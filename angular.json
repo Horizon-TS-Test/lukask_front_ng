@@ -20,12 +20,31 @@
             "tsConfig": "src/tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              "src/manifest.json"
             ],
             "styles": [
-              "src/styles.css"
+              "src/assets/css/reset.css",
+              "src/assets/css/styles.css",
+              "src/assets/css/portada.css",
+              "src/assets/css/smart-fixed-nav.css",
+              "node_modules/tether/dist/css/tether.min.css",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "node_modules/font-awesome/css/font-awesome.css",
+              "node_modules/select2/dist/css/select2.min.css",
+              "node_modules/select2-bootstrap-theme/dist/select2-bootstrap.min.css"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/jquery/dist/jquery.min.js",
+              "node_modules/jquery-smooth-scroll/jquery.smooth-scroll.min.js",
+              "node_modules/select2/dist/js/select2.min.js",
+              "src/assets/js/smart-fixed-nav.js",
+              "node_modules/tether/dist/js/tether.min.js",
+              "node_modules/bootstrap/dist/js/bootstrap.min.js",
+              "src/assets/js/promise.min.js",
+              "src/assets/js/idb.js",
+              "src/assets/js/utility-db.js"
+            ]
           },
           "configurations": {
             "production": {
@@ -43,7 +62,8 @@
               "aot": true,
               "extractLicenses": true,
               "vendorChunk": false,
-              "buildOptimizer": true
+              "buildOptimizer": true,
+              "serviceWorker": true
             }
           }
         },
@@ -77,7 +97,8 @@
             "scripts": [],
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              "src/manifest.json"
             ]
           }
         },
