@@ -1,0 +1,1 @@
+export const secret_key: String = 'ae3c6ae9bb1245928958f9564d497f99';

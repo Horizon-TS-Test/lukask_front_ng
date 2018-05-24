@@ -1,0 +1,34 @@
+<div class="personal-content personal-fadeout min-height-full container d-flex justify-content-center align-items-center w-100"
+  id="local-content-1">
+
+  <form #frmLogin="ngForm" class="col-12 col-sm-7 col-md-6 py-2" id="frmL" (ngSubmit)="onLogin()">
+    <div id="loading-content"></div>
+
+    <div class="form-group row pb-1" [ngClass]="{ 'has-danger': !user_name.valid && user_name.touched }">
+      <label for="user_name" class="col-3 col-form-label">Usuario:</label>
+      <div class="col-9">
+        <input type="text" id="user_name" name="user_name" #user_name="ngModel" [(ngModel)]="user.username" class="form-control form-control-danger"
+          required>
+        <small *ngIf="!user_name.valid && user_name.touched" class="form-control-feedback">Ingrese su nombre de usuario</small>
+      </div>
+    </div>
+
+    <div class="form-group row pb-1" [ngClass]="{ 'has-danger': !pass.valid && pass.touched }">
+      <label for="pass" class="col-3 col-form-label">Clave:</label>
+      <div class="col-9">
+        <input type="password" id="pass" name="pass" #pass="ngModel" [(ngModel)]="user.password" class="form-control form-control-danger"
+          required>
+        <small *ngIf="!pass.valid && pass.touched" class="form-control-feedback">Ingrese su clave</small>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12 offset-sm-3 col-sm-9 d-flex justify-content-center align-items-center d-sm-block">
+        <button type="submit" class="primary-font btn btn-outline-info" [disabled]="!frmLogin.form.valid">Ingresar</button>
+        <button type="reset" id="resetBtn" class="primary-font btn btn-outline-secondary ml-1">Limpiar</button>
+      </div>
+    </div>
+
+  </form>
+
+</div>

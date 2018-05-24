@@ -1,0 +1,34 @@
+<div class="alert-container px-4 py-2 py-md-3">
+  <div class="personal-alert card d-flex flex-column justify-content-center align-items-center flex-md-row" [ngClass]="{
+    'personal-success': alertData.data.type == alertTypes.success,
+    'personal-info': alertData.data.type == alertTypes.info,
+    'personal-warning': alertData.data.type == alertTypes.warning,
+    'personal-danger': alertData.data.type == alertTypes.danger
+  }">
+    <div class="alert-close" (click)="showHideAlert(false)">
+      <fa name="window-close" size="2x"></fa>
+    </div>
+
+    <div class="card-block py-3 px-0 alert-icon">
+
+      <ng-container [ngSwitch]="alertData.data.type">
+        <fa *ngSwitchCase="alertTypes.success" name="check-circle" size="5x"></fa>
+        <fa *ngSwitchCase="alertTypes.info" name="info-circle" size="5x"></fa>
+        <fa *ngSwitchCase="alertTypes.warning" name="warning" size="5x"></fa>
+        <fa *ngSwitchCase="alertTypes.danger" name="close" size="5x"></fa>
+      </ng-container>
+
+    </div>
+
+    <div class="card-block d-flex flex-column justify-content-center align-items-start w-100">
+
+      <div class="alert-header text-center w-100 py-1">
+        <strong>{{ alertData.data.title }}</strong>
+      </div>
+      <div class="alert-body text-justify w-100 py-2">
+        {{ alertData.data.message }}
+      </div>
+
+    </div>
+  </div>
+</div>
