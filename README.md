@@ -28,3 +28,21 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 
 ##TO INSTAL PACKAGES:
 Run npm install
+
+##TO RUN NORMAL ANGULAR-CLI VERSION
+ng serve
+
+##TO RUN THE PWA VERSION:
+###JUST THE FIRS TIME
+-npm install -g http-server
+
+###ANY TIME YOU RUN THE APP
+####GENERATE THE SERVICE WORKER:
+cd /workbox
+workbox injectManifest workbox-config.js
+
+####IN ONE TERMINAL
+ng build --prod
+cd dist/lukask_pwa
+####USE THE PORT YOU PREFER
+http-server -p 8080 -c-1

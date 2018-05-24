@@ -1,0 +1,39 @@
+<div class="top-panel d-flex justify-content-end align-items-center">
+  <div class="menu-focus">
+    <span></span>
+  </div>
+  <div class="opcion f-child-full-space py-3 text-center">
+    Home
+  </div>
+
+  <div class="opcion f-child-full-space py-3 text-center">
+    Mapa
+  </div>
+
+  <div class="opcion f-child-full-space py-3 text-center">
+    Actividad
+  </div>
+</div>
+
+<div class="bot-panel d-flex justify-content-end align-items-center">
+  <div class="p-3 w-100">
+    <a href="#" (click)="openLayer($event, contentTypes.new_media)" class="btn btn-outline-info">
+      <fa name="plus"></fa>
+    </a>
+    <a href="#" (click)="openLayer($event, contentTypes.new_queja)" class="ml-1 btn btn-outline-info">
+      <fa name="plus"></fa>
+    </a>
+    <a href="#" *ngIf="isAble" (click)="subscribe($event)" class="ml-1 btn btn-outline-info">
+      <fa name="bell"></fa>
+    </a>
+    <!--form class="form-inline">
+      <div class="input-group col-8">
+        <input type="text" class="form-control" id="inlineFormInputGroup" placeholder="Buscar">
+      </div>
+
+      <button type="submit" class="btn btn-outline-secondary col-2">
+        <fa name="search"></fa>
+      </button>
+    </form-->
+  </div>
+</div>

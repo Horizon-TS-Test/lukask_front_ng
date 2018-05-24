@@ -1,0 +1,88 @@
+//COLORS:
+$primary: rgb(93, 190, 182);
+$primary-a: rgba(93, 190, 182, .5);
+$primary-a-f: rgba(93, 190, 182, .8);
+
+$primary-dark: rgb(0, 67, 96);
+$primary-dark-a: rgba(0, 67, 96, .9);
+
+$primary-light: rgb(193, 230, 202);
+
+$secondary: rgb(247, 245, 200);
+$secondary-dark: rgb(127, 164, 173);
+$secondary-dark-a: rgba(127, 164, 173, .5);
+
+$primary-text: rgb(132, 139, 118);
+$primary-text-a: rgba(132, 139, 118, .7);
+
+//$secondary-text: rgb(242, 242, 242);
+$secondary-text: #fff;
+/////
+
+//ALERT COLORS:
+$success: rgb(26, 188, 156);
+$success-low: rgba(26, 188, 156, .8);
+
+$info: rgb(52, 180, 219);
+$info-low: rgba(52, 180, 219, .5);
+
+$warning: rgb(240, 189, 80);
+$warning-low: rgba(240, 189, 80, .5);
+
+$danger: #E52F62;
+$danger-low: rgba(229, 47, 98, .5);
+////
+
+//FONTS:
+$primary-font: 'Barlow', sans-serif;
+$secondary-font: 'Barlow Condensed', sans-serif;
+
+//POSITION FOR NAV AND MENU BUTTONS:
+//XS, SM:
+$nav-menu-size: 2.1rem;
+$global-nav-size: 1.4rem;
+
+$nav-menu-bottom: .42rem;
+$nav-menu-bottom-1: .12rem;
+
+$global-nav-bottom: .8rem;
+$global-nav-bottom-1: .5rem;
+
+$nav-x: .7rem;
+$nav-x-down: 2.6rem;
+
+$global-nav-bot-foot-sm: .9rem;
+$nav-menu-bot-foot-sm: .5rem;
+
+//MD:
+$nav-menu-size-md: 2.3rem;
+$global-nav-size-md: 1.6rem;
+
+$nav-menu-bottom-md: .75rem;
+$global-nav-bottom-md: 1.1rem;
+$nav-x-md: 1rem;
+$nav-x-down-md: 3.1rem;
+
+$global-nav-bot-foot-md: .9rem;
+$nav-menu-bot-foot-md: .43rem;
+
+//LG:
+$nav-menu-size-lg: 2.7rem;
+$global-nav-size-lg: 2rem;
+
+$nav-menu-bottom-lg: .95rem;
+$global-nav-bottom-lg: 1.3rem;
+$nav-x-lg: 1.1rem;
+$nav-x-down-lg: 3.6rem;
+
+$global-nav-bot-foot-lg: .6rem;
+$nav-menu-bot-foot-lg: .25rem;
+
+////
+
+//MAIN NAV BAR SIZE:
+$option-min-height: 2.6rem;
+////
+
+//INTRO HEIGHT:
+$intro-height-XS: 100vh;
