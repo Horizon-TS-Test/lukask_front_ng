@@ -189,7 +189,7 @@ export class QuejaService {
   }
 
   sendQueja(queja: Publication) {
-    if ('serviceWorker' in navigator && 'SyncManager' in window) {
+    /*if ('serviceWorker' in navigator && 'SyncManager' in window) {
       navigator.serviceWorker.ready
         .then((serviceW) => {
           var pub = this.mergeJSONData(queja);
@@ -207,7 +207,7 @@ export class QuejaService {
         });
     }
     //IF THE WEB BROWSER DOESN'T SUPPORT OFFLINE SYNCRONIZATION:
-    else {
+    else {*/
       let quejaFormData: FormData = this.mergeFormData(queja);
       this.postQuejaClient(quejaFormData)
         .then(
@@ -219,7 +219,7 @@ export class QuejaService {
             console.log(err);
           }
         );
-    }
+    //}
   }
 
   mergeFormData(queja: Publication) {
