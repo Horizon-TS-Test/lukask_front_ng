@@ -5,6 +5,8 @@ import { Subscription } from 'rxjs';
 import { ContentService } from '../../services/content.service';
 import { NotifierService } from '../../services/notifier.service';
 import { NewMediaComponent } from '../new-media/new-media.component';
+import { HorizonModalComponent } from '../horizon-modal/horizon-modal.component';
+import { DynaContent } from '../../interfaces/dyna-content.interface';
 
 @Component({
   selector: 'app-content-layer',
@@ -23,17 +25,18 @@ export class ContentLayerComponent implements OnDestroy {
   ) {
     //SUBSCRIPTION TO ADD NEW CONTENT LAYER DINAMICALLY:
     this.subscription = this._notifierService.listenLayer().subscribe(
-      (contentType: number) => {
-        switch (contentType) {
+      (dynaContent: DynaContent) => {
+        switch (dynaContent.contentType) {
           case CONTENT_TYPES.new_media:
             this._contentService.addComponent(NewMediaComponent, this._cfr, this.secondaryLayer);
             break;
           case CONTENT_TYPES.new_queja:
-            this._contentService.addComponent(EditQuejaComponent, this._cfr, this.secondaryLayer);
+            this._contentService.addComponent(EditQuejaComponent, this._cfr, this.secondaryLayer, dynaContent);
             break;
           case CONTENT_TYPES.edit_queja:
             break;
           case CONTENT_TYPES.view_queja:
+            this._contentService.addComponent(HorizonModalComponent, this._cfr, this.secondaryLayer, dynaContent);
             break;
         }
       }

@@ -1,5 +1,6 @@
 import { Media } from "./media";
 import { User } from "./user";
+import { QuejaType } from "./queja-type";
 
 export class Publication {
     public media: Media[];
@@ -12,8 +13,9 @@ export class Publication {
         public date_pub: string,
         public priority?: string,
         public active?: boolean,
-        public type?: string,
+        public type?: QuejaType,
         public user?: User,
+        public position?: number,
     ) {
         this.media = [];
     }

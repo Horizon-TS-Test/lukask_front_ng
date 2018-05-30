@@ -22,8 +22,10 @@ export class SocketService {
       console.log("backend-rules: ", backendData);
       switch (backendData.stream) {
         case "publication":
-          console.log("publication");
-          this._publicationUpdate.emit(backendData.payload);
+          this._publicationUpdate.emit(backendData);
+          break;
+        case "multimedia":
+          this._publicationUpdate.emit(backendData);
           break;
       }
     });

@@ -24,7 +24,7 @@
       <div class="ml-2 my-0 personal-profile-img" [style.background-image]="_domSanitizer.bypassSecurityTrustStyle('url(' + queja.user.profileImg + ')')">
       </div>
     </div>
-    <a href="#">
+    <a href="#" (click)="viewQuejaDetail($event, queja.id_publication)">
       <div class="card-img-top d-flex flex-wrap justify-content-center align-items-center">
         <span *ngIf="queja.media.length > 3">
           <fa name="ellipsis-h"></fa>
