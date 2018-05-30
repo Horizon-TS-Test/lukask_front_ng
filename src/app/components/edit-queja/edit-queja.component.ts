@@ -12,6 +12,8 @@ import { CameraService } from '../../services/camera.service';
 import { QuejaType } from '../../models/queja-type';
 import { Gps } from '../../interfaces/gps.interface';
 import { Media } from '../../models/media';
+import { MediaFile } from '../../interfaces/media-file.interface';
+import { DynaContent } from '../../interfaces/dyna-content.interface';
 
 import { ViewChild } from '@angular/core';
 import { } from '@types/googlemaps';
@@ -23,11 +25,11 @@ declare var $: any;
   selector: 'app-edit-queja',
   templateUrl: './edit-queja.component.html',
   styleUrls: ['./edit-queja.component.css'],
-  providers: [QuejaService]
 })
 export class EditQuejaComponent implements OnInit, OnDestroy {
   private self: any;
   public _ref: any;
+  public _dynaContent: DynaContent;
 
   public tipoQuejaSelect: Select2[];
   public quejaTypeList: QuejaType[];
@@ -63,7 +65,7 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
 
     //LISTEN TO NEW SNAPSHOT SENT BY NEW MEDIA CONTENT:
     this.subscription = this._cameraService._snapShot.subscribe(
-      (snapShot: any) => {
+      (snapShot: MediaFile) => {
         console.log("new snapshot received!!");
         this.addQuejaSnapShot(snapShot);
       }
@@ -85,23 +87,14 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
     this.map = new google.maps.Map(this.gmapElement.nativeElement, mapProp);
   }
 
-  ngAfterViewInit() {
-    setTimeout(() => {
-      this._contentService.slideDownUp(this.self);
-    }, 100);
-  }
+  ngAfterViewInit() { }
 
   removeObject() {
     this._ref.destroy();
   }
 
   close(event) {
-    event.preventDefault();
-    this._contentService.slideDownUp(this.self, false);
-
-    setTimeout(() => {
-      this.removeObject();
-    }, 300);
+    this.removeObject();
   }
 
   getQuejaType() {
@@ -115,13 +108,13 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
     });
   }
 
-  addQuejaSnapShot(src: any) {
+  addQuejaSnapShot(media: MediaFile) {
     let cardImg = $("#frmQ").find(".card-img-top");
     let defaultQuejaImg = $("#frmQ").find(".card-img-top > #defaultQuejaImg");
 
     defaultQuejaImg.css("display", "none");
-    cardImg.append('<img class="mb-1" src="' + src + '" width="100%">');
-    this.filesToUpload.push(FileManager.dataURItoBlob(src));
+    cardImg.append('<img class="mb-1" src="' + media.mediaFileUrl + '" width="100%">');
+    this.filesToUpload.push(media.mediaFile);
   }
 
   getFormattedDate() {
@@ -133,7 +126,7 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
 
   newMedia(event: any) {
     event.preventDefault();
-    this._notifierService.notifyNewContent(CONTENT_TYPES.new_media);
+    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.new_media, contentData: null });
   }
 
   private setFormGroup(): FormGroup {
@@ -234,7 +227,7 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
     });
   }
   publishQueja() {
-    this.newPub = new Publication("", this._gps.latitude, this._gps.longitude, this.formQuej.value.fcnDetail, this.getFormattedDate(), null, null, this.quejaType);
+    this.newPub = new Publication("", this._gps.latitude, this._gps.longitude, this.formQuej.value.fcnDetail, this.getFormattedDate(), null, null, new QuejaType(this.quejaType, null));
     if (this.filesToUpload.length > 0) {
       for (let i = 0; i < this.filesToUpload.length; i++) {
         this.newPub.media.push(new Media("", "", "", null, this.filesToUpload[i], i + "-" + this.getFormattedDate() + ".png"));

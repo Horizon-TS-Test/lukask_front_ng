@@ -36,9 +36,9 @@ export class PanelOpcionesComponent implements OnInit {
     }
   }
 
-  openLayer(event: any, contentType: number) {
+  openLayer(event: any, contType: number) {
     event.preventDefault();
-    this._notifierService.notifyNewContent(contentType);
+    this._notifierService.notifyNewContent({ contentType: contType, contentData: null });
   }
 
   subscribe(event: any) {

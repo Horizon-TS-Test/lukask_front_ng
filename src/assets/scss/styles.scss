@@ -1173,14 +1173,12 @@ agm-map {
     .video-camera {
         position: absolute;
         width: auto;
-        height: 100vh;
-    }
+        height: 100%;
 
-    canvas {
-        position: absolute;
-        width: auto;
-        height: 100vh;
-        //background: red;
+        @include MQ(HS) {
+            width: 100%;
+            height: auto;
+        }
     }
 }
 /////////////////////

@@ -25,7 +25,10 @@ export class UtilsService {
         break;
       default:
         if (!lastDataModel) {
-          modelArray.push(newDataModel);
+          //INSERT ARRAY ELEMENT TO AN SPECIFIC POSITION:
+          //REF: https://stackoverflow.com/questions/586182/how-to-insert-an-item-into-an-array-at-a-specific-index
+          modelArray.splice(0, 0, newDataModel);
+          ////
         }
         break;
     }

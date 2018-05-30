@@ -1,28 +1,23 @@
-<div class="personal-content personal-over-unset">
-  <div class="fixed-background"></div>
+<div class="personal-content personal-over-unset min-height-full col-12 p-0" id="personal-media">
+  <app-webrtc-camera></app-webrtc-camera>
 
-  <div class="min-height-full personal-dyna-cont default-back col-12 p-0" id="personal-media">
-    <app-webrtc-camera></app-webrtc-camera>
-
-    <div class="personal-new-media-pan card pr-0">
-      <div class="pr-0 card-block d-flex flex-column justify-content-center align-items-center">
-        <a href="#" class="btn btn-outline-info" (click)="sendCameraAction($event, cameraActions.start_video)">
-          <span class="personal-site-icon">e</span>
-        </a>
-        <a href="#" class="mt-1 btn btn-outline-info" (click)="sendCameraAction($event, cameraActions.back_camera)">
-          <span class="personal-site-icon">d</span>
-        </a>
-        <a href="#" class="mt-1 btn btn-outline-info" (click)="sendCameraAction($event, cameraActions.snap_shot)">
-          <fa name="camera"></fa>
-        </a>
-        <a href="#" class="mt-1 btn btn-outline-info" (click)="sendCameraAction($event, 0)">
-          <span class="personal-site-icon">b</span>
-        </a>
-        <a href="#" class="mt-1 btn btn-outline-info" (click)="close($event)">
-          <fa name="times-circle"></fa>
-        </a>
-      </div>
+  <div class="personal-new-media-pan card pr-0">
+    <div class="pr-0 card-block d-flex flex-column justify-content-center align-items-center">
+      <a href="#" class="btn btn-outline-info" (click)="sendCameraAction($event, cameraActions.start_video)">
+        <span class="personal-site-icon">e</span>
+      </a>
+      <a href="#" class="mt-1 btn btn-outline-info" (click)="sendCameraAction($event, cameraActions.change_camera)">
+        <span class="personal-site-icon">d</span>
+      </a>
+      <a href="#" class="mt-1 btn btn-outline-info" (click)="sendCameraAction($event, cameraActions.snap_shot)">
+        <fa name="camera"></fa>
+      </a>
+      <a href="#" class="mt-1 btn btn-outline-info" (click)="sendCameraAction($event, 0)">
+        <span class="personal-site-icon">b</span>
+      </a>
+      <a href="#" class="mt-1 btn btn-outline-info" (click)="close($event)">
+        <fa name="times-circle"></fa>
+      </a>
     </div>
   </div>
-
 </div>

@@ -1,5 +1,6 @@
 //DISPLAY RESOLUTION:
 $XS: 376px;
+$HS: 476px;
 $S: 576px;
 $M: 768px;
 $L: 992px;
@@ -10,6 +11,9 @@ $XL: 1200px;
 @mixin MQ($canvas) {
     @if $canvas == XS {
         @media only screen and (min-width: $XS) { @content; } 
+    }
+    @if $canvas == HS {
+        @media only screen and (min-width: $HS) { @content; } 
     }
     @if $canvas == S {
         @media only screen and (min-width: $S) { @content; } 

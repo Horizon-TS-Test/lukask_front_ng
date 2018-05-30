@@ -6,6 +6,9 @@ import { Subscription } from 'rxjs';
 import { CameraService } from '../../services/camera.service';
 import { ContentService } from '../../services/content.service';
 
+import { ImageCapture } from 'image-capture';
+import { MediaFile } from '../../interfaces/media-file.interface';
+
 declare var $: any;
 
 @Component({
@@ -16,13 +19,14 @@ declare var $: any;
 export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
   private _frontCamera: Device;
   private _backCamera: Device;
-  private _canvas: any;
   private _video: any;
   private _navigator: any;
-  private _width: any;
-  private _height: any;
   private localStream: any;
-
+  private backCamera: boolean;
+  public snapShot: MediaFile;
+  public swapCamera: boolean;
+  private mediaStreamTrack: any;
+  private imageCapture: any;
   private subscription: Subscription;
 
   constructor(
@@ -31,7 +35,9 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
     private _contentService: ContentService,
   ) {
     this._frontCamera = { id: "", description: "" };
-    this._frontCamera = { id: "", description: "" };
+    this._backCamera = { id: "", description: "" };
+    this.swapCamera = false;
+    this.backCamera = false;
 
     //LISTEN FOR ANY CAMERA EVENT:
     this.subscription = this._notifierService._cameraAction.subscribe(
@@ -40,11 +46,13 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
           case CAMERA_ACTIONS.snap_shot:
             this.takeSnapShot();
             break;
-          case CAMERA_ACTIONS.front_camera:
-            this.startFrontLiveCam();
-            break;
-          case CAMERA_ACTIONS.back_camera:
-            this.startBackLiveCam();
+          case CAMERA_ACTIONS.change_camera:
+            if (this.backCamera) {
+              this.startFrontLiveCam();
+            }
+            else {
+              this.startBackLiveCam();
+            }
             break;
           case CAMERA_ACTIONS.start_video:
             break;
@@ -70,15 +78,10 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit() {
     navigator.mediaDevices.enumerateDevices().then((data) => {
       console.log("dispositivos", data);
-      this.getDivices(data);
+      this.getDevices(data);
     }).catch(this.handleError);
 
     this.startFrontLiveCam();
-  }
-
-  centerStream() {
-    this._contentService.centerElement($("#video"));
-    this._contentService.centerElement($("#canvas"));
   }
 
   /**
@@ -86,15 +89,6 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
    */
   initVariables() {
     this._video = document.querySelector("#video");
-    this._canvas = document.querySelector("#canvas");
-
-    this._width = $("#video").width();
-    this._height = $("#video").height();
-
-    this._canvas.setAttribute('width', this._width);
-    this._canvas.setAttribute('height', this._height);
-
-    this._canvas.style.display = 'none';
   }
 
   /**
@@ -104,12 +98,64 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
     this._navigator = <any>navigator;
     this._navigator.getUserMedia = (this._navigator.getUserMedia || this._navigator.webkitGetUserMedia || this._navigator.mozGetUserMedia || this._navigator.msGetUserMedia);
     this._navigator.mediaDevices.getUserMedia({
-      video: { deviceId: infoCamp.id ? { exact: infoCamp.id } : undefined, width: this._width, height: this._height }
+      video: { deviceId: infoCamp.id ? { exact: infoCamp.id } : undefined }
     }).then((stream) => {
       console.log("stream", stream)
       this.localStream = stream;
       this._video.srcObject = stream;
-    })
+
+      this.mediaStreamTrack = stream.getVideoTracks()[0];
+      this.imageCapture = new ImageCapture(this.mediaStreamTrack);
+      console.log(this.imageCapture);
+    }).catch(error => console.error('getUserMedia() error:', error));
+  }
+
+  /**
+   * Obtiene los dispositivos disponibles hardware disponibles del dispositivo(smartphone o PC) que esta ejecutando la aplicación.
+   * @param deviceInfos Información  de los dispositivos
+   */
+  getDevices(deviceInfos: any) {
+    deviceInfos.forEach((device) => {
+      if (device.kind === "videoinput") {
+        this.setCamera(device);
+      }
+    });
+  }
+
+  /**
+   * Permite elegir las cámaras disponibles.
+   * @param device
+   */
+  setCamera(device: any) {
+    if (device.label.indexOf("back") > -1) {
+      this._backCamera = { id: device.deviceId, description: "Posterior" }
+      this.swapCamera = true;
+    } else if (device.label.indexOf("front") > -1) {
+      this._frontCamera = { id: device.deviceId, description: "Frontal" }
+    } else {
+      let textLabel = (device.label.length > 6) ? device.label.substr(0, 6) + "..." : device.label;
+      this._frontCamera = { id: device.deviceId, description: textLabel }
+    }
+  }
+
+  /**
+   * Iniciar transmición con la cámara frontal
+   */
+  startFrontLiveCam() {
+    this.backCamera = false;
+    this.stopStream();
+    this.startLiveCamp(this._frontCamera);
+  }
+
+  /**
+   * Inicicar transmición con la cámara trasera.
+   */
+  startBackLiveCam() {
+    if (this.swapCamera) {
+      this.backCamera = true;
+      this.stopStream();
+      this.startLiveCamp(this._backCamera);
+    }
   }
 
   /**
@@ -128,26 +174,31 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
    * obtener captura del video en transmición
    */
   takeSnapShot() {
-    this._canvas.getContext('2d').drawImage(this._video, 0, 0, this._width, this._height);
-    this._video.style.display = 'none';
-    this._canvas.style.display = 'block';
+    if (this.imageCapture) {
+      this.imageCapture.takePhoto().then(blob => {
+        console.log(blob);
+        this.snapShot = {
+          mediaFileUrl: URL.createObjectURL(blob),
+          mediaFile: blob
+        }
+        this._cameraService.notifySnapShot(this.snapShot);
+      });
 
-    let snapShot = this._canvas.toDataURL('image/png');
-    this._cameraService.notifySnapShot(snapShot);
-
-    this.stopStream();
+      this.imageCapture.getPhotoCapabilities()
+        .then((photoCapabilities) => {
+          console.log(photoCapabilities.imageWidth.min);
+          console.log(photoCapabilities.imageWidth.max);
+          console.log(photoCapabilities.imageWidth.step);
+          return this.imageCapture.getPhotoSettings();
+        }).then(function (photoSettings) {
+          console.log(photoSettings.imageWidth);
+        })
+        .catch(error => console.error('Error getting camera capabilities and settings:', error));
+    }
   }
 
-  /**
-   * Obtiene los dispositivos disponibles hardware disponibles del dispositivo(smartphone o PC) que esta ejecutando la aplicación.
-   * @param deviceInfos Información  de los dispositivos
-   */
-  getDivices(deviceInfos: any) {
-    deviceInfos.forEach((device) => {
-      if (device.kind === "videoinput") {
-        this.setCamera(device);
-      }
-    });
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
   /**
@@ -157,40 +208,4 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
   handleError(error) {
     console.log(error);
   }
-
-  /**
-   * Permite elegir las cámaras disponibles.
-   * @param device
-   */
-  setCamera(device: any) {
-    if (device.label.indexOf("back") > -1) {
-      this._backCamera = { id: device.deviceId, description: "Posterior" }
-    } else if (device.label.indexOf("front") > -1) {
-      this._frontCamera = { id: device.deviceId, description: "Frontal" }
-    } else {
-      let textLabel = (device.label.length > 6) ? device.label.substr(0, 6) + "..." : device.label;
-      this._frontCamera = { id: device.deviceId, description: textLabel }
-    }
-  }
-
-  /**
-   * Iniciar transmición con la cámara frontal
-   */
-  startFrontLiveCam() {
-    this.stopStream();
-    this.startLiveCamp(this._frontCamera);
-  }
-
-  /**
-   * Inicicar transmición con la cámara trasera.
-   */
-  startBackLiveCam() {
-    this.stopStream();
-    this.startLiveCamp(this._backCamera);
-  }
-
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
-  }
-
 }
