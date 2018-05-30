@@ -13,6 +13,10 @@ import { QuejaType } from '../../models/queja-type';
 import { Gps } from '../../interfaces/gps.interface';
 import { Media } from '../../models/media';
 
+import { ViewChild } from '@angular/core';
+import { } from '@types/googlemaps';
+
+declare var google: any;
 declare var $: any;
 
 @Component({
@@ -32,9 +36,14 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
   public filesToUpload: any[];
   private quejaType: string;
   private _gps: Gps;
+  private _direccion: string;
   private newPub: Publication;
 
   private subscription: Subscription;
+  //Declacion de variables del mapa
+  @ViewChild('gmap') gmapElement: any;
+  //map: google.maps.Map;
+  map: any;
 
   constructor(
     private _contentService: ContentService,
@@ -67,6 +76,13 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
 
     this.formQuej = this.setFormGroup();
     this.getGps();
+    //Inicalizacion del mapa
+    var mapProp = {
+      center: new google.maps.LatLng(-1.669685, -78.651953),
+      zoom: 15,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+    this.map = new google.maps.Map(this.gmapElement.nativeElement, mapProp);
   }
 
   ngAfterViewInit() {
@@ -127,10 +143,69 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
 
     return formGroup;
   }
-
+/**
+ * Funcion que validara la posicion y el nombre de la organizacion
+ * @param event 
+ */
   getSelect2Value(event: string) {
     this.quejaType = event;
+    console.log("valor seleccionado");
+    console.log(this.quejaType);
+    console.log(this._gps.latitude);
+    console.log(this._gps.longitude);
+    var list =[
+      {lat:-1.664856,lng:-78.655525},
+      {lat:-1.668264,lng:-78.647987},
+      {lat:-1.671611,lng:-78.646030},
+      {lat:-1.674530,lng:-78.643477},
+      {lat:-1.680598,lng:-78.643049}
+      ];
+    for (let i in list) {
+      console.log(list[i]);
+      this.circunferencia(list[i]);
+    }
+
   }
+
+
+  circunferencia(posicion){
+		console.log(posicion);
+		var cityCircle = new google.maps.Circle({
+			strokeColor: '#FF0000',
+			strokeOpacity: 0.8,
+			strokeWeight: 2,
+			fillColor: '#FF0000',
+			fillOpacity: 0.35,
+
+			center: posicion,
+			radius: 10
+		});
+
+		this.map.setCenter(posicion);
+		this.map.setZoom(19);
+		console.log("Datos.....!!!!");
+		console.log(this._gps.latitude);
+		console.log(this._gps.longitude);
+		var posi = new google.maps.LatLng(this._gps.latitude, this._gps.longitude);
+		if (this.determinarPosicion2(cityCircle, posi)) {
+			alert("si esta");
+		}		else{
+			console.log("No esta");
+    }	
+	}
+  
+	determinarPosicion2(circle,latLngA){
+		var bounds = circle.getBounds();
+		bounds = circle.getBounds();
+		if(bounds.contains(latLngA)){
+			alert("ESta dentro ? :"+bounds.contains(latLngA));
+			return bounds.contains(latLngA);
+		}else{
+			console.log("ESta dentro ? :"+bounds.contains(latLngA));
+			//crear_marker(latLngA);
+			return bounds.contains(latLngA);
+		} 
+	}
 
   getGps() {
     if (!('geolocation' in navigator)) {
@@ -141,7 +216,7 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
     navigator.geolocation.getCurrentPosition((position) => {
       this._gps.latitude = position.coords.latitude;
       this._gps.longitude = position.coords.longitude;
-      console.log(this._gps);
+      this.getAddress(this._gps.latitude, this._gps.longitude);
     }, function (err) {
       console.log(err);
       //EXCEDED THE TIMEOUT
@@ -149,6 +224,15 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
     }, { timeout: 7000 });
   }
 
+  getAddress(plat,plng){
+    console.log("llamando");
+    var geocoder = new google.maps.Geocoder;
+    geocoder.geocode({ 'latLng': { lat: -1.663585, lng: -78.658242 } }, (results, status)=> {
+      if (status === google.maps.GeocoderStatus.OK) {
+        this._direccion = results[0].address_components[1].long_name;
+      }
+    });
+  }
   publishQueja() {
     this.newPub = new Publication("", this._gps.latitude, this._gps.longitude, this.formQuej.value.fcnDetail, this.getFormattedDate(), null, null, this.quejaType);
     if (this.filesToUpload.length > 0) {
