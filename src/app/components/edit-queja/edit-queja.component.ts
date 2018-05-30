@@ -71,23 +71,14 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
     this.getGps();
   }
 
-  ngAfterViewInit() {
-    setTimeout(() => {
-      this._contentService.slideDownUp(this.self);
-    }, 100);
-  }
+  ngAfterViewInit() { }
 
   removeObject() {
     this._ref.destroy();
   }
 
   close(event) {
-    event.preventDefault();
-    this._contentService.slideDownUp(this.self, false);
-
-    setTimeout(() => {
-      this.removeObject();
-    }, 300);
+    this.removeObject();
   }
 
   getQuejaType() {

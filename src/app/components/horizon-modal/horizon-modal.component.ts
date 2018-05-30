@@ -4,6 +4,8 @@ import { NotifierService } from '../../services/notifier.service';
 import { DynaContent } from '../../interfaces/dyna-content.interface';
 import { CONTENT_TYPES } from '../../config/content-type';
 import { QuejaDetailComponent } from '../queja-detail/queja-detail.component';
+import { EditQuejaComponent } from '../edit-queja/edit-queja.component';
+import { NewMediaComponent } from '../new-media/new-media.component';
 
 declare var $: any;
 
@@ -28,7 +30,7 @@ export class HorizonModalComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.self = $("#horizon-modal");
+    this.self = $(".horizon-modal").last();
     this.addDynamicContent();
   }
 
@@ -39,11 +41,19 @@ export class HorizonModalComponent implements OnInit {
   }
 
   addDynamicContent() {
+    let childComponent: any;
     switch (this._dynaContent.contentType) {
+      case CONTENT_TYPES.new_queja:
+        childComponent = EditQuejaComponent;
+        break;
+      case CONTENT_TYPES.new_media:
+        childComponent = NewMediaComponent;
+        break;
       case CONTENT_TYPES.view_queja:
-        this._childInstance = this._contentService.addComponent(QuejaDetailComponent, this._cfr, this.modalContainer, this._dynaContent);
+        childComponent = QuejaDetailComponent;
         break;
     }
+    this._childInstance = this._contentService.addComponent(childComponent, this._cfr, this.modalContainer, this._dynaContent);
   }
 
   close(event) {

@@ -15,7 +15,7 @@ import { DynaContent } from '../../interfaces/dyna-content.interface';
 })
 export class ContentLayerComponent implements OnDestroy {
   @ViewChild("secodaryLayer", { read: ViewContainerRef }) secondaryLayer: ViewContainerRef;
-  
+
   private subscription: Subscription;
 
   constructor(
@@ -26,19 +26,7 @@ export class ContentLayerComponent implements OnDestroy {
     //SUBSCRIPTION TO ADD NEW CONTENT LAYER DINAMICALLY:
     this.subscription = this._notifierService.listenLayer().subscribe(
       (dynaContent: DynaContent) => {
-        switch (dynaContent.contentType) {
-          case CONTENT_TYPES.new_media:
-            this._contentService.addComponent(NewMediaComponent, this._cfr, this.secondaryLayer);
-            break;
-          case CONTENT_TYPES.new_queja:
-            this._contentService.addComponent(EditQuejaComponent, this._cfr, this.secondaryLayer, dynaContent);
-            break;
-          case CONTENT_TYPES.edit_queja:
-            break;
-          case CONTENT_TYPES.view_queja:
-            this._contentService.addComponent(HorizonModalComponent, this._cfr, this.secondaryLayer, dynaContent);
-            break;
-        }
+        this._contentService.addComponent(HorizonModalComponent, this._cfr, this.secondaryLayer, dynaContent);
       }
     );
     ////

@@ -63,7 +63,7 @@ export class ContentService {
 
     switch (dynaContent.contentType) {
       case CONTENT_TYPES.alert:
-        compInstance.id = this.counter;
+        compInstance._id = this.counter;
         compInstance.alertData = dynaContent.contentData;
         this.counter++;
         break;
