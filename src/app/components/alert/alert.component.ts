@@ -11,7 +11,7 @@ declare var $: any;
 })
 export class AlertComponent implements OnInit {
   public _ref: any;
-  public id: number;
+  public _id: number;
   public alertData: Alert;
   private self: any;
   public alertTypes: any;
@@ -22,7 +22,7 @@ export class AlertComponent implements OnInit {
 
   ngOnInit() {
     this.self = $(".personal-alert").last();
-    this.self.attr("id", this.id);
+    this.self.attr("id", this._id);
   }
 
   ngAfterViewInit() {
