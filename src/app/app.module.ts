@@ -36,6 +36,9 @@ import { NotifierService } from './services/notifier.service';
 import { CameraService } from './services/camera.service';
 import { SocketService } from './services/socket.service';
 import { BrowserNotifierService } from './services/browser-notifier.service';
+import { QuejaService } from './services/queja.service';
+import { HorizonModalComponent } from './components/horizon-modal/horizon-modal.component';
+import { HorizonModallearComponent } from './components/horizon-modallear/horizon-modallear.component';
 
 @NgModule({
   declarations: [
@@ -55,7 +58,9 @@ import { BrowserNotifierService } from './services/browser-notifier.service';
     QuejaDetailComponent,
     QuejaListComponent,
     Select2BootstrapComponent,
-    WebrtcCameraComponent
+    WebrtcCameraComponent,
+    HorizonModalComponent,
+    HorizonModallearComponent
   ],
   imports: [
     HttpModule,
@@ -66,8 +71,8 @@ import { BrowserNotifierService } from './services/browser-notifier.service';
     AngularFontAwesomeModule,
     ServiceWorkerModule.register('/sw-workbox.js', { enabled: environment.production })
   ],
-  providers: [appRoutingProviders, ContentService, LoginService, AuthGuardService, LoginGuardService, NotifierService, CameraService, SocketService, BrowserNotifierService],
+  providers: [appRoutingProviders, ContentService, LoginService, AuthGuardService, LoginGuardService, NotifierService, CameraService, SocketService, BrowserNotifierService, QuejaService],
   bootstrap: [AppComponent],
-  entryComponents: [AlertComponent, EditQuejaComponent, NewMediaComponent]
+  entryComponents: [AlertComponent, EditQuejaComponent, NewMediaComponent, HorizonModalComponent, QuejaDetailComponent]
 })
 export class AppModule { }

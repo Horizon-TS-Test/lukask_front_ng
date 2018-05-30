@@ -7,5 +7,6 @@ export var REST_SERV = {
     socketServerUrl: 'http://192.168.1.20:3000',
     publicationsUrl: 'http://192.168.1.20:3000/publication',
     qTypeUrl: 'http://192.168.1.20:3000/qtype',
-    pushSub: 'http://192.168.1.19:3200/subscribe'
+    pushSub: 'http://192.168.1.19:3200/subscribe',
+    mediaBack: 'http://192.168.1.56:8081'
 }

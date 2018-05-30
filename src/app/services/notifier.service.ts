@@ -1,6 +1,7 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { Subject, Observable } from 'rxjs';
 import { Alert } from './../models/alert';
+import { DynaContent } from '../interfaces/dyna-content.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +9,7 @@ import { Alert } from './../models/alert';
 export class NotifierService {
 
   private _alertListener = new Subject<any>();
-  private _layerListener = new Subject<any>();
+  private _layerListener = new Subject<DynaContent>();
   public _cameraAction = new EventEmitter<number>();
 
   constructor() { }
@@ -21,11 +22,11 @@ export class NotifierService {
     this._alertListener.next(alert);
   }
 
-  listenLayer(): Observable<any> {
+  listenLayer(): Observable<DynaContent> {
     return this._layerListener.asObservable();
   }
 
-  notifyNewContent(contentType: number) {
+  notifyNewContent(contentType: DynaContent) {
     this._layerListener.next(contentType);
   }
 

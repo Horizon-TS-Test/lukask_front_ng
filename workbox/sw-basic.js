@@ -16,9 +16,15 @@ var REST_URLS = {
 workbox.precaching.suppressWarnings();
 
 //DYNAMIC CACHING WITH ROUTING:
-//REGULAR EXPRESSION TO FONT AWESOME URL'S:
+//REGULAR EXPRESSION FOR FONT AWESOME URL'S:
 workbox.routing.registerRoute(new RegExp("[^*]/fontawesome-webfont.*"), workbox.strategies.staleWhileRevalidate({
     cacheName: 'font-awesome'
+}));
+////
+
+//REGULAR EXPRESSION FOR BACKEND MEDIA:
+workbox.routing.registerRoute(new RegExp("http://192.168.1.58:8081/repositorio_lukask/*"), workbox.strategies.staleWhileRevalidate({
+    cacheName: 'lukask-media'
 }));
 ////
 
@@ -31,15 +37,19 @@ workbox.routing.registerRoute(REST_URLS.pub, function (args) {
     return fetch(args.event.request)
         .then(function (res) {
             //STORE THE RESPONSE ON INDEX DB:
-            let clonePubRes = res.clone();
+            var clonePubRes = res.clone();
             clearAllData('publication')
                 .then(function () {
                     return clonePubRes.json();
                 })
                 .then(function (response) {
                     console.log("[Lukask Service Worker - indexedDB] pub from rest api", response.data);
-                    for (let pub of response.data) {
-                        writeData('publication', pub);
+                    var pubs = response.data;
+                    for (var i = 0; i < pubs.length; i++) {
+                        //THIS IS FOR SORTING:
+                        pubs[i].position = i;
+                        ////
+                        writeData('publication', pubs[i]);
                     }
                 });
             return res;
@@ -50,14 +60,14 @@ workbox.routing.registerRoute(REST_URLS.qtype, function (args) {
     return fetch(args.event.request)
         .then(function (res) {
             //STORE THE RESPONSE ON INDEX DB:
-            let cloneTypeRes = res.clone();
+            var cloneTypeRes = res.clone();
             clearAllData('qtype')
                 .then(function () {
                     return cloneTypeRes.json();
                 })
                 .then(function (response) {
                     console.log("[Lukask Service Worker - indexedDB] qtype from rest api", response.data);
-                    for (let qtype of response.data) {
+                    for (var qtype of response.data) {
                         writeData('qtype', qtype);
                     }
                 });
@@ -97,26 +107,6 @@ workbox.routing.registerRoute(function (routeData) {
 ///////////
 
 /////////////POST REQUEST TO THE SERVER WITH A BACKGROUND SYNCRONIZATION WAY USING THE SERVICE WORKER://////////////
-/*fetch(restUrl, {
-    method: 'POST',
-    body: JSON.stringify({}),
-    headers: {
-        'Content-Type': 'application/json'
-    }
-}).then(function (res) {
-    console.log('Data sent', res);
-    if (res.ok) {
-        res.json()
-            .then(function (restData) {
-                writeData('publication', restData.pub);
-                //ALWAYS IT MUST BE "id" FOR GENERIC PURPOSES:
-                deleteItemData(indexedTable, formData.get('id'));
-            });
-    }
-}).catch(function (err) {
-    console.log('Error while sending data', err);
-});*/
-
 function sendData(user_id, formData, indexedTable, restUrl) {
     fetch(restUrl, {
         method: 'POST',
@@ -133,6 +123,7 @@ function sendData(user_id, formData, indexedTable, restUrl) {
                     writeData('publication', restData.pub);
                     //ALWAYS IT MUST BE "id" FOR GENERIC PURPOSES:
                     deleteItemData(indexedTable, formData.get('id'));
+                    ////
                 });
         }
     }).catch(function (err) {
@@ -149,9 +140,9 @@ self.addEventListener('sync', function (event) {
             event.waitUntil(
                 readAllData('sync-pub')
                     .then(function (data) {
-                        for (let pub of data) {
+                        for (var pub of data) {
                             //SENDING PUB TO THE BACKEND SERVER:
-                            let formData = new FormData();
+                            var formData = new FormData();
                             //ALWAYS IT MUST BE "id" FOR GENERIC PURPOSES:
                             formData.append('id', pub.id);
                             //
@@ -160,7 +151,7 @@ self.addEventListener('sync', function (event) {
                             formData.append('detail', pub.detail);
                             formData.append('type_publication', pub.type_publication);
                             formData.append('date_publication', pub.date_publication);
-                            for (let media of pub.media_files) {
+                            for (var media of pub.media_files) {
                                 formData.append('media_files[]', media.file, media.fileName);
                             }
 
@@ -180,9 +171,9 @@ workbox.precaching.precacheAndRoute([], {});
 //HANDLE CLICK EVENTS:
 self.addEventListener('notificationclick', function (event) {
     //FIND OUT THE NOTIFICATION:
-    let notification = event.notification;
+    var notification = event.notification;
     //FIND OUT WHICH ACTION WAS CLICKED:
-    let action = event.action;
+    var action = event.action;
 
     console.log(notification);
     if (action == 'confirm') {
@@ -196,7 +187,7 @@ self.addEventListener('notificationclick', function (event) {
             //TO HANDLE THE TABS OF THE WEB BROWSER:
             clients.matchAll()
                 .then(function (clientsArray) {
-                    let client = clientsArray.find(function (cli) {
+                    var client = clientsArray.find(function (cli) {
                         return cli.visibilityState === 'visible';
                     });
 
@@ -224,7 +215,7 @@ self.addEventListener('notificationclose', function (event) {
 self.addEventListener('push', function (event) {
     console.log('Push Notification received', event);
 
-    let defaultNotifData = { title: 'New!', content: 'Something new happened!', open_url: '/' };
+    var defaultNotifData = { title: 'New!', content: 'Something new happened!', open_url: '/' };
 
     if (event.data) {
         defaultNotifData = JSON.parse(event.data.text());

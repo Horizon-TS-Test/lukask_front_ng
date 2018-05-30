@@ -5,14 +5,18 @@ import { Publication } from '../../models/publications';
 import { SocketService } from '../../services/socket.service';
 import { UtilsService } from '../../services/utils.service';
 import { Subscription } from 'rxjs';
+import { User } from '../../models/user';
+import { REST_SERV } from '../../rest-url/rest-servers';
+import { Media } from '../../models/media';
 
-declare var utilityDb: any;
+declare var writeData: any;
+declare var deleteItemData: any;
 
 @Component({
   selector: 'app-quejas-list',
   templateUrl: './queja-list.component.html',
   styleUrls: ['./queja-list.component.css'],
-  providers: [QuejaService, UtilsService]
+  providers: [UtilsService]
 })
 export class QuejaListComponent implements OnInit, OnDestroy {
   public pubList: Publication[];
@@ -32,7 +36,7 @@ export class QuejaListComponent implements OnInit, OnDestroy {
   }
 
   getPubList() {
-    this._quejaService.getPubList().then((pubs) => {
+    this._quejaService.getPubList().then((pubs: Publication[]) => {
       this.pubList = pubs;
     });
   }
@@ -40,24 +44,46 @@ export class QuejaListComponent implements OnInit, OnDestroy {
   listenToSocket() {
     this.subsSocketPub = this._socketService._publicationUpdate.subscribe(
       (socketPub: any) => {
-        console.log(socketPub);
+        let stream = socketPub.stream;
+        let action = socketPub.payload.action.toUpperCase();
 
-        let jsonPub = socketPub.data;
-        console.log("[Queja List]", jsonPub);
-        let action = socketPub.action.toUpperCase();
-        let lastPub: Publication, newPub: Publication;
+        switch (stream) {
+          case "publication":
+            let jsonPub = socketPub.payload.data;
+            let lastPub: Publication, newPub: Publication;
 
-        //REF: https://stackoverflow.com/questions/39019808/angular-2-get-object-from-array-by-id
-        lastPub = this.pubList.find(pub => pub.id_publication === jsonPub.id_publication);
+            //STORING THE DATA COMMING FROM THE SOCKET.IO IN INDEXED-DB
+            writeData('publication', jsonPub);
+            ////
 
-        if (action != this._utilsService.DELETE) {
-          newPub = new Publication(jsonPub.id_publication, jsonPub.latitude, jsonPub.longitude, jsonPub.detail, jsonPub.date_publication, jsonPub.priority_publication, jsonPub.active, jsonPub.type_publication);
+            //REF: https://stackoverflow.com/questions/39019808/angular-2-get-object-from-array-by-id
+            lastPub = this.pubList.find(pub => pub.id_publication === jsonPub.id_publication);
+
+            if (action != this._utilsService.DELETE) {
+              newPub = this._quejaService.extractPubJson(jsonPub, true);
+            }
+
+            this._utilsService.backendServerSays(action, this.pubList, lastPub, newPub);
+            break;
+          case "multimedia":
+            let jsonMedia = socketPub.payload.data;
+            let lastMedia: Media, newMedia: Media;
+            let ownerPub: Publication;
+
+            //REF: https://stackoverflow.com/questions/39019808/angular-2-get-object-from-array-by-id
+            ownerPub = this.pubList.find(pub => pub.id_publication === jsonMedia.id_publication);
+
+            //deleteItemData('publication', )
+
+            lastMedia = ownerPub.media.find(med => med.id === jsonMedia.id_multimedia);
+
+            if (action != this._utilsService.DELETE) {
+              newMedia = new Media(jsonMedia.id_multimedia, jsonMedia.format_multimedia, REST_SERV.mediaBack + jsonMedia.media_file, null, null, null, jsonMedia.id_publication);
+            }
+
+            this._utilsService.backendServerSays(action, ownerPub.media, lastMedia, newMedia);
+            break;
         }
-
-        this.pubList = this._utilsService.backendServerSays(action, this.pubList, lastPub, newPub);
-        this._quejaService.setPubList(this.pubList);
-
-        console.log(this.pubList);
       }
     );
   }

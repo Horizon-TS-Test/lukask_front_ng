@@ -5,6 +5,7 @@ export class Media {
         public url?: string,
         public active?: boolean,
         public file?: any,
-        public fileName?: string
+        public fileName?: string,
+        public id_publication?: string
     ) { }
 }

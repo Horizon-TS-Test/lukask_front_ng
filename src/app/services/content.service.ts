@@ -1,4 +1,6 @@
 import { Injectable, ComponentFactoryResolver, ViewContainerRef, ViewChild } from '@angular/core';
+import { DynaContent } from '../interfaces/dyna-content.interface';
+import { CONTENT_TYPES } from '../config/content-type';
 
 declare var $: any;
 
@@ -6,9 +8,6 @@ declare var $: any;
   providedIn: 'root'
 })
 export class ContentService {
-  ALERT_COMPONENT: number = 0;
-  MODAL_COMPONENT: number = 1;
-
   private counter: number;
 
   constructor() { }
@@ -54,25 +53,26 @@ export class ContentService {
   }
 
   //TO ADD A COMPONENT DINAMICALLY AND PROGRAMMATICALLY:
-  addComponent(ChildComponent: any, cfr: ComponentFactoryResolver, compContainer: ViewContainerRef, componentOp: number = null, componentData: any = null) {
+  addComponent(ChildComponent: any, cfr: ComponentFactoryResolver, compContainer: ViewContainerRef, dynaContent: DynaContent = null) {
     // check and resolve the component
     let component = cfr.resolveComponentFactory(ChildComponent);
     // Create component inside container
     let expComp: any = compContainer.createComponent(component);
-    expComp.instance._ref = expComp;
+    let compInstance: any = expComp.instance;
+    compInstance._ref = expComp;
 
-    switch (componentOp) {
-      case this.ALERT_COMPONENT:
-        expComp.instance.id = this.counter;
-        expComp.instance.alertData = componentData;
+    switch (dynaContent.contentType) {
+      case CONTENT_TYPES.alert:
+        compInstance.id = this.counter;
+        compInstance.alertData = dynaContent.contentData;
         this.counter++;
         break;
-      case this.MODAL_COMPONENT:
-        expComp.instance.servicio = componentData;
-        break;
       default:
+        compInstance._dynaContent = dynaContent;
         break;
     }
+
+    return compInstance;
   }
   ////
 

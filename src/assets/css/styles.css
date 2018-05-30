@@ -878,10 +878,10 @@ agm-map {
   .camera-content .video-camera {
     position: absolute;
     width: auto;
-    height: 100vh; }
-  .camera-content canvas {
-    position: absolute;
-    width: auto;
-    height: 100vh; }
+    height: 100%; }
+    @media only screen and (min-width: 476px) {
+      .camera-content .video-camera {
+        width: 100%;
+        height: auto; } }
 
 /*# sourceMappingURL=styles.css.map */

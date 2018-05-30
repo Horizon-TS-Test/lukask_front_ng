@@ -5,6 +5,8 @@ import { NotifierService } from './services/notifier.service';
 import { AlertComponent } from './components/alert/alert.component';
 import { Subscription } from 'rxjs';
 import { SocketService } from './services/socket.service';
+import { CONTENT_TYPES } from './config/content-type';
+import { Alert } from './models/alert';
 
 @Component({
   selector: 'app-root',
@@ -30,9 +32,9 @@ export class AppComponent implements OnDestroy {
     }
 
     this.subscription = this._notifierService.listenAlert().subscribe(
-      (alertData: any) => {
+      (alertData: Alert) => {
         this.checkLogin();
-        this._contentService.addComponent(AlertComponent, this._cfr, this.alertContainer, this._contentService.ALERT_COMPONENT, alertData);
+        this._contentService.addComponent(AlertComponent, this._cfr, this.alertContainer, { contentType: CONTENT_TYPES.alert, contentData: alertData });
       }
     );
   }
