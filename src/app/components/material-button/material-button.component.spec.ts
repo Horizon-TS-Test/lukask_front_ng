@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { HorizonModallearComponent } from './horizon-modallear.component';
+import { MaterialButtonComponent } from './material-button.component';
 
-describe('HorizonModallearComponent', () => {
-  let component: HorizonModallearComponent;
-  let fixture: ComponentFixture<HorizonModallearComponent>;
+describe('MaterialButtonComponent', () => {
+  let component: MaterialButtonComponent;
+  let fixture: ComponentFixture<MaterialButtonComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ HorizonModallearComponent ]
+      declarations: [ MaterialButtonComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(HorizonModallearComponent);
+    fixture = TestBed.createComponent(MaterialButtonComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

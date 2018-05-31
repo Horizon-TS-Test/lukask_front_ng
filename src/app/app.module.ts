@@ -38,7 +38,8 @@ import { SocketService } from './services/socket.service';
 import { BrowserNotifierService } from './services/browser-notifier.service';
 import { QuejaService } from './services/queja.service';
 import { HorizonModalComponent } from './components/horizon-modal/horizon-modal.component';
-import { HorizonModallearComponent } from './components/horizon-modallear/horizon-modallear.component';
+import { MaterialButtonComponent } from './components/material-button/material-button.component';
+import { MaterialBtnListComponent } from './components/material-btn-list/material-btn-list.component';
 
 @NgModule({
   declarations: [
@@ -60,7 +61,8 @@ import { HorizonModallearComponent } from './components/horizon-modallear/horizo
     Select2BootstrapComponent,
     WebrtcCameraComponent,
     HorizonModalComponent,
-    HorizonModallearComponent
+    MaterialButtonComponent,
+    MaterialBtnListComponent
   ],
   imports: [
     HttpModule,
@@ -73,6 +75,6 @@ import { HorizonModallearComponent } from './components/horizon-modallear/horizo
   ],
   providers: [appRoutingProviders, ContentService, LoginService, AuthGuardService, LoginGuardService, NotifierService, CameraService, SocketService, BrowserNotifierService, QuejaService],
   bootstrap: [AppComponent],
-  entryComponents: [AlertComponent, EditQuejaComponent, NewMediaComponent, HorizonModalComponent, QuejaDetailComponent]
+  entryComponents: [AlertComponent, NewMediaComponent, HorizonModalComponent, QuejaDetailComponent]
 })
 export class AppModule { }

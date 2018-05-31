@@ -18,20 +18,21 @@ export class HorizonModalComponent implements OnInit {
   @ViewChild("modalContainer", { read: ViewContainerRef }) modalContainer: ViewContainerRef;
 
   private self: any;
+
   public _ref: any;
-  private _childInstance: any;
   public _dynaContent: DynaContent;
+  public contentTypes: any;
 
   constructor(
     private _contentService: ContentService,
     private _notifierService: NotifierService,
     private _cfr: ComponentFactoryResolver
   ) {
+    this.contentTypes = CONTENT_TYPES;
   }
 
   ngOnInit() {
     this.self = $(".horizon-modal").last();
-    this.addDynamicContent();
   }
 
   ngAfterViewInit() {
@@ -40,32 +41,17 @@ export class HorizonModalComponent implements OnInit {
     }, 100);
   }
 
-  addDynamicContent() {
-    let childComponent: any;
-    switch (this._dynaContent.contentType) {
-      case CONTENT_TYPES.new_queja:
-        childComponent = EditQuejaComponent;
-        break;
-      case CONTENT_TYPES.new_media:
-        childComponent = NewMediaComponent;
-        break;
-      case CONTENT_TYPES.view_queja:
-        childComponent = QuejaDetailComponent;
-        break;
+  close(closeEvent: Boolean) {
+    if (closeEvent) {
+      this._contentService.slideDownUp(this.self, false);
+
+      setTimeout(() => {
+        this.removeObject();
+      }, 300);
     }
-    this._childInstance = this._contentService.addComponent(childComponent, this._cfr, this.modalContainer, this._dynaContent);
-  }
-
-  close(event) {
-    this._contentService.slideDownUp(this.self, false);
-
-    setTimeout(() => {
-      this.removeObject();
-    }, 300);
   }
 
   removeObject() {
-    this._childInstance.removeObject();
     this._ref.destroy();
   }
 

@@ -845,6 +845,7 @@ agm-map {
 
 .personal-material-btn {
   position: fixed;
+  z-index: 2;
   right: 12px;
   bottom: 12px; }
 

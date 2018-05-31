@@ -15,9 +15,8 @@
       <a href="#" class="mt-1 btn btn-outline-info" (click)="sendCameraAction($event, 0)">
         <span class="personal-site-icon">b</span>
       </a>
-      <a href="#" class="mt-1 btn btn-outline-info" (click)="close($event)">
-        <fa name="times-circle"></fa>
-      </a>
     </div>
   </div>
+
+  <material-btn-list [materialBtns]="matButtons" (someBtnAction)="getButtonAction($event)"></material-btn-list>
 </div>

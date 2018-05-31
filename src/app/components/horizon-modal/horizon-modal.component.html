@@ -2,7 +2,11 @@
   <div class="fixed-background"></div>
 
   <div class="min-height-full personal-dyna-cont horizon-modal col-12 p-0">
-    <div #modalContainer></div>
+    <ng-container [ngSwitch]="_dynaContent.contentType">
+      <edit-queja *ngSwitchCase="contentTypes.new_queja" (closeModal)="close($event)"></edit-queja>
+      <new-media *ngSwitchCase="contentTypes.new_media" (closeModal)="close($event)"></new-media>
+      <queja-detail *ngSwitchCase="contentTypes.view_queja" [idQueja]="_dynaContent.contentData" (closeModal)="close($event)"></queja-detail>
+    </ng-container>
   </div>
 
 </div>

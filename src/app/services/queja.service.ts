@@ -9,11 +9,12 @@ import { Media } from '../models/media';
 import { User } from '../models/user';
 import { LoginService } from './login.service';
 import { Person } from '../models/person';
+import { SocketService } from './socket.service';
+import { ArrayManager } from '../tools/array-manager';
+import * as lodash from 'lodash';
 
 declare var readAllData: any;
 declare var writeData: any;
-
-import * as lodash from 'lodash';
 
 @Injectable({
   providedIn: 'root'
@@ -28,12 +29,15 @@ export class QuejaService {
 
   constructor(
     private _http: Http,
-    private _loginService: LoginService
+    private _loginService: LoginService,
+    private _socketService: SocketService
   ) {
 
     this.isFetchedQtype = false;
     this.isFetchedPubs = false;
     this.isFetchedPub = false;
+
+    this.listenToSocket();
   }
 
   getQuejTypeWeb() {
@@ -215,8 +219,7 @@ export class QuejaService {
     this.postQuejaClient(quejaFormData)
       .then(
         (response) => {
-          writeData('publication', response);
-          this.addPubToPubList(this.extractPubJson(response));
+          this.updatePubList(response, "CREATE");
           console.log(response);
         },
         (err) => {
@@ -226,14 +229,14 @@ export class QuejaService {
     //}
   }
 
-  extractPubJson(pubJson, isSocket: boolean = false) {
+  extractPubJson(pubJson) {
     let pub: Publication;
     let usr: User;
     let person: Person;
     let type: QuejaType;
     let medios: Media;
 
-    usr = new User(pubJson.user_email, '', ((isSocket) ? REST_SERV.mediaBack : "") + pubJson.media_profile);
+    usr = new User(pubJson.user_email, '', pubJson.media_profile);
     usr.person = new Person(null, null, null, pubJson.user_name, pubJson.user_lastname, null, null, null);
     type = new QuejaType(pubJson.type_publication, pubJson.type_publication_detail);
 
@@ -330,5 +333,81 @@ export class QuejaService {
       }
       return throwError(error.json());
     });
+  }
+
+  /**
+   * MÉTODO PARA ESCUCHAR LAS ACTUALIZACIONES DEL CLIENTE SOCKET.IO
+   * QUE TRAE CAMBIOS DESDE EL BACKEND (CREATE/UPDATE/DELETE)
+   * Y ACTUALIZAR LA LISTA GLOBAL DE PUBLICACIONES CON LOS NUEVOS CAMBIOS
+   */
+  listenToSocket() {
+    this._socketService._publicationUpdate.subscribe(
+      (socketPub: any) => {
+        let stream = socketPub.stream;
+        let action = socketPub.payload.action.toUpperCase();
+
+        switch (stream) {
+          case "publication":
+            this.updatePubList(socketPub.payload.data, action);
+            break;
+          case "multimedia":
+            this.updatePubMediaList(socketPub.payload.data, action);
+            break;
+        }
+      }
+    );
+  }
+
+  /**
+   * MÉTODO PARA ACTUALIZAR INFORMACIÓN DE LA LISTA DE PUBLICACIONES
+   * @param pubJson JSON COMMING FROM THE SOCKET.IO SERVER OR AS A NORMAL HTTP RESPONSE:
+   * @param action THIS CAN BE CREATE, UPDATE OR DELETE:
+   */
+  updatePubList(pubJson: any, action: string) {
+    let lastPub: Publication, newPub: Publication;
+
+    //PREPPENDING THE BACKEND SERVER IP/DOMAIN:
+    pubJson.media_profile = ((pubJson.media_profile.indexOf("http") == -1) ? REST_SERV.mediaBack : "") + pubJson.media_profile;
+    ////
+
+    //STORING THE NEW DATA COMMING FROM SOMEWHERE IN INDEXED-DB
+    writeData('publication', pubJson);
+    ////
+
+    //REF: https://stackoverflow.com/questions/39019808/angular-2-get-object-from-array-by-id
+    lastPub = this.pubList.find(pub => pub.id_publication === pubJson.id_publication);
+
+    if (action != ArrayManager.DELETE) {
+      newPub = this.extractPubJson(pubJson);
+    }
+
+    ArrayManager.backendServerSays(action, this.pubList, lastPub, newPub);
+  }
+
+  /**
+   * MÉTODO PARA ACTUALIZAR INFORMACIÓN DE LA LISTA DE MEDIOS DE UNA PUBLICACIÓN
+   * @param mediaJson JSON COMMING FROM THE SOCKET.IO SERVER OR AS A NORMAL HTTP RESPONSE:
+   * @param action THIS CAN BE CREATE, UPDATE OR DELETE:
+   */
+  updatePubMediaList(mediaJson: any, action: string) {
+    let ownerPub: Publication;
+    let lastMedia: Media, newMedia: Media;
+
+    //PREPPENDING THE BACKEND SERVER IP/DOMAIN:
+    mediaJson.media_file = ((mediaJson.media_file.indexOf("http") == -1) ? REST_SERV.mediaBack : "") + mediaJson.media_file;
+    ////
+
+    //REF: https://stackoverflow.com/questions/39019808/angular-2-get-object-from-array-by-id
+    ownerPub = this.pubList.find(pub => pub.id_publication === mediaJson.id_publication);
+
+    //deleteItemData('publication', )
+
+    lastMedia = ownerPub.media.find(med => med.id === mediaJson.id_multimedia);
+
+    if (action != ArrayManager.DELETE) {
+      newMedia = new Media(mediaJson.id_multimedia, mediaJson.format_multimedia, REST_SERV.mediaBack + mediaJson.media_file, null, null, null, mediaJson.id_publication);
+    }
+
+    ArrayManager.backendServerSays(action, ownerPub.media, lastMedia, newMedia);
   }
 }

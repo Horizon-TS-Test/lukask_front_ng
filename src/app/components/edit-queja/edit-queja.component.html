@@ -42,14 +42,7 @@
         </li>
       </ul>
 
-      <div class="personal-material-btn d-flex flex-column justify-content-center align-items-center">
-        <button type="submit" class="custom-btn p-0 btn btn-outline-info">
-          <fa name="check"></fa>
-        </button>
-        <a href="#" class="custom-btn p-0 mt-2 btn btn-outline-secondary" (click)="close($event)">
-          <fa name="close"></fa>
-        </a>
-      </div>
+      <material-btn-list [materialBtns]="matButtons" (someBtnAction)="getButtonAction($event)"></material-btn-list>
     </form>
 
   </div>
