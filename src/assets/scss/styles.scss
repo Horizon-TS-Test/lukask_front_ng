@@ -314,34 +314,36 @@ p, label, div {
 .personal-owl-nav {
     .owl-nav {
         position: absolute;
-        bottom: -7px;
-        right: -40px;
+        bottom: 5px;
+        right: 5px;
         color: #fff;
 
         button {
-            outline:none;
-        }
-        button:hover {
-            background: transparent !important;
-        } 
-    }
-}
-
-.personal-owl-carousel {
-    .owl-nav {
-        color: $primary;
-
-        button {
             outline: none;
-            transition: all ease !important;
+            border-radius: 50% !important;
+            width: 30px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.7) !important;
+            transition: all .5s !important;
 
             i {
-                font-size: 1.5rem;
+                vertical-align: middle;
+                font-size: 1.2rem;
+                color: $primary-dark;
+            }
+
+        }
+        button:first-child {
+            i {
+                margin-right: 2px;
+            }
+        }
+        button:last-child {
+            i {
+                margin-left: 2px;
             }
         }
         button:hover {
-            background: transparent !important;
-            color: $primary !important;
             opacity: .7;
         } 
     }
@@ -481,19 +483,14 @@ p, label, div {
 #menu-nav {
     z-index: 9999999;
     right: $nav-x;
-    bottom: $nav-menu-bottom;
+    bottom: $nav-menu-bottom-lg;
     overflow: hidden;
     text-indent: 100%;
     white-space: nowrap;
     width: $nav-menu-size-lg;
     height: $nav-menu-size-lg;
-    border-radius: 0.25rem;
+    border-radius: 50%;
     transition: bottom .3s ease;
-
-    @include MQ(M) {
-        right: $nav-x-lg;
-        bottom: $nav-menu-bottom-lg;
-    }
 }
 
 .menu-nav-onfooter {
@@ -506,7 +503,10 @@ p, label, div {
 
 .personal-nav-btn {
     position: fixed;
-    box-shadow: 0 0 10px $primary-a;
+    //box-shadow: 0 0 10px $primary;
+    -webkit-box-shadow: 1px 2px 4px 2px $primary-a !important;
+    -moz-box-shadow: 1px 2px 4px 2px $primary-a !important;
+    box-shadow: 1px 2px 4px 2px $primary-a !important;
     background: $primary-dark;
 
     span {

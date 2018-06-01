@@ -2,6 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
+import { OwlModule } from 'ngx-owl-carousel';
 import { AngularFontAwesomeModule } from 'angular-font-awesome';
 
 //ROUTES
@@ -71,6 +72,7 @@ import { MaterialBtnListComponent } from './components/material-btn-list/materia
     ReactiveFormsModule,
     routing,
     AngularFontAwesomeModule,
+    OwlModule,
     ServiceWorkerModule.register('/sw-workbox.js', { enabled: environment.production })
   ],
   providers: [appRoutingProviders, ContentService, LoginService, AuthGuardService, LoginGuardService, NotifierService, CameraService, SocketService, BrowserNotifierService, QuejaService],

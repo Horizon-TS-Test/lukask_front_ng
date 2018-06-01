@@ -16,18 +16,16 @@ export class QuejaDetailComponent implements OnInit {
   @Input() idQueja: string;
   @Output() closeModal: EventEmitter<boolean>;
 
-  private self: any;
-  public _ref: any;
   private _CLOSE = 1;
 
   public quejaDetail: Publication;
   public matButtons: HorizonButton[];
+  public carouselOptions: any;
 
   constructor(
     private _quejaService: QuejaService,
     public _domSanitizer: DomSanitizer
   ) {
-    this.quejaDetail = new Publication(null, null, null, null, null, null, null, new QuejaType(null, null), new User(null, null));
     this.closeModal = new EventEmitter<boolean>();
     this.matButtons = [
       {
@@ -36,20 +34,18 @@ export class QuejaDetailComponent implements OnInit {
         icon: "close"
       }
     ];
+    this.carouselOptions = {};
   }
 
   ngOnInit() {
     this._quejaService.getPubById(this.idQueja)
       .then((pub: Publication) => {
         this.quejaDetail = pub;
+        this.initCarousel();
       }).catch(error => console.log(error));
   }
 
   ngAfterViewInit() { }
-
-  removeObject() {
-    this._ref.destroy();
-  }
 
   /**
    * MÉTODO PARA ESCUCHAR LA ACCIÓN DEL EVENTO DE CLICK DE UN BOTÓN DINÁMICO:
@@ -62,4 +58,11 @@ export class QuejaDetailComponent implements OnInit {
     }
   }
 
+  initCarousel() {
+    this.carouselOptions = {
+      items: 1, dots: false, loop: true, margin: 0,
+      nav: true, stagePadding: 0, autoWidth: false,
+      navText: ['<i class="fa fa-chevron-left " title="Anterior "></i>', '<i class="fa fa-chevron-right" title="Siguiente "></i>'],
+    }
+  }
 }
