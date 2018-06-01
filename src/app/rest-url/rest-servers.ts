@@ -1,6 +1,7 @@
 export var REST_SERV = {
     socketServerUrl: 'http://127.0.0.1:8070',
     publicationsUrl: 'http://127.0.0.1:8070/publication',
+    pubFilterUrl: 'http://127.0.0.1:8070/publication/filter',
     qTypeUrl: 'http://127.0.0.1:8070/qtype',
     loginUrl: 'http://127.0.0.1:8070/login',
     pushSub: 'http://192.168.1.19:3200/subscribe',

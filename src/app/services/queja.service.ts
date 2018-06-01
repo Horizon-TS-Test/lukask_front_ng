@@ -20,6 +20,7 @@ import * as lodash from 'lodash';
 })
 export class QuejaService {
   public pubList: Publication[];
+  public pubFilterList: Publication[];
   private quejTypeList: QuejaType[];
 
   private isFetchedQtype: boolean;
@@ -144,11 +145,9 @@ export class QuejaService {
     let returnedPubs: Publication[];
     return this.getPubsWeb().then((webPubs: Publication[]) => {
       returnedPubs = webPubs;
-
       if (!this.isFetchedPubs) {
         returnedPubs = this.getPubsCache();
       }
-
       this.pubList = returnedPubs;
       return returnedPubs;
     }).catch((error: Response) => {
@@ -158,6 +157,7 @@ export class QuejaService {
       return throwError(error.json());
     });
   }
+
 
   getPubListObj() {
     return this.pubList;
@@ -324,6 +324,48 @@ export class QuejaService {
       }
 
       return returnedPub;
+    }).catch((error: Response) => {
+      if (error.json().code == 401) {
+        localStorage.clear();
+      }
+      return throwError(error.json());
+    });
+  }
+
+  getPubsFilterWeb(city: string) {
+    const pubHeaders = new Headers({ 'Content-Type': 'application/json', 'X-Access-Token': this._loginService.getUserId() });
+
+    return this._http.get(REST_SERV.pubFilterUrl + "/" + city, { headers: pubHeaders, withCredentials: true }).toPromise()
+      .then((response: Response) => {
+        const pubs = response.json().data;
+        let transformedPubs: Publication[] = [];
+        for (let i = 0; i < pubs.length; i++) {
+          transformedPubs.push(this.extractPubJson(pubs[i]));
+        }
+
+        this.isFetchedPubs = true;
+        console.log("[LUKASK QUEJA SERVICE] - PUBLICATIONS FROM WEB WITH FILTER", transformedPubs);
+        return transformedPubs;
+      }).catch((error: Response) => {
+        if (error.json().code == 401) {
+          localStorage.clear();
+        }
+        return throwError(error.json());
+      });
+  }
+
+  getPubListFilter(city: string) {
+    /**
+     * IMPLEMENTING NETWORK FIRST STRATEGY
+    */
+    let returnedPubs: Publication[];
+    return this.getPubsFilterWeb(city).then((webPubs: Publication[]) => {
+      returnedPubs = webPubs;
+      /*if (!this.isFetchedPubs) {
+        returnedPubs = this.getPubsCache();
+      }*/
+      this.pubFilterList = returnedPubs;
+      return returnedPubs;
     }).catch((error: Response) => {
       if (error.json().code == 401) {
         localStorage.clear();

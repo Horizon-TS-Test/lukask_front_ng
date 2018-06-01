@@ -45,7 +45,7 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
 
   private subscription: Subscription;
   private alertData: Alert;
-  private pubList: Publication[];
+  private pubFilterList: Publication[];
 
   //Declacion de variables del mapa
   @ViewChild('gmap') gmapElement: any;
@@ -69,7 +69,10 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
     /**
      * TOMANDO LA LISTA DE PUBLICACIONES QUE ESTAN EN MEMORIA DE LA APP:
      */
-    this.pubList = this._quejaService.getPubListObj();
+    this._quejaService.getPubListFilter("Riobamba")
+      .then((pubsFilter: Publication[]) => {
+        this.pubFilterList = pubsFilter;
+      });
 
     this.getQuejaType();
 
@@ -152,17 +155,21 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
    */
   getSelect2Value(event: string) {
     this.quejaType = event;
+    this.validateQuejaRepeat();
+  }
+
+  validateQuejaRepeat() {
     console.log("Valor se");
-    console.log(this._gps.latitude+" "+this._gps.longitude+" "+this.quejaType);
+    console.log(this._gps.latitude + " " + this._gps.longitude + " " + this.quejaType);
     let band = false;
     console.log("Valores...");
-    for (let pub of this.pubList) {
-      console.log(pub.latitude+" "+pub.longitude+" "+pub.type.id)
-      if(this.circunferencia({ lat: pub.latitude, lng: pub.longitude }, pub.type.id)){
-        band=true;
+    for (let pub of this.pubFilterList) {
+      console.log(pub.latitude + " " + pub.longitude + " " + pub.type.id)
+      if (this.circunferencia({ lat: pub.latitude, lng: pub.longitude }, pub.type.id)) {
+        band = true;
       }
     }
-    if(band==true){
+    if (band == true) {
       this.alertData = new Alert({ title: 'Proceso Fallido', message: 'No es posible ejecutar la petición', type: ALERT_TYPES.danger });
       this.setAlert();
     }
@@ -182,11 +189,11 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
     this.map.setCenter(posicion);
     this.map.setZoom(19);
     //var posi = new google.maps.LatLng(posicion.lat, posicion.lng);  
-    var posi = new google.maps.LatLng(-1.6805658273366262, -78.64302486011889);  
+    var posi = new google.maps.LatLng(-1.6805658273366262, -78.64302486011889);
 
-    if (this.determinarPosicion2(cityCircle, posi) && this.quejaType == pubType ) { 
+    if (this.determinarPosicion2(cityCircle, posi) && this.quejaType == pubType) {
       console.log("Psicion que si esta");
-      console.log(cityCircle.center.lat()+" "+cityCircle.center.lng());
+      console.log(cityCircle.center.lat() + " " + cityCircle.center.lng());
       return true;
     } else {
       return false;
