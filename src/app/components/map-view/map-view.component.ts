@@ -56,7 +56,7 @@ export class MapViewComponent implements OnInit {
     this.getPubs();
   }
 
-    saluda() {
+  saluda() {
     alert("Saludando...!");
   }
 
@@ -99,8 +99,7 @@ export class MapViewComponent implements OnInit {
   }
 
   getPubs() {
-    this._quejaService.getPubList().then((pubs) => {
-      console.log(pubs);
+    this._quejaService.getPubList().then((pubs: Publication[]) => {
       this.pubList = pubs;
       this.recorer();
     });

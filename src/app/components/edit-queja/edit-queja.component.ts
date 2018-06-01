@@ -17,6 +17,8 @@ import { DynaContent } from '../../interfaces/dyna-content.interface';
 
 import { ViewChild } from '@angular/core';
 import { } from '@types/googlemaps';
+import { Alert } from '../../models/alert';
+import { ALERT_TYPES } from '../../config/alert-types';
 
 declare var google: any;
 declare var $: any;
@@ -42,6 +44,9 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
   private newPub: Publication;
 
   private subscription: Subscription;
+  private alertData: Alert;
+  private pubList: Publication[];
+
   //Declacion de variables del mapa
   @ViewChild('gmap') gmapElement: any;
   //map: google.maps.Map;
@@ -60,6 +65,11 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
       latitude: 0,
       longitude: 0
     }
+
+    /**
+     * TOMANDO LA LISTA DE PUBLICACIONES QUE ESTAN EN MEMORIA DE LA APP:
+     */
+    this.pubList = this._quejaService.getPubListObj();
 
     this.getQuejaType();
 
@@ -136,69 +146,62 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
 
     return formGroup;
   }
-/**
- * Funcion que validara la posicion y el nombre de la organizacion
- * @param event 
- */
+  /**
+   * Funcion que validara la posicion y el nombre de la organizacion
+   * @param event 
+   */
   getSelect2Value(event: string) {
     this.quejaType = event;
-    console.log("valor seleccionado");
-    console.log(this.quejaType);
-    console.log(this._gps.latitude);
-    console.log(this._gps.longitude);
-    var list =[
-      {lat:-1.664856,lng:-78.655525},
-      {lat:-1.668264,lng:-78.647987},
-      {lat:-1.671611,lng:-78.646030},
-      {lat:-1.674530,lng:-78.643477},
-      {lat:-1.680598,lng:-78.643049}
-      ];
-    for (let i in list) {
-      console.log(list[i]);
-      this.circunferencia(list[i]);
+    console.log("Valor se");
+    console.log(this._gps.latitude+" "+this._gps.longitude+" "+this.quejaType);
+    let band = false;
+    console.log("Valores...");
+    for (let pub of this.pubList) {
+      console.log(pub.latitude+" "+pub.longitude+" "+pub.type.id)
+      if(this.circunferencia({ lat: pub.latitude, lng: pub.longitude }, pub.type.id)){
+        band=true;
+      }
     }
-
+    if(band==true){
+      this.alertData = new Alert({ title: 'Proceso Fallido', message: 'No es posible ejecutar la petición', type: ALERT_TYPES.danger });
+      this.setAlert();
+    }
   }
 
+  circunferencia(posicion: any, pubType: string) {
+    var cityCircle = new google.maps.Circle({
+      strokeColor: '#FF0000',
+      strokeOpacity: 0.8,
+      strokeWeight: 2,
+      fillColor: '#FF0000',
+      fillOpacity: 0.35,
+      center: posicion,
+      radius: 10
+    });
 
-  circunferencia(posicion){
-		console.log(posicion);
-		var cityCircle = new google.maps.Circle({
-			strokeColor: '#FF0000',
-			strokeOpacity: 0.8,
-			strokeWeight: 2,
-			fillColor: '#FF0000',
-			fillOpacity: 0.35,
+    this.map.setCenter(posicion);
+    this.map.setZoom(19);
+    //var posi = new google.maps.LatLng(posicion.lat, posicion.lng);  
+    var posi = new google.maps.LatLng(-1.6805658273366262, -78.64302486011889);  
 
-			center: posicion,
-			radius: 10
-		});
+    if (this.determinarPosicion2(cityCircle, posi) && this.quejaType == pubType ) { 
+      console.log("Psicion que si esta");
+      console.log(cityCircle.center.lat()+" "+cityCircle.center.lng());
+      return true;
+    } else {
+      return false;
+    }
+  }
 
-		this.map.setCenter(posicion);
-		this.map.setZoom(19);
-		console.log("Datos.....!!!!");
-		console.log(this._gps.latitude);
-		console.log(this._gps.longitude);
-		var posi = new google.maps.LatLng(this._gps.latitude, this._gps.longitude);
-		if (this.determinarPosicion2(cityCircle, posi)) {
-			alert("si esta");
-		}		else{
-			console.log("No esta");
-    }	
-	}
-  
-	determinarPosicion2(circle,latLngA){
-		var bounds = circle.getBounds();
-		bounds = circle.getBounds();
-		if(bounds.contains(latLngA)){
-			alert("ESta dentro ? :"+bounds.contains(latLngA));
-			return bounds.contains(latLngA);
-		}else{
-			console.log("ESta dentro ? :"+bounds.contains(latLngA));
-			//crear_marker(latLngA);
-			return bounds.contains(latLngA);
-		} 
-	}
+  determinarPosicion2(circle, latLngA) {
+    var bounds = circle.getBounds();
+    bounds = circle.getBounds();
+    if (bounds.contains(latLngA)) {
+      return bounds.contains(latLngA);
+    } else {
+      return bounds.contains(latLngA);
+    }
+  }
 
   getGps() {
     if (!('geolocation' in navigator)) {
@@ -217,10 +220,10 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
     }, { timeout: 7000 });
   }
 
-  getAddress(plat,plng){
+  getAddress(plat, plng) {
     console.log("llamando");
     var geocoder = new google.maps.Geocoder;
-    geocoder.geocode({ 'latLng': { lat: -1.663585, lng: -78.658242 } }, (results, status)=> {
+    geocoder.geocode({ 'latLng': { lat: -1.663585, lng: -78.658242 } }, (results, status) => {
       if (status === google.maps.GeocoderStatus.OK) {
         this._direccion = results[0].address_components[1].long_name;
       }
@@ -236,6 +239,13 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
 
     this._quejaService.sendQueja(this.newPub);
     this.formQuej.reset();
+  }
+
+  /**
+   * MÉTODO PARA SOLICITAR APERTURA DE UNA ALERTA
+   */
+  setAlert() {
+    this._notifierService.sendAlert(this.alertData);
   }
 
   ngOnDestroy() {
