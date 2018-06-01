@@ -25,7 +25,7 @@ export class QuejaDetailComponent implements OnInit {
 
   constructor(
     private _quejaService: QuejaService,
-    private _domSanitizer: DomSanitizer
+    public _domSanitizer: DomSanitizer
   ) {
     this.quejaDetail = new Publication(null, null, null, null, null, null, null, new QuejaType(null, null), new User(null, null));
     this.closeModal = new EventEmitter<boolean>();
