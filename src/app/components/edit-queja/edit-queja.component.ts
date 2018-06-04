@@ -104,7 +104,6 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
     this.formQuej = this.setFormGroup();
     this.initMapa();
     this.getGps();
-    this.callPubs();
   }
 
   initMapa() {
@@ -254,6 +253,7 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
       if (status === google.maps.GeocoderStatus.OK) {
         this._locationAdress = results[0].address_components[0].long_name;
         this._locationCity = results[0].address_components[1].long_name;
+        this.callPubs();
       }
     });
   }
@@ -288,9 +288,11 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
      * TOMANDO LA LISTA DE PUBLICACIONES CON FILTRO DESDE EL BACKEND:
      */
   callPubs() {
+    console.log(this._locationCity);
     this._quejaService.getPubListFilter(this._locationCity)
       .then((pubsFilter: Publication[]) => {
         this.pubFilterList = pubsFilter;
+        console.log(this.pubFilterList);
       });
   }
 

@@ -16,10 +16,8 @@ declare var deleteItemData: any;
   templateUrl: './queja-list.component.html',
   styleUrls: ['./queja-list.component.css'],
 })
-export class QuejaListComponent implements OnInit, OnDestroy {
+export class QuejaListComponent implements OnInit {
   public pubList: Publication[];
-
-  private subsSocketPub: Subscription;
 
   constructor(
     private _quejaService: QuejaService,
@@ -35,10 +33,6 @@ export class QuejaListComponent implements OnInit, OnDestroy {
     this._quejaService.getPubList().then((pubs: Publication[]) => {
       this.pubList = pubs;
     });
-  }
-
-  ngOnDestroy() {
-    this.subsSocketPub.unsubscribe();
   }
 
 }
