@@ -4,26 +4,123 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Publication } from '../../models/publications';
 import { NotifierService } from '../../services/notifier.service';
 import { CONTENT_TYPES } from '../../config/content-type';
+import { Comment } from '../../models/comment';
+import { ActionService } from '../../services/action.service';
+import { PatternManager } from '../../tools/pattern-manager';
+import { Person } from '../../models/person';
+import { User } from '../../models/user';
+import { SocketService } from '../../services/socket.service';
+import { REST_SERV } from '../../rest-url/rest-servers';
+import { ArrayManager } from '../../tools/array-manager';
+
+declare var writeData: any;
 
 @Component({
   selector: 'app-queja',
   templateUrl: './queja.component.html',
-  styleUrls: ['./queja.component.css']
+  styleUrls: ['./queja.component.css'],
+  providers: [ActionService]
 })
 export class QuejaComponent implements OnInit {
   @Input() queja: Publication;
+  private newComment: Comment;
+  public commentList: Comment[];
+  public maxChars: number;
+  public restChars: number;
 
   constructor(
     public _domSanitizer: DomSanitizer,
-    public _notifierService: NotifierService
-  ) { }
+    public _notifierService: NotifierService,
+    public _actionService: ActionService,
+    public _socketService: SocketService
+  ) {
+    this.maxChars = 200;
+    this.restChars = this.maxChars;
+
+    this.commentList = this._actionService.getCommentListObj();
+    this.listenToSocket();
+  }
 
   ngOnInit() {
+    this.resetComment();
+  }
+
+  resetComment() {
+    this.newComment = new Comment("", "", this.queja.id_publication);
   }
 
   viewQuejaDetail(event: any, idPub) {
     event.preventDefault();
-    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_queja, contentData: idPub});
+    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_queja, contentData: idPub });
   }
 
+  publishComment() {
+    this._actionService.sendComment(this.newComment)
+      .then((response) => {
+        console.log(response);
+        this.commentList.splice(0, 0, this.extractCommentJson(response));
+
+        this.resetComment();
+        this.validateLettersNumber(null);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
+  extractCommentJson(commentJson: any) {
+    return new Comment(commentJson.id_action_notification, commentJson.description, commentJson.publication, new User(this.queja.user.username, "", this.queja.user.profileImg));
+  }
+
+  validateLettersNumber(event: KeyboardEvent) {
+    this.restChars = PatternManager.limitWords(this.maxChars, this.newComment.description.length);
+  }
+
+  /**
+   * MÉTODO PARA ESCUCHAR LAS ACTUALIZACIONES DEL CLIENTE SOCKET.IO
+   * QUE TRAE CAMBIOS DESDE EL BACKEND (CREATE/UPDATE/DELETE)
+   * Y ACTUALIZAR LA LISTA GLOBAL DE COMENTARIOS CON LOS NUEVOS CAMBIOS
+   */
+  listenToSocket() {
+    this._socketService._publicationUpdate.subscribe(
+      (socketPub: any) => {
+        let stream = socketPub.stream;
+        let action = socketPub.payload.action.toUpperCase();
+
+        switch (stream) {
+          case "comment":
+            this.updateCommentList(socketPub.payload.data, action);
+            break;
+        }
+      }
+    );
+  }
+
+  /**
+   * MÉTODO PARA ACTUALIZAR INFORMACIÓN DE LA LISTA DE PUBLICACIONES
+   * @param pubJson JSON COMMING FROM THE SOCKET.IO SERVER OR AS A NORMAL HTTP RESPONSE:
+   * @param action THIS CAN BE CREATE, UPDATE OR DELETE:
+   */
+  updateCommentList(commentJson: any, action: string) {
+    let lastComment: Comment, newCom: Comment;
+
+    //PREPPENDING THE BACKEND SERVER IP/DOMAIN:
+    commentJson.media_profile = ((commentJson.media_profile.indexOf("http") == -1) ? REST_SERV.mediaBack : "") + commentJson.media_profile;
+    ////
+
+    //STORING THE NEW DATA COMMING FROM SOMEWHERE IN INDEXED-DB:
+    if ('indexedDB' in window) {
+      writeData('comment', commentJson);
+    }
+    ////
+
+    //REF: https://stackoverflow.com/questions/39019808/angular-2-get-object-from-array-by-id
+    lastComment = this.commentList.find(com => com.id === commentJson.id_action_notification);
+
+    if (action != ArrayManager.DELETE) {
+      newCom = this.extractCommentJson(commentJson);
+    }
+
+    ArrayManager.backendServerSays(action, this.commentList, lastComment, newCom);
+  }
 }

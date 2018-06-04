@@ -259,6 +259,9 @@ p, label, div {
 .max-height-full {
     max-height: 100vh !important;
 }
+.max-height-half {
+    max-height: 50vh !important;
+}
 .p-overflow-auto {
     overflow-y: auto;
     overflow-x: hidden;
@@ -389,6 +392,18 @@ p, label, div {
 //FLEX-CHILDS:
 .f-child-full-space {
     flex: 1 0 auto;
+}
+.f-child-no-auto {
+    flex: 1 0;
+}
+.f-child-order-0 {
+    order: 0;
+}
+.f-child-order-1 {
+    order: 1;
+}
+.f-child-order-2 {
+    order: 2;
 }
 ////
 
@@ -802,6 +817,16 @@ agm-map {
     background-position: center center !important;
     background-repeat: no-repeat !important;
 }
+.pers-profile-img-comen {
+    width: 40px;
+    height: 40px;
+    overflow: hidden;
+    border-radius: 50%;
+    background-color: #aaa;
+    background-size: cover !important;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
+}
 
 .personal-queja {
     .personal-usr-queja {
@@ -1003,11 +1028,16 @@ agm-map {
     z-index: 10000000000000000;
     transform: translateY(100%);
     transition: transform .3s ease;
-    background: #aaa;
 }
 .show-dyna-cont {
     transform: translateY(0);
     transition: transform .5s ease;
+}
+
+.personal-dyna-down {
+    position: absolute !important;
+    left: 0;
+    bottom: 0;
 }
 
 .fixed-background {
@@ -1024,6 +1054,9 @@ agm-map {
 .fixed-background.on {
     opacity: .9;
     transition: opacity .5s ease;
+}
+.opacity-light.on {
+    opacity: .7;
 }
 .personal-over-unset {
     overflow: unset;
@@ -1182,3 +1215,9 @@ agm-map {
     }
 }
 /////////////////////
+
+///PERSONAL STYLE FOR INPUT CONTROLS:
+.p-border-none {
+    border: none !important;
+}
+////

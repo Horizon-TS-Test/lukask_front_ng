@@ -41,6 +41,8 @@ import { QuejaService } from './services/queja.service';
 import { HorizonModalComponent } from './components/horizon-modal/horizon-modal.component';
 import { MaterialButtonComponent } from './components/material-button/material-button.component';
 import { MaterialBtnListComponent } from './components/material-btn-list/material-btn-list.component';
+import { CommentComponent } from './components/comment/comment.component';
+import { CommentReplyComponent } from './components/comment-reply/comment-reply.component';
 
 @NgModule({
   declarations: [
@@ -63,7 +65,9 @@ import { MaterialBtnListComponent } from './components/material-btn-list/materia
     WebrtcCameraComponent,
     HorizonModalComponent,
     MaterialButtonComponent,
-    MaterialBtnListComponent
+    MaterialBtnListComponent,
+    CommentComponent,
+    CommentReplyComponent
   ],
   imports: [
     HttpModule,
@@ -77,6 +81,6 @@ import { MaterialBtnListComponent } from './components/material-btn-list/materia
   ],
   providers: [appRoutingProviders, ContentService, LoginService, AuthGuardService, LoginGuardService, NotifierService, CameraService, SocketService, BrowserNotifierService, QuejaService],
   bootstrap: [AppComponent],
-  entryComponents: [AlertComponent, NewMediaComponent, HorizonModalComponent, QuejaDetailComponent]
+  entryComponents: [AlertComponent, HorizonModalComponent]
 })
 export class AppModule { }

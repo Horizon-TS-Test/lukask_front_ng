@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild, ViewContainerRef, ComponentFactoryResolver } from '@angular/core';
 import { ContentService } from '../../services/content.service';
-import { NotifierService } from '../../services/notifier.service';
 import { DynaContent } from '../../interfaces/dyna-content.interface';
 import { CONTENT_TYPES } from '../../config/content-type';
 import { QuejaDetailComponent } from '../queja-detail/queja-detail.component';
@@ -24,9 +23,7 @@ export class HorizonModalComponent implements OnInit {
   public contentTypes: any;
 
   constructor(
-    private _contentService: ContentService,
-    private _notifierService: NotifierService,
-    private _cfr: ComponentFactoryResolver
+    private _contentService: ContentService
   ) {
     this.contentTypes = CONTENT_TYPES;
   }
@@ -41,14 +38,23 @@ export class HorizonModalComponent implements OnInit {
     }, 100);
   }
 
+  closeModal() {
+    this._contentService.slideDownUp(this.self, false);
+
+    setTimeout(() => {
+      this.removeObject();
+    }, 300);
+  }
+
   close(closeEvent: Boolean) {
     if (closeEvent) {
-      this._contentService.slideDownUp(this.self, false);
-
-      setTimeout(() => {
-        this.removeObject();
-      }, 300);
+      this.closeModal();
     }
+  }
+
+  onClickClose(event: any) {
+    event.preventDefault();
+    this.closeModal();
   }
 
   removeObject() {
