@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { ContentService } from '../../services/content.service';
 import { Publication } from '../../models/publications';
 import { Select2 } from '../../interfaces/select2.interface';
@@ -14,29 +14,34 @@ import { Gps } from '../../interfaces/gps.interface';
 import { Media } from '../../models/media';
 import { MediaFile } from '../../interfaces/media-file.interface';
 import { DynaContent } from '../../interfaces/dyna-content.interface';
+import { HorizonButton } from '../../interfaces/horizon-button.interface';
 
 declare var $: any;
 
 @Component({
-  selector: 'app-edit-queja',
+  selector: 'edit-queja',
   templateUrl: './edit-queja.component.html',
   styleUrls: ['./edit-queja.component.css'],
 })
 export class EditQuejaComponent implements OnInit, OnDestroy {
+  @Output() closeModal: EventEmitter<boolean>;
+
+  private _SUBMIT = 0;
+  private _CLOSE = 1;
+
   private self: any;
-  public _ref: any;
-  public _dynaContent: DynaContent;
-
-  public tipoQuejaSelect: Select2[];
-  public quejaTypeList: QuejaType[];
-
-  public formQuej: FormGroup;
-  public filesToUpload: any[];
   private quejaType: string;
   private _gps: Gps;
   private newPub: Publication;
-
   private subscription: Subscription;
+
+  public _ref: any;
+  public _dynaContent: DynaContent;
+  public tipoQuejaSelect: Select2[];
+  public quejaTypeList: QuejaType[];
+  public formQuej: FormGroup;
+  public filesToUpload: any[];
+  public matButtons: HorizonButton[];
 
   constructor(
     private _contentService: ContentService,
@@ -62,6 +67,20 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
       }
     );
     /////
+
+    this.closeModal = new EventEmitter<boolean>();
+    this.matButtons = [
+      {
+        parentContentType: 0,
+        action: this._SUBMIT,
+        icon: "check"
+      },
+      {
+        parentContentType: 0,
+        action: this._CLOSE,
+        icon: "close"
+      }
+    ];
   }
 
   ngOnInit() {
@@ -87,6 +106,9 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
       this.tipoQuejaSelect = [];
 
       for (let type of this.quejaTypeList) {
+        if(!this.quejaType) {
+          this.quejaType = type.id;
+        }
         this.tipoQuejaSelect.push({ value: type.id, data: type.description });
       }
     });
@@ -152,6 +174,21 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
 
     this._quejaService.sendQueja(this.newPub);
     this.formQuej.reset();
+  }
+
+  /**
+   * MÉTODO PARA ESCUCHAR LA ACCIÓN DEL EVENTO DE CLICK DE UN BOTÓN DINÁMICO:
+   */
+  getButtonAction(actionEvent: number) {
+    switch (actionEvent) {
+      case this._SUBMIT:
+        console.log("Submit! has been requested");
+        this.publishQueja();
+        break;
+      case this._CLOSE:
+        this.closeModal.emit(true);
+        break;
+    }
   }
 
   ngOnDestroy() {

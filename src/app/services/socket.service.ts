@@ -12,6 +12,7 @@ import { REST_SERV } from './../rest-url/rest-servers';
 export class SocketService {
   private socket;
   public _publicationUpdate = new EventEmitter<any>();
+  public _commentUpdate = new EventEmitter<any>();
 
   constructor() { }
 
@@ -26,6 +27,9 @@ export class SocketService {
           break;
         case "multimedia":
           this._publicationUpdate.emit(backendData);
+          break;
+        case "comment":
+          this._commentUpdate.emit(backendData);
           break;
       }
     });

@@ -4,5 +4,5 @@ export var CONTENT_TYPES = {
     edit_queja: 2,
     view_queja: 3,
     alert: 4,
-    horizon_modal: 5,
+    new_reply: 5,
 }

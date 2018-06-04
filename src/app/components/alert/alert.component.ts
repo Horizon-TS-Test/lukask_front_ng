@@ -37,10 +37,6 @@ export class AlertComponent implements OnInit {
     setTimeout(() => {
       this.showHideAlert(false);
     }, 4500);
-
-    setTimeout(() => {
-      this.removeObject();
-    }, 5000);
   }
 
   removeObject() {
@@ -55,6 +51,10 @@ export class AlertComponent implements OnInit {
     else {
       this.self.removeClass("on");
       this.self.parent().removeClass("active");
+
+      setTimeout(() => {
+        this.removeObject();
+      }, 500);
     }
   }
 

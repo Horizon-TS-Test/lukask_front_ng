@@ -18,19 +18,19 @@
 
       <ul class="list-group list-group-flush pb-0">
 
-        <li class="list-group-item row">
-          <fa name="bullhorn" class="col-1"></fa>
+        <li class="list-group-item">
+          <fa name="bullhorn"></fa>
           <app-select2-bootstrap class="col-11" [fcName]="'quejaType'" [select2Data]="tipoQuejaSelect" (select2Change)="getSelect2Value($event)"></app-select2-bootstrap>
         </li>
 
         <li class="list-group-item">
-          <fa name="calendar"></fa>
-          <small>2018-04-27 16:25</small>
+          <fa name="calendar" class="mr-1"></fa>
+          <small class="ml-1">2018-04-27 16:25</small>
         </li>
 
         <li class="list-group-item">
-          <fa name="location-arrow"></fa>
-          <small>Av. Antonio José de Sucre y Almagro</small>
+          <fa name="location-arrow" class="mr-1"></fa>
+          <small class="ml-1">Av. Antonio José de Sucre y Almagro</small>
         </li>
 
         <li class="list-group-item pb-0">
@@ -42,14 +42,7 @@
         </li>
       </ul>
 
-      <div class="personal-material-btn d-flex flex-column justify-content-center align-items-center">
-        <button type="submit" class="custom-btn p-0 btn btn-outline-info">
-          <fa name="check"></fa>
-        </button>
-        <a href="#" class="custom-btn p-0 mt-2 btn btn-outline-secondary" (click)="close($event)">
-          <fa name="close"></fa>
-        </a>
-      </div>
+      <material-btn-list [materialBtns]="matButtons" (someBtnAction)="getButtonAction($event)"></material-btn-list>
     </form>
 
   </div>

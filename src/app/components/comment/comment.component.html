@@ -1,0 +1,22 @@
+<div class="d-flex flex-row justify-content-between align-items-start" [ngClass]="{'pl-3': isReply}">
+  <div [ngClass]="{
+    'personal-profile-img': !isReply,
+    'pers-profile-img-comen': isReply
+  }" [style.background-image]="_domSanitizer.bypassSecurityTrustStyle('url(' + commentModel.user.profileImg + ')')"></div>
+  <span class="f-child-no-auto text-justify d-flex flex-column" [ngClass]="{
+    'pl-3': !isReply,
+    'pl-4': isReply
+  }">
+    <small>
+      {{ commentModel.description }}
+    </small>
+    <div class="mt-2 d-flex">
+      <a href="#" class="mr-1 btn btn-sm btn-outline-info personal-icon-btn" title="Apoyo">
+        <fa name="star"></fa>
+      </a>
+      <a *ngIf="!isReply && !noReplyBtn" href="#" (click)="addNewReply($event)" class="mr-1 btn btn-sm btn-outline-info personal-icon-btn" title="Comentar">
+        <fa name="reply"></fa>
+      </a>
+    </div>
+  </span>
+</div>

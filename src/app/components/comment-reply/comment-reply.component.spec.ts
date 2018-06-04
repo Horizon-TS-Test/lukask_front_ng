@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { HorizonModallearComponent } from './horizon-modallear.component';
+import { CommentReplyComponent } from './comment-reply.component';
 
-describe('HorizonModallearComponent', () => {
-  let component: HorizonModallearComponent;
-  let fixture: ComponentFixture<HorizonModallearComponent>;
+describe('CommentReplyComponent', () => {
+  let component: CommentReplyComponent;
+  let fixture: ComponentFixture<CommentReplyComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ HorizonModallearComponent ]
+      declarations: [ CommentReplyComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(HorizonModallearComponent);
+    fixture = TestBed.createComponent(CommentReplyComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

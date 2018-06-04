@@ -9,8 +9,8 @@ var SYNC_TYPE = {
     pubSyn: 'sync-new-pub'
 };
 var REST_URLS = {
-    pub: 'http://192.168.1.20:3000/publication',
-    qtype: 'http://192.168.1.20:3000/qtype'
+    pub: 'http://192.168.1.37:3000/publication',
+    qtype: 'http://192.168.1.37:3000/qtype'
 }
 
 workbox.precaching.suppressWarnings();
@@ -46,9 +46,6 @@ workbox.routing.registerRoute(REST_URLS.pub, function (args) {
                     console.log("[Lukask Service Worker - indexedDB] pub from rest api", response.data);
                     var pubs = response.data;
                     for (var i = 0; i < pubs.length; i++) {
-                        //THIS IS FOR SORTING:
-                        pubs[i].position = i;
-                        ////
                         writeData('publication', pubs[i]);
                     }
                 });
