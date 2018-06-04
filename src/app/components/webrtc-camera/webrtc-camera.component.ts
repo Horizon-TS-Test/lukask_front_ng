@@ -183,17 +183,6 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
         }
         this._cameraService.notifySnapShot(this.snapShot);
       });
-
-      this.imageCapture.getPhotoCapabilities()
-        .then((photoCapabilities) => {
-          console.log(photoCapabilities.imageWidth.min);
-          console.log(photoCapabilities.imageWidth.max);
-          console.log(photoCapabilities.imageWidth.step);
-          return this.imageCapture.getPhotoSettings();
-        }).then(function (photoSettings) {
-          console.log(photoSettings.imageWidth);
-        })
-        .catch(error => console.error('Error getting camera capabilities and settings:', error));
     }
   }
 

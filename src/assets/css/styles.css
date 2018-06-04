@@ -211,6 +211,9 @@ p, label, div {
 .max-height-full {
   max-height: 100vh !important; }
 
+.max-height-half {
+  max-height: 50vh !important; }
+
 .p-overflow-auto {
   overflow-y: auto;
   overflow-x: hidden; }
@@ -257,24 +260,25 @@ p, label, div {
 /*OWL CAROUSEL WITH NAV BUTTONS CUSTOMIZED*/
 .personal-owl-nav .owl-nav {
   position: absolute;
-  bottom: -7px;
-  right: -40px;
+  bottom: 5px;
+  right: 5px;
   color: #fff; }
   .personal-owl-nav .owl-nav button {
-    outline: none; }
-  .personal-owl-nav .owl-nav button:hover {
-    background: transparent !important; }
-
-.personal-owl-carousel .owl-nav {
-  color: #5dbeb6; }
-  .personal-owl-carousel .owl-nav button {
     outline: none;
-    transition: all ease !important; }
-    .personal-owl-carousel .owl-nav button i {
-      font-size: 1.5rem; }
-  .personal-owl-carousel .owl-nav button:hover {
-    background: transparent !important;
-    color: #5dbeb6 !important;
+    border-radius: 50% !important;
+    width: 30px;
+    height: 30px;
+    background: rgba(255, 255, 255, 0.7) !important;
+    transition: all .5s !important; }
+    .personal-owl-nav .owl-nav button i {
+      vertical-align: middle;
+      font-size: 1.2rem;
+      color: #004360; }
+  .personal-owl-nav .owl-nav button:first-child i {
+    margin-right: 2px; }
+  .personal-owl-nav .owl-nav button:last-child i {
+    margin-left: 2px; }
+  .personal-owl-nav .owl-nav button:hover {
     opacity: .7; }
 
 .personal-ul, .personal-ul li {
@@ -312,6 +316,18 @@ p, label, div {
 /**************************************************************/
 .f-child-full-space {
   flex: 1 0 auto; }
+
+.f-child-no-auto {
+  flex: 1 0; }
+
+.f-child-order-0 {
+  order: 0; }
+
+.f-child-order-1 {
+  order: 1; }
+
+.f-child-order-2 {
+  order: 2; }
 
 .dark-crystal {
   position: absolute;
@@ -376,19 +392,15 @@ p, label, div {
 ********************************/
 #menu-nav {
   z-index: 9999999;
-  right: 0.7rem;
-  bottom: 0.42rem;
+  right: 1rem;
+  bottom: 0.9rem;
   overflow: hidden;
   text-indent: 100%;
   white-space: nowrap;
   width: 2.7rem;
   height: 2.7rem;
-  border-radius: 0.25rem;
+  border-radius: 50%;
   transition: bottom .3s ease; }
-  @media only screen and (min-width: 768px) {
-    #menu-nav {
-      right: 1.1rem;
-      bottom: 0.95rem; } }
 
 .menu-nav-onfooter {
   bottom: 0.12rem !important; }
@@ -398,15 +410,17 @@ p, label, div {
 
 .personal-nav-btn {
   position: fixed;
-  box-shadow: 0 0 10px rgba(93, 190, 182, 0.5);
+  -webkit-box-shadow: 1px 2px 4px 2px rgba(93, 190, 182, 0.5) !important;
+  -moz-box-shadow: 1px 2px 4px 2px rgba(93, 190, 182, 0.5) !important;
+  box-shadow: 1px 2px 4px 2px rgba(93, 190, 182, 0.5) !important;
   background: #004360; }
   .personal-nav-btn span {
     background: #fff; }
 
 .personal-primary-nav {
   position: fixed !important;
-  right: 0.7rem;
-  bottom: 0.42rem;
+  right: 1rem;
+  bottom: 0.6rem;
   max-width: 350px;
   width: calc(100% - 3.5rem);
   max-height: 19rem;
@@ -522,7 +536,7 @@ p, label, div {
   @media only screen and (min-width: 992px) {
     .personal-primary-nav {
       right: 1.1rem;
-      bottom: 0.95rem; } }
+      bottom: 0.9rem; } }
 
 .personal-primary-nav-onfooter {
   bottom: 0.12rem !important; }
@@ -609,6 +623,16 @@ agm-map {
 .personal-profile-img {
   width: 50px;
   height: 50px;
+  overflow: hidden;
+  border-radius: 50%;
+  background-color: #aaa;
+  background-size: cover !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important; }
+
+.pers-profile-img-comen {
+  width: 40px;
+  height: 40px;
   overflow: hidden;
   border-radius: 50%;
   background-color: #aaa;
@@ -752,12 +776,16 @@ agm-map {
   height: 100%;*/
   z-index: 10000000000000000;
   transform: translateY(100%);
-  transition: transform .3s ease;
-  background: #aaa; }
+  transition: transform .3s ease; }
 
 .show-dyna-cont {
   transform: translateY(0);
   transition: transform .5s ease; }
+
+.personal-dyna-down {
+  position: absolute !important;
+  left: 0;
+  bottom: 0; }
 
 .fixed-background {
   position: fixed !important;
@@ -773,6 +801,9 @@ agm-map {
 .fixed-background.on {
   opacity: .9;
   transition: opacity .5s ease; }
+
+.opacity-light.on {
+  opacity: .7; }
 
 .personal-over-unset {
   overflow: unset; }
@@ -845,6 +876,7 @@ agm-map {
 
 .personal-material-btn {
   position: fixed;
+  z-index: 2;
   right: 12px;
   bottom: 12px; }
 
@@ -883,5 +915,8 @@ agm-map {
       .camera-content .video-camera {
         width: 100%;
         height: auto; } }
+
+.p-border-none {
+  border: none !important; }
 
 /*# sourceMappingURL=styles.css.map */

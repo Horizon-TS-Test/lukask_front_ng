@@ -2,6 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
+import { OwlModule } from 'ngx-owl-carousel';
 import { AngularFontAwesomeModule } from 'angular-font-awesome';
 
 //ROUTES
@@ -38,7 +39,10 @@ import { SocketService } from './services/socket.service';
 import { BrowserNotifierService } from './services/browser-notifier.service';
 import { QuejaService } from './services/queja.service';
 import { HorizonModalComponent } from './components/horizon-modal/horizon-modal.component';
-import { HorizonModallearComponent } from './components/horizon-modallear/horizon-modallear.component';
+import { MaterialButtonComponent } from './components/material-button/material-button.component';
+import { MaterialBtnListComponent } from './components/material-btn-list/material-btn-list.component';
+import { CommentComponent } from './components/comment/comment.component';
+import { CommentReplyComponent } from './components/comment-reply/comment-reply.component';
 
 @NgModule({
   declarations: [
@@ -60,7 +64,10 @@ import { HorizonModallearComponent } from './components/horizon-modallear/horizo
     Select2BootstrapComponent,
     WebrtcCameraComponent,
     HorizonModalComponent,
-    HorizonModallearComponent
+    MaterialButtonComponent,
+    MaterialBtnListComponent,
+    CommentComponent,
+    CommentReplyComponent
   ],
   imports: [
     HttpModule,
@@ -69,10 +76,11 @@ import { HorizonModallearComponent } from './components/horizon-modallear/horizo
     ReactiveFormsModule,
     routing,
     AngularFontAwesomeModule,
+    OwlModule,
     ServiceWorkerModule.register('/sw-workbox.js', { enabled: environment.production })
   ],
   providers: [appRoutingProviders, ContentService, LoginService, AuthGuardService, LoginGuardService, NotifierService, CameraService, SocketService, BrowserNotifierService, QuejaService],
   bootstrap: [AppComponent],
-  entryComponents: [AlertComponent, EditQuejaComponent, NewMediaComponent, HorizonModalComponent, QuejaDetailComponent]
+  entryComponents: [AlertComponent, HorizonModalComponent]
 })
 export class AppModule { }

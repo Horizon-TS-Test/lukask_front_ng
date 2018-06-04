@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { ContentService } from '../../services/content.service';
 import { Publication } from '../../models/publications';
 import { Select2 } from '../../interfaces/select2.interface';
@@ -14,6 +14,7 @@ import { Gps } from '../../interfaces/gps.interface';
 import { Media } from '../../models/media';
 import { MediaFile } from '../../interfaces/media-file.interface';
 import { DynaContent } from '../../interfaces/dyna-content.interface';
+import { HorizonButton } from '../../interfaces/horizon-button.interface';
 
 import { ViewChild } from '@angular/core';
 import { } from '@types/googlemaps';
@@ -24,33 +25,36 @@ declare var google: any;
 declare var $: any;
 
 @Component({
-  selector: 'app-edit-queja',
+  selector: 'edit-queja',
   templateUrl: './edit-queja.component.html',
   styleUrls: ['./edit-queja.component.css'],
 })
 export class EditQuejaComponent implements OnInit, OnDestroy {
-  private self: any;
-  public _ref: any;
-  public _dynaContent: DynaContent;
-
-  public tipoQuejaSelect: Select2[];
-  public quejaTypeList: QuejaType[];
-
-  public formQuej: FormGroup;
-  public filesToUpload: any[];
-  private quejaType: string;
-  private _gps: Gps;
-  private _direccion: string;
-  private newPub: Publication;
-
-  private subscription: Subscription;
-  private alertData: Alert;
-  private pubFilterList: Publication[];
-
+  @Output() closeModal: EventEmitter<boolean>;
   //Declacion de variables del mapa
   @ViewChild('gmap') gmapElement: any;
-  //map: google.maps.Map;
-  map: any;
+  private map: any;
+
+  private _SUBMIT = 0;
+  private _CLOSE = 1;
+
+  private self: any;
+  private quejaType: string;
+  private _gps: Gps;
+  private newPub: Publication;
+  private subscription: Subscription;
+  private _locationAdress: string;
+  private alertData: Alert;
+  private pubFilterList: Publication[];
+  private _locationCity: string;
+
+  public _ref: any;
+  public _dynaContent: DynaContent;
+  public tipoQuejaSelect: Select2[];
+  public quejaTypeList: QuejaType[];
+  public formQuej: FormGroup;
+  public filesToUpload: any[];
+  public matButtons: HorizonButton[];
 
   constructor(
     private _contentService: ContentService,
@@ -66,13 +70,7 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
       longitude: 0
     }
 
-    /**
-     * TOMANDO LA LISTA DE PUBLICACIONES QUE ESTAN EN MEMORIA DE LA APP:
-     */
-    this._quejaService.getPubListFilter("Riobamba")
-      .then((pubsFilter: Publication[]) => {
-        this.pubFilterList = pubsFilter;
-      });
+
 
     this.getQuejaType();
 
@@ -84,13 +82,32 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
       }
     );
     /////
+
+    this.closeModal = new EventEmitter<boolean>();
+    this.matButtons = [
+      {
+        parentContentType: 0,
+        action: this._SUBMIT,
+        icon: "check"
+      },
+      {
+        parentContentType: 0,
+        action: this._CLOSE,
+        icon: "close"
+      }
+    ];
   }
 
   ngOnInit() {
     this.self = $("#personal-edit-q");
 
     this.formQuej = this.setFormGroup();
+    this.initMapa();
     this.getGps();
+    this.callPubs();
+  }
+
+  initMapa() {
     //Inicalizacion del mapa
     var mapProp = {
       center: new google.maps.LatLng(-1.669685, -78.651953),
@@ -116,6 +133,9 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
       this.tipoQuejaSelect = [];
 
       for (let type of this.quejaTypeList) {
+        if (!this.quejaType) {
+          this.quejaType = type.id;
+        }
         this.tipoQuejaSelect.push({ value: type.id, data: type.description });
       }
     });
@@ -149,8 +169,10 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
 
     return formGroup;
   }
+
   /**
-   * Funcion que validara la posicion y el nombre de la organizacion
+   * Función que valida la posición y el nombre de la organizacion al
+   * recibir el cambio de valor desde el select
    * @param event 
    */
   getSelect2Value(event: string) {
@@ -173,6 +195,10 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
     }
   }
 
+  setAlert() {
+    this._notifierService.sendAlert(this.alertData);
+  }
+
   drawCircle(pos: any, pubType: string) {
     var cityCircle = new google.maps.Circle({
       center: pos,
@@ -181,7 +207,7 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
 
     this.map.setCenter(pos);
     this.map.setZoom(19);
-    var posi = new google.maps.LatLng(this._gps.latitude, this._gps.longitude);  
+    var posi = new google.maps.LatLng(this._gps.latitude, this._gps.longitude);
     //var posi = new google.maps.LatLng(-1.6805658273366262, -78.64302486011889);
 
     if (this.validatePosition(cityCircle, posi) && this.quejaType == pubType) {
@@ -211,7 +237,7 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
     navigator.geolocation.getCurrentPosition((position) => {
       this._gps.latitude = position.coords.latitude;
       this._gps.longitude = position.coords.longitude;
-      this.getAddress(this._gps.latitude, this._gps.longitude);
+      this.getLocation();
     }, function (err) {
       console.log(err);
       //EXCEDED THE TIMEOUT
@@ -219,11 +245,15 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
     }, { timeout: 7000 });
   }
 
-  getAddress(plat, plng) {
+  /**
+   * Function que toma la direccion de la ubicacion de donde se emite la queja.
+   */
+  getLocation() {
     var geocoder = new google.maps.Geocoder;
-    geocoder.geocode({ 'latLng': { lat: plat, lng: plng } }, (results, status) => {
+    geocoder.geocode({ 'latLng': { lat: this._gps.latitude, lng: this._gps.longitude } }, (results, status) => {
       if (status === google.maps.GeocoderStatus.OK) {
-        this._direccion = results[0].address_components[0].long_name;
+        this._locationAdress = results[0].address_components[0].long_name;
+        this._locationCity = results[0].address_components[1].long_name;
       }
     });
   }
@@ -241,10 +271,27 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA SOLICITAR APERTURA DE UNA ALERTA
+   * MÉTODO PARA ESCUCHAR LA ACCIÓN DEL EVENTO DE CLICK DE UN BOTÓN DINÁMICO:
    */
-  setAlert() {
-    this._notifierService.sendAlert(this.alertData);
+  getButtonAction(actionEvent: number) {
+    switch (actionEvent) {
+      case this._SUBMIT:
+        console.log("Submit! has been requested");
+        this.publishQueja();
+        break;
+      case this._CLOSE:
+        this.closeModal.emit(true);
+        break;
+    }
+  }
+  /**
+     * TOMANDO LA LISTA DE PUBLICACIONES CON FILTRO DESDE EL BACKEND:
+     */
+  callPubs() {
+    this._quejaService.getPubListFilter(this._locationCity)
+      .then((pubsFilter: Publication[]) => {
+        this.pubFilterList = pubsFilter;
+      });
   }
 
   ngOnDestroy() {
