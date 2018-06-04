@@ -36,7 +36,8 @@ export class ActionService {
         'X-Access-Token': this._loginService.getUserId()
       }
     );
-    const requestBody = JSON.stringify({ description: comment.description, id_publication: comment.id_publication });
+    console.log(comment.commentParentId);
+    const requestBody = JSON.stringify({ description: comment.description, id_publication: comment.publicationId, action_parent: (comment.commentParentId) ? comment.commentParentId : "" });
 
     return this._http.post(REST_SERV.commentUrl, requestBody, { headers: requestHeaders, withCredentials: true })
       .toPromise()

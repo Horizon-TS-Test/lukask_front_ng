@@ -69,7 +69,7 @@ export class QuejaComponent implements OnInit {
   }
 
   extractCommentJson(commentJson: any) {
-    return new Comment(commentJson.id_action_notification, commentJson.description, commentJson.publication, new User(this.queja.user.username, "", this.queja.user.profileImg));
+    return new Comment(commentJson.id_action, commentJson.description, commentJson.publication, new User(this.queja.user.username, "", this.queja.user.profileImg));
   }
 
   validateLettersNumber(event: KeyboardEvent) {
@@ -115,7 +115,7 @@ export class QuejaComponent implements OnInit {
     ////
 
     //REF: https://stackoverflow.com/questions/39019808/angular-2-get-object-from-array-by-id
-    lastComment = this.commentList.find(com => com.id === commentJson.id_action_notification);
+    lastComment = this.commentList.find(com => com.commentId === commentJson.id_action);
 
     if (action != ArrayManager.DELETE) {
       newCom = this.extractCommentJson(commentJson);
