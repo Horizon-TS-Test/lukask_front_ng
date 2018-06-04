@@ -159,13 +159,11 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
   }
 
   validateQuejaRepeat() {
-    console.log("Valor se");
     console.log(this._gps.latitude + " " + this._gps.longitude + " " + this.quejaType);
     let band = false;
-    console.log("Valores...");
     for (let pub of this.pubFilterList) {
       console.log(pub.latitude + " " + pub.longitude + " " + pub.type.id)
-      if (this.circunferencia({ lat: pub.latitude, lng: pub.longitude }, pub.type.id)) {
+      if (this.drawCircle({ lat: pub.latitude, lng: pub.longitude }, pub.type.id)) {
         band = true;
       }
     }
@@ -175,24 +173,18 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
     }
   }
 
-  circunferencia(posicion: any, pubType: string) {
+  drawCircle(pos: any, pubType: string) {
     var cityCircle = new google.maps.Circle({
-      strokeColor: '#FF0000',
-      strokeOpacity: 0.8,
-      strokeWeight: 2,
-      fillColor: '#FF0000',
-      fillOpacity: 0.35,
-      center: posicion,
+      center: pos,
       radius: 10
     });
 
-    this.map.setCenter(posicion);
+    this.map.setCenter(pos);
     this.map.setZoom(19);
-    //var posi = new google.maps.LatLng(posicion.lat, posicion.lng);  
-    var posi = new google.maps.LatLng(-1.6805658273366262, -78.64302486011889);
+    var posi = new google.maps.LatLng(this._gps.latitude, this._gps.longitude);  
+    //var posi = new google.maps.LatLng(-1.6805658273366262, -78.64302486011889);
 
-    if (this.determinarPosicion2(cityCircle, posi) && this.quejaType == pubType) {
-      console.log("Psicion que si esta");
+    if (this.validatePosition(cityCircle, posi) && this.quejaType == pubType) {
       console.log(cityCircle.center.lat() + " " + cityCircle.center.lng());
       return true;
     } else {
@@ -200,7 +192,7 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
     }
   }
 
-  determinarPosicion2(circle, latLngA) {
+  validatePosition(circle, latLngA) {
     var bounds = circle.getBounds();
     bounds = circle.getBounds();
     if (bounds.contains(latLngA)) {
@@ -228,14 +220,14 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
   }
 
   getAddress(plat, plng) {
-    console.log("llamando");
     var geocoder = new google.maps.Geocoder;
-    geocoder.geocode({ 'latLng': { lat: -1.663585, lng: -78.658242 } }, (results, status) => {
+    geocoder.geocode({ 'latLng': { lat: plat, lng: plng } }, (results, status) => {
       if (status === google.maps.GeocoderStatus.OK) {
-        this._direccion = results[0].address_components[1].long_name;
+        this._direccion = results[0].address_components[0].long_name;
       }
     });
   }
+
   publishQueja() {
     this.newPub = new Publication("", this._gps.latitude, this._gps.longitude, this.formQuej.value.fcnDetail, this.getFormattedDate(), null, null, new QuejaType(this.quejaType, null));
     if (this.filesToUpload.length > 0) {
