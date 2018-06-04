@@ -70,8 +70,6 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
       longitude: 0
     }
 
-
-
     this.getQuejaType();
 
     //LISTEN TO NEW SNAPSHOT SENT BY NEW MEDIA CONTENT:
@@ -259,7 +257,7 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
   }
 
   publishQueja() {
-    this.newPub = new Publication("", this._gps.latitude, this._gps.longitude, this.formQuej.value.fcnDetail, this.getFormattedDate(), null, null, new QuejaType(this.quejaType, null));
+    this.newPub = new Publication("", this._gps.latitude, this._gps.longitude, this.formQuej.value.fcnDetail, this.getFormattedDate(), null, null, new QuejaType(this.quejaType, null), null, this._locationCity);
     if (this.filesToUpload.length > 0) {
       for (let i = 0; i < this.filesToUpload.length; i++) {
         this.newPub.media.push(new Media("", "", "", null, this.filesToUpload[i], i + "-" + this.getFormattedDate() + ".png"));

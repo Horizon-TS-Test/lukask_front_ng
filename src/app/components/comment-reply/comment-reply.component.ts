@@ -18,19 +18,13 @@ export class CommentReplyComponent implements OnInit {
   private _CLOSE = 1;
 
   public matButtons: HorizonButton[];
-  public commentReply: Comment;
-  public maxChars: number;
-  public restChars: number;
+  public commentForm: Comment;
   public replyList: Comment[];
 
   constructor(
-    private _domSanitizer: DomSanitizer,
     private _actionService: ActionService
   ) {
     this.closeModal = new EventEmitter<boolean>();
-
-    this.maxChars = 200;
-    this.restChars = this.maxChars;
 
     this.matButtons = [
       {
@@ -44,34 +38,11 @@ export class CommentReplyComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.resetComment();
+    this.commentForm = new Comment("", "", this.mainComment.publicationId, this.mainComment.user, this.mainComment.commentId);
   }
 
-  resetComment() {
-    this.commentReply = new Comment("", "", "", this.mainComment.user, this.mainComment.commentId);
-  }
-
-  validateLettersNumber(event: KeyboardEvent) {
-    this.restChars = PatternManager.limitWords(this.maxChars, this.commentReply.description.length);
-  }
-
-  publishReply() {
-    this._actionService.sendComment(this.commentReply)
-      .then((response) => {
-        console.log(response);
-        this.replyList.splice(0, 0, this.extractReplyJson(response));
-
-        this.resetComment();
-        this.validateLettersNumber(null);
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  }
-
-  extractReplyJson(commentJson: any) {
-    //return new Comment(commentJson.id_action, commentJson.description, commentJson.publication, new User(commentJson.user_name, "", commentJson.media_profile), commentJson.action_parent);
-    return new Comment(commentJson.id_action, commentJson.description, commentJson.publication, new User(this.mainComment.user.username, "", this.mainComment.user.profileImg), commentJson.action_parent);
+  onCommentResponse(event: Comment) {
+    this.replyList.splice(0, 0, event);
   }
 
   /**

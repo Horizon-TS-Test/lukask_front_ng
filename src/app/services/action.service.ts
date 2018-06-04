@@ -6,6 +6,7 @@ import { throwError } from 'rxjs';
 import { error } from '@angular/compiler/src/util';
 import { LoginService } from './login.service';
 import { User } from '../models/user';
+import { Person } from '../models/person';
 
 @Injectable({
   providedIn: 'root'
@@ -55,5 +56,12 @@ export class ActionService {
 
   getReplyListObj() {
     return this.replyList;
+  }
+
+  extractCommentJson(commentJson: any) {
+    let usr = new User(commentJson.user_register.email, "", commentJson.user_register.media_profile);
+    usr.person = new Person('', commentJson.user_register.person.age, commentJson.user_register.person.identification_card, commentJson.user_register.person.name, commentJson.user_register.person.last_name, commentJson.user_register.person.telephone, commentJson.user_register.person.adress);
+
+    return new Comment(commentJson.id_action, commentJson.description, commentJson.publication, usr, commentJson.action_parent);
   }
 }

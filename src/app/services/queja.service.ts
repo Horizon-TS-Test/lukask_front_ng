@@ -207,6 +207,7 @@ export class QuejaService {
       detail: queja.detail,
       type_publication: queja.type.id,
       date_publication: queja.date_pub,
+      location: queja.location,
       media_files: []
     }
 
@@ -238,17 +239,17 @@ export class QuejaService {
     }
     //IF THE WEB BROWSER DOESN'T SUPPORT OFFLINE SYNCRONIZATION:
     else {*/
-      let quejaFormData: FormData = this.mergeFormData(queja);
-      this.postQuejaClient(quejaFormData)
-        .then(
-          (response) => {
-            this.updatePubList(response, "CREATE");
-            console.log(response);
-          },
-          (err) => {
-            console.log(err);
-          }
-        );
+    let quejaFormData: FormData = this.mergeFormData(queja);
+    this.postQuejaClient(quejaFormData)
+      .then(
+        (response) => {
+          this.updatePubList(response, "CREATE");
+          console.log(response);
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
     //}
   }
 
@@ -259,8 +260,8 @@ export class QuejaService {
     let type: QuejaType;
     let medios: Media;
 
-    usr = new User(pubJson.user_email, '', pubJson.media_profile);
-    usr.person = new Person(null, null, null, pubJson.user_name, pubJson.user_lastname, null, null, null);
+    usr = new User(pubJson.user_register.email, '', pubJson.user_register.media_profile);
+    usr.person = new Person(pubJson.user_register.person.id_person, pubJson.user_register.person.id_person.age, pubJson.user_register.person.identification_card, pubJson.user_register.person.name, pubJson.user_register.person.last_name, pubJson.user_register.person.telephone, pubJson.user_register.person.address, pubJson.user_register.person.active);
     type = new QuejaType(pubJson.type_publication, pubJson.type_publication_detail);
 
     pub = new Publication(pubJson.id_publication, pubJson.latitude, pubJson.length, pubJson.detail, pubJson.date_publication, pubJson.priority_publication, pubJson.active, type, usr);
@@ -279,6 +280,7 @@ export class QuejaService {
     formData.append('detail', queja.detail);
     formData.append('type_publication', queja.type.id);
     formData.append('date_publication', queja.date_pub);
+    formData.append('location', queja.location);
 
     for (let med of queja.media) {
       formData.append('media_files[]', med.file, med.fileName);
@@ -475,7 +477,7 @@ export class QuejaService {
     let lastPub: Publication, newPub: Publication;
 
     //PREPPENDING THE BACKEND SERVER IP/DOMAIN:
-    pubJson.media_profile = ((pubJson.media_profile.indexOf("http") == -1) ? REST_SERV.mediaBack : "") + pubJson.media_profile;
+    pubJson.user_register.media_profile = ((pubJson.user_register.media_profile.indexOf("http") == -1) ? REST_SERV.mediaBack : "") + pubJson.user_register.media_profile;
     ////
 
     //STORING THE NEW DATA COMMING FROM SOMEWHERE IN INDEXED-DB

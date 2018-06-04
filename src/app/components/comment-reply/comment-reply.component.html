@@ -1,20 +1,6 @@
 <div class="card">
     <div class="card-block pb-0">
-        <form #frmReply="ngForm" class="d-flex justify-content-between w-100 pb-0" (ngSubmit)="publishReply()">
-            <div class="pers-profile-img-comen" [style.background-image]="_domSanitizer.bypassSecurityTrustStyle('url(' + commentReply.user.profileImg + ')')"></div>
-
-            <div class="f-child-no-auto form-group pl-1 pb-0 mb-0" [ngClass]="{ 'has-danger': description.touched && restChars < 0 }">
-                <textarea name="description" #description="ngModel" [(ngModel)]="commentReply.description" class="p-border-none form-control form-control-danger"
-                    cols="30" rows="3" placeholder="Escribe una respuesta..." (keyup)="validateLettersNumber($event)"></textarea>
-                <small class="pb-0 form-control-feedback">{{restChars}} caracteres restantes.</small>
-            </div>
-            <div class="pl-1 pt-1">
-                <button type="submit" [disabled]="restChars == maxChars || restChars < 0" class="btn btn-sm btn-outline-info personal-icon-btn"
-                    title="Comentar">
-                    <fa name="send"></fa>
-                </button>
-            </div>
-        </form>
+        <comment-form [commentModel]="commentForm" (commentResponse)="onCommentResponse($event)"></comment-form>
     </div>
     <ul class="list-group list-group-flush pb-0 max-height-half p-overflow-auto">
         <li class="f-child-full-space list-group-item">

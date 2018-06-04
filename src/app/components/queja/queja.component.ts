@@ -23,6 +23,7 @@ declare var writeData: any;
 })
 export class QuejaComponent implements OnInit {
   @Input() queja: Publication;
+
   private newComment: Comment;
   public commentList: Comment[];
   public maxChars: number;
@@ -46,7 +47,7 @@ export class QuejaComponent implements OnInit {
   }
 
   resetComment() {
-    this.newComment = new Comment("", "", this.queja.id_publication);
+    this.newComment = new Comment("", "", this.queja.id_publication, this.queja.user);
   }
 
   viewQuejaDetail(event: any, idPub) {
@@ -54,26 +55,8 @@ export class QuejaComponent implements OnInit {
     this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_queja, contentData: idPub });
   }
 
-  publishComment() {
-    this._actionService.sendComment(this.newComment)
-      .then((response) => {
-        console.log(response);
-        this.commentList.splice(0, 0, this.extractCommentJson(response));
-
-        this.resetComment();
-        this.validateLettersNumber(null);
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  }
-
-  extractCommentJson(commentJson: any) {
-    return new Comment(commentJson.id_action, commentJson.description, commentJson.publication, new User(this.queja.user.username, "", this.queja.user.profileImg));
-  }
-
-  validateLettersNumber(event: KeyboardEvent) {
-    this.restChars = PatternManager.limitWords(this.maxChars, this.newComment.description.length);
+  onCommentResponse(event: Comment) {
+    this.commentList.splice(0, 0, event);
   }
 
   /**
@@ -118,7 +101,7 @@ export class QuejaComponent implements OnInit {
     lastComment = this.commentList.find(com => com.commentId === commentJson.id_action);
 
     if (action != ArrayManager.DELETE) {
-      newCom = this.extractCommentJson(commentJson);
+      newCom = this._actionService.extractCommentJson(commentJson);
     }
 
     ArrayManager.backendServerSays(action, this.commentList, lastComment, newCom);

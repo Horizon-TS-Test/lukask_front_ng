@@ -1,0 +1,52 @@
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
+import { ActionService } from '../../services/action.service';
+import { PatternManager } from '../../tools/pattern-manager';
+import { Comment } from '../../models/comment';
+import { User } from '../../models/user';
+
+@Component({
+  selector: 'comment-form',
+  templateUrl: './comment-form.component.html',
+  styleUrls: ['./comment-form.component.css']
+})
+export class CommentFormComponent implements OnInit {
+  @Input() commentModel: Comment;
+  @Output() commentResponse = new EventEmitter<Comment>();
+
+  public maxChars: number;
+  public restChars: number;
+
+  constructor(
+    private _domSanitizer: DomSanitizer,
+    private _actionService: ActionService
+  ) {
+    this.maxChars = 200;
+    this.restChars = this.maxChars;
+  }
+
+  ngOnInit() { }
+
+  validateLettersNumber(event: KeyboardEvent) {
+    this.restChars = PatternManager.limitWords(this.maxChars, this.commentModel.description.length);
+  }
+
+  resetComment() {
+    this.commentModel.description = "";
+  }
+
+  publishComment() {
+    this._actionService.sendComment(this.commentModel)
+      .then((response) => {
+        console.log(response);
+        this.commentResponse.emit(this._actionService.extractCommentJson(response));
+
+        this.resetComment();
+        this.validateLettersNumber(null);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
+}

@@ -15,6 +15,7 @@ export class Publication {
         public active?: boolean,
         public type?: QuejaType,
         public user?: User,
+        public location?: string,
     ) {
         this.media = [];
     }
