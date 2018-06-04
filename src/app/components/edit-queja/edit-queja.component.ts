@@ -250,9 +250,12 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
   getLocation() {
     var geocoder = new google.maps.Geocoder;
     geocoder.geocode({ 'latLng': { lat: this._gps.latitude, lng: this._gps.longitude } }, (results, status) => {
+    //geocoder.geocode({ 'latLng': { lat: -1.607661, lng: -78.639310 } }, (results, status) => {
       if (status === google.maps.GeocoderStatus.OK) {
-        this._locationAdress = results[0].address_components[0].long_name;
-        this._locationCity = results[0].address_components[1].long_name;
+        var str = results[0].formatted_address;
+        var dir = str.split(",");
+        this._locationAdress = dir[0];
+        this._locationCity = dir[1];
         this.callPubs();
       }
     });
