@@ -4,7 +4,9 @@ export var REST_SERV = {
     qTypeUrl: 'http://127.0.0.1:8070/qtype',
     loginUrl: 'http://127.0.0.1:8070/login',*/
     loginUrl: 'http://192.168.1.37:3000/login',
-    publicationsUrl: 'http://192.168.1.37:3000/publication',
+    getPubsUrl: 'http://192.168.1.37:3000/publication/page',
+    getPubUrl: 'http://192.168.1.37:3000/publication',
+    postPubUrl: 'http://192.168.1.37:3000/publication',
     pubFilterUrl: 'http://192.168.1.37:3000/publication/filter',
     qTypeUrl: 'http://192.168.1.37:3000/qtype',
     commentUrl: 'http://192.168.1.37:3000/comment',

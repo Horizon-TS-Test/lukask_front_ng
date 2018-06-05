@@ -50,9 +50,9 @@ export class QuejaComponent implements OnInit {
     this.newComment = new Comment("", "", this.queja.id_publication, this.queja.user);
   }
 
-  viewQuejaDetail(event: any, idPub) {
+  viewQuejaDetail(event: any) {
     event.preventDefault();
-    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_queja, contentData: idPub });
+    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_queja, contentData: this.queja.id_publication });
   }
 
   onCommentResponse(event: Comment) {

@@ -177,6 +177,20 @@ p, label, div {
   z-index: 1;
   transition: opacity .5s ease, z-index .2s ease; }
 
+.bottom-loader {
+  position: absolute !important;
+  bottom: 0;
+  opacity: 0;
+  transform: translateY(-150%);
+  transition: opacity 0s 0.2s, transform .5s ease; }
+
+.bottom-loader.on {
+  position: absolute !important;
+  bottom: 0;
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0s 0.2s, transform .7s ease; }
+
 .op-active, .op-active a {
   pointer-events: none;
   cursor: default; }

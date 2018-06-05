@@ -83,4 +83,15 @@ export class ContentService {
     element.offset({ left: (windowMid - elHalfWidth) });
   }
 
+  isBottomScroll(domElement: any) {
+    let elementScroll = domElement.scrollTop();
+    let elementHeight = domElement.height();
+    let docHeight = domElement.children().first().height();
+    if (elementScroll + elementHeight >= docHeight - 10) {
+      return true;
+    }
+
+    return false;
+  }
+
 }

@@ -21,11 +21,16 @@ declare var deleteItemData: any;
   providedIn: 'root'
 })
 export class QuejaService {
+
   private quejTypeList: QuejaType[];
   private isFetchedQtype: boolean;
   private isFetchedPubs: boolean;
   private isFetchedPub: boolean;
   private mainMediaJson: any;
+  private pagePattern: string;
+
+  public DEFAULT_LIMIT: number = 5;
+  public ALL: string = "all";
 
   public pubList: Publication[];
   public pubFilterList: Publication[];
@@ -52,7 +57,7 @@ export class QuejaService {
 
     return this._http.get(REST_SERV.qTypeUrl, { headers: qTheaders, withCredentials: true }).toPromise()
       .then((response: Response) => {
-        const qtypes = response.json().data;
+        const qtypes = response.json().data.results;
         let transformedQtypes: QuejaType[] = [];
         for (let type of qtypes) {
           transformedQtypes.push(new QuejaType(type.id_type_publication, type.description));
@@ -115,26 +120,44 @@ export class QuejaService {
     });;
   }
 
-  getPubsWeb() {
-    const pubHeaders = new Headers({ 'Content-Type': 'application/json', 'X-Access-Token': this._loginService.getUserId() });
+  getPubsWebByPage(morePubs: boolean = false) {
+    const pubHeaders = new Headers({
+      'Content-Type': 'application/json',
+      'X-Access-Token': this._loginService.getUserId(),
+      'Page-Pattern': this.pagePattern
+    });
+    let flag = 1;
 
-    return this._http.get(REST_SERV.publicationsUrl, { headers: pubHeaders, withCredentials: true }).toPromise()
-      .then((response: Response) => {
-        const pubs = response.json().data;
-        let transformedPubs: Publication[] = [];
-        for (let i = 0; i < pubs.length; i++) {
-          transformedPubs.push(this.extractPubJson(pubs[i]));
-        }
+    if (morePubs && !this.pagePattern) {
+      flag = 0;
+    }
 
-        this.isFetchedPubs = true;
-        console.log("[LUKASK QUEJA SERVICE] - PUBLICATIONS FROM WEB", transformedPubs);
-        return transformedPubs;
-      }).catch((error: Response) => {
-        if (error.json().code == 401) {
-          localStorage.clear();
-        }
-        return throwError(error.json());
-      });
+    if (flag == 1) {
+      return this._http.get(REST_SERV.getPubsUrl + "/" + this.DEFAULT_LIMIT, { headers: pubHeaders, withCredentials: true }).toPromise()
+        .then((response: Response) => {
+          const respJson = response.json().data;
+          this.pagePattern = respJson.next;
+          const pubs = respJson.results;
+
+          let transformedPubs: Publication[] = [];
+          for (let i = 0; i < pubs.length; i++) {
+            transformedPubs.push(this.extractPubJson(pubs[i]));
+          }
+
+          this.isFetchedPubs = true;
+          console.log("[LUKASK QUEJA SERVICE] - PUBLICATIONS FROM WEB", transformedPubs);
+          return transformedPubs;
+        }).catch((error: Response) => {
+          if (error.json().code == 401) {
+            localStorage.clear();
+          }
+          return throwError(error.json());
+        });
+    }
+    return new Promise((resolve, reject) => {
+      this.isFetchedPubs = true;
+      resolve(null);
+    });
   }
 
   getPubsCache() {
@@ -164,7 +187,7 @@ export class QuejaService {
     /**
      * IMPLEMENTING NETWORK FIRST STRATEGY
     */
-    return this.getPubsWeb().then((webPubs: Publication[]) => {
+    return this.getPubsWebByPage().then((webPubs: Publication[]) => {
       this.pubList = webPubs;
 
       if (!this.isFetchedPubs) {
@@ -178,6 +201,35 @@ export class QuejaService {
       }
 
       return webPubs;
+    }).catch((error: Response) => {
+      if (error.json().code == 401) {
+        localStorage.clear();
+      }
+      return throwError(error.json());
+    });
+  }
+
+  /**
+   * FUNCIÓN PARA OBTENER PUBLICACIONES BAJO DEMANDA A TRAVÉS DE UN PATTERN DE PAGINACIÓN:
+   */
+  getMorePubs() {
+    /**
+     * IMPLEMENTING NETWORK FIRST STRATEGY
+    */
+    return this.getPubsWebByPage(true).then((webPubs: Publication[]) => {
+      this.pubList = (webPubs) ? this.pubList.concat(webPubs) : this.pubList;
+
+      if (!this.isFetchedPubs) {
+        return this.getPubsCache().then((cachePubs: Publication[]) => {
+          this.pubList = this.pubList.concat(cachePubs);
+          return this.pubList;
+        });
+      }
+      else {
+        this.isFetchedPubs = false;
+      }
+
+      return this.pubList;
     }).catch((error: Response) => {
       if (error.json().code == 401) {
         localStorage.clear();
@@ -307,7 +359,7 @@ export class QuejaService {
         }
       };
 
-      xhr.open("post", REST_SERV.publicationsUrl, true);
+      xhr.open("post", REST_SERV.postPubUrl, true);
       xhr.setRequestHeader('X-Access-Token', this._loginService.getUserId());
       xhr.withCredentials = true;
       xhr.send(quejaFormData);
@@ -317,7 +369,7 @@ export class QuejaService {
   getPubWebById(id: string) {
     const _headers = new Headers({ 'Content-Type': 'application/json', 'X-Access-Token': this._loginService.getUserId() });
 
-    return this._http.get(REST_SERV.publicationsUrl + "/" + id, { headers: _headers, withCredentials: true }).toPromise()
+    return this._http.get(REST_SERV.getPubUrl + "/" + id, { headers: _headers, withCredentials: true }).toPromise()
       .then((response: Response) => {
         const pubJson = response.json().pub;
         let pub: Publication;
@@ -388,7 +440,7 @@ export class QuejaService {
 
     return this._http.get(REST_SERV.pubFilterUrl + "/" + city, { headers: pubHeaders, withCredentials: true }).toPromise()
       .then((response: Response) => {
-        const pubs = response.json().data;
+        const pubs = response.json().data.results;
         let transformedPubs: Publication[] = [];
         for (let i = 0; i < pubs.length; i++) {
           transformedPubs.push(this.extractPubJson(pubs[i]));
