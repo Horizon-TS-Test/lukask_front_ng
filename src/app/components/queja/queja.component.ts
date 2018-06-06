@@ -23,7 +23,7 @@ declare var writeData: any;
 })
 export class QuejaComponent implements OnInit {
   @Input() queja: Publication;
-  private newComment: Comment;
+  public newComment: Comment;
   public commentList: Comment[];
   public maxChars: number;
   public restChars: number;

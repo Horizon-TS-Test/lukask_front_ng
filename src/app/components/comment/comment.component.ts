@@ -15,7 +15,7 @@ export class CommentComponent implements OnInit {
   @Input() noReplyBtn: boolean;
 
   constructor(
-    private _domSanitizer: DomSanitizer,
+    public _domSanitizer: DomSanitizer,
     private _notifierService: NotifierService,
   ) { }
 

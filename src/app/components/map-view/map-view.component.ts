@@ -5,8 +5,11 @@ import { } from '@types/googlemaps';
 import { Publication } from '../../models/publications';
 import { QuejaService } from '../../services/queja.service';
 import pubIcons from '../../data/pub-icons';
+import { NotifierService } from '../../services/notifier.service';
+import { CONTENT_TYPES } from '../../config/content-type';
 
 declare var google: any;
+declare var $: any;
 
 @Component({
   selector: 'app-map-view',
@@ -27,7 +30,8 @@ export class MapViewComponent implements OnInit {
 
   constructor(
     private _contentService: ContentService,
-    private _quejaService: QuejaService
+    private _quejaService: QuejaService,
+    private _notifierService: NotifierService
   ) {
     this.lat = -1.6709800;
     this.lng = -78.6471200;
@@ -54,6 +58,12 @@ export class MapViewComponent implements OnInit {
     //Definicion del mapa
     this.map = new google.maps.Map(this.gmapElement.nativeElement, mapProp);
     this.getPubs();
+
+    $("#idviewPub").on(("click"), (event) => {
+      console.log("si das cluck")
+      //event.preventDefault();
+      //this.viewPub();
+    });
   }
 
   saluda() {
@@ -73,12 +83,13 @@ export class MapViewComponent implements OnInit {
     console.log("List: ", this.pubList);
     for (let pub of this.pubList) {
       console.log(pub.latitude);
-      this.crearMarker(pub.latitude, pub.longitude, this.defineTypeIcon(pub.type));
+      console.log("pub");
+      console.log(pub);
+      this.crearMarker(pub.latitude, pub.longitude, this.defineTypeIcon(pub.type), pub.id_publication);
     }
   }
 
-  crearMarker(lat, lng, icon) {
-
+  crearMarker(lat, lng, icon, pubId: string) {
     let marker = new google.maps.Marker({
       position: new google.maps.LatLng(lat, lng),
       map: this.map,
@@ -89,13 +100,22 @@ export class MapViewComponent implements OnInit {
 
     //Definicion de un evento del marker
     var infowindow = new google.maps.InfoWindow({
-      content: "Baches"
+      content: '<button (click)="saluda()">Click me</button>'
     });
 
-    marker.addListener('click', () => {
-      this.saluda();
-      infowindow.open(this.map, marker);
+    marker.addListener('click', (event) => {
+      this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_queja, contentData: "02ceab07-d0d3-4073-86ba-654534813f86" });
+      $("#idviewPub").click();
+      //console.log("hecho");
+      //this.saluda();      
+      //infowindow.open(this.map, marker);
+
     });
+  }
+
+
+  viewPub(pubId: string = "02ceab07-d0d3-4073-86ba-654534813f86") {
+    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_queja, contentData: pubId });
   }
 
   getPubs() {

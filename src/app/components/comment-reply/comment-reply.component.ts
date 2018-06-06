@@ -24,7 +24,7 @@ export class CommentReplyComponent implements OnInit {
   public replyList: Comment[];
 
   constructor(
-    private _domSanitizer: DomSanitizer,
+    public _domSanitizer: DomSanitizer,
     private _actionService: ActionService
   ) {
     this.closeModal = new EventEmitter<boolean>();
