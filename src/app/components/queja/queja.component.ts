@@ -12,6 +12,7 @@ import { User } from '../../models/user';
 import { SocketService } from '../../services/socket.service';
 import { REST_SERV } from '../../rest-url/rest-servers';
 import { ArrayManager } from '../../tools/array-manager';
+import { Router } from '@angular/router';
 
 declare var writeData: any;
 
@@ -30,9 +31,10 @@ export class QuejaComponent implements OnInit {
 
   constructor(
     public _domSanitizer: DomSanitizer,
-    public _notifierService: NotifierService,
-    public _actionService: ActionService,
-    public _socketService: SocketService
+    private _notifierService: NotifierService,
+    private _actionService: ActionService,
+    private _socketService: SocketService,
+    private _router: Router,
   ) {
     this.maxChars = 200;
     this.restChars = this.maxChars;
@@ -75,6 +77,25 @@ export class QuejaComponent implements OnInit {
   validateLettersNumber(event: KeyboardEvent) {
     this.restChars = PatternManager.limitWords(this.maxChars, this.newComment.description.length);
   }
+
+  /**
+   * MÉTODO PARA GEOLOCALIZAR LA QUEJA SELECCIONADA
+   */
+  geolocatePub(event: any) {
+    event.preventDefault();
+    //REF:
+    this._router.navigateByUrl(
+      this._router.createUrlTree(
+        ['/mapview'],
+        {
+          queryParams: {
+            pubId: this.queja.id_publication
+          }
+        }
+      )
+    );
+  }
+
 
   /**
    * MÉTODO PARA ESCUCHAR LAS ACTUALIZACIONES DEL CLIENTE SOCKET.IO

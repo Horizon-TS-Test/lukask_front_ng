@@ -5,8 +5,11 @@ import { } from '@types/googlemaps';
 import { Publication } from '../../models/publications';
 import { QuejaService } from '../../services/queja.service';
 import pubIcons from '../../data/pub-icons';
+import pubIconsOver from '../../data/pub-icons-over';
 import { NotifierService } from '../../services/notifier.service';
 import { CONTENT_TYPES } from '../../config/content-type';
+import { ActivatedRoute } from '@angular/router';
+
 
 declare var google: any;
 declare var $: any;
@@ -18,6 +21,8 @@ declare var $: any;
   providers: [QuejaService]
 })
 export class MapViewComponent implements OnInit {
+  private focusPubId: string;
+
   public lat: number;
   public lng: number;
   public zoom: number;
@@ -31,7 +36,8 @@ export class MapViewComponent implements OnInit {
   constructor(
     private _contentService: ContentService,
     private _quejaService: QuejaService,
-    private _notifierService: NotifierService
+    private _notifierService: NotifierService,
+    private _activatedRoute: ActivatedRoute,
   ) {
     this.lat = -1.6709800;
     this.lng = -78.6471200;
@@ -46,7 +52,6 @@ export class MapViewComponent implements OnInit {
 
   }
 
-
   ngOnInit() {
     this._contentService.fadeInComponent();
     var mapProp = {
@@ -55,6 +60,8 @@ export class MapViewComponent implements OnInit {
       mapTypeId: google.maps.MapTypeId.ROADMAP,
       styles: this.estilo
     };
+
+
     //Definicion del mapa
     this.map = new google.maps.Map(this.gmapElement.nativeElement, mapProp);
     this.getPubs();
@@ -64,52 +71,115 @@ export class MapViewComponent implements OnInit {
       //event.preventDefault();
       //this.viewPub();
     });
+
+    //TOMANDO QUERY PARAMS:
+    this.getQueryParams();
+    ////
+    //HACIENDO FOCUS UNA PUBLICACIÓN EN EL MAPA
+    //this.metodFocusPubId();
   }
 
-  saluda() {
-    alert("Saludando...!");
+  /**
+   * MÉTODO PARA OBTENER LOS PARÁMETROS QUE LLEGAN EN EL URL:
+   */
+  getQueryParams() {
+    this._activatedRoute.queryParams.subscribe(params => {
+      this.focusPubId = params['pubId'];
+    });
   }
 
+  /**
+   * METODO QUE VALIDA SI HAY UN ID DEL MARKER
+   */
+  metodFocusPubId() {
+    if (this.focusPubId != undefined) {
+      this.focus();
+    } 
+  }
+
+  /**
+   * METODO QUE ENFOCA EL MARKER BUSCADO
+   */
+  focus() {
+    for (let pub of this.pubList) {
+      if (this.focusPubId == pub.id_publication) {
+        this.map.setCenter({ lat: pub.latitude, lng: pub.longitude });
+        this.map.setZoom(19);
+      }
+    }
+  }
+/**
+ * METODO QUE SEGUN EL TIPO DE ENTIDAD ENVIA EL ICONO
+ * @param typeId = TIPO DE ENTIDAD
+ */
   defineTypeIcon(typeId) {
     for (let typeIcon of pubIcons) {
-      if (typeIcon.type_id == typeId) {
+      if (typeIcon.type_id == typeId.id) {
         return typeIcon.icon;
       }
     }
   }
 
+  /**
+   * Funcion para cambiar de icono cuando el mouse se encuentre encima
+   * */
+  defineTypeIconOver(typeId) {
+    for (let typeIconOver of pubIconsOver) {
+      if (typeIconOver.type_id == typeId.id) {
+        return typeIconOver.icon;
+      }
+    }
+  }
+/**
+ * METODO QUE RECORRE LA LISTA DE QUEJAS Y CREA EL MARKER DE CADA UNA
+ */
   recorer() {
-    console.log("Recorrer....");
-    console.log("List: ", this.pubList);
     for (let pub of this.pubList) {
-      console.log(pub.latitude);
-      console.log("pub");
-      console.log(pub);
-      this.crearMarker(pub.latitude, pub.longitude, this.defineTypeIcon(pub.type), pub.id_publication);
+      this.crearMarker(pub.latitude, pub.longitude, this.defineTypeIcon(pub.type), pub.id_publication, pub.type, pub.type.description);
     }
   }
 
-  crearMarker(lat, lng, icon, pubId: string) {
+  /**
+   * Funcion para crear marker en el mapa
+   * @param lat = latitud
+   * @param lng = longitud
+   * @param icon = icono
+   * @param pubId = identificador de la publicacion
+   * @param pubtype = tipo de queja
+   * @param description = nombre de la entidad
+   */
+  crearMarker(lat, lng, icon, pubId: string, pubtype, description) {
     let marker = new google.maps.Marker({
       position: new google.maps.LatLng(lat, lng),
       map: this.map,
-      title: 'Got you!',
+      title: description,
       icon: icon,
       draggable: false
     });
 
     //Definicion de un evento del marker
     var infowindow = new google.maps.InfoWindow({
-      content: '<button (click)="saluda()">Click me</button>'
+      content: description
     });
 
     marker.addListener('click', (event) => {
-      this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_queja, contentData: "02ceab07-d0d3-4073-86ba-654534813f86" });
-      $("#idviewPub").click();
-      //console.log("hecho");
-      //this.saluda();      
+      this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_queja, contentData: pubId });
+      $("#idviewPub").click(); //No tocar si no deja de funcionar ojo!!     
       //infowindow.open(this.map, marker);
+    });
 
+    marker.addListener('mouseover', () => {
+      let icon = this.defineTypeIconOver(pubtype);
+      marker.setIcon(icon);
+      marker.setAnimation(google.maps.Animation.BOUNCE);
+      infowindow.open(this.map, marker);
+    });
+
+    marker.addListener('mouseout', () => {
+      let icon = this.defineTypeIcon(pubtype);
+      marker.setIcon(icon);
+      marker.setAnimation();
+      infowindow.close(this.map, marker);
     });
   }
 
@@ -122,6 +192,7 @@ export class MapViewComponent implements OnInit {
     this._quejaService.getPubList().then((pubs: Publication[]) => {
       this.pubList = pubs;
       this.recorer();
+      this.metodFocusPubId();
     });
   }
 
