@@ -30,7 +30,6 @@ import { Select2BootstrapComponent } from './components/select2-bootstrap/select
 import { WebrtcCameraComponent } from './components/webrtc-camera/webrtc-camera.component';
 
 import { ContentService } from './services/content.service';
-import { LoginService } from './services/login.service';
 import { AuthGuardService } from './services/auth-guard.service';
 import { LoginGuardService } from './services/login-guard.service';
 import { NotifierService } from './services/notifier.service';
@@ -44,6 +43,7 @@ import { MaterialBtnListComponent } from './components/material-btn-list/materia
 import { CommentComponent } from './components/comment/comment.component';
 import { CommentReplyComponent } from './components/comment-reply/comment-reply.component';
 import { CommentFormComponent } from './components/comment-form/comment-form.component';
+import { UserService } from './services/user.service';
 
 @NgModule({
   declarations: [
@@ -81,7 +81,7 @@ import { CommentFormComponent } from './components/comment-form/comment-form.com
     OwlModule,
     ServiceWorkerModule.register('/sw-workbox.js', { enabled: environment.production })
   ],
-  providers: [appRoutingProviders, ContentService, LoginService, AuthGuardService, LoginGuardService, NotifierService, CameraService, SocketService, BrowserNotifierService, QuejaService],
+  providers: [appRoutingProviders, ContentService, UserService, AuthGuardService, LoginGuardService, NotifierService, CameraService, SocketService, BrowserNotifierService, QuejaService],
   bootstrap: [AppComponent],
   entryComponents: [AlertComponent, HorizonModalComponent]
 })

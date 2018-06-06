@@ -55,5 +55,15 @@
         <comment [commentModel]="comment"></comment>
       </li>
     </ul>
+    <div *ngIf="pagePattern" class="card-footer text-center">
+      <a href="#" (click)="askForMore($event)" class="p-dark-text-color">
+        <small>
+          Ver comentarios anteriores
+        </small>
+      </a>
+      <div class="bottom-loader {{ activeClass }} col-12 d-flex justify-content-center align-items-center">
+        <img src="/assets/images/forms/preloader.gif" width="50px">
+      </div>
+    </div>
   </div>
 </div>

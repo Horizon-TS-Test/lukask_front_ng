@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { Queja } from '../../interfaces/queja.interface';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Publication } from '../../models/publications';
@@ -13,6 +13,7 @@ import { SocketService } from '../../services/socket.service';
 import { REST_SERV } from '../../rest-url/rest-servers';
 import { ArrayManager } from '../../tools/array-manager';
 
+declare var $: any;
 declare var writeData: any;
 
 @Component({
@@ -24,10 +25,16 @@ declare var writeData: any;
 export class QuejaComponent implements OnInit {
   @Input() queja: Publication;
 
+  private LOADER_HIDE: string = "hide";
+  private LOADER_ON: string = "on";
+
+  private pagePattern: string;
+
   public newComment: Comment;
   public commentList: Comment[];
   public maxChars: number;
   public restChars: number;
+  public activeClass: string;
 
   constructor(
     public _domSanitizer: DomSanitizer,
@@ -38,12 +45,16 @@ export class QuejaComponent implements OnInit {
     this.maxChars = 200;
     this.restChars = this.maxChars;
 
-    this.commentList = this._actionService.getCommentListObj();
     this.listenToSocket();
   }
 
   ngOnInit() {
     this.resetComment();
+    this._actionService.getCommentByPub(this.queja.id_publication)
+      .then((commentsData: any) => {
+        this.commentList = commentsData.comments;
+        this.pagePattern = commentsData.pagePattern;
+      });
   }
 
   resetComment() {
@@ -57,6 +68,40 @@ export class QuejaComponent implements OnInit {
 
   onCommentResponse(event: Comment) {
     this.commentList.splice(0, 0, event);
+  }
+
+  /**
+   * MÉTODO PARA CARGAR MAS COMENTARIOS
+   */
+  askForMore(event: any) {
+    event.preventDefault();
+    if (this.activeClass != this.LOADER_ON) {
+      this.activeClass = this.LOADER_ON;
+      this._actionService.getMoreCommentByPub(this.queja.id_publication, this.pagePattern)
+        .then((commentsData: any) => {
+          setTimeout(() => {
+            this.activeClass = "";
+
+            setTimeout(() => {
+              this.activeClass = this.LOADER_HIDE;
+              this.commentList = this.commentList.concat(commentsData.comments);
+              this.pagePattern = commentsData.pagePattern;
+            }, 800);
+
+          }, 1000)
+        })
+        .catch(err => {
+          console.log(err);
+
+          setTimeout(() => {
+            this.activeClass = "";
+
+            setTimeout(() => {
+              this.activeClass = this.LOADER_HIDE;
+            }, 800);
+          }, 1000)
+        });
+    }
   }
 
   /**

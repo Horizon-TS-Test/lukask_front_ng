@@ -20,8 +20,13 @@ declare var deleteItemData: any;
   styleUrls: ['./queja-list.component.css'],
 })
 export class QuejaListComponent implements OnInit, OnDestroy {
+  private LOADER_HIDE: string = "hide";
+  private LOADER_ON: string = "on";
+
   private subscriptor: Subscription
+
   public pubList: Publication[];
+  public activeClass: string;
 
   constructor(
     private _quejaService: QuejaService,
@@ -60,19 +65,29 @@ export class QuejaListComponent implements OnInit, OnDestroy {
    * FUNCIÓN PARA OBTENER PUBLICACIONES BAJO DEMANDA A TRAVÉS DE UN PATTERN DE PAGINACIÓN:
    */
   getMorePubs() {
-    if (!$(".bottom-loader").hasClass("on")) {
-      $(".bottom-loader").addClass("on");
+    if (this.activeClass != this.LOADER_ON) {
+      this.activeClass = this.LOADER_ON;
       this._quejaService.getMorePubs().then((morePubs: Publication[]) => {
         setTimeout(() => {
-          $(".bottom-loader").removeClass("on");
-          this.pubList = morePubs;
-        }, 1500)
+          this.activeClass = "";
+
+          setTimeout(() => {
+            this.activeClass = this.LOADER_HIDE;
+            this.pubList = morePubs;
+          }, 800);
+
+        }, 1000);
       }).catch(err => {
         console.log(err);
 
         setTimeout(() => {
-          $(".bottom-loader").removeClass("on");
-        }, 1500)
+          this.activeClass = "";
+
+          setTimeout(() => {
+            this.activeClass = this.LOADER_HIDE;
+          }, 800);
+          
+        }, 1000)
       });
     }
   }

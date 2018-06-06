@@ -126,14 +126,14 @@ export class QuejaService {
       'X-Access-Token': this._userService.getUserId(),
       'Page-Pattern': this.pagePattern
     });
-    let flag = 1;
+    let flag = true;
 
     if (morePubs && !this.pagePattern) {
-      flag = 0;
+      flag = false;
     }
 
-    if (flag == 1) {
-      return this._http.get(REST_SERV.getPubsUrl + "/" + this.DEFAULT_LIMIT, { headers: pubHeaders, withCredentials: true }).toPromise()
+    if (flag) {
+      return this._http.get(REST_SERV.pubsUrl + "/?limit=" + this.DEFAULT_LIMIT, { headers: pubHeaders, withCredentials: true }).toPromise()
         .then((response: Response) => {
           const respJson = response.json().data;
           this.pagePattern = respJson.next;
@@ -359,7 +359,7 @@ export class QuejaService {
         }
       };
 
-      xhr.open("post", REST_SERV.postPubUrl, true);
+      xhr.open("post", REST_SERV.pubsUrl, true);
       xhr.setRequestHeader('X-Access-Token', this._userService.getUserId());
       xhr.withCredentials = true;
       xhr.send(quejaFormData);
@@ -367,9 +367,12 @@ export class QuejaService {
   }
 
   getPubWebById(id: string) {
-    const _headers = new Headers({ 'Content-Type': 'application/json', 'X-Access-Token': this._userService.getUserId() });
+    const _headers = new Headers({
+      'Content-Type': 'application/json',
+      'X-Access-Token': this._userService.getUserId()
+    });
 
-    return this._http.get(REST_SERV.getPubUrl + "/" + id, { headers: _headers, withCredentials: true }).toPromise()
+    return this._http.get(REST_SERV.pubsUrl + "/" + id, { headers: _headers, withCredentials: true }).toPromise()
       .then((response: Response) => {
         const pubJson = response.json().pub;
         let pub: Publication;
