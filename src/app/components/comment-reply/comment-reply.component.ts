@@ -38,7 +38,7 @@ export class CommentReplyComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.commentForm = new Comment("", "", this.mainComment.publicationId, this.mainComment.user, this.mainComment.commentId);
+    this.commentForm = new Comment("", "", this.mainComment.publicationId, null, this.mainComment.commentId);
   }
 
   onCommentResponse(event: Comment) {

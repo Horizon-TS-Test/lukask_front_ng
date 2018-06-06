@@ -7,7 +7,7 @@ import { QuejaType } from '../models/queja-type';
 import { Publication } from '../models/publications';
 import { Media } from '../models/media';
 import { User } from '../models/user';
-import { LoginService } from './login.service';
+import { UserService } from './user.service';
 import { Person } from '../models/person';
 import { SocketService } from './socket.service';
 import { ArrayManager } from '../tools/array-manager';
@@ -37,7 +37,7 @@ export class QuejaService {
 
   constructor(
     private _http: Http,
-    private _loginService: LoginService,
+    private _userService: UserService,
     private _socketService: SocketService
   ) {
 
@@ -53,7 +53,7 @@ export class QuejaService {
   }
 
   getQuejTypeWeb() {
-    const qTheaders = new Headers({ 'Content-Type': 'application/json', 'X-Access-Token': this._loginService.getUserId() });
+    const qTheaders = new Headers({ 'Content-Type': 'application/json', 'X-Access-Token': this._userService.getUserId() });
 
     return this._http.get(REST_SERV.qTypeUrl, { headers: qTheaders, withCredentials: true }).toPromise()
       .then((response: Response) => {
@@ -123,7 +123,7 @@ export class QuejaService {
   getPubsWebByPage(morePubs: boolean = false) {
     const pubHeaders = new Headers({
       'Content-Type': 'application/json',
-      'X-Access-Token': this._loginService.getUserId(),
+      'X-Access-Token': this._userService.getUserId(),
       'Page-Pattern': this.pagePattern
     });
     let flag = 1;
@@ -252,7 +252,7 @@ export class QuejaService {
 
   mergeJSONData(queja: Publication) {
     var json = {
-      user_id: this._loginService.getUserId(),
+      user_id: this._userService.getUserId(),
       id: new Date().toISOString(),
       latitude: queja.latitude,
       longitude: queja.longitude,
@@ -360,14 +360,14 @@ export class QuejaService {
       };
 
       xhr.open("post", REST_SERV.postPubUrl, true);
-      xhr.setRequestHeader('X-Access-Token', this._loginService.getUserId());
+      xhr.setRequestHeader('X-Access-Token', this._userService.getUserId());
       xhr.withCredentials = true;
       xhr.send(quejaFormData);
     });
   }
 
   getPubWebById(id: string) {
-    const _headers = new Headers({ 'Content-Type': 'application/json', 'X-Access-Token': this._loginService.getUserId() });
+    const _headers = new Headers({ 'Content-Type': 'application/json', 'X-Access-Token': this._userService.getUserId() });
 
     return this._http.get(REST_SERV.getPubUrl + "/" + id, { headers: _headers, withCredentials: true }).toPromise()
       .then((response: Response) => {
@@ -436,7 +436,7 @@ export class QuejaService {
   }
 
   getPubsFilterWeb(city: string) {
-    const pubHeaders = new Headers({ 'Content-Type': 'application/json', 'X-Access-Token': this._loginService.getUserId() });
+    const pubHeaders = new Headers({ 'Content-Type': 'application/json', 'X-Access-Token': this._userService.getUserId() });
 
     return this._http.get(REST_SERV.pubFilterUrl + "/" + city, { headers: pubHeaders, withCredentials: true }).toPromise()
       .then((response: Response) => {

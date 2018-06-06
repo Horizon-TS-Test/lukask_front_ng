@@ -4,11 +4,13 @@ import { ActionService } from '../../services/action.service';
 import { PatternManager } from '../../tools/pattern-manager';
 import { Comment } from '../../models/comment';
 import { User } from '../../models/user';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'comment-form',
   templateUrl: './comment-form.component.html',
-  styleUrls: ['./comment-form.component.css']
+  styleUrls: ['./comment-form.component.css'],
+  providers: [UserService]
 })
 export class CommentFormComponent implements OnInit {
   @Input() commentModel: Comment;
@@ -19,13 +21,16 @@ export class CommentFormComponent implements OnInit {
 
   constructor(
     private _domSanitizer: DomSanitizer,
-    private _actionService: ActionService
+    private _actionService: ActionService,
+    private _userService: UserService
   ) {
     this.maxChars = 200;
     this.restChars = this.maxChars;
   }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.commentModel.user = this._userService.getStoredUserData();
+  }
 
   validateLettersNumber(event: KeyboardEvent) {
     this.restChars = PatternManager.limitWords(this.maxChars, this.commentModel.description.length);

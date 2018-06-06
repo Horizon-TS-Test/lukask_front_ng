@@ -1,5 +1,4 @@
 import { Component, ViewChild, ViewContainerRef, ComponentFactoryResolver, OnDestroy } from '@angular/core';
-import { LoginService } from './services/login.service';
 import { ContentService } from './services/content.service';
 import { NotifierService } from './services/notifier.service';
 import { AlertComponent } from './components/alert/alert.component';
@@ -7,6 +6,7 @@ import { Subscription } from 'rxjs';
 import { SocketService } from './services/socket.service';
 import { CONTENT_TYPES } from './config/content-type';
 import { Alert } from './models/alert';
+import { UserService } from './services/user.service';
 
 @Component({
   selector: 'app-root',
@@ -20,7 +20,7 @@ export class AppComponent implements OnDestroy {
   private subscription: Subscription;
 
   constructor(
-    private _loginService: LoginService,
+    private _userService: UserService,
     private _contentService: ContentService,
     private _notifierService: NotifierService,
     private _socketService: SocketService,
@@ -41,7 +41,7 @@ export class AppComponent implements OnDestroy {
 
   checkLogin() {
     //this.isLoggedIn = true;
-    this.isLoggedIn = this._loginService.isLoggedIn();
+    this.isLoggedIn = this._userService.isLoggedIn();
   }
 
   ngOnDestroy() {

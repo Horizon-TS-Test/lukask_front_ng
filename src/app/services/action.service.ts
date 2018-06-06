@@ -4,9 +4,9 @@ import { Headers, Http, Response } from '@angular/http';
 import { REST_SERV } from '../rest-url/rest-servers';
 import { throwError } from 'rxjs';
 import { error } from '@angular/compiler/src/util';
-import { LoginService } from './login.service';
 import { User } from '../models/user';
 import { Person } from '../models/person';
+import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +17,7 @@ export class ActionService {
 
   constructor(
     private _http: Http,
-    private _loginService: LoginService
+    private _userService: UserService
   ) {
     this.commentList = [
       new Comment("", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", "", new User("stroker@mail.com", "", "https://smhttp-ssl-33667.nexcesscdn.net/manual/wp-content/uploads/2016/05/mens-beard-styling-guide-1-1170x580.jpg")),
@@ -34,10 +34,9 @@ export class ActionService {
     const requestHeaders = new Headers(
       {
         'Content-Type': 'application/json',
-        'X-Access-Token': this._loginService.getUserId()
+        'X-Access-Token': this._userService.getUserId()
       }
     );
-    console.log(comment.commentParentId);
     const requestBody = JSON.stringify({ description: comment.description, id_publication: comment.publicationId, action_parent: (comment.commentParentId) ? comment.commentParentId : "" });
 
     return this._http.post(REST_SERV.commentUrl, requestBody, { headers: requestHeaders, withCredentials: true })

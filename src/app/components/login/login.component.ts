@@ -50,29 +50,25 @@ export class LoginComponent implements OnInit {
   onLogin() {
     this.activeLoadingContent();
     this._loginService.restLogin(this.user)
-      .then(
-        response => {
-          console.log(response);
-          localStorage.setItem('user_id', response.data.user_id);
-          localStorage.setItem('user_name', response.data.username);
+      .then(response => {
+        $("#resetBtn").click();
+        this.activeLoadingContent(true);
+        this.resetForm();
 
-          $("#resetBtn").click();
-          this.activeLoadingContent(true);
-          this.resetForm();
+        this.alertData = new Alert({ title: 'Proceso Correcto', message: response.title, type: ALERT_TYPES.success });
+        this.setAlert();
 
-          this.alertData = new Alert({ title: 'Proceso Correcto', message: response.title, type: ALERT_TYPES.success });
-          this.setAlert();
-
-          this._router.navigateByUrl('/inicio');
-        }
-      ).catch((err) => {
-        console.log("error", err);
+        this._router.navigateByUrl('/inicio');
+      })
+      .catch((error: Response) => {
+        const respJson: any = error.json();
+        console.log("error", respJson);
 
         $("#resetBtn").click();
         this.activeLoadingContent(true);
         this.resetForm();
 
-        this.alertData = new Alert({ title: 'Proceso Fallido', message: err.title, type: ALERT_TYPES.danger });
+        this.alertData = new Alert({ title: 'Proceso Fallido', message: respJson.title, type: ALERT_TYPES.danger });
         this.setAlert();
       });
   }
