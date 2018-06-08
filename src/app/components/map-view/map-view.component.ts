@@ -6,6 +6,7 @@ import { Publication } from '../../models/publications';
 import { QuejaService } from '../../services/queja.service';
 import pubIcons from '../../data/pub-icons';
 import pubIconsOver from '../../data/pub-icons-over';
+import styleMap from '../../data/map-style';
 import { NotifierService } from '../../services/notifier.service';
 import { CONTENT_TYPES } from '../../config/content-type';
 import { ActivatedRoute } from '@angular/router';
@@ -28,9 +29,7 @@ export class MapViewComponent implements OnInit {
   public zoom: number;
 
   @ViewChild('gmap') gmapElement: any;
-  //map: google.maps.Map;
-  map: any;
-  listaPosiciones: any[];
+  map: any; 
   public pubList: Publication[];
 
   constructor(
@@ -42,14 +41,6 @@ export class MapViewComponent implements OnInit {
     this.lat = -1.6709800;
     this.lng = -78.6471200;
     this.zoom = 19;
-    this.listaPosiciones = [
-      { lat: -1.663585, lng: -78.658242 },
-      { lat: -1.665846, lng: -78.649935 },
-      { lat: -1.672766, lng: -78.654561 },
-      { lat: -1.672800, lng: -78.642033 },
-      { lat: -1.680462, lng: -78.642911 }
-    ];
-
   }
 
   ngOnInit() {
@@ -58,25 +49,20 @@ export class MapViewComponent implements OnInit {
       center: new google.maps.LatLng(-1.669685, -78.651953),
       zoom: 15,
       mapTypeId: google.maps.MapTypeId.ROADMAP,
-      styles: this.estilo
+      styles: styleMap
     };
 
-
-    //Definicion del mapa
+    //Definición del mapa
     this.map = new google.maps.Map(this.gmapElement.nativeElement, mapProp);
     this.getPubs();
 
-    $("#idviewPub").on(("click"), (event) => {
-      console.log("si das cluck")
-      //event.preventDefault();
-      //this.viewPub();
-    });
+    /**
+     * MÉTODO QUE EJECUTA LA ACCIÓN DEL MARKER
+     */
+    $("#idviewPub").on(("click"), (event) => { });
 
     //TOMANDO QUERY PARAMS:
     this.getQueryParams();
-    ////
-    //HACIENDO FOCUS UNA PUBLICACIÓN EN EL MAPA
-    //this.metodFocusPubId();
   }
 
   /**
@@ -88,8 +74,72 @@ export class MapViewComponent implements OnInit {
     });
   }
 
+/**
+ * METODO QUE RECORRE LA LISTA DE QUEJAS Y CREA EL MARKER DE CADA UNA
+ */
+  recorer() {
+    for (let pub of this.pubList) {
+      this.crearMarker(pub.latitude, pub.longitude, this.defineTypeIcon(pub.type), pub.id_publication, pub.type, pub.type.description);
+    }
+  }
+
   /**
-   * METODO QUE VALIDA SI HAY UN ID DEL MARKER
+   * MÉTODO PARA CREAR EL MARKER EN EL MAPA
+   * @param lat = latitud
+   * @param lng = longitud
+   * @param icon = icono
+   * @param pubId = identificador de la publicacion
+   * @param pubtype = tipo de queja
+   * @param description = nombre de la entidad
+   */
+  crearMarker(lat, lng, icon, pubId: string, pubtype, description) {
+    let marker = new google.maps.Marker({
+      position: new google.maps.LatLng(lat, lng),
+      map: this.map,
+      title: description,
+      icon: icon,
+      draggable: false
+    });
+
+    var infowindow = new google.maps.InfoWindow({
+      content: description
+    });
+
+    marker.addListener('click', (event) => {
+      this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_queja, contentData: pubId });
+      $("#idviewPub").click(); //No tocar si no deja de funcionar ojo!!     
+    });
+
+    marker.addListener('mouseover', () => {
+      let icon = this.defineTypeIconOver(pubtype);
+      marker.setIcon(icon);
+      marker.setAnimation(google.maps.Animation.BOUNCE);
+      infowindow.open(this.map, marker);
+    });
+
+    marker.addListener('mouseout', () => {
+      let icon = this.defineTypeIcon(pubtype);
+      marker.setIcon(icon);
+      marker.setAnimation();
+      infowindow.close(this.map, marker);
+    });
+  }
+
+  viewPub(pubId: string = "02ceab07-d0d3-4073-86ba-654534813f86") {
+    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_queja, contentData: pubId });
+  }
+
+  getPubs() {
+    this._quejaService.getPubList().then((pubs: Publication[]) => {
+      this.pubList = pubs;
+      this.recorer();
+      //HACIENDO FOCUS UNA PUBLICACIÓN EN EL MAPA      
+      this.metodFocusPubId();
+    });
+  }
+  
+  /**
+   * METODO QUE VALIDA SI HAY UN ID DE QUEJA PARA UBICARLO EN EL MAPA
    */
   metodFocusPubId() {
     if (this.focusPubId != undefined) {
@@ -108,10 +158,11 @@ export class MapViewComponent implements OnInit {
       }
     }
   }
-/**
- * METODO QUE SEGUN EL TIPO DE ENTIDAD ENVIA EL ICONO
- * @param typeId = TIPO DE ENTIDAD
- */
+
+  /**
+   * METODO QUE SEGUN EL TIPO DE ENTIDAD ENVIA EL ICONO
+   * @param typeId = TIPO DE ENTIDAD
+   */
   defineTypeIcon(typeId) {
     for (let typeIcon of pubIcons) {
       if (typeIcon.type_id == typeId.id) {
@@ -121,7 +172,8 @@ export class MapViewComponent implements OnInit {
   }
 
   /**
-   * Funcion para cambiar de icono cuando el mouse se encuentre encima
+   * MÉTODO PARA CAMBIAR DE ICONO CUANDO EL MOUSE SE ENCUENTRE ENCIMA
+   * @param typeId = Identificador del marker en el que el mouse se encuentra encima 
    * */
   defineTypeIconOver(typeId) {
     for (let typeIconOver of pubIconsOver) {
@@ -130,247 +182,5 @@ export class MapViewComponent implements OnInit {
       }
     }
   }
-/**
- * METODO QUE RECORRE LA LISTA DE QUEJAS Y CREA EL MARKER DE CADA UNA
- */
-  recorer() {
-    for (let pub of this.pubList) {
-      this.crearMarker(pub.latitude, pub.longitude, this.defineTypeIcon(pub.type), pub.id_publication, pub.type, pub.type.description);
-    }
-  }
-
-  /**
-   * Funcion para crear marker en el mapa
-   * @param lat = latitud
-   * @param lng = longitud
-   * @param icon = icono
-   * @param pubId = identificador de la publicacion
-   * @param pubtype = tipo de queja
-   * @param description = nombre de la entidad
-   */
-  crearMarker(lat, lng, icon, pubId: string, pubtype, description) {
-    let marker = new google.maps.Marker({
-      position: new google.maps.LatLng(lat, lng),
-      map: this.map,
-      title: description,
-      icon: icon,
-      draggable: false
-    });
-
-    //Definicion de un evento del marker
-    var infowindow = new google.maps.InfoWindow({
-      content: description
-    });
-
-    marker.addListener('click', (event) => {
-      this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_queja, contentData: pubId });
-      $("#idviewPub").click(); //No tocar si no deja de funcionar ojo!!     
-      //infowindow.open(this.map, marker);
-    });
-
-    marker.addListener('mouseover', () => {
-      let icon = this.defineTypeIconOver(pubtype);
-      marker.setIcon(icon);
-      marker.setAnimation(google.maps.Animation.BOUNCE);
-      infowindow.open(this.map, marker);
-    });
-
-    marker.addListener('mouseout', () => {
-      let icon = this.defineTypeIcon(pubtype);
-      marker.setIcon(icon);
-      marker.setAnimation();
-      infowindow.close(this.map, marker);
-    });
-  }
-
-
-  viewPub(pubId: string = "02ceab07-d0d3-4073-86ba-654534813f86") {
-    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_queja, contentData: pubId });
-  }
-
-  getPubs() {
-    this._quejaService.getPubList().then((pubs: Publication[]) => {
-      this.pubList = pubs;
-      this.recorer();
-      this.metodFocusPubId();
-    });
-  }
-
-  estilo = [
-    {
-      "featureType": "water",
-      "elementType": "geometry",
-      "stylers": [
-        {
-          "color": "#e9e9e9"
-        },
-        {
-          "lightness": 17
-        }
-      ]
-    },
-    {
-      "featureType": "landscape",
-      "elementType": "geometry",
-      "stylers": [
-        {
-          "color": "#f5f5f5"
-        },
-        {
-          "lightness": 20
-        }
-      ]
-    },
-    {
-      "featureType": "road.highway",
-      "elementType": "geometry.fill",
-      "stylers": [
-        {
-          "color": "#ffffff"
-        },
-        {
-          "lightness": 17
-        }
-      ]
-    },
-    {
-      "featureType": "road.highway",
-      "elementType": "geometry.stroke",
-      "stylers": [
-        {
-          "color": "#ffffff"
-        },
-        {
-          "lightness": 29
-        },
-        {
-          "weight": 0.2
-        }
-      ]
-    },
-    {
-      "featureType": "road.arterial",
-      "elementType": "geometry",
-      "stylers": [
-        {
-          "color": "#ffffff"
-        },
-        {
-          "lightness": 18
-        }
-      ]
-    },
-    {
-      "featureType": "road.local",
-      "elementType": "geometry",
-      "stylers": [
-        {
-          "color": "#ffffff"
-        },
-        {
-          "lightness": 16
-        }
-      ]
-    },
-    {
-      "featureType": "poi",
-      "elementType": "geometry",
-      "stylers": [
-        {
-          "color": "#f5f5f5"
-        },
-        {
-          "lightness": 21
-        }
-      ]
-    },
-    {
-      "featureType": "poi.park",
-      "elementType": "geometry",
-      "stylers": [
-        {
-          "color": "#dedede"
-        },
-        {
-          "lightness": 21
-        }
-      ]
-    },
-    {
-      "elementType": "labels.text.stroke",
-      "stylers": [
-        {
-          "visibility": "on"
-        },
-        {
-          "color": "#ffffff"
-        },
-        {
-          "lightness": 16
-        }
-      ]
-    },
-    {
-      "elementType": "labels.text.fill",
-      "stylers": [
-        {
-          "saturation": 36
-        },
-        {
-          "color": "#333333"
-        },
-        {
-          "lightness": 40
-        }
-      ]
-    },
-    {
-      "elementType": "labels.icon",
-      "stylers": [
-        {
-          "visibility": "off"
-        }
-      ]
-    },
-    {
-      "featureType": "transit",
-      "elementType": "geometry",
-      "stylers": [
-        {
-          "color": "#f2f2f2"
-        },
-        {
-          "lightness": 19
-        }
-      ]
-    },
-    {
-      "featureType": "administrative",
-      "elementType": "geometry.fill",
-      "stylers": [
-        {
-          "color": "#fefefe"
-        },
-        {
-          "lightness": 20
-        }
-      ]
-    },
-    {
-      "featureType": "administrative",
-      "elementType": "geometry.stroke",
-      "stylers": [
-        {
-          "color": "#fefefe"
-        },
-        {
-          "lightness": 17
-        },
-        {
-          "weight": 1.2
-        }
-      ]
-    }
-  ];
 
 }
