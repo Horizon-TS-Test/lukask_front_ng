@@ -15,7 +15,7 @@ export class CommentComponent implements OnInit {
   @Input() noReplyBtn: boolean;
 
   constructor(
-    private _domSanitizer: DomSanitizer,
+    public _domSanitizer: DomSanitizer,
     private _notifierService: NotifierService,
   ) { }
 
@@ -24,7 +24,6 @@ export class CommentComponent implements OnInit {
 
   addNewReply(event: any) {
     event.preventDefault();
-    console.log(this.commentModel);
     this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.new_reply, contentData: this.commentModel });
   }
 

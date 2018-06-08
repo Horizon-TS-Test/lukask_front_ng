@@ -12,7 +12,6 @@ import { UserService } from './user.service';
   providedIn: 'root'
 })
 export class ActionService {
-  private replyList: Comment[];
   private isFetchedComments: boolean;
 
   public DEFAULT_LIMIT: number = 2;
@@ -22,14 +21,9 @@ export class ActionService {
     private _userService: UserService
   ) {
     this.isFetchedComments = false;
-
-    this.replyList = [
-      new Comment("", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", "", new User("stroker@mail.com", "", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6HJFHBLjKtKNOWiHnATky2_fhLKAnFe7wa8AcsjCLQ-hEObA1ow")),
-      new Comment("", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", "", new User("stroker@mail.com", "", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6HJFHBLjKtKNOWiHnATky2_fhLKAnFe7wa8AcsjCLQ-hEObA1ow"))
-    ];
   }
 
-  getCommentsWebByPub(pubId: string, pagePattern: string = null, moreComments: boolean = false) {
+  private getCommentsWebByPub(parentId: string, isReplies: boolean, pagePattern: string = null, moreComments: boolean = false) {
     const requestHeaders = new Headers({
       "Content-Type": "application/json",
       'X-Access-Token': this._userService.getUserId(),
@@ -42,7 +36,9 @@ export class ActionService {
     }
 
     if (flag) {
-      return this._http.get(REST_SERV.commentUrl + "/?pub_id=" + pubId + "&limit=" + this.DEFAULT_LIMIT, {
+      let filter = ((!isReplies) ? "/?pub_id=" + parentId : "/?com_id=" + parentId) + "&limit=" + this.DEFAULT_LIMIT + ((isReplies) ? "&replies=true" : "");
+
+      return this._http.get(REST_SERV.commentUrl + filter, {
         headers: requestHeaders,
         withCredentials: true
       }).toPromise()
@@ -56,8 +52,13 @@ export class ActionService {
             }
 
             this.isFetchedComments = true;
-            console.log("[LUKASK QUEJA SERVICE] - COMMENTS OF A PUBLICATION WITH ID " + pubId + " FROM WEB", comments);
-            return {comments: comments, pagePattern: respJson.comments.next};
+            if (isReplies) {
+              console.log("[LUKASK QUEJA SERVICE] - REPLIES OF A COMMENT WITH ID " + parentId + " FROM WEB", comments);
+            }
+            else {
+              console.log("[LUKASK QUEJA SERVICE] - COMMENTS OF A PUBLICATION WITH ID " + parentId + " FROM WEB", comments);
+            }
+            return { comments: comments, pagePattern: respJson.comments.next };
           }
         });
     }
@@ -70,23 +71,23 @@ export class ActionService {
 
   /**
    * COMPLETAR LA CARGA DE COMENTARIOS DESDE CACHÉ
-   * @param pubId 
+   * @param parentId 
    */
-  getCommentsCacheByPub(pubId: string) {
+  private getCommentsCacheByPub(parentId: string) {
     return new Promise((resolve, reject) => {
       this.isFetchedComments = true;
       resolve(null);
     });
   }
 
-  getCommentByPub(pubId: string, pagePattern: string = null) {
+  public getCommentByPub(parentId: string, isReplies: boolean, pagePattern: string = null) {
     /**
      * IMPLEMENTING NETWORK FIRST STRATEGY
     */
-    return this.getCommentsWebByPub(pubId, pagePattern).then((webComments: any) => {
+    return this.getCommentsWebByPub(parentId, isReplies, pagePattern).then((webComments: any) => {
 
       if (!this.isFetchedComments) {
-        return this.getCommentsCacheByPub(pubId).then((cacheComments: Comment[]) => {
+        return this.getCommentsCacheByPub(parentId).then((cacheComments: Comment[]) => {
           return cacheComments;
         });
       }
@@ -103,14 +104,14 @@ export class ActionService {
     });
   }
 
-  getMoreCommentByPub(pubId: string, pagePattern: string) {
+  public getMoreCommentByPub(parentId: string, isReplies: boolean, pagePattern: string) {
     /**
      * IMPLEMENTING NETWORK FIRST STRATEGY
     */
-    return this.getCommentsWebByPub(pubId, pagePattern, true).then((webComments: Comment[]) => {
+    return this.getCommentsWebByPub(parentId, isReplies, pagePattern, true).then((webComments: Comment[]) => {
 
       if (!this.isFetchedComments) {
-        return this.getCommentsCacheByPub(pubId).then((cacheComments: Comment[]) => {
+        return this.getCommentsCacheByPub(parentId).then((cacheComments: Comment[]) => {
           return cacheComments;
         });
       }
@@ -127,7 +128,7 @@ export class ActionService {
     });
   }
 
-  sendComment(comment: Comment) {
+  public sendComment(comment: Comment) {
     const requestHeaders = new Headers(
       {
         'Content-Type': 'application/json',
@@ -146,11 +147,7 @@ export class ActionService {
       .catch((error) => throwError(error.json()));
   }
 
-  getReplyListObj() {
-    return this.replyList;
-  }
-
-  extractCommentJson(jsonComment: any) {
+  public extractCommentJson(jsonComment: any) {
     let usr = this._userService.extractUserJson(jsonComment.user_register);
 
     return new Comment(jsonComment.id_action, jsonComment.description, jsonComment.publication, usr, jsonComment.action_parent);

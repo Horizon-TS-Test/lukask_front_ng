@@ -1,14 +1,23 @@
 <div class="card">
-    <div class="card-block pb-0">
+    <div class="card-block">
+        <comment [commentModel]="parentComment" [noReplyBtn]="true"></comment>
+    </div>
+    <div class="card-block">
         <comment-form [commentModel]="commentForm" (commentResponse)="onCommentResponse($event)"></comment-form>
     </div>
     <ul class="list-group list-group-flush pb-0 max-height-half p-overflow-auto">
-        <li class="f-child-full-space list-group-item">
-            <comment [commentModel]="mainComment" [noReplyBtn]="true"></comment>
-        </li>
         <li *ngFor="let reply of replyList" class="f-child-full-space list-group-item">
             <comment [commentModel]="reply" [isReply]="true"></comment>
         </li>
     </ul>
+    <div *ngIf="pagePattern || firstPattern" class="card-footer text-center">
+        <a href="#" (click)="askForMore($event)" class="p-dark-text-color">
+            <small *ngIf="pagePattern">Ver respuestas anteriores</small>
+            <small *ngIf="!pagePattern && firstPattern">Ocultar respuestas anteriores</small>
+        </a>
+        <div class="bottom-loader {{ activeClass }} col-12 d-flex justify-content-center align-items-center">
+            <img src="/assets/images/forms/preloader.gif" width="50px">
+        </div>
+    </div>
 </div>
 <material-btn-list [materialBtns]="matButtons" (someBtnAction)="getButtonAction($event)"></material-btn-list>

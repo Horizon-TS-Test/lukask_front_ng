@@ -42,12 +42,16 @@ export class ContentService {
       if (!contentLayer.hasClass("show-dyna-cont")) {
         contentLayer.parent().find(".fixed-background").addClass("on");
         contentLayer.addClass("show-dyna-cont");
+        contentLayer.find(".personal-dyna-down").addClass("show");
+        contentLayer.find(".personal-material-btn").addClass("show");
       }
     }
     else {
       if (contentLayer.hasClass("show-dyna-cont")) {
         contentLayer.parent().find(".fixed-background").removeClass("on");
         contentLayer.removeClass("show-dyna-cont");
+        contentLayer.find(".personal-dyna-down").removeClass("show");
+        contentLayer.find(".personal-material-btn").removeClass("show");
       }
     }
   }

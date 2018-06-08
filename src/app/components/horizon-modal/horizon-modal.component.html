@@ -1,4 +1,4 @@
-<div class="personal-content personal-over-unset">
+<div class="personal-content" id="h-modal">
   <div class="fixed-background" [ngClass]="{'opacity-light': _dynaContent.contentType == contentTypes.new_reply}"></div>
 
   <div class="min-height-full personal-dyna-cont horizon-modal col-12 p-0 d-flex flex-column">
@@ -12,9 +12,9 @@
       <queja-detail *ngSwitchCase="contentTypes.view_queja" [idQueja]="_dynaContent.contentData" (closeModal)="close($event)"></queja-detail>
 
       <div class="personal-dyna-down" *ngSwitchCase="contentTypes.new_reply">
-        <comment-reply [mainComment]="_dynaContent.contentData" (closeModal)="close($event)"></comment-reply>
+        <comment-reply [parentComment]="_dynaContent.contentData" (closeModal)="close($event)"></comment-reply>
       </div>
     </ng-container>
   </div>
-
+  
 </div>

@@ -20,7 +20,7 @@ export class CommentFormComponent implements OnInit {
   public restChars: number;
 
   constructor(
-    private _domSanitizer: DomSanitizer,
+    public _domSanitizer: DomSanitizer,
     private _actionService: ActionService,
     private _userService: UserService
   ) {
