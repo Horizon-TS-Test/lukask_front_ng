@@ -18,8 +18,7 @@ declare var $: any;
 @Component({
   selector: 'app-map-view',
   templateUrl: './map-view.component.html',
-  styleUrls: ['./map-view.component.css'],
-  providers: [QuejaService]
+  styleUrls: ['./map-view.component.css']
 })
 export class MapViewComponent implements OnInit {
   private focusPubId: string;
@@ -40,17 +39,19 @@ export class MapViewComponent implements OnInit {
   ) {
     this.lat = -1.6709800;
     this.lng = -78.6471200;
-    this.zoom = 19;
+    this.zoom = 15;
   }
 
   ngOnInit() {
     this._contentService.fadeInComponent();
+    this.getGps()
     var mapProp = {
-      center: new google.maps.LatLng(-1.669685, -78.651953),
-      zoom: 15,
+      center: new google.maps.LatLng(this.lat, this.lng),
+      zoom: this.zoom,
       mapTypeId: google.maps.MapTypeId.ROADMAP,
       styles: styleMap
     };
+
 
     //Definición del mapa
     this.map = new google.maps.Map(this.gmapElement.nativeElement, mapProp);
@@ -66,6 +67,27 @@ export class MapViewComponent implements OnInit {
   }
 
   /**
+   * MÉTODO QUE OBTIENE LA POSICIÓN DESDE DONDE SE EMITE LA QUEJA
+   */
+  getGps() {
+    if (!('geolocation' in navigator)) {
+      return;
+    }
+
+    //ACCESS TO THE GPS:
+    navigator.geolocation.getCurrentPosition((position) => {
+      this.lat = position.coords.latitude;
+      this.lng = position.coords.longitude;
+
+    }, function (err) {
+      console.log(err);
+      //EXCEDED THE TIMEOUT
+      return;
+    }, { timeout: 7000 });
+  }
+
+
+  /**
    * MÉTODO PARA OBTENER LOS PARÁMETROS QUE LLEGAN EN EL URL:
    */
   getQueryParams() {
@@ -79,6 +101,7 @@ export class MapViewComponent implements OnInit {
  */
   recorer() {
     for (let pub of this.pubList) {
+      console.log(pub);
       this.crearMarker(pub.latitude, pub.longitude, this.defineTypeIcon(pub.type), pub.id_publication, pub.type, pub.type.description);
     }
   }
@@ -149,10 +172,11 @@ export class MapViewComponent implements OnInit {
    * METODO QUE ENFOCA EL MARKER BUSCADO
    */
   focus() {
+    let focusZoom=19;
     for (let pub of this.pubList) {
       if (this.focusPubId == pub.id_publication) {
         this.map.setCenter({ lat: pub.latitude, lng: pub.longitude });
-        this.map.setZoom(19);
+        this.map.setZoom(focusZoom);
       }
     }
   }
@@ -163,7 +187,7 @@ export class MapViewComponent implements OnInit {
    */
   defineTypeIcon(typeId) {
     for (let typeIcon of pubIcons) {
-      if (typeIcon.type_id == typeId.id) {
+      if (typeIcon.type_id == typeId.description) {
         return typeIcon.icon;
       }
     }
