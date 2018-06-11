@@ -8,6 +8,7 @@ export var REST_SERV = {
     pubFilterUrl: 'http://192.168.1.37:3000/publication/filter',
     qTypeUrl: 'http://192.168.1.37:3000/qtype',
     commentUrl: 'http://192.168.1.37:3000/comment',
+    relevanceUrl: 'http://192.168.1.37:3000/relevance',
     mediaBack: 'http://192.168.1.58:8081',
     pushSub: 'http://192.168.1.19:3200/subscribe',
     socketServerUrl: 'http://192.168.1.37:3000'

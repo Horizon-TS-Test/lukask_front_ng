@@ -1219,6 +1219,26 @@ agm-map {
         color: $secondary-text !important;
     }
 }
+
+.no-border-button {
+    border: none !important;
+    background: transparent !important;
+    
+    fa, span {
+        font-size: 1.1rem !important;
+        color: $primary !important;
+        transition: all .5s ease;
+    }    
+}
+.no-border-button.dark {
+
+    fa, span {
+        color: $primary-dark !important;
+    }
+}
+.no-border-button:hover {
+    opacity: .8;
+}
 /////////////////////
 
 //////CAMERA:

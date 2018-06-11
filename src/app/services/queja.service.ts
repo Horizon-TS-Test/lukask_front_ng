@@ -312,12 +312,18 @@ export class QuejaService {
     let type: QuejaType;
     let medios: Media;
 
+    //PREPPENDING THE BACKEND SERVER IP/DOMAIN:
+    pubJson.user_register.media_profile = ((pubJson.user_register.media_profile.indexOf("http") == -1) ? REST_SERV.mediaBack : "") + pubJson.user_register.media_profile;
+    ////
     usr = new User(pubJson.user_register.email, '', pubJson.user_register.media_profile);
     usr.person = new Person(pubJson.user_register.person.id_person, pubJson.user_register.person.id_person.age, pubJson.user_register.person.identification_card, pubJson.user_register.person.name, pubJson.user_register.person.last_name, pubJson.user_register.person.telephone, pubJson.user_register.person.address, pubJson.user_register.person.active);
     type = new QuejaType(pubJson.type_publication, pubJson.type_publication_detail);
 
-    pub = new Publication(pubJson.id_publication, pubJson.latitude, pubJson.length, pubJson.detail, pubJson.date_publication, pubJson.priority_publication, pubJson.active, type, usr);
+    pub = new Publication(pubJson.id_publication, pubJson.latitude, pubJson.length, pubJson.detail, pubJson.date_publication, pubJson.priority_publication, pubJson.active, type, usr, pubJson.location, pubJson.count_relevance, pubJson.user_relevance);
     for (let med of pubJson.medios) {
+      //PREPPENDING THE BACKEND SERVER IP/DOMAIN:
+      med.media_file = ((med.media_file.indexOf("http") == -1) ? REST_SERV.mediaBack : "") + med.media_file;
+      ////
       pub.media.push(new Media(med.id_multimedia, med.format_multimedia, med.media_file));
     }
 

@@ -2,16 +2,17 @@
   <div class="personal-queja card mb-3 pb-0">
     <div class="card-header d-flex justify-content-between align-items-center">
       <div class="d-flex justify-content-center align-items-center">
-        <a href="#" class="ml-1 btn btn-sm btn-outline-info personal-icon-btn" title="Apoyo">
+        <a href="#" (click)="onRelevance($event)" class="ml-1 p-1 btn btn-sm btn-info no-border-button" [ngClass]="{ 'dark': queja.user_relevance }"
+          title="Apoyo">
           <fa name="star"></fa>
         </a>
-        <a href="#" class="ml-1 btn btn-sm btn-outline-info personal-icon-btn" title="Comentar">
+        <a href="#" class="ml-1 p-1 btn btn-sm btn-info no-border-button" title="Comentar">
           <fa name="pencil"></fa>
         </a>
-        <a href="#" class="ml-1 btn btn-sm btn-outline-info personal-icon-btn" title="Localizar">
+        <a href="#" class="ml-1 p-1 btn btn-sm btn-info no-border-button" title="Localizar">
           <fa name="map-marker"></fa>
         </a>
-        <a href="#" class="ml-1 btn btn-sm btn-outline-info personal-icon-btn" title="Denunciar">
+        <a href="#" class="ml-1 p-1 btn btn-sm btn-info no-border-button" title="Denunciar">
           <fa name="ban"></fa>
         </a>
       </div>
@@ -20,7 +21,7 @@
       </div>
     </div>
     <div class="personal-usr-queja py-0 card-block d-flex justify-content-end align-items-center">
-      {{queja.user.username}}
+      {{queja.user.person.name}} {{queja.user.person.last_name}}
       <div class="ml-2 my-0 personal-profile-img" [style.background-image]="_domSanitizer.bypassSecurityTrustStyle('url(' + queja.user.profileImg + ')')">
       </div>
     </div>

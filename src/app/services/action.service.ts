@@ -128,6 +128,10 @@ export class ActionService {
     });
   }
 
+  /**
+   * MÉTODO PARA GUARDAR UN COMENTARIO O UNA RESPUESTA A UN COMENTARIO:
+   * @param comment EL COMENTARIO O RESPUESTA A ENVIAR
+   */
   public sendComment(comment: Comment) {
     const requestHeaders = new Headers(
       {
@@ -145,6 +149,27 @@ export class ActionService {
         return respJson;
       })
       .catch((error) => throwError(error.json()));
+  }
+
+  /**
+   * 
+   */
+  public sendRelevance(pubId: string) {
+    const requestHeaders = new Headers(
+      {
+        'Content-Type': 'application/json',
+        'X-Access-Token': this._userService.getUserId()
+      }
+    );
+    const requestBody = JSON.stringify({ id_publication: pubId });
+
+    return this._http.post(REST_SERV.relevanceUrl, requestBody, { headers: requestHeaders, withCredentials: true })
+      .toPromise()
+      .then((response: Response) => {
+        let respJson = response.json().data;
+
+        return respJson;
+      });
   }
 
   public extractCommentJson(jsonComment: any) {

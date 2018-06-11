@@ -153,7 +153,7 @@ export class CommentReplyComponent implements OnInit {
    */
   updateCommentList(commentJson: any, action: string) {
     console.log(commentJson.action_parent);
-    if (commentJson.action_parent == this.parentComment.commentId) {
+    if (commentJson.description != null && commentJson.action_parent == this.parentComment.commentId) {
       let lastComment: Comment, newCom: Comment;
 
       //PREPPENDING THE BACKEND SERVER IP/DOMAIN:

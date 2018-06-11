@@ -16,6 +16,8 @@ export class Publication {
         public type?: QuejaType,
         public user?: User,
         public location?: string,
+        public relevance_counter?: number,
+        public user_relevance?: boolean
     ) {
         this.media = [];
     }

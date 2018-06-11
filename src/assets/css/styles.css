@@ -922,6 +922,20 @@ agm-map {
   .custom-btn fa, .custom-btn span {
     color: #fff !important; }
 
+.no-border-button {
+  border: none !important;
+  background: transparent !important; }
+  .no-border-button fa, .no-border-button span {
+    font-size: 1.1rem !important;
+    color: #5dbeb6 !important;
+    transition: all .5s ease; }
+
+.no-border-button.dark fa, .no-border-button.dark span {
+  color: #004360 !important; }
+
+.no-border-button:hover {
+  opacity: .8; }
+
 .camera-content {
   position: fixed !important;
   top: 0 !important;

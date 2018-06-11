@@ -81,6 +81,21 @@ export class QuejaComponent implements OnInit {
     ArrayManager.backendServerSays("CREATE", this.commentList, lastComment, event);
   }
 
+  onRelevance(event: any) {
+    event.preventDefault();
+    this._actionService.sendRelevance(this.queja.id_publication)
+      .then((data: boolean) => {
+        console.log(data);
+        if (data) {
+          this.queja.user_relevance = true;
+        }
+        else {
+          this.queja.user_relevance = false;
+        }
+      })
+      .catch((error) => console.log(error));
+  }
+
   /**
    * MÉTODO PARA CARGAR MAS COMENTARIOS
    */
@@ -151,7 +166,7 @@ export class QuejaComponent implements OnInit {
    */
   updateCommentList(commentJson: any, action: string) {
     console.log(commentJson.publication);
-    if (commentJson.publication == this.queja.id_publication) {
+    if (commentJson.description != null && commentJson.publication == this.queja.id_publication) {
       let lastComment: Comment, newCom: Comment;
 
       //PREPPENDING THE BACKEND SERVER IP/DOMAIN:
