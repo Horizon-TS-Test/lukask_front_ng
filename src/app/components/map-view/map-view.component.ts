@@ -99,7 +99,7 @@ export class MapViewComponent implements OnInit {
 /**
  * METODO QUE RECORRE LA LISTA DE QUEJAS Y CREA EL MARKER DE CADA UNA
  */
-  recorer() {
+  fetchPub() {
     for (let pub of this.pubList) {
       console.log(pub);
       this.crearMarker(pub.latitude, pub.longitude, this.defineTypeIcon(pub.type), pub.id_publication, pub.type, pub.type.description);
@@ -153,7 +153,7 @@ export class MapViewComponent implements OnInit {
   getPubs() {
     this._quejaService.getPubList().then((pubs: Publication[]) => {
       this.pubList = pubs;
-      this.recorer();
+      this.fetchPub();
       //HACIENDO FOCUS UNA PUBLICACIÓN EN EL MAPA      
       this.metodFocusPubId();
     });
