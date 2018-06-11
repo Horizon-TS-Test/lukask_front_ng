@@ -199,7 +199,7 @@ export class MapViewComponent implements OnInit {
    * */
   defineTypeIconOver(typeId) {
     for (let typeIconOver of pubIconsOver) {
-      if (typeIconOver.type_id == typeId.id) {
+      if (typeIconOver.type_id == typeId.description) {
         return typeIconOver.icon;
       }
     }

@@ -43,6 +43,7 @@ import { MaterialButtonComponent } from './components/material-button/material-b
 import { MaterialBtnListComponent } from './components/material-btn-list/material-btn-list.component';
 import { CommentComponent } from './components/comment/comment.component';
 import { CommentReplyComponent } from './components/comment-reply/comment-reply.component';
+import { EditUserComponent } from './components/edit-user/edit-user.component';
 
 @NgModule({
   declarations: [
@@ -67,7 +68,8 @@ import { CommentReplyComponent } from './components/comment-reply/comment-reply.
     MaterialButtonComponent,
     MaterialBtnListComponent,
     CommentComponent,
-    CommentReplyComponent
+    CommentReplyComponent,
+    EditUserComponent
   ],
   imports: [
     HttpModule,
