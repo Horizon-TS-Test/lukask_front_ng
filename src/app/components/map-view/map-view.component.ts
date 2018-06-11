@@ -125,9 +125,7 @@ export class MapViewComponent implements OnInit {
     });
   }
 
-  viewPub(pubId: string = "02ceab07-d0d3-4073-86ba-654534813f86") {
-    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_queja, contentData: pubId });
-  }
+
 
   getPubs() {
     this._quejaService.getPubList().then((pubs: Publication[]) => {
