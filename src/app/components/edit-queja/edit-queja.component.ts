@@ -98,14 +98,14 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.self = $("#personal-edit-q");
     this.formQuej = this.setFormGroup();
-    this.initMapa();
     this.getGps();
+    this.initMapa();
   }
 
   initMapa() {
     //Inicalizacion del mapa
     var mapProp = {
-      center: new google.maps.LatLng(-1.669685, -78.651953),
+      center: new google.maps.LatLng(this._gps.latitude, this._gps.longitude),
       zoom: 15,
       mapTypeId: google.maps.MapTypeId.ROADMAP
     };
