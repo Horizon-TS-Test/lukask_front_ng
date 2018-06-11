@@ -139,7 +139,12 @@ export class ActionService {
         'X-Access-Token': this._userService.getUserId()
       }
     );
-    const requestBody = JSON.stringify({ description: comment.description, id_publication: comment.publicationId, action_parent: (comment.commentParentId) ? comment.commentParentId : "" });
+    const requestBody = JSON.stringify({
+      description: comment.description,
+      id_publication: comment.publicationId,
+      action_parent: (comment.commentParentId) ? comment.commentParentId : "",
+      active: true
+    });
 
     return this._http.post(REST_SERV.commentUrl, requestBody, { headers: requestHeaders, withCredentials: true })
       .toPromise()
@@ -154,19 +159,23 @@ export class ActionService {
   /**
    * 
    */
-  public sendRelevance(pubId: string) {
+  public sendRelevance(pubId: string, isRelevance: boolean) {
+    console.log("isRelevance: " + isRelevance);
     const requestHeaders = new Headers(
       {
         'Content-Type': 'application/json',
         'X-Access-Token': this._userService.getUserId()
       }
     );
-    const requestBody = JSON.stringify({ id_publication: pubId });
+    const requestBody = JSON.stringify({
+      id_publication: pubId,
+      active: isRelevance
+    });
 
     return this._http.post(REST_SERV.relevanceUrl, requestBody, { headers: requestHeaders, withCredentials: true })
       .toPromise()
       .then((response: Response) => {
-        let respJson = response.json().data;
+        let respJson = response.json().relevanceData.active;
 
         return respJson;
       });

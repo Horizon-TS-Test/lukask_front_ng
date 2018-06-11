@@ -34,6 +34,8 @@ export class QuejaListComponent implements OnInit, OnDestroy {
     private _contentService: ContentService,
     private _notifierService: NotifierService
   ) {
+    this.activeClass = this.LOADER_HIDE;
+    
     this.getPubList();
 
     /**

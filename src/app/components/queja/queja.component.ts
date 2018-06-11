@@ -52,6 +52,7 @@ export class QuejaComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log(this.queja.user_relevance);
     this.resetComment();
     this.getComments();
   }
@@ -84,14 +85,14 @@ export class QuejaComponent implements OnInit {
 
   onRelevance(event: any) {
     event.preventDefault();
-    this._actionService.sendRelevance(this.queja.id_publication)
-      .then((data: boolean) => {
-        console.log(data);
-        if (data) {
-          this.queja.user_relevance = true;
+    this._actionService.sendRelevance(this.queja.id_publication, !this.queja.user_relevance)
+      .then((active: boolean) => {
+        console.log(active);
+        if (active) {
+          this.queja.user_relevance = active;
         }
         else {
-          this.queja.user_relevance = false;
+          this.queja.user_relevance = active;
         }
       })
       .catch((error) => console.log(error));

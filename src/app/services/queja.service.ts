@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { Http, Response, Headers } from '@angular/http';
 import { throwError } from 'rxjs';
 
@@ -34,6 +34,7 @@ export class QuejaService {
 
   public pubList: Publication[];
   public pubFilterList: Publication[];
+  public _mapEmitter = new EventEmitter<string>();
 
   constructor(
     private _http: Http,
@@ -501,6 +502,7 @@ export class QuejaService {
         switch (stream) {
           case "publication":
             this.updatePubList(socketPub.payload.data, action);
+            this._mapEmitter.emit(socketPub.payload.data.id_publication);
             break;
           case "multimedia":
             /**
