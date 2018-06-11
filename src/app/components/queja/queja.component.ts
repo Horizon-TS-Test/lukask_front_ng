@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Queja } from '../../interfaces/queja.interface';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Publication } from '../../models/publications';
@@ -12,8 +12,8 @@ import { User } from '../../models/user';
 import { SocketService } from '../../services/socket.service';
 import { REST_SERV } from '../../rest-url/rest-servers';
 import { ArrayManager } from '../../tools/array-manager';
+import { Router } from '@angular/router';
 
-declare var $: any;
 declare var writeData: any;
 
 @Component({
@@ -41,7 +41,8 @@ export class QuejaComponent implements OnInit {
     public _domSanitizer: DomSanitizer,
     private _notifierService: NotifierService,
     private _actionService: ActionService,
-    private _socketService: SocketService
+    private _socketService: SocketService,
+    private _router: Router,
   ) {
     this.maxChars = 200;
     this.restChars = this.maxChars;
@@ -141,6 +142,24 @@ export class QuejaComponent implements OnInit {
         }, 1000)
       }
     }
+  }
+
+  /**
+   * MÉTODO PARA GEOLOCALIZAR LA QUEJA SELECCIONADA
+   */
+  geolocatePub(event: any) {
+    event.preventDefault();
+    //REF:
+    this._router.navigateByUrl(
+      this._router.createUrlTree(
+        ['/mapview'],
+        {
+          queryParams: {
+            pubId: this.queja.id_publication
+          }
+        }
+      )
+    );
   }
 
   /**

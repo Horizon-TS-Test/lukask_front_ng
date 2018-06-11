@@ -79,7 +79,6 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
         this.addQuejaSnapShot(snapShot);
       }
     );
-    /////
 
     this.closeModal = new EventEmitter<boolean>();
     this.matButtons = [
@@ -98,7 +97,6 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.self = $("#personal-edit-q");
-
     this.formQuej = this.setFormGroup();
     this.initMapa();
     this.getGps();
@@ -141,16 +139,17 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
   addQuejaSnapShot(media: MediaFile) {
     let cardImg = $("#frmQ").find(".card-img-top");
     let defaultQuejaImg = $("#frmQ").find(".card-img-top > #defaultQuejaImg");
-
     defaultQuejaImg.css("display", "none");
     cardImg.append('<img class="mb-1" src="' + media.mediaFileUrl + '" width="100%">');
     this.filesToUpload.push(media.mediaFile);
   }
 
+  /**
+   * METODO PARA OBTENER LA FECHA
+   */
   getFormattedDate() {
     var date = new Date();
     var str = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-
     return str;
   }
 
@@ -163,13 +162,11 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
     const formGroup = this.formBuilder.group({
       fcnDetail: [null, Validators.required]
     });
-
     return formGroup;
   }
 
   /**
-   * Función que valida la posición y el nombre de la organizacion al
-   * recibir el cambio de valor desde el select
+   * METODO QUE VALIDA LA POSICION Y EL NOMBRE DE LA ORGANIZACION AL RECIBIR EL CAMBIO DE VALOR DESDE EL SELECT
    * @param event 
    */
   getSelect2Value(event: string) {
@@ -177,11 +174,12 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
     this.validateQuejaRepeat();
   }
 
+  /**
+   * METODO QUE VALIDA SI LA PUBLICACION CUMPLE ESTA DENTRO DEL AREA ESTABLECIDA
+   */
   validateQuejaRepeat() {
-    console.log(this._gps.latitude + " " + this._gps.longitude + " " + this.quejaType);
     let band = false;
     for (let pub of this.pubFilterList) {
-      console.log(pub.latitude + " " + pub.longitude + " " + pub.type.id)
       if (this.drawCircle({ lat: pub.latitude, lng: pub.longitude }, pub.type.id)) {
         band = true;
       }
@@ -192,10 +190,18 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * METODO ACTIVA EL MODAL DE AVISOS EN LA PANTALLA
+   */
   setAlert() {
     this._notifierService.sendAlert(this.alertData);
   }
 
+  /**
+   * METODO QUE DIBUJA EL PERIMETRO ESTABLECIDO 
+   * @param pos = Posición desde la cual se esta emitiendo la queja
+   * @param pubType = Tipo de queja
+   */
   drawCircle(pos: any, pubType: string) {
     var cityCircle = new google.maps.Circle({
       center: pos,
@@ -205,16 +211,18 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
     this.map.setCenter(pos);
     this.map.setZoom(19);
     var posi = new google.maps.LatLng(this._gps.latitude, this._gps.longitude);
-    //var posi = new google.maps.LatLng(-1.6805658273366262, -78.64302486011889);
-
     if (this.validatePosition(cityCircle, posi) && this.quejaType == pubType) {
-      console.log(cityCircle.center.lat() + " " + cityCircle.center.lng());
       return true;
     } else {
       return false;
     }
   }
 
+  /**
+   * METODO CALCULA SI LA POSICION DADA ESTA DENTRO DEL AREA ESTABLECIDA 
+   * @param circle = Área permitida 
+   * @param latLngA = Posiciòn desde la cual se emite la queja
+   */
   validatePosition(circle, latLngA) {
     var bounds = circle.getBounds();
     bounds = circle.getBounds();
@@ -225,6 +233,9 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * MÉTODO QUE OBTIENE LA POSICIÓN DESDE DONDE SE EMITE LA QUEJA
+   */
   getGps() {
     if (!('geolocation' in navigator)) {
       return;
@@ -243,18 +254,21 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Function que toma la direccion de la ubicacion de donde se emite la queja.
+   * MÉTODO QUE TOMA LA CIUDAD Y DIRECCIÓN DE DONDE SE EMITE LA QUEJA
    */
   getLocation() {
     var geocoder = new google.maps.Geocoder;
     geocoder.geocode({ 'latLng': { lat: this._gps.latitude, lng: this._gps.longitude } }, (results, status) => {
       if (status === google.maps.GeocoderStatus.OK) {
-        this._locationAdress = results[0].address_components[0].long_name;
-        this._locationCity = results[0].address_components[1].long_name;
+        var str = results[0].formatted_address;
+        var dir = str.split(",");
+        this._locationAdress = dir[0];
+        this._locationCity = dir[1];
         this.callPubs();
       }
     });
   }
+
 
   publishQueja() {
     this.newPub = new Publication("", this._gps.latitude, this._gps.longitude, this.formQuej.value.fcnDetail, this.getFormattedDate(), null, null, new QuejaType(this.quejaType, null), null, this._locationCity);
@@ -263,7 +277,6 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
         this.newPub.media.push(new Media("", "", "", null, this.filesToUpload[i], i + "-" + this.getFormattedDate() + ".png"));
       }
     }
-
     this._quejaService.sendQueja(this.newPub);
     this.formQuej.reset();
   }
@@ -283,8 +296,8 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
     }
   }
   /**
-     * TOMANDO LA LISTA DE PUBLICACIONES CON FILTRO DESDE EL BACKEND:
-     */
+  * TOMANDO LA LISTA DE PUBLICACIONES CON FILTRO DESDE EL BACKEND:
+  */
   callPubs() {
     console.log(this._locationCity);
     this._quejaService.getPubListFilter(this._locationCity)
