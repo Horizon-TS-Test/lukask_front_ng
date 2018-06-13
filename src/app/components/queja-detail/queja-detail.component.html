@@ -1,23 +1,41 @@
-<div class="col-12 py-0 px-1">
-  <div *ngIf="quejaDetail" class="personal-queja card mb-3 pb-0">
-    <div class="card-header d-flex justify-content-between align-items-center">
-      <task-list [queja]="quejaDetail"></task-list>
-      <div>
-        <small>{{quejaDetail.date_pub}}</small>
+<div class="personal-content min-height-full max-height-full p-overflow-auto">
+  <div class="col-12 pt-1 px-1">
+    <div *ngIf="quejaDetail" class="personal-queja card mb-3 pb-0">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <task-list [queja]="quejaDetail"></task-list>
       </div>
-    </div>
-    <div class="personal-usr-queja py-0 card-block d-flex justify-content-end align-items-center">
-      {{quejaDetail.user.person.name}} {{quejaDetail.user.person.last_name}} 
-      <div class="ml-2 my-0 personal-profile-img" [style.background-image]="_domSanitizer.bypassSecurityTrustStyle('url(' + quejaDetail.user.profileImg + ')')">
+      <div class="personal-usr-queja py-0 card-block d-flex justify-content-end align-items-center">
+        {{quejaDetail.user.person.name}} {{quejaDetail.user.person.last_name}}
+        <div class="ml-2 my-0 personal-profile-img" [style.background-image]="_domSanitizer.bypassSecurityTrustStyle('url(' + quejaDetail.user.profileImg + ')')">
+        </div>
       </div>
-    </div>
-    <div class="card-img-top">
-      <owl-carousel id="corousel-detail-q" class="personal-owl-carousel personal-owl-nav" [options]="carouselOptions" [carouselClasses]="['owl-theme']">
-        <img *ngFor="let med of quejaDetail.media" class="mb-1" src="{{med.url}}" width="100%">
-      </owl-carousel>
-    </div>
-    <div class="card-block text-justify">
-      {{quejaDetail.detail}}
+      <div class="card-img-top">
+        <owl-carousel id="corousel-detail-q" class="personal-owl-carousel personal-owl-nav" [options]="carouselOptions" [carouselClasses]="['owl-theme']">
+          <img *ngFor="let med of quejaDetail.media" class="mb-1" src="{{med.url}}" width="100%">
+        </owl-carousel>
+      </div>
+      <div class="card-block text-justify">
+        {{quejaDetail.detail}}
+      </div>
+
+      <ul class="list-group list-group-flush pb-0">
+        <li class="f-child-full-space list-group-item">
+          <fa name="calendar" class="mr-1"></fa>
+          <small class="ml-1">{{ quejaDetail.date_pub }}</small>
+        </li>
+        <li class="f-child-full-space list-group-item">
+          <fa name="bullhorn" class="mr-1"></fa>
+          <small class="ml-1">{{ quejaDetail.type.description }}</small>
+        </li>
+        <li class="f-child-full-space list-group-item">
+          <fa name="map-marker" class="mr-1"></fa>
+          <small class="ml-1">{{ quejaDetail.location }}</small>
+        </li>
+        <li class="f-child-full-space list-group-item">
+          <fa name="location-arrow" class="mr-1"></fa>
+          <small class="ml-1">Av. Alfonso Chávez km 301</small>
+        </li>
+      </ul>
     </div>
   </div>
 </div>

@@ -38,7 +38,7 @@
     </a>
     <ul class="list-group list-group-flush pb-0">
       <li class="list-group-item pb-0">
-        <comment-form [commentModel]="newComment" (commentResponse)="onCommentResponse($event)"></comment-form>
+        <comment-form class="col-12 p-0" [commentModel]="newComment" (commentResponse)="onCommentResponse($event)"></comment-form>
       </li>
       <li *ngFor="let comment of commentList" class="list-group-item">
         <comment [commentModel]="comment"></comment>

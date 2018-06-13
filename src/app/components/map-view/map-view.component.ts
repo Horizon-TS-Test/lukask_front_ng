@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ContentService } from '../../services/content.service';
 import { ViewChild } from '@angular/core';
-import { } from '@types/googlemaps';
 import { Publication } from '../../models/publications';
 import { QuejaService } from '../../services/queja.service';
 import pubIcons from '../../data/pub-icons';

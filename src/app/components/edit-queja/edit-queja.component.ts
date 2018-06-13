@@ -3,8 +3,7 @@ import { ContentService } from '../../services/content.service';
 import { Publication } from '../../models/publications';
 import { Select2 } from '../../interfaces/select2.interface';
 import { QuejaService } from '../../services/queja.service';
-import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
-import { FileManager } from './../../tools/file-manager';
+import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { NotifierService } from '../../services/notifier.service';
 import { CONTENT_TYPES } from '../../config/content-type';
@@ -17,7 +16,6 @@ import { DynaContent } from '../../interfaces/dyna-content.interface';
 import { HorizonButton } from '../../interfaces/horizon-button.interface';
 
 import { ViewChild } from '@angular/core';
-import { } from '@types/googlemaps';
 import { Alert } from '../../models/alert';
 import { ALERT_TYPES } from '../../config/alert-types';
 
@@ -37,17 +35,17 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
 
   private _SUBMIT = 0;
   private _CLOSE = 1;
-
   private self: any;
+
   private quejaType: string;
   private _gps: Gps;
   private newPub: Publication;
   private subscription: Subscription;
-  private _locationAdress: string;
   private alertData: Alert;
   private pubFilterList: Publication[];
-  private _locationCity: string;
-
+  
+  public _locationCity: string;
+  public _locationAdress: string;
   public _ref: any;
   public _dynaContent: DynaContent;
   public tipoQuejaSelect: Select2[];
@@ -57,7 +55,6 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
   public matButtons: HorizonButton[];
 
   constructor(
-    private _contentService: ContentService,
     private _quejaService: QuejaService,
     private _notifierService: NotifierService,
     private _cameraService: CameraService,
@@ -97,6 +94,8 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.self = $("#personal-edit-q");
+    $("#hidden-btn").on(("click"), (event) => { }); //NO TOCAR!
+
     this.formQuej = this.setFormGroup();
     this.getGps();
     this.initMapa();
@@ -264,11 +263,23 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
         var dir = str.split(",");
         this._locationAdress = dir[0];
         this._locationCity = dir[1];
+        $("#hidden-btn").click();
         this.callPubs();
       }
     });
   }
 
+  /**
+  * TOMANDO LA LISTA DE PUBLICACIONES CON FILTRO DESDE EL BACKEND:
+  */
+  callPubs() {
+    console.log(this._locationCity);
+    this._quejaService.getPubListFilter(this._locationCity)
+      .then((pubsFilter: Publication[]) => {
+        this.pubFilterList = pubsFilter;
+        console.log(this.pubFilterList);
+      });
+  }
 
   publishQueja() {
     this.newPub = new Publication("", this._gps.latitude, this._gps.longitude, this.formQuej.value.fcnDetail, this.getFormattedDate(), null, null, new QuejaType(this.quejaType, null), null, this._locationCity);
@@ -294,17 +305,6 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
         this.closeModal.emit(true);
         break;
     }
-  }
-  /**
-  * TOMANDO LA LISTA DE PUBLICACIONES CON FILTRO DESDE EL BACKEND:
-  */
-  callPubs() {
-    console.log(this._locationCity);
-    this._quejaService.getPubListFilter(this._locationCity)
-      .then((pubsFilter: Publication[]) => {
-        this.pubFilterList = pubsFilter;
-        console.log(this.pubFilterList);
-      });
   }
 
   ngOnDestroy() {
