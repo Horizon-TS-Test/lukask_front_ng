@@ -1,16 +1,22 @@
-<form #frmComment="ngForm" class="d-flex justify-content-between w-100 pb-0" (ngSubmit)="publishComment()">
-  <div class="pers-profile-img-comen" [style.background-image]="_domSanitizer.bypassSecurityTrustStyle('url(' + commentModel.user.profileImg + ')')"></div>
+<div [ngClass]="{ 'personal-float-form card p-2': modalForm == true }">
+  <form #frmComment="ngForm" class="d-flex justify-content-between w-100 pb-0" (ngSubmit)="publishComment()" [ngClass]="{ 'align-items-center': modalForm == false }">
+    <div class="pers-profile-img-comen" [style.background-image]="_domSanitizer.bypassSecurityTrustStyle('url(' + commentModel.user.profileImg + ')')"></div>
 
-  <div class="f-child-no-auto form-group pl-1 pb-0 mb-0" [ngClass]="{ 'has-danger': description.touched && restChars < 0 }">
-    <textarea name="description" #description="ngModel" [(ngModel)]="commentModel.description" class="p-border-none form-control form-control-danger"
-      cols="30" rows="3" placeholder="Escribe {{ (commentModel.commentParentId) ? 'una respuesta...' : 'un comentario' }}"
-      (keyup)="validateLettersNumber($event)"></textarea>
-    <small class="pb-0 form-control-feedback">{{restChars}} caracteres restantes.</small>
-  </div>
-  <div class="pl-1 pt-1">
-    <button type="submit" [disabled]="restChars == maxChars || restChars < 0" class="btn btn-sm btn-outline-info personal-icon-btn"
-      title="Comentar">
-      <fa name="send"></fa>
-    </button>
-  </div>
-</form>
+    <div class="f-child-no-auto form-group pl-1 pb-0 mb-0" [ngClass]="{ 'has-danger': description.touched && restChars < 0 }">
+      <textarea [ngStyle]="{ 'display': (modalForm != false) ? 'inherit': 'none' }" #commentText name="description" #description="ngModel"
+        [(ngModel)]="commentModel.description" class="p-border-none form-control form-control-danger" cols="30" rows="4" placeholder="Escribe {{ (commentModel.commentParentId) ? 'una respuesta...' : 'un comentario' }}"
+        (keyup)="validateLettersNumber($event)"></textarea>
+      <small *ngIf="modalForm != false" class="pb-0 form-control-feedback">{{restChars}} caracteres restantes.</small>
+
+      <a href="#" *ngIf="modalForm == false" (click)="writeComment($event)" class="p-primary-text-color pl-3">
+        Escribe {{ (commentModel.commentParentId) ? 'una respuesta...' : 'un comentario' }}
+      </a>
+    </div>
+    <div *ngIf="modalForm != false" class="pl-1 pt-1">
+      <button type="submit" [disabled]="restChars == maxChars || restChars < 0" class="btn btn-sm btn-outline-info personal-icon-btn"
+        title="Comentar">
+        <fa name="send"></fa>
+      </button>
+    </div>
+  </form>
+</div>

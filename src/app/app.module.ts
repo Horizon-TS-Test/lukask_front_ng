@@ -44,6 +44,7 @@ import { CommentComponent } from './components/comment/comment.component';
 import { CommentReplyComponent } from './components/comment-reply/comment-reply.component';
 import { CommentFormComponent } from './components/comment-form/comment-form.component';
 import { UserService } from './services/user.service';
+import { TaskListComponent } from './components/task-list/task-list.component';
 
 @NgModule({
   declarations: [
@@ -69,7 +70,8 @@ import { UserService } from './services/user.service';
     MaterialBtnListComponent,
     CommentComponent,
     CommentReplyComponent,
-    CommentFormComponent
+    CommentFormComponent,
+    TaskListComponent
   ],
   imports: [
     HttpModule,

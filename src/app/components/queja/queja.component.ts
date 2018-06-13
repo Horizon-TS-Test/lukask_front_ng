@@ -41,8 +41,7 @@ export class QuejaComponent implements OnInit {
     public _domSanitizer: DomSanitizer,
     private _notifierService: NotifierService,
     private _actionService: ActionService,
-    private _socketService: SocketService,
-    private _router: Router,
+    private _socketService: SocketService
   ) {
     this.maxChars = 200;
     this.restChars = this.maxChars;
@@ -81,21 +80,6 @@ export class QuejaComponent implements OnInit {
     lastComment = this.commentList.find(com => com.commentId === event.commentId);
 
     ArrayManager.backendServerSays("CREATE", this.commentList, lastComment, event);
-  }
-
-  onRelevance(event: any) {
-    event.preventDefault();
-    this._actionService.sendRelevance(this.queja.id_publication, !this.queja.user_relevance)
-      .then((active: boolean) => {
-        console.log(active);
-        if (active) {
-          this.queja.user_relevance = active;
-        }
-        else {
-          this.queja.user_relevance = active;
-        }
-      })
-      .catch((error) => console.log(error));
   }
 
   /**
@@ -143,24 +127,6 @@ export class QuejaComponent implements OnInit {
         }, 1000)
       }
     }
-  }
-
-  /**
-   * MÉTODO PARA GEOLOCALIZAR LA QUEJA SELECCIONADA
-   */
-  geolocatePub(event: any) {
-    event.preventDefault();
-    //REF:
-    this._router.navigateByUrl(
-      this._router.createUrlTree(
-        ['/mapview'],
-        {
-          queryParams: {
-            pubId: this.queja.id_publication
-          }
-        }
-      )
-    );
   }
 
   /**

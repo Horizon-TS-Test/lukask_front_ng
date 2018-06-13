@@ -5,6 +5,8 @@ import { PatternManager } from '../../tools/pattern-manager';
 import { Comment } from '../../models/comment';
 import { User } from '../../models/user';
 import { UserService } from '../../services/user.service';
+import { NotifierService } from '../../services/notifier.service';
+import { CONTENT_TYPES } from '../../config/content-type';
 
 @Component({
   selector: 'comment-form',
@@ -14,7 +16,9 @@ import { UserService } from '../../services/user.service';
 })
 export class CommentFormComponent implements OnInit {
   @Input() commentModel: Comment;
+  @Input() modalForm: boolean;
   @Output() commentResponse = new EventEmitter<Comment>();
+  @Output() closeModal = new EventEmitter<boolean>();
 
   public maxChars: number;
   public restChars: number;
@@ -22,7 +26,8 @@ export class CommentFormComponent implements OnInit {
   constructor(
     public _domSanitizer: DomSanitizer,
     private _actionService: ActionService,
-    private _userService: UserService
+    private _userService: UserService,
+    private _notifierService: NotifierService
   ) {
     this.maxChars = 200;
     this.restChars = this.maxChars;
@@ -48,10 +53,18 @@ export class CommentFormComponent implements OnInit {
 
         this.resetComment();
         this.validateLettersNumber(null);
+        
+        this.closeModal.emit(true);
       })
       .catch(err => {
         console.log(err);
       });
+  }
+
+  writeComment($event) {
+    if (this.modalForm == false) {
+      this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.comment_input, contentData: this.commentModel });
+    }
   }
 
 }

@@ -137,6 +137,7 @@ export class QuejaService {
       return this._http.get(REST_SERV.pubsUrl + "/?limit=" + this.DEFAULT_LIMIT, { headers: pubHeaders, withCredentials: true }).toPromise()
         .then((response: Response) => {
           const respJson = response.json().data;
+          console.log(respJson);
           this.pagePattern = respJson.next;
           const pubs = respJson.results;
 
@@ -317,7 +318,7 @@ export class QuejaService {
     pubJson.user_register.media_profile = ((pubJson.user_register.media_profile.indexOf("http") == -1) ? REST_SERV.mediaBack : "") + pubJson.user_register.media_profile;
     ////
     usr = new User(pubJson.user_register.email, '', pubJson.user_register.media_profile);
-    usr.person = new Person(pubJson.user_register.person.id_person, pubJson.user_register.person.id_person.age, pubJson.user_register.person.identification_card, pubJson.user_register.person.name, pubJson.user_register.person.last_name, pubJson.user_register.person.telephone, pubJson.user_register.person.address, pubJson.user_register.person.active);
+    usr.person = new Person(pubJson.user_register.person.id_person, pubJson.user_register.person.age, pubJson.user_register.person.identification_card, pubJson.user_register.person.name, pubJson.user_register.person.last_name, pubJson.user_register.person.telephone, pubJson.user_register.person.address, pubJson.user_register.person.active);
     type = new QuejaType(pubJson.type_publication, pubJson.type_publication_detail);
 
     pub = new Publication(pubJson.id_publication, pubJson.latitude, pubJson.length, pubJson.detail, pubJson.date_publication, pubJson.priority_publication, pubJson.active, type, usr, pubJson.location, pubJson.count_relevance, pubJson.user_relevance);

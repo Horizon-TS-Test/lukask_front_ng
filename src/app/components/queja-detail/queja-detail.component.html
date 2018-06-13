@@ -1,26 +1,13 @@
 <div class="col-12 py-0 px-1">
   <div *ngIf="quejaDetail" class="personal-queja card mb-3 pb-0">
     <div class="card-header d-flex justify-content-between align-items-center">
-      <div class="d-flex justify-content-center align-items-center">
-        <a href="#" class="ml-1 btn btn-sm btn-outline-info personal-icon-btn" title="Apoyo">
-          <fa name="star"></fa>
-        </a>
-        <a href="#" class="ml-1 btn btn-sm btn-outline-info personal-icon-btn" title="Comentar">
-          <fa name="pencil"></fa>
-        </a>
-        <a href="#" class="ml-1 btn btn-sm btn-outline-info personal-icon-btn" title="Localizar">
-          <fa name="map-marker"></fa>
-        </a>
-        <a href="#" class="ml-1 btn btn-sm btn-outline-info personal-icon-btn" title="Denunciar">
-          <fa name="ban"></fa>
-        </a>
-      </div>
+      <task-list [queja]="quejaDetail"></task-list>
       <div>
         <small>{{quejaDetail.date_pub}}</small>
       </div>
     </div>
     <div class="personal-usr-queja py-0 card-block d-flex justify-content-end align-items-center">
-      {{quejaDetail.user.username}}
+      {{quejaDetail.user.person.name}} {{quejaDetail.user.person.last_name}} 
       <div class="ml-2 my-0 personal-profile-img" [style.background-image]="_domSanitizer.bypassSecurityTrustStyle('url(' + quejaDetail.user.profileImg + ')')">
       </div>
     </div>

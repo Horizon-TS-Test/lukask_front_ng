@@ -3,9 +3,9 @@
         <comment [commentModel]="parentComment" [noReplyBtn]="true"></comment>
     </div>
     <div class="card-block">
-        <comment-form [commentModel]="commentForm" (commentResponse)="onCommentResponse($event)"></comment-form>
+        <comment-form [commentModel]="commentForm" [modalForm]="false" (commentResponse)="onCommentResponse($event)"></comment-form>
     </div>
-    <ul class="list-group list-group-flush pb-0 max-height-half p-overflow-auto">
+    <ul class="list-group list-group-flush pb-0 max-height-third p-overflow-auto">
         <li *ngFor="let reply of replyList" class="f-child-full-space list-group-item">
             <comment [commentModel]="reply" [isReply]="true"></comment>
         </li>

@@ -167,7 +167,7 @@ export class CommentReplyComponent implements OnInit {
       ////
 
       //REF: https://stackoverflow.com/questions/39019808/angular-2-get-object-from-array-by-id
-      lastComment = this.replyList.find(com => com.commentId === commentJson.id_action);
+      lastComment = (this.replyList) ? this.replyList.find(com => com.commentId === commentJson.id_action) : null;
 
       if (action != ArrayManager.DELETE) {
         newCom = this._actionService.extractCommentJson(commentJson);

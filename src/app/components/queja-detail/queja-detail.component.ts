@@ -60,7 +60,7 @@ export class QuejaDetailComponent implements OnInit {
 
   initCarousel() {
     this.carouselOptions = {
-      items: 1, dots: false, loop: true, margin: 0,
+      items: 1, dots: true, loop: false, margin: 0,
       nav: true, stagePadding: 0, autoWidth: false,
       navText: ['<i class="fa fa-chevron-left " title="Anterior "></i>', '<i class="fa fa-chevron-right" title="Siguiente "></i>'],
     }
