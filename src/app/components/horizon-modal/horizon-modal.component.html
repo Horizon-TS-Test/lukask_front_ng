@@ -1,22 +1,22 @@
 <div class="personal-content" id="h-modal">
   <div class="fixed-background" [ngClass]="{'opacity-light': _dynaContent.contentType == contentTypes.new_reply}"></div>
 
-  <div class="min-height-full personal-dyna-cont horizon-modal col-12 p-0 d-flex flex-column">
-    <a href="#" (click)="onClickClose($event)" class="f-child-full-space" [ngClass]="{
+  <div class="min-height-full personal-dyna-cont horizon-modal col-12 p-0 d-flex flex-column justify-content-center">
+    <a href="#" (click)="onClickClose($event)" [ngClass]="{
       'f-child-order-0': _dynaContent.contentType == contentTypes.new_reply,
-      'f-child-order-1': _dynaContent.contentType != contentTypes.new_reply
+      'absolute-background': _dynaContent.contentType == contentTypes.view_img,
+      'f-child-full-space': _dynaContent.contentType != contentTypes.view_img
     }"></a>
     <ng-container [ngSwitch]="_dynaContent.contentType">
       <edit-queja *ngSwitchCase="contentTypes.new_queja" (closeModal)="close($event)"></edit-queja>
       <new-media *ngSwitchCase="contentTypes.new_media" (closeModal)="close($event)"></new-media>
       <queja-detail *ngSwitchCase="contentTypes.view_queja" [idQueja]="_dynaContent.contentData" (closeModal)="close($event)"></queja-detail>
-      
-      <div class="personal-dyna-down" *ngSwitchCase="contentTypes.new_reply">
+      <div class="personal-dyna-down col-12 p-0" *ngSwitchCase="contentTypes.new_reply">
         <comment-reply [parentComment]="_dynaContent.contentData" (closeModal)="close($event)"></comment-reply>
       </div>
-
       <comment-form *ngSwitchCase="contentTypes.comment_input" [commentModel]="_dynaContent.contentData" [modalForm]="true" (closeModal)="close($event)"></comment-form>
+      <img-viewer *ngSwitchCase="contentTypes.view_img" [media]="_dynaContent.contentData" (closeModal)="close($event)"></img-viewer>
     </ng-container>
   </div>
-  
+
 </div>

@@ -45,6 +45,8 @@ import { CommentReplyComponent } from './components/comment-reply/comment-reply.
 import { CommentFormComponent } from './components/comment-form/comment-form.component';
 import { UserService } from './services/user.service';
 import { TaskListComponent } from './components/task-list/task-list.component';
+import { SingleMapComponent } from './components/single-map/single-map.component';
+import { ImgViewerComponent } from './components/img-viewer/img-viewer.component';
 
 @NgModule({
   declarations: [
@@ -71,7 +73,9 @@ import { TaskListComponent } from './components/task-list/task-list.component';
     CommentComponent,
     CommentReplyComponent,
     CommentFormComponent,
-    TaskListComponent
+    TaskListComponent,
+    SingleMapComponent,
+    ImgViewerComponent
   ],
   imports: [
     HttpModule,
@@ -85,6 +89,6 @@ import { TaskListComponent } from './components/task-list/task-list.component';
   ],
   providers: [appRoutingProviders, ContentService, UserService, AuthGuardService, LoginGuardService, NotifierService, CameraService, SocketService, BrowserNotifierService, QuejaService],
   bootstrap: [AppComponent],
-  entryComponents: [AlertComponent, HorizonModalComponent]
+  entryComponents: [AlertComponent, HorizonModalComponent, SingleMapComponent]
 })
 export class AppModule { }

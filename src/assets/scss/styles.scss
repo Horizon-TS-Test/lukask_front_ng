@@ -90,7 +90,6 @@ img {
 }
 
 .personal-content {
-    //position: relative;
     background: #fff;
     overflow: hidden;
     width: 100%;
@@ -342,6 +341,7 @@ p, label, div {
         position: absolute;
         bottom: 5px;
         right: 5px;
+        z-index: 3;
         color: #fff;
 
         button {
@@ -802,9 +802,12 @@ p, label, div {
 /*************************************
 ///////MAP VIEW:
 *************************************/
-agm-map {
+.personal-map {
     height: 100vh;
     position: relative;
+}
+.personal-single-map {
+    height: 50vh;
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 .card {
@@ -1068,17 +1071,16 @@ agm-map {
 }
 
 .fixed-background {
-    position: fixed !important;
+    position: fixed;
     background: rgb(37, 35, 35);
-    z-index: 100000000000000;
+    z-index: 10000000000;
     top: -100%;
-    bottom: 0;
+    left: 0;
     width: 100%;
     height: 300vh;
     opacity: 0;
     transition: all .3s ease;
 }
-
 .fixed-background.on {
     opacity: .9;
     transition: opacity .5s ease;
@@ -1088,6 +1090,17 @@ agm-map {
 }
 .personal-over-unset {
     overflow: unset;
+}
+
+.absolute-background {
+    position: absolute;
+    top: -100%;
+    left: 0;
+    width: 100%;
+    height: 300vh;
+}
+.relative-background {
+    position: relative;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1177,18 +1190,30 @@ agm-map {
 ///PERSONAL BUTTONS:
 .personal-center-btn {
     position: absolute;
-    top: 0;
-    left: 0;
     border-radius: 50% !important;
     width: 80px;
     height: 80px;
-    top: calc(50% - 40px);
-    left: calc(50% - 40px);
     background: rgba(0, 0, 0, .3) !important;
     border-color: rgba(255, 255, 255, .8) !important;
 
     fa {
         font-size: 40px;
+        color: rgba(255, 255, 255, .8) !important
+    }
+}
+.p-float-btn-sm {
+    position: absolute;
+    z-index: 1;
+    border-radius: 50% !important;
+    width: 40px;
+    height: 40px;
+    top: 5px;
+    left: 5px;
+    background: rgba(0, 0, 0, .3) !important;
+    border-color: rgba(255, 255, 255, .8) !important;
+
+    fa {
+        font-size: 20px;
         color: rgba(255, 255, 255, .8) !important
     }
 }

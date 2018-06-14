@@ -11,7 +11,6 @@ import { CONTENT_TYPES } from '../../config/content-type';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 
-
 declare var google: any;
 declare var $: any;
 
@@ -109,7 +108,7 @@ export class MapViewComponent implements OnInit {
   }
 
   /**
-   * METODO QUE RECORRE LA LISTA DE QUEJAS Y CREA EL MARKER DE CADA UNA
+   * MÉTODO QUE RECORRE LA LISTA DE QUEJAS Y CREA EL MARKER DE CADA UNA
    */
   fetchPub() {
     for (let pub of this.pubList) {
