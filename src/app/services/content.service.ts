@@ -9,9 +9,14 @@ declare var $: any;
 })
 export class ContentService {
   private counter: number;
+  private VERTICAL_SCROLL: number = 0;
+  private HORIZONTAL_SCROLL: number = 1;
 
   constructor() { }
 
+  /**
+   * MÉTODO PARA OCULTAR LA PORTADA LUEGO DE UN TIEMPO DEFINIDO:
+   */
   hidePortada() {
     let portada = $("#personal-portada");
     let dark = $(".portada-fixed");
@@ -27,6 +32,9 @@ export class ContentService {
     }
   }
 
+  /**
+   * MÉTODO PARA DAR UN EFECTO FADE-IN A UN COMPONENTE AL ABRIRSE POR PRIMERA VEZ:
+   */
   fadeInComponent() {
     let component = $(".personal-fadeout");
 
@@ -37,6 +45,12 @@ export class ContentService {
     }, /*2000*/0);
   }
 
+  /**
+   * MÉTODO PARA DAR UN EFECTO SLIDE DOWN-UP A UN ELEMENTO DEL DOM, 
+   * GENERALMENTE USADO EN LA APERTURA DE UN HORIZON MODAL
+   * @param contentLayer EL ELEMENTO A APLICAR EL EFECTO TRANSITORIO
+   * @param slideUp TRUE PARA MOSTRAR EL ELEMENTO, CON EFECTO TRANSITORIO / FALSE PARA OCULTAR EL ELEMENTO, CON EFECTO TRANSITORIO
+   */
   slideDownUp(contentLayer, slideUp: boolean = true) {
     if (slideUp) {
       if (!contentLayer.hasClass("show-dyna-cont")) {
@@ -56,7 +70,9 @@ export class ContentService {
     }
   }
 
-  //TO ADD A COMPONENT DINAMICALLY AND PROGRAMMATICALLY:
+  /**
+   * MÉTODO PARA AÑADIR DINÁMICAMENTE UN COMPONENTE E INCRUSTARLO EN EL DOM A TRAVÉS DE CÓDIGO TYPESCRIPT:
+   */
   addComponent(ChildComponent: any, cfr: ComponentFactoryResolver, compContainer: ViewContainerRef, dynaContent: DynaContent = null) {
     // check and resolve the component
     let component = cfr.resolveComponentFactory(ChildComponent);
@@ -80,6 +96,10 @@ export class ContentService {
   }
   ////
 
+  /**
+   * MÉTODO PARA CENTRAR HORIZONTALMENTE CUALQUIER ELEMENTO DEL DOM
+   * @param element ELEMENTO A SER CENTRADO
+   */
   centerElement(element: any) {
     let elHalfWidth = Math.trunc(element.width() / 2);
     let windowMid = Math.trunc($(window).width() / 2);
@@ -87,6 +107,10 @@ export class ContentService {
     element.offset({ left: (windowMid - elHalfWidth) });
   }
 
+  /**
+   * MÉTODO PARA VERIFICAR SI EL SCROLL ESTÁ AL FINAL DE UN ELEMENTO DEL DOM:
+   * @param domElement ELEMENTO A VERIFICAR SI EL SCROLL ESTÁ AL FINAL DEL MISMO
+   */
   isBottomScroll(domElement: any) {
     let elementScroll = domElement.scrollTop();
     let elementHeight = domElement.height();
@@ -96,6 +120,77 @@ export class ContentService {
     }
 
     return false;
+  }
+
+  /**
+   * MÉTODO PARA DESPLAZAR EL SCROLL HACIA UN COMPONENTE ESPECÍFICO DEL DOM:
+   * @param hrefValue ID DEL COMPONENTE DE REFERENCIA
+   */
+  goToLocalContent(hrefValue: any) {
+    event.preventDefault();
+    $.smoothScroll({
+      scrollTarget: hrefValue,
+      speed: 1200,
+    });
+  }
+  ////
+
+  /**
+   * MÉTODO PARA DAR SCROLL DENTRO DE UN COMPONENTE DEL DOM:
+   * @param element ELEMENTO A DAR SCROLL DENTRO
+   * @param offset DISTANCIA A DAR SCROL DENTO DEL ELEMENTO
+   * @param option SI ES UN SCROLL VERTICAL U HORIZONTAL
+   * @param speedSec TIEMPO DE LA ANIMACIÓN EN MILI SEGUNDOS
+   * @param animate TRUE CON EFECTO DE ANIMACIÓN / FALSE SIN EFECTO DE ANIMACIÓN
+   */
+  elementScrollInside(element: any, offset: number, option: number = this.VERTICAL_SCROLL, speedSec: number = 1000, animate: boolean = true) {
+    //REF: https://stackoverflow.com/questions/23305033/smooth-scrolling-within-element-only-first-link-anchor-works
+    switch (option) {
+      default:
+        if (animate == true) {
+          $(element).animate({
+            scrollTop: offset
+          }, speedSec);
+        }
+        else {
+          $(element).scrollTop(offset);
+        }
+        break;
+      case this.HORIZONTAL_SCROLL:
+        if (animate == true) {
+          $(element).animate({
+            scrollLeft: offset
+          }, speedSec);
+        }
+        else {
+          $(element).scrollLeft(offset);
+        }
+        break;
+    }
+  }
+
+  /**
+   * MÉTODO PARA DAR FOCUS A UNA OPCIÓN DE UN MENÚ
+   * @param navContainer ELEMENTO DEL DOM QUE CONTIENE LAS OPCIONES DE NAVEGACIÓN
+   * @param idContent ID HTML DE LA OPCIÓN SELECCIONADA
+   */
+  focusMenuOption(navContainer: any, idContent: string) {
+    let optionLeft = 0;
+    let menuFocus = navContainer.find(".menu-focus");
+
+    navContainer.find("a").each((index, element) => {
+      if ($(element).attr("id") === idContent) {
+        menuFocus.css({
+          left: optionLeft,
+          width: $(element).width()
+        });
+
+        return false;
+      }
+      else {
+        optionLeft += $(element).width();
+      }
+    });
   }
 
 }

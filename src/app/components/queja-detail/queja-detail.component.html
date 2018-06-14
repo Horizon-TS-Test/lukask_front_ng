@@ -1,23 +1,27 @@
-<div class="personal-content min-height-full max-height-full p-overflow-auto">
+<div class="personal-content min-height-full max-height-full p-overflow-auto" id="idQuejaDetail">
   <div class="col-12 pt-1 px-1">
-    <div *ngIf="quejaDetail" class="personal-queja card mb-3 pb-0">
+    <div *ngIf="quejaDetail" class="personal-queja p-shadow-card p-no-border-rad-card card mb-3 pb-0">
       <div class="card-header d-flex justify-content-between align-items-center">
-        <task-list [queja]="quejaDetail"></task-list>
+        <task-list [queja]="quejaDetail" [isDetail]="true"></task-list>
       </div>
       <div class="personal-usr-queja py-0 card-block d-flex justify-content-end align-items-center">
-        {{quejaDetail.user.person.name}} {{quejaDetail.user.person.last_name}}
+        {{ quejaDetail.user.person.name }} {{ quejaDetail.user.person.last_name }}
         <div class="ml-2 my-0 personal-profile-img" [style.background-image]="_domSanitizer.bypassSecurityTrustStyle('url(' + quejaDetail.user.profileImg + ')')">
         </div>
       </div>
-      <div class="card-img-top1 personal-content relative-background">
+      <div class="personal-content relative-background">
         <owl-carousel id="corousel-detail-q" class="personal-owl-nav" [options]="carouselOptions" [carouselClasses]="['owl-theme']">
-          <a href="#" *ngFor="let med of quejaDetail.media" (click)="viewImg($event)">
+          <a href="#" *ngFor="let med of quejaDetail.media" (click)="viewImg($event)" class="card-img-top">
             <img src="{{med.url}}" width="100%" class="mb-1">
           </a>
         </owl-carousel>
       </div>
-      <div class="card-block text-justify">
-        {{quejaDetail.detail}}
+      <div class="relative-background card-block text-justify">
+        {{ quejaDetail.detail }}
+
+        <a href="#" (click)="viewComments($event)" class="p-float-link down-right-corner p-dark-text-color">
+          <small>Ver comentarios</small>
+        </a>
       </div>
 
       <ul class="list-group list-group-flush pb-0">

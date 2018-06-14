@@ -52,6 +52,8 @@ export class MapViewComponent implements OnInit {
       mapTypeId: google.maps.MapTypeId.ROADMAP,
       styles: styleMap
     };
+    
+    this.focusInnerOption();
 
     /**
      * PARA SUBSCRIBIRSE AL EVENTO DE ACTUALIZACIÓN DEL SOCKET, QUE TRAE 
@@ -75,6 +77,13 @@ export class MapViewComponent implements OnInit {
 
     //TOMANDO QUERY PARAMS:
     this.getQueryParams();
+  }
+
+  /**
+   * MÉTODO PARA DAR FOCUS A LA OPCIÓN ASOCIADA A ESTE CONTENIDO PRINCIPAL DE NAVEGACIÓN:
+   */
+  focusInnerOption() {
+    this._contentService.focusMenuOption($("#id-top-panel"), "top-option-1");
   }
 
   /**

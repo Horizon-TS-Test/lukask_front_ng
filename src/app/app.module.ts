@@ -47,6 +47,7 @@ import { UserService } from './services/user.service';
 import { TaskListComponent } from './components/task-list/task-list.component';
 import { SingleMapComponent } from './components/single-map/single-map.component';
 import { ImgViewerComponent } from './components/img-viewer/img-viewer.component';
+import { CommentListComponent } from './components/comment-list/comment-list.component';
 
 @NgModule({
   declarations: [
@@ -75,7 +76,8 @@ import { ImgViewerComponent } from './components/img-viewer/img-viewer.component
     CommentFormComponent,
     TaskListComponent,
     SingleMapComponent,
-    ImgViewerComponent
+    ImgViewerComponent,
+    CommentListComponent
   ],
   imports: [
     HttpModule,

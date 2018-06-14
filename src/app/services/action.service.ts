@@ -3,9 +3,6 @@ import { Comment } from '../models/comment';
 import { Headers, Http, Response } from '@angular/http';
 import { REST_SERV } from '../rest-url/rest-servers';
 import { throwError } from 'rxjs';
-import { error } from '@angular/compiler/src/util';
-import { User } from '../models/user';
-import { Person } from '../models/person';
 import { UserService } from './user.service';
 
 @Injectable({
@@ -14,13 +11,16 @@ import { UserService } from './user.service';
 export class ActionService {
   private isFetchedComments: boolean;
 
-  public DEFAULT_LIMIT: number = 2;
+  private DEFAULT_LIMIT: number = 2;
+  public MOBILE_LIMIT: number = 5;
+  public pageLimit: number;
 
   constructor(
     private _http: Http,
     private _userService: UserService
   ) {
     this.isFetchedComments = false;
+    this.pageLimit = this.DEFAULT_LIMIT;
   }
 
   private getCommentsWebByPub(parentId: string, isReplies: boolean, pagePattern: string = null, moreComments: boolean = false) {
@@ -36,7 +36,7 @@ export class ActionService {
     }
 
     if (flag) {
-      let filter = ((!isReplies) ? "/?pub_id=" + parentId : "/?com_id=" + parentId) + "&limit=" + this.DEFAULT_LIMIT + ((isReplies) ? "&replies=true" : "");
+      let filter = ((!isReplies) ? "/?pub_id=" + parentId : "/?com_id=" + parentId) + "&limit=" + this.pageLimit + ((isReplies) ? "&replies=true" : "");
 
       return this._http.get(REST_SERV.commentUrl + filter, {
         headers: requestHeaders,

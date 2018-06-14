@@ -810,13 +810,13 @@ p, label, div {
     height: 50vh;
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-.card {
+.p-shadow-card {
     -webkit-box-shadow: 3px 2px 3px rgba(0,0,0,0.2) !important;
     -moz-box-shadow: 3px 2px 3px rgba(0,0,0,0.2) !important;
     box-shadow: 3px 2px 3px rgba(0,0,0,0.2) !important;
-
+}
+.p-no-border-rad-card {
     border-radius: 0 !important;
-    
 }
 
 .personal-icon-btn {
@@ -1217,7 +1217,16 @@ p, label, div {
         color: rgba(255, 255, 255, .8) !important
     }
 }
+.p-float-link {
+    position: absolute;
+    z-index: 1;
+}
+.down-right-corner {
+    bottom: 3px;
+    right: 20px;
+}
 
+//MATERIAL BUTTONS:
 .personal-material-btn {
     position: fixed;
     z-index: 100000000000000;

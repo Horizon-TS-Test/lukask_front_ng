@@ -24,7 +24,7 @@ export class CommentComponent implements OnInit {
 
   addNewReply(event: any) {
     event.preventDefault();
-    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.new_reply, contentData: this.commentModel });
+    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_replies, contentData: this.commentModel });
   }
 
 }

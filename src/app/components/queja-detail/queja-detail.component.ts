@@ -59,7 +59,7 @@ export class QuejaDetailComponent implements OnInit {
    */
   initCarousel() {
     this.carouselOptions = {
-      items: 1, dots: true, loop: false, margin: 0,
+      items: 1, dots: true, loop: false, margin: 5,
       nav: false, stagePadding: 0, autoWidth: false,
       navText: ['<i class="fa fa-chevron-left " title="Anterior "></i>', '<i class="fa fa-chevron-right" title="Siguiente "></i>'],
     }
@@ -81,6 +81,15 @@ export class QuejaDetailComponent implements OnInit {
   viewImg(event: any) {
     event.preventDefault();
     this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_img, contentData: this.quejaDetail.media });
+  }
+
+  /**
+   * MÉTODO PARA VER EL MODAL DE COMENTARIOS DE UNA PUBLICACIÓN ESPECÍFICA:
+   * @param event EVENTO DE CLICK DEL ELEMENTO <a href="#">
+   */
+  viewComments(event: any) {
+    event.preventDefault();
+    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_comments, contentData: this.quejaDetail.id_publication });
   }
 
   /**

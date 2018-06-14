@@ -1,94 +1,109 @@
 import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
-import { HorizonButton } from '../../interfaces/horizon-button.interface';
-import { Comment } from '../../models/comment';
-import { PatternManager } from '../../tools/pattern-manager';
 import { ActionService } from '../../services/action.service';
-import { DomSanitizer } from '@angular/platform-browser';
-import { User } from '../../models/user';
+import { Comment } from '../../models/comment';
+import { ArrayManager } from '../../tools/array-manager';
 import { SocketService } from '../../services/socket.service';
 import { REST_SERV } from '../../rest-url/rest-servers';
-import { ArrayManager } from '../../tools/array-manager';
+import { HorizonButton } from '../../interfaces/horizon-button.interface';
+
+declare var writeData: any;
 
 @Component({
-  selector: 'comment-reply',
-  templateUrl: './comment-reply.component.html',
-  styleUrls: ['./comment-reply.component.css']
+  selector: 'comment-list',
+  templateUrl: './comment-list.component.html',
+  styleUrls: ['./comment-list.component.css']
 })
-export class CommentReplyComponent implements OnInit {
-  @Input() parentComment: Comment;
-  @Output() closeModal: EventEmitter<boolean>;
+export class CommentListComponent implements OnInit {
+  @Input() pubId: string;
+  @Input() isModal: boolean;
+  @Output() closeModal = new EventEmitter<boolean>();
 
   private _CLOSE = 1;
+
   private LOADER_HIDE: string = "hide";
   private LOADER_ON: string = "on";
 
   public firstPattern: string;
   public pagePattern: string;
 
-  public matButtons: HorizonButton[];
-  public commentForm: Comment;
-  public replyList: Comment[];
+  public newComment: Comment;
+  public commentList: Comment[];
   public activeClass: string;
+  public matButtons: HorizonButton[];
 
   constructor(
     private _actionService: ActionService,
     private _socketService: SocketService
   ) {
-    this.closeModal = new EventEmitter<boolean>();
-
+    this.activeClass = this.LOADER_HIDE;
     this.matButtons = [
       {
-        parentContentType: 0,
+        parentContentType: 1,
         action: this._CLOSE,
         icon: "close"
       }
     ];
 
-    this.activeClass = this.LOADER_HIDE;
-
     this.listenToSocket();
   }
 
   ngOnInit() {
-    this.commentForm = new Comment("", "", "", null, this.parentComment.commentId);
-    this.getRepies();
+    this.resetComment();
+    this.getComments();
   }
 
-  getRepies() {
-    this._actionService.getCommentByPub(this.parentComment.commentId, true)
-      .then((repliesData: any) => {
-        this.replyList = repliesData.comments;
-        this.firstPattern = repliesData.pagePattern;
-        this.pagePattern = repliesData.pagePattern;
+  /**
+   * MÉTODO PARA INICIALIZAR EL OBJETO DE TIPO COMMENT PARA REGISTRAR UN NUEVO COMENTARIO:
+   */
+  resetComment() {
+    this.newComment = new Comment("", "", this.pubId);
+  }
+
+  /**
+   * MÉTODO PARA CARGAR LOS COMENTARIOS DESDE EL BACKEND:
+   */
+  getComments() {
+    if(this.isModal == true) {
+      this._actionService.pageLimit = this._actionService.MOBILE_LIMIT;
+    }
+    this._actionService.getCommentByPub(this.pubId, false)
+      .then((commentsData: any) => {
+        this.commentList = commentsData.comments;
+        this.firstPattern = commentsData.pagePattern;
+        this.pagePattern = commentsData.pagePattern;
       });
   }
 
+  /**
+   * MÉTODO PARA ESCUCHAR LAS EMISIONES DEL OBJETO EVENT-EMITER DEL COMPONENTE HIJO
+   * @param event EL NUEVO COMENTARIO QUE DEVUELVE EL COMPONENTE HIJO, PROVENIENTE DEL BACKEND
+   */
   onCommentResponse(event: Comment) {
     let lastComment: Comment;
     //REF: https://stackoverflow.com/questions/39019808/angular-2-get-object-from-array-by-id
-    lastComment = this.replyList.find(com => com.commentId === event.commentId);
+    lastComment = this.commentList.find(com => com.commentId === event.commentId);
 
-    ArrayManager.backendServerSays("CREATE", this.replyList, lastComment, event);
+    ArrayManager.backendServerSays("CREATE", this.commentList, lastComment, event);
   }
 
   /**
    * MÉTODO PARA CARGAR MAS COMENTARIOS
-   * @param event EVENTO DEL ELEMENTO <a href="#">
+   * @param event EVENTO DE CLICK DEL ELEMENTO <a href="#">
    */
   askForMore(event: any) {
     event.preventDefault();
     if (this.activeClass != this.LOADER_ON) {
       this.activeClass = this.LOADER_ON;
       if (this.pagePattern) {
-        this._actionService.getMoreCommentByPub(this.parentComment.commentId, true, this.pagePattern)
-          .then((repliesData: any) => {
+        this._actionService.getMoreCommentByPub(this.pubId, false, this.pagePattern)
+          .then((commentsData: any) => {
             setTimeout(() => {
               this.activeClass = "";
 
               setTimeout(() => {
                 this.activeClass = this.LOADER_HIDE;
-                this.replyList = this.replyList.concat(repliesData.comments);
-                this.pagePattern = repliesData.pagePattern;
+                this.commentList = this.commentList.concat(commentsData.comments);
+                this.pagePattern = commentsData.pagePattern;
               }, 800);
 
             }, 1000)
@@ -112,7 +127,7 @@ export class CommentReplyComponent implements OnInit {
           setTimeout(() => {
             this.pagePattern = this.firstPattern;
             this.activeClass = this.LOADER_HIDE;
-            this.replyList.splice(this._actionService.pageLimit, this.replyList.length - this._actionService.pageLimit);
+            this.commentList.splice(this._actionService.pageLimit, this.commentList.length - this._actionService.pageLimit);
           }, 800);
         }, 1000)
       }
@@ -133,12 +148,11 @@ export class CommentReplyComponent implements OnInit {
   /**
    * MÉTODO PARA ESCUCHAR LAS ACTUALIZACIONES DEL CLIENTE SOCKET.IO
    * QUE TRAE CAMBIOS DESDE EL BACKEND (CREATE/UPDATE/DELETE)
-   * Y ACTUALIZAR LA LISTA GLOBAL DE RESPUESTAS CON LOS NUEVOS CAMBIOS
+   * Y ACTUALIZAR LA LISTA GLOBAL DE COMENTARIOS CON LOS NUEVOS CAMBIOS
    */
   listenToSocket() {
     this._socketService._commentUpdate.subscribe(
       (socketPub: any) => {
-        let stream = socketPub.stream;
         let action = socketPub.payload.action.toUpperCase();
 
         this.updateCommentList(socketPub.payload.data, action);
@@ -152,8 +166,8 @@ export class CommentReplyComponent implements OnInit {
    * @param action THIS CAN BE CREATE, UPDATE OR DELETE:
    */
   updateCommentList(commentJson: any, action: string) {
-    console.log(commentJson.action_parent);
-    if (commentJson.description != null && commentJson.action_parent == this.parentComment.commentId) {
+    console.log(commentJson.publication);
+    if (commentJson.description != null && commentJson.publication == this.pubId) {
       let lastComment: Comment, newCom: Comment;
 
       //PREPPENDING THE BACKEND SERVER IP/DOMAIN:
@@ -167,14 +181,13 @@ export class CommentReplyComponent implements OnInit {
       ////
 
       //REF: https://stackoverflow.com/questions/39019808/angular-2-get-object-from-array-by-id
-      lastComment = (this.replyList) ? this.replyList.find(com => com.commentId === commentJson.id_action) : null;
+      lastComment = this.commentList.find(com => com.commentId === commentJson.id_action);
 
       if (action != ArrayManager.DELETE) {
         newCom = this._actionService.extractCommentJson(commentJson);
       }
 
-      ArrayManager.backendServerSays(action, this.replyList, lastComment, newCom);
+      ArrayManager.backendServerSays(action, this.commentList, lastComment, newCom);
     }
   }
-
 }
