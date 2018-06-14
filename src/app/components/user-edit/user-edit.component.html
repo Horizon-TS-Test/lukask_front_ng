@@ -1,0 +1,56 @@
+<div class="personal-content personal-over-unset min-height-full max-height-full col-12 p-0" id="personal-edit-p">
+  <div class="personal-content min-height-full max-height-full p-overflow-auto">
+    <form #formUser class="pb-0 min-height-full card" id="frmU" (ngSubmit)="editProfile()">
+      <div id="loading-content"></div>
+      <div class="card-header d-flex justify-content-between align-items-center">
+        Datos Perfil
+      </div>
+      <div class="card-img-top d-flex flex-wrap justify-content-center align-items-center">
+        <img class="mb-1" id="defaultQuejaImg" src="{{userObj.profileImg}}" width="100%">
+
+        <a href="#" (click)="newMedia($event)" class="personal-center-btn btn btn-lg btn-outline-info p-0 d-flex justify-content-center align-items-center">
+          <fa name="camera"></fa>
+        </a>
+      </div>
+      <ul class="list-group list-group-flush pb-0">
+
+        <li class="list-group-item pb-0">
+
+          <div class="col-12 pb-0">Cédula :</div>
+          <div class="col-12 pb-0">
+            <input placeholder="Cédula" type="text" name="ci" #idCard="ngModel" [(ngModel)]="userObj.person.identification_card" class="form-control pb-0 "
+              required/>
+          </div>
+
+
+          <div class="col-12 pb-0" style="color:transparent">_</div>
+          <div class="col-12 pb-0">Nombre :</div>
+          <div class="col-12 pb-0">
+            <input type="text" name="nombre" #name="ngModel" [(ngModel)]="userObj.person.name" class="form-control pb-0 " required />
+          </div>
+
+          <br>
+
+          <div class="col-12 pb-0" style="color:transparent">_</div>
+          <div class="col-12 pb-0">Apellido :</div>
+          <div class="col-12 pb-0">
+            <input type="text" name="apellido" #lastName="ngModel" [(ngModel)]="userObj.person.last_name" class="form-control pb-0 "
+              required/>
+          </div>
+
+          <br>
+
+          <div class="col-12 pb-0" style="color:transparent">_</div>
+          <div class="col-12 pb-0">Dirección:</div>
+          <div class="col-12 pb-0">
+            <input type="text" name="direccion" #address="ngModel" [(ngModel)]="userObj.person.address" class="form-control pb-0" required/>
+          </div>
+
+
+        </li>
+      </ul>
+    </form>
+  </div>
+</div>
+
+<material-btn-list [materialBtns]="materialButtons" (someBtnAction)="actionBtn($event)"></material-btn-list>
