@@ -24,10 +24,18 @@ declare var writeData: any;
 })
 export class QuejaComponent implements OnInit {
   @Input() queja: Publication;
+
+  private LOADER_HIDE: string = "hide";
+  private LOADER_ON: string = "on";
+
+  public firstPattern: string;
+  public pagePattern: string;
+
   public newComment: Comment;
   public commentList: Comment[];
   public maxChars: number;
   public restChars: number;
+  public activeClass: string;
 
   constructor(
     public _domSanitizer: DomSanitizer,
@@ -38,44 +46,103 @@ export class QuejaComponent implements OnInit {
   ) {
     this.maxChars = 200;
     this.restChars = this.maxChars;
+    this.activeClass = this.LOADER_HIDE;
 
-    this.commentList = this._actionService.getCommentListObj();
     this.listenToSocket();
   }
 
   ngOnInit() {
+    console.log(this.queja.user_relevance);
     this.resetComment();
+    this.getComments();
   }
 
   resetComment() {
     this.newComment = new Comment("", "", this.queja.id_publication);
   }
 
-  viewQuejaDetail(event: any, idPub) {
-    event.preventDefault();
-    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_queja, contentData: idPub });
-  }
-
-  publishComment() {
-    this._actionService.sendComment(this.newComment)
-      .then((response) => {
-        console.log(response);
-        this.commentList.splice(0, 0, this.extractCommentJson(response));
-
-        this.resetComment();
-        this.validateLettersNumber(null);
-      })
-      .catch(err => {
-        console.log(err);
+  getComments() {
+    this._actionService.getCommentByPub(this.queja.id_publication, false)
+      .then((commentsData: any) => {
+        this.commentList = commentsData.comments;
+        this.firstPattern = commentsData.pagePattern;
+        this.pagePattern = commentsData.pagePattern;
       });
   }
 
-  extractCommentJson(commentJson: any) {
-    return new Comment(commentJson.id_action, commentJson.description, commentJson.publication, new User(this.queja.user.username, "", this.queja.user.profileImg));
+  viewQuejaDetail(event: any) {
+    event.preventDefault();
+    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_queja, contentData: this.queja.id_publication });
   }
 
-  validateLettersNumber(event: KeyboardEvent) {
-    this.restChars = PatternManager.limitWords(this.maxChars, this.newComment.description.length);
+  onCommentResponse(event: Comment) {
+    let lastComment: Comment;
+    //REF: https://stackoverflow.com/questions/39019808/angular-2-get-object-from-array-by-id
+    lastComment = this.commentList.find(com => com.commentId === event.commentId);
+
+    ArrayManager.backendServerSays("CREATE", this.commentList, lastComment, event);
+  }
+
+  onRelevance(event: any) {
+    event.preventDefault();
+    this._actionService.sendRelevance(this.queja.id_publication, !this.queja.user_relevance)
+      .then((active: boolean) => {
+        console.log(active);
+        if (active) {
+          this.queja.user_relevance = active;
+        }
+        else {
+          this.queja.user_relevance = active;
+        }
+      })
+      .catch((error) => console.log(error));
+  }
+
+  /**
+   * MÉTODO PARA CARGAR MAS COMENTARIOS
+   */
+  askForMore(event: any) {
+    event.preventDefault();
+    if (this.activeClass != this.LOADER_ON) {
+      this.activeClass = this.LOADER_ON;
+      if (this.pagePattern) {
+        this._actionService.getMoreCommentByPub(this.queja.id_publication, false, this.pagePattern)
+          .then((commentsData: any) => {
+            setTimeout(() => {
+              this.activeClass = "";
+
+              setTimeout(() => {
+                this.activeClass = this.LOADER_HIDE;
+                this.commentList = this.commentList.concat(commentsData.comments);
+                this.pagePattern = commentsData.pagePattern;
+              }, 800);
+
+            }, 1000)
+          })
+          .catch(err => {
+            console.log(err);
+
+            setTimeout(() => {
+              this.activeClass = "";
+
+              setTimeout(() => {
+                this.activeClass = this.LOADER_HIDE;
+              }, 800);
+            }, 1000)
+          });
+      }
+      else {
+        setTimeout(() => {
+          this.activeClass = "";
+
+          setTimeout(() => {
+            this.pagePattern = this.firstPattern;
+            this.activeClass = this.LOADER_HIDE;
+            this.commentList.splice(this._actionService.DEFAULT_LIMIT, this.commentList.length - this._actionService.DEFAULT_LIMIT);
+          }, 800);
+        }, 1000)
+      }
+    }
   }
 
   /**
@@ -96,23 +163,18 @@ export class QuejaComponent implements OnInit {
     );
   }
 
-
   /**
    * MÉTODO PARA ESCUCHAR LAS ACTUALIZACIONES DEL CLIENTE SOCKET.IO
    * QUE TRAE CAMBIOS DESDE EL BACKEND (CREATE/UPDATE/DELETE)
    * Y ACTUALIZAR LA LISTA GLOBAL DE COMENTARIOS CON LOS NUEVOS CAMBIOS
    */
   listenToSocket() {
-    this._socketService._publicationUpdate.subscribe(
+    this._socketService._commentUpdate.subscribe(
       (socketPub: any) => {
         let stream = socketPub.stream;
         let action = socketPub.payload.action.toUpperCase();
 
-        switch (stream) {
-          case "comment":
-            this.updateCommentList(socketPub.payload.data, action);
-            break;
-        }
+        this.updateCommentList(socketPub.payload.data, action);
       }
     );
   }
@@ -123,25 +185,28 @@ export class QuejaComponent implements OnInit {
    * @param action THIS CAN BE CREATE, UPDATE OR DELETE:
    */
   updateCommentList(commentJson: any, action: string) {
-    let lastComment: Comment, newCom: Comment;
+    console.log(commentJson.publication);
+    if (commentJson.description != null && commentJson.publication == this.queja.id_publication) {
+      let lastComment: Comment, newCom: Comment;
 
-    //PREPPENDING THE BACKEND SERVER IP/DOMAIN:
-    commentJson.media_profile = ((commentJson.media_profile.indexOf("http") == -1) ? REST_SERV.mediaBack : "") + commentJson.media_profile;
-    ////
+      //PREPPENDING THE BACKEND SERVER IP/DOMAIN:
+      commentJson.media_profile = ((commentJson.user_register.media_profile.indexOf("http") == -1) ? REST_SERV.mediaBack : "") + commentJson.user_register.media_profile;
+      ////
 
-    //STORING THE NEW DATA COMMING FROM SOMEWHERE IN INDEXED-DB:
-    if ('indexedDB' in window) {
-      writeData('comment', commentJson);
+      //STORING THE NEW DATA COMMING FROM SOMEWHERE IN INDEXED-DB:
+      /*if ('indexedDB' in window) {
+        writeData('comment', commentJson);
+      }*/
+      ////
+
+      //REF: https://stackoverflow.com/questions/39019808/angular-2-get-object-from-array-by-id
+      lastComment = this.commentList.find(com => com.commentId === commentJson.id_action);
+
+      if (action != ArrayManager.DELETE) {
+        newCom = this._actionService.extractCommentJson(commentJson);
+      }
+
+      ArrayManager.backendServerSays(action, this.commentList, lastComment, newCom);
     }
-    ////
-
-    //REF: https://stackoverflow.com/questions/39019808/angular-2-get-object-from-array-by-id
-    lastComment = this.commentList.find(com => com.commentId === commentJson.id_action);
-
-    if (action != ArrayManager.DELETE) {
-      newCom = this.extractCommentJson(commentJson);
-    }
-
-    ArrayManager.backendServerSays(action, this.commentList, lastComment, newCom);
   }
 }

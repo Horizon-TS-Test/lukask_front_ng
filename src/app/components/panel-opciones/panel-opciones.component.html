@@ -27,6 +27,9 @@
     <a href="#" *ngIf="isAble" (click)="subscribe($event)" class="ml-1 btn btn-outline-info">
       <fa name="bell"></fa>
     </a>
+    <a href="#"  (click)="openLayer($event, contentTypes.edit_profile)" class="ml-1 btn btn-outline-info">
+      <fa name="cog"></fa>
+    </a>
     <!--form class="form-inline">
       <div class="input-group col-8">
         <input type="text" class="form-control" id="inlineFormInputGroup" placeholder="Buscar">

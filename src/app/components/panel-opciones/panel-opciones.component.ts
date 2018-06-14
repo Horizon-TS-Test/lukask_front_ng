@@ -35,7 +35,10 @@ export class PanelOpcionesComponent implements OnInit {
       this.isAble = false;
     }
   }
-
+/**
+ * METODO PARA ABRIR EL MODAL PREDEFINIDO EN LA APLICACION
+ * @param event 
+ */
   openLayer(event: any, contType: number) {
     event.preventDefault();
     this._notifierService.notifyNewContent({ contentType: contType, contentData: null });

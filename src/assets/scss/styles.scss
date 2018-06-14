@@ -90,7 +90,7 @@ img {
 }
 
 .personal-content {
-    position: relative;
+    //position: relative;
     background: #fff;
     overflow: hidden;
     width: 100%;
@@ -195,6 +195,26 @@ p, label, div {
     opacity: .8;
     z-index: 1;
     transition: opacity .5s ease, z-index .2s ease;
+}
+
+.bottom-loader {
+    position: absolute !important;
+    left: 0;
+    bottom: 0;
+    opacity: 0;
+    transform: translateY(-100%);
+    transition: opacity 0s 0.4s, transform 1s ease;
+}
+.bottom-loader.hide {
+    z-index: -1;
+}
+.bottom-loader.on {
+    position: absolute !important;
+    bottom: 0;
+    opacity: 1;
+    z-index: 1;
+    transform: translateY(0);
+    transition: opacity 0s 0.2s, transform .8s ease;
 }
 ////
 
@@ -721,7 +741,7 @@ p, label, div {
 
 //////PANEL DE OPCIONES:
 .top-panel, .bot-panel {
-    position: absolute;
+    position: fixed;
     left: 0;
     width: 100%;
     z-index: 9999998 !important;
@@ -1022,35 +1042,40 @@ agm-map {
 .personal-dyna-cont {
     position: absolute !important;
     left: 0;
-    top: 0;
+    top: 100%;
     /*width: 100%;
     height: 100%;*/
     z-index: 10000000000000000;
-    transform: translateY(100%);
-    transition: transform .3s ease;
+    transition: all .3s ease;
 }
 .show-dyna-cont {
-    transform: translateY(0);
-    transition: transform .5s ease;
+    top: 0;
+    transition: all .5s ease;
 }
 
 .personal-dyna-down {
-    position: absolute !important;
+    position: fixed !important;
     left: 0;
+    bottom: -100%;
+    transition: all .3s ease;
+}
+.personal-dyna-down.show {
     bottom: 0;
+    transition: all .5s ease;
 }
 
 .fixed-background {
     position: fixed !important;
     background: rgb(37, 35, 35);
     z-index: 100000000000000;
-    top: 0;
+    top: -100%;
     bottom: 0;
     width: 100%;
-    height: 100%;
+    height: 300vh;
     opacity: 0;
     transition: all .3s ease;
 }
+
 .fixed-background.on {
     opacity: .9;
     transition: opacity .5s ease;
@@ -1149,13 +1174,9 @@ agm-map {
 ///PERSONAL BUTTONS:
 .personal-center-btn {
     position: absolute;
-    top: 0;
-    left: 0;
     border-radius: 50% !important;
     width: 80px;
     height: 80px;
-    top: calc(50% - 40px);
-    left: calc(50% - 40px);
     background: rgba(0, 0, 0, .3) !important;
     border-color: rgba(255, 255, 255, .8) !important;
 
@@ -1167,9 +1188,14 @@ agm-map {
 
 .personal-material-btn {
     position: fixed;
-    z-index: 2;
+    z-index: 100000000000000;
     right: 12px;
-    bottom: 12px;
+    bottom: -100%;
+    transition: all .3s ease;
+}
+.personal-material-btn.show {
+    bottom: 3px;
+    transition: all .5s ease;
 }
 
 .custom-btn {
@@ -1188,6 +1214,26 @@ agm-map {
     fa, span {
         color: $secondary-text !important;
     }
+}
+
+.no-border-button {
+    border: none !important;
+    background: transparent !important;
+    
+    fa, span {
+        font-size: 1.1rem !important;
+        color: $primary !important;
+        transition: all .5s ease;
+    }    
+}
+.no-border-button.dark {
+
+    fa, span {
+        color: $primary-dark !important;
+    }
+}
+.no-border-button:hover {
+    opacity: .8;
 }
 /////////////////////
 
@@ -1221,3 +1267,17 @@ agm-map {
     border: none !important;
 }
 ////
+
+//TEXT CUSTOME STYLES:
+.p-dark-text-color {
+    color: $primary-dark;
+}
+////
+
+////ETILOS PARA FORMULARIO
+////ESTILO INPUT USER EDIT
+input[type=text], textarea{
+    border-top: none;
+    border-left: none;
+    border-right: none;
+}

@@ -13,44 +13,36 @@ import { CrytoGen } from './../tools/crypto-gen';
 
 import { User } from '../models/user';
 import { SocketService } from './socket.service';
+import { Person } from '../models/person';
+import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LoginService {
-  private loginUrl: string;
 
   constructor(
     private _http: Http,
     private _socketService: SocketService,
-  ) {
-    this.loginUrl = REST_SERV.loginUrl;
-  }
+    private _userService: UserService
+  ) { }
 
   restLogin(user: User) {
     let encUsr = CrytoGen.encrypt(user.username);
     let encPass = CrytoGen.encrypt(user.password);
 
-    const userBody = JSON.stringify({ username: encUsr, password: encPass });
-    const userHeaders = new Headers({ 'Content-Type': 'application/json' });
+    const requestHeaders = new Headers({ 'Content-Type': 'application/json' });
+    const requestBody = JSON.stringify({ username: encUsr, password: encPass });
 
-    return this._http.post(this.loginUrl, userBody, { headers: userHeaders, withCredentials: true }).toPromise()
+    return this._http.post(REST_SERV.loginUrl, requestBody, { headers: requestHeaders, withCredentials: true }).toPromise()
       .then((response: Response) => {
         let respJson = response.json();
         console.log(respJson);
-        if (respJson.code == 200) {
+        if (response.status === 200) {
           this._socketService.connectSocket();
+          this._userService.storeUserData(respJson.data);
         }
         return respJson;
-      }).catch((error: Response) => throwError(error.json()));
-  }
-
-  isLoggedIn() {
-    return localStorage.getItem('user_id') !== null;
-  }
-
-  getUserId() {
-    const user_id = localStorage.getItem("user_id") ? localStorage.getItem("user_id") : '';
-    return user_id;
+      });
   }
 }

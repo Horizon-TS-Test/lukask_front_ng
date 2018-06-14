@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { Http, Response, Headers } from '@angular/http';
 import { throwError } from 'rxjs';
 
@@ -7,7 +7,7 @@ import { QuejaType } from '../models/queja-type';
 import { Publication } from '../models/publications';
 import { Media } from '../models/media';
 import { User } from '../models/user';
-import { LoginService } from './login.service';
+import { UserService } from './user.service';
 import { Person } from '../models/person';
 import { SocketService } from './socket.service';
 import { ArrayManager } from '../tools/array-manager';
@@ -21,18 +21,24 @@ declare var deleteItemData: any;
   providedIn: 'root'
 })
 export class QuejaService {
+
   private quejTypeList: QuejaType[];
   private isFetchedQtype: boolean;
   private isFetchedPubs: boolean;
   private isFetchedPub: boolean;
   private mainMediaJson: any;
+  private pagePattern: string;
+
+  public DEFAULT_LIMIT: number = 5;
+  public ALL: string = "all";
 
   public pubList: Publication[];
   public pubFilterList: Publication[];
+  public _mapEmitter = new EventEmitter<string>();
 
   constructor(
     private _http: Http,
-    private _loginService: LoginService,
+    private _userService: UserService,
     private _socketService: SocketService
   ) {
 
@@ -48,11 +54,11 @@ export class QuejaService {
   }
 
   getQuejTypeWeb() {
-    const qTheaders = new Headers({ 'Content-Type': 'application/json', 'X-Access-Token': this._loginService.getUserId() });
+    const qTheaders = new Headers({ 'Content-Type': 'application/json', 'X-Access-Token': this._userService.getUserId() });
 
     return this._http.get(REST_SERV.qTypeUrl, { headers: qTheaders, withCredentials: true }).toPromise()
       .then((response: Response) => {
-        const qtypes = response.json().data;
+        const qtypes = response.json().data.results;
         let transformedQtypes: QuejaType[] = [];
         for (let type of qtypes) {
           transformedQtypes.push(new QuejaType(type.id_type_publication, type.description));
@@ -115,26 +121,44 @@ export class QuejaService {
     });;
   }
 
-  getPubsWeb() {
-    const pubHeaders = new Headers({ 'Content-Type': 'application/json', 'X-Access-Token': this._loginService.getUserId() });
+  getPubsWebByPage(morePubs: boolean = false) {
+    const pubHeaders = new Headers({
+      'Content-Type': 'application/json',
+      'X-Access-Token': this._userService.getUserId(),
+      'Page-Pattern': this.pagePattern
+    });
+    let flag = true;
 
-    return this._http.get(REST_SERV.publicationsUrl, { headers: pubHeaders, withCredentials: true }).toPromise()
-      .then((response: Response) => {
-        const pubs = response.json().data;
-        let transformedPubs: Publication[] = [];
-        for (let i = 0; i < pubs.length; i++) {
-          transformedPubs.push(this.extractPubJson(pubs[i]));
-        }
+    if (morePubs && !this.pagePattern) {
+      flag = false;
+    }
 
-        this.isFetchedPubs = true;
-        console.log("[LUKASK QUEJA SERVICE] - PUBLICATIONS FROM WEB", transformedPubs);
-        return transformedPubs;
-      }).catch((error: Response) => {
-        if (error.json().code == 401) {
-          localStorage.clear();
-        }
-        return throwError(error.json());
-      });
+    if (flag) {
+      return this._http.get(REST_SERV.pubsUrl + "/?limit=" + this.DEFAULT_LIMIT, { headers: pubHeaders, withCredentials: true }).toPromise()
+        .then((response: Response) => {
+          const respJson = response.json().data;
+          this.pagePattern = respJson.next;
+          const pubs = respJson.results;
+
+          let transformedPubs: Publication[] = [];
+          for (let i = 0; i < pubs.length; i++) {
+            transformedPubs.push(this.extractPubJson(pubs[i]));
+          }
+
+          this.isFetchedPubs = true;
+          console.log("[LUKASK QUEJA SERVICE] - PUBLICATIONS FROM WEB", transformedPubs);
+          return transformedPubs;
+        }).catch((error: Response) => {
+          if (error.json().code == 401) {
+            localStorage.clear();
+          }
+          return throwError(error.json());
+        });
+    }
+    return new Promise((resolve, reject) => {
+      this.isFetchedPubs = true;
+      resolve(null);
+    });
   }
 
   getPubsCache() {
@@ -164,7 +188,7 @@ export class QuejaService {
     /**
      * IMPLEMENTING NETWORK FIRST STRATEGY
     */
-    return this.getPubsWeb().then((webPubs: Publication[]) => {
+    return this.getPubsWebByPage().then((webPubs: Publication[]) => {
       this.pubList = webPubs;
 
       if (!this.isFetchedPubs) {
@@ -178,6 +202,35 @@ export class QuejaService {
       }
 
       return webPubs;
+    }).catch((error: Response) => {
+      if (error.json().code == 401) {
+        localStorage.clear();
+      }
+      return throwError(error.json());
+    });
+  }
+
+  /**
+   * FUNCIÓN PARA OBTENER PUBLICACIONES BAJO DEMANDA A TRAVÉS DE UN PATTERN DE PAGINACIÓN:
+   */
+  getMorePubs() {
+    /**
+     * IMPLEMENTING NETWORK FIRST STRATEGY
+    */
+    return this.getPubsWebByPage(true).then((webPubs: Publication[]) => {
+      this.pubList = (webPubs) ? this.pubList.concat(webPubs) : this.pubList;
+
+      if (!this.isFetchedPubs) {
+        return this.getPubsCache().then((cachePubs: Publication[]) => {
+          this.pubList = this.pubList.concat(cachePubs);
+          return this.pubList;
+        });
+      }
+      else {
+        this.isFetchedPubs = false;
+      }
+
+      return this.pubList;
     }).catch((error: Response) => {
       if (error.json().code == 401) {
         localStorage.clear();
@@ -200,13 +253,14 @@ export class QuejaService {
 
   mergeJSONData(queja: Publication) {
     var json = {
-      user_id: this._loginService.getUserId(),
+      user_id: this._userService.getUserId(),
       id: new Date().toISOString(),
       latitude: queja.latitude,
       longitude: queja.longitude,
       detail: queja.detail,
       type_publication: queja.type.id,
       date_publication: queja.date_pub,
+      location: queja.location,
       media_files: []
     }
 
@@ -238,17 +292,17 @@ export class QuejaService {
     }
     //IF THE WEB BROWSER DOESN'T SUPPORT OFFLINE SYNCRONIZATION:
     else {*/
-      let quejaFormData: FormData = this.mergeFormData(queja);
-      this.postQuejaClient(quejaFormData)
-        .then(
-          (response) => {
-            this.updatePubList(response, "CREATE");
-            console.log(response);
-          },
-          (err) => {
-            console.log(err);
-          }
-        );
+    let quejaFormData: FormData = this.mergeFormData(queja);
+    this.postQuejaClient(quejaFormData)
+      .then(
+        (response) => {
+          this.updatePubList(response, "CREATE");
+          console.log(response);
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
     //}
   }
 
@@ -259,12 +313,18 @@ export class QuejaService {
     let type: QuejaType;
     let medios: Media;
 
-    usr = new User(pubJson.user_email, '', pubJson.media_profile);
-    usr.person = new Person(null, null, null, pubJson.user_name, pubJson.user_lastname, null, null, null);
+    //PREPPENDING THE BACKEND SERVER IP/DOMAIN:
+    pubJson.user_register.media_profile = ((pubJson.user_register.media_profile.indexOf("http") == -1) ? REST_SERV.mediaBack : "") + pubJson.user_register.media_profile;
+    ////
+    usr = new User(pubJson.user_register.email, '', pubJson.user_register.media_profile);
+    usr.person = new Person(pubJson.user_register.person.id_person, pubJson.user_register.person.id_person.age, pubJson.user_register.person.identification_card, pubJson.user_register.person.name, pubJson.user_register.person.last_name, pubJson.user_register.person.telephone, pubJson.user_register.person.address, pubJson.user_register.person.active);
     type = new QuejaType(pubJson.type_publication, pubJson.type_publication_detail);
 
-    pub = new Publication(pubJson.id_publication, pubJson.latitude, pubJson.length, pubJson.detail, pubJson.date_publication, pubJson.priority_publication, pubJson.active, type, usr);
+    pub = new Publication(pubJson.id_publication, pubJson.latitude, pubJson.length, pubJson.detail, pubJson.date_publication, pubJson.priority_publication, pubJson.active, type, usr, pubJson.location, pubJson.count_relevance, pubJson.user_relevance);
     for (let med of pubJson.medios) {
+      //PREPPENDING THE BACKEND SERVER IP/DOMAIN:
+      med.media_file = ((med.media_file.indexOf("http") == -1) ? REST_SERV.mediaBack : "") + med.media_file;
+      ////
       pub.media.push(new Media(med.id_multimedia, med.format_multimedia, med.media_file));
     }
 
@@ -279,6 +339,7 @@ export class QuejaService {
     formData.append('detail', queja.detail);
     formData.append('type_publication', queja.type.id);
     formData.append('date_publication', queja.date_pub);
+    formData.append('location', queja.location);
 
     for (let med of queja.media) {
       formData.append('media_files[]', med.file, med.fileName);
@@ -305,17 +366,20 @@ export class QuejaService {
         }
       };
 
-      xhr.open("post", REST_SERV.publicationsUrl, true);
-      xhr.setRequestHeader('X-Access-Token', this._loginService.getUserId());
+      xhr.open("post", REST_SERV.pubsUrl, true);
+      xhr.setRequestHeader('X-Access-Token', this._userService.getUserId());
       xhr.withCredentials = true;
       xhr.send(quejaFormData);
     });
   }
 
   getPubWebById(id: string) {
-    const _headers = new Headers({ 'Content-Type': 'application/json', 'X-Access-Token': this._loginService.getUserId() });
+    const _headers = new Headers({
+      'Content-Type': 'application/json',
+      'X-Access-Token': this._userService.getUserId()
+    });
 
-    return this._http.get(REST_SERV.publicationsUrl + "/" + id, { headers: _headers, withCredentials: true }).toPromise()
+    return this._http.get(REST_SERV.pubsUrl + "/" + id, { headers: _headers, withCredentials: true }).toPromise()
       .then((response: Response) => {
         const pubJson = response.json().pub;
         let pub: Publication;
@@ -382,11 +446,11 @@ export class QuejaService {
   }
 
   getPubsFilterWeb(city: string) {
-    const pubHeaders = new Headers({ 'Content-Type': 'application/json', 'X-Access-Token': this._loginService.getUserId() });
+    const pubHeaders = new Headers({ 'Content-Type': 'application/json', 'X-Access-Token': this._userService.getUserId() });
 
     return this._http.get(REST_SERV.pubFilterUrl + "/" + city, { headers: pubHeaders, withCredentials: true }).toPromise()
       .then((response: Response) => {
-        const pubs = response.json().data;
+        const pubs = response.json().data.results;
         let transformedPubs: Publication[] = [];
         for (let i = 0; i < pubs.length; i++) {
           transformedPubs.push(this.extractPubJson(pubs[i]));
@@ -438,6 +502,7 @@ export class QuejaService {
         switch (stream) {
           case "publication":
             this.updatePubList(socketPub.payload.data, action);
+            this._mapEmitter.emit(socketPub.payload.data.id_publication);
             break;
           case "multimedia":
             /**
@@ -475,7 +540,7 @@ export class QuejaService {
     let lastPub: Publication, newPub: Publication;
 
     //PREPPENDING THE BACKEND SERVER IP/DOMAIN:
-    pubJson.media_profile = ((pubJson.media_profile.indexOf("http") == -1) ? REST_SERV.mediaBack : "") + pubJson.media_profile;
+    pubJson.user_register.media_profile = ((pubJson.user_register.media_profile.indexOf("http") == -1) ? REST_SERV.mediaBack : "") + pubJson.user_register.media_profile;
     ////
 
     //STORING THE NEW DATA COMMING FROM SOMEWHERE IN INDEXED-DB

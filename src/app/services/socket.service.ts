@@ -28,7 +28,7 @@ export class SocketService {
         case "multimedia":
           this._publicationUpdate.emit(backendData);
           break;
-        case "comment":
+        case "comments":
           this._commentUpdate.emit(backendData);
           break;
       }

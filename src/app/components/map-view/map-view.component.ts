@@ -10,6 +10,7 @@ import styleMap from '../../data/map-style';
 import { NotifierService } from '../../services/notifier.service';
 import { CONTENT_TYPES } from '../../config/content-type';
 import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 
 declare var google: any;
@@ -27,8 +28,10 @@ export class MapViewComponent implements OnInit {
   public lng: number;
   public zoom: number;
 
+  public subscription: Subscription;
+
   @ViewChild('gmap') gmapElement: any;
-  map: any; 
+  map: any;
   public pubList: Publication[];
 
   constructor(
@@ -52,6 +55,16 @@ export class MapViewComponent implements OnInit {
       styles: styleMap
     };
 
+    /**
+     * PARA SUBSCRIBIRSE AL EVENTO DE ACTUALIZACIÓN DEL SOCKET, QUE TRAE 
+     * LOS CAMBIOS DE UNA PUBLICACIÓN PARA LUEGO MOSTRARLA EN EL MAPA
+    */
+    this.subscription = this._quejaService._mapEmitter.subscribe((newPubId: string) => {
+      this.fetchPub();
+      this.focusPubId = newPubId;
+      this.metodFocusPubId();
+    });
+    ////
 
     //Definición del mapa
     this.map = new google.maps.Map(this.gmapElement.nativeElement, mapProp);
@@ -96,12 +109,11 @@ export class MapViewComponent implements OnInit {
     });
   }
 
-/**
- * METODO QUE RECORRE LA LISTA DE QUEJAS Y CREA EL MARKER DE CADA UNA
- */
+  /**
+   * METODO QUE RECORRE LA LISTA DE QUEJAS Y CREA EL MARKER DE CADA UNA
+   */
   fetchPub() {
     for (let pub of this.pubList) {
-      console.log(pub);
       this.crearMarker(pub.latitude, pub.longitude, this.defineTypeIcon(pub.type), pub.id_publication, pub.type, pub.type.description);
     }
   }
@@ -148,8 +160,6 @@ export class MapViewComponent implements OnInit {
     });
   }
 
-
-
   getPubs() {
     this._quejaService.getPubList().then((pubs: Publication[]) => {
       this.pubList = pubs;
@@ -158,21 +168,21 @@ export class MapViewComponent implements OnInit {
       this.metodFocusPubId();
     });
   }
-  
+
   /**
    * METODO QUE VALIDA SI HAY UN ID DE QUEJA PARA UBICARLO EN EL MAPA
    */
   metodFocusPubId() {
     if (this.focusPubId != undefined) {
       this.focus();
-    } 
+    }
   }
 
   /**
    * METODO QUE ENFOCA EL MARKER BUSCADO
    */
   focus() {
-    let focusZoom=19;
+    let focusZoom = 19;
     for (let pub of this.pubList) {
       if (this.focusPubId == pub.id_publication) {
         this.map.setCenter({ lat: pub.latitude, lng: pub.longitude });

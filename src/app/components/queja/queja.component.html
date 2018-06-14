@@ -1,18 +1,18 @@
-
 <div class="col-12 py-0 px-1">
   <div class="personal-queja card mb-3 pb-0">
     <div class="card-header d-flex justify-content-between align-items-center">
       <div class="d-flex justify-content-center align-items-center">
-        <a href="#" class="ml-1 btn btn-sm btn-outline-info personal-icon-btn" title="Apoyo">
+        <a href="#" (click)="onRelevance($event)" class="ml-1 p-1 btn btn-sm btn-info no-border-button" [ngClass]="{ 'dark': queja.user_relevance }"
+          title="Apoyo">
           <fa name="star"></fa>
         </a>
-        <a href="#" class="ml-1 btn btn-sm btn-outline-info personal-icon-btn" title="Comentar">
+        <a href="#" class="ml-1 p-1 btn btn-sm btn-info no-border-button" title="Comentar">
           <fa name="pencil"></fa>
         </a>
-        <a href="#" (click)="geolocatePub($event)" class="ml-1 btn btn-sm btn-outline-info personal-icon-btn" title="Localizar">
+        <a href="#" (click)="geolocatePub($event)" class="ml-1 p-1 btn btn-sm btn-info no-border-button" title="Geolocalizar">
           <fa name="map-marker"></fa>
         </a>
-        <a href="#" class="ml-1 btn btn-sm btn-outline-info personal-icon-btn" title="Denunciar">
+        <a href="#" class="ml-1 p-1 btn btn-sm btn-info no-border-button" title="Denunciar">
           <fa name="ban"></fa>
         </a>
       </div>
@@ -21,11 +21,11 @@
       </div>
     </div>
     <div class="personal-usr-queja py-0 card-block d-flex justify-content-end align-items-center">
-      {{queja.user.username}}
+      {{queja.user.person.name}} {{queja.user.person.last_name}}
       <div class="ml-2 my-0 personal-profile-img" [style.background-image]="_domSanitizer.bypassSecurityTrustStyle('url(' + queja.user.profileImg + ')')">
       </div>
     </div>
-    <a href="#" (click)="viewQuejaDetail($event, queja.id_publication)">
+    <a href="#" (click)="viewQuejaDetail($event)">
       <div class="card-img-top d-flex flex-wrap justify-content-center align-items-center">
         <span *ngIf="queja.media.length > 3">
           <fa name="ellipsis-h"></fa>
@@ -50,26 +50,20 @@
     </a>
     <ul class="list-group list-group-flush pb-0">
       <li class="list-group-item pb-0">
-        <form #frmComment="ngForm" class="d-flex justify-content-between w-100 pb-0" (ngSubmit)="publishComment()">
-          <div class="pers-profile-img-comen" [style.background-image]="_domSanitizer.bypassSecurityTrustStyle('url(' + queja.user.profileImg + ')')"></div>
-
-          <div class="f-child-no-auto form-group pl-1 pb-0 mb-0" [ngClass]="{ 'has-danger': description.touched && restChars < 0 }">
-            <textarea name="description" #description="ngModel" [(ngModel)]="newComment.description" class="p-border-none form-control form-control-danger"
-              cols="30" rows="3" placeholder="Escribe un comentario..." (keyup)="validateLettersNumber($event)"></textarea>
-            <small class="pb-0 form-control-feedback">{{restChars}} caracteres restantes.</small>
-          </div>
-          <div class="pl-1 pt-1">
-            <button type="submit" [disabled]="restChars == maxChars || restChars < 0" class="btn btn-sm btn-outline-info personal-icon-btn"
-              title="Comentar">
-              <fa name="send"></fa>
-            </button>
-          </div>
-
-        </form>
+        <comment-form [commentModel]="newComment" (commentResponse)="onCommentResponse($event)"></comment-form>
       </li>
       <li *ngFor="let comment of commentList" class="list-group-item">
         <comment [commentModel]="comment"></comment>
       </li>
     </ul>
+    <div *ngIf="pagePattern || firstPattern" class="card-footer text-center">
+      <a href="#" (click)="askForMore($event)" class="p-dark-text-color">
+        <small *ngIf="pagePattern">Ver respuestas anteriores</small>
+        <small *ngIf="!pagePattern && firstPattern">Ocultar respuestas anteriores</small>
+      </a>
+      <div class="bottom-loader {{ activeClass }} col-12 d-flex justify-content-center align-items-center">
+        <img src="/assets/images/forms/preloader.gif" width="50px">
+      </div>
+    </div>
   </div>
 </div>

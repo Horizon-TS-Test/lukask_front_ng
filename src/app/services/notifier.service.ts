@@ -11,6 +11,7 @@ export class NotifierService {
   private _alertListener = new Subject<any>();
   private _layerListener = new Subject<DynaContent>();
   public _cameraAction = new EventEmitter<number>();
+  public _morePubsRequest = new EventEmitter<boolean>();
 
   constructor() { }
 
@@ -33,6 +34,11 @@ export class NotifierService {
   //CAMERA ACTIONS LISTENER:
   notifyCameraAction(action: number) {
     this._cameraAction.emit(action);
+  }
+  ////
+
+  notifyMorePubsRequest(request: boolean) {
+    this._morePubsRequest.emit(request);
   }
 
 }
