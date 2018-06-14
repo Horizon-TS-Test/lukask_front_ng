@@ -10,10 +10,12 @@
       <edit-queja *ngSwitchCase="contentTypes.new_queja" (closeModal)="close($event)"></edit-queja>
       <new-media *ngSwitchCase="contentTypes.new_media" (closeModal)="close($event)"></new-media>
       <queja-detail *ngSwitchCase="contentTypes.view_queja" [idQueja]="_dynaContent.contentData" (closeModal)="close($event)"></queja-detail>
-
+      
       <div class="personal-dyna-down" *ngSwitchCase="contentTypes.new_reply">
         <comment-reply [parentComment]="_dynaContent.contentData" (closeModal)="close($event)"></comment-reply>
       </div>
+
+      <user-edit *ngSwitchCase="contentTypes.edit_profile" (closeModal)="close($event)"></user-edit>
     </ng-container>
   </div>
   

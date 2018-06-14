@@ -883,13 +883,9 @@ agm-map {
 
 .personal-center-btn {
   position: absolute;
-  top: 0;
-  left: 0;
   border-radius: 50% !important;
   width: 80px;
   height: 80px;
-  top: calc(50% - 40px);
-  left: calc(50% - 40px);
   background: rgba(0, 0, 0, 0.3) !important;
   border-color: rgba(255, 255, 255, 0.8) !important; }
   .personal-center-btn fa {
@@ -962,5 +958,10 @@ agm-map {
 
 .p-dark-text-color {
   color: #004360; }
+
+input[type=text], textarea {
+  border-top: none;
+  border-left: none;
+  border-right: none; }
 
 /*# sourceMappingURL=styles.css.map */

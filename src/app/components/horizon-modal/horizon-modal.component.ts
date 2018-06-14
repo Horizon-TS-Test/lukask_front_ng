@@ -14,8 +14,6 @@ declare var $: any;
   styleUrls: ['./horizon-modal.component.css']
 })
 export class HorizonModalComponent implements OnInit {
-  @ViewChild("modalContainer", { read: ViewContainerRef }) modalContainer: ViewContainerRef;
-
   private self: any;
 
   public _ref: any;
