@@ -25,7 +25,7 @@ export class UserEditComponent implements OnInit {
 
   public materialButtons: HorizonButton[];
   public userObj: User;
-  public filesToUpload: any[];
+  public filesToUpload: any;
 
   constructor(
     private _userService: UserService,
@@ -66,7 +66,7 @@ export class UserEditComponent implements OnInit {
    * MÉTODO PARA EDITAR UN PERFIL DE USUARIO:
    */
   editProfile() {
-    if (this.filesToUpload.length > 0) {
+    if (this.filesToUpload) {
       this.userObj.file = this.filesToUpload;
       this.userObj.fileName = this.getFormattedDate() + ".png";
     }
@@ -107,7 +107,7 @@ export class UserEditComponent implements OnInit {
     let defaultQuejaImg = $("#frmU").find(".card-img-top > #defaultQuejaImg");
     defaultQuejaImg.css("display", "none");
     cardImg.append('<img class="mb-1" src="' + media.mediaFileUrl + '" width="100%">');
-    this.filesToUpload.push(media.mediaFile);
+    this.filesToUpload = media.mediaFile;
   }
 
   /**
