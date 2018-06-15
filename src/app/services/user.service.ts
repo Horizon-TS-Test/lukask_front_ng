@@ -12,12 +12,22 @@ export class UserService {
   constructor() { }
 
   /**
-   * MÉTODO PARA ALMACENAR EN EL NAVEGADOR LA INFORMACIÓN DEL PERFIL DE USUARIO:
+   * MÉTODO PARA ALMACENAR EN EL NAVEGADOR LA INFORMACIÓN DEL 
+   * PERFIL DE USUARIO LUEGO DE HABERSE LOGGEADO:
    */
   storeUserData(jsonUser: any) {
     let cryptoData = CrytoGen.encrypt(JSON.stringify(jsonUser.user_profile));
 
     localStorage.setItem('user_id', jsonUser.user_id);
+    localStorage.setItem('user_data', cryptoData);
+  }
+
+  /**
+   * MÉTODO PARA ACTUALIZAR EN EL NAVEGADOR LA INFORMACIÓN DEL PERFIL DE USUARIO:
+   */
+  updateUserData(jsonUser: any) {
+    let cryptoData = CrytoGen.encrypt(JSON.stringify(jsonUser));
+
     localStorage.setItem('user_data', cryptoData);
   }
 
@@ -67,8 +77,9 @@ export class UserService {
     let userFormData: FormData = this.mergeFormData(user);
     this.postUserClient(userFormData)
       .then(
-        (response) => {
-          console.log(response);
+        (response: any) => {
+          let usrData = response.userData;
+          this.updateUserData(usrData);
         },
         (err) => {
           console.log(err);
@@ -80,10 +91,6 @@ export class UserService {
    * MÉTODO PARA TOMAR LOS DATOS QUE BIENEN POR POST 
    */
   mergeFormData(user: User) {
-  console.log("nombre del archivo");
-  console.log(user.file);
-  console.log(user.fileName);
-
     let formData = new FormData();
 
     formData.append('id', user.id);
@@ -110,9 +117,10 @@ export class UserService {
       let xhr = new XMLHttpRequest();
       xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
-          if (xhr.status === 201) {
+          if (xhr.status === 200) {
+            let resp = JSON.parse(xhr.response);
             console.log(JSON.parse(xhr.response));
-            resolve(JSON.parse(xhr.response).pub);
+            resolve(resp);
           }
           else {
             if (xhr.status == 401) {

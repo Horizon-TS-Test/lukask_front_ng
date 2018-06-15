@@ -7,7 +7,7 @@ export var REST_SERV = {
     publicationsUrl: 'http://127.0.0.1:8070/publication',
     pubFilterUrl: 'http://127.0.0.1:8070/publication/filter',
     qTypeUrl: 'http://127.0.0.1:8070/qtype',
-    pubsUrl: 'http://127.0.0.1:8070/publication/',
+    pubsUrl: 'http://127.0.0.1:8070/publication',
     commentUrl: 'http://127.0.0.1:8070/comment',
     mediaBack: 'http://192.168.1.57:8080',
     pushSub: 'http://192.168.1.19:3200/subscribe',
