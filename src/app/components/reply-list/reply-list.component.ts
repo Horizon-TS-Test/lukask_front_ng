@@ -1,20 +1,17 @@
 import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 import { HorizonButton } from '../../interfaces/horizon-button.interface';
 import { Comment } from '../../models/comment';
-import { PatternManager } from '../../tools/pattern-manager';
 import { ActionService } from '../../services/action.service';
-import { DomSanitizer } from '@angular/platform-browser';
-import { User } from '../../models/user';
 import { SocketService } from '../../services/socket.service';
 import { REST_SERV } from '../../rest-url/rest-servers';
 import { ArrayManager } from '../../tools/array-manager';
 
 @Component({
-  selector: 'comment-reply',
-  templateUrl: './comment-reply.component.html',
-  styleUrls: ['./comment-reply.component.css']
+  selector: 'reply-list',
+  templateUrl: './reply-list.component.html',
+  styleUrls: ['./reply-list.component.css']
 })
-export class CommentReplyComponent implements OnInit {
+export class ReplyListComponent implements OnInit {
   @Input() parentComment: Comment;
   @Output() closeModal: EventEmitter<boolean>;
 

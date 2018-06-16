@@ -13,7 +13,7 @@
       <new-media *ngSwitchCase="contentTypes.new_media" (closeModal)="close($event)"></new-media>
       <queja-detail *ngSwitchCase="contentTypes.view_queja" [idQueja]="_dynaContent.contentData" (closeModal)="close($event)"></queja-detail>
       <div class="personal-dyna-down col-12 p-0" *ngSwitchCase="contentTypes.view_replies">
-        <comment-reply [parentComment]="_dynaContent.contentData" (closeModal)="close($event)"></comment-reply>
+        <reply-list [parentComment]="_dynaContent.contentData" (closeModal)="close($event)"></reply-list>
       </div>
       <comment-form *ngSwitchCase="contentTypes.comment_input" [commentModel]="_dynaContent.contentData" [modalForm]="true" (closeModal)="close($event)"></comment-form>
       <img-viewer *ngSwitchCase="contentTypes.view_img" [media]="_dynaContent.contentData" (closeModal)="close($event)"></img-viewer>

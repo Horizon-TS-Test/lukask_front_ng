@@ -232,6 +232,9 @@ p, label, div {
 .max-height-half {
   max-height: 50vh !important; }
 
+.max-height-fourth {
+  max-height: 40vh !important; }
+
 .max-height-third {
   max-height: 30vh !important; }
 

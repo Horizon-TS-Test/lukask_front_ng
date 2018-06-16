@@ -41,7 +41,7 @@ import { HorizonModalComponent } from './components/horizon-modal/horizon-modal.
 import { MaterialButtonComponent } from './components/material-button/material-button.component';
 import { MaterialBtnListComponent } from './components/material-btn-list/material-btn-list.component';
 import { CommentComponent } from './components/comment/comment.component';
-import { CommentReplyComponent } from './components/comment-reply/comment-reply.component';
+import { ReplyListComponent } from './components/reply-list/reply-list.component';
 import { CommentFormComponent } from './components/comment-form/comment-form.component';
 import { UserService } from './services/user.service';
 import { TaskListComponent } from './components/task-list/task-list.component';
@@ -72,7 +72,7 @@ import { CommentListComponent } from './components/comment-list/comment-list.com
     MaterialButtonComponent,
     MaterialBtnListComponent,
     CommentComponent,
-    CommentReplyComponent,
+    ReplyListComponent,
     CommentFormComponent,
     TaskListComponent,
     SingleMapComponent,

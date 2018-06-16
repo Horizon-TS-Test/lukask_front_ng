@@ -1,13 +1,27 @@
 //////////////////INITIALIZING INDEX DB://////////////////////////
-//OPENS A NEW DATABASE, IF DOESN'T EXISTS IT WILL BE CREATED
+/**
+ * OPENS A NEW DATABASE, IF DOESN'T EXISTS IT WILL BE CREATED
+ */
 var dbPromise = idb.open('lukask-store', 1, function (db) {
-    //NEXT IS LIKE CREATE A NEW TABLE WITH AN ESPECIFIC FIELD AS PRIMARY KEY:
+    /**
+     * NEXT IS LIKE CREATE A NEW TABLE WITH AN ESPECIFIC FIELD AS PRIMARY KEY:
+     */
     if (!db.objectStoreNames.contains('publication')) {
-        db.createObjectStore('publication', { keyPath: 'id_publication' });
+        db.createObjectStore('publication', { keyPath: 'id' });
     }
     if (!db.objectStoreNames.contains('qtype')) {
-        db.createObjectStore('qtype', { keyPath: 'id_type_publication' });
+        db.createObjectStore('qtype', { keyPath: 'id' });
     }
+    if (!db.objectStoreNames.contains('comment')) {
+        db.createObjectStore('comment', { keyPath: 'id' });
+    }
+    if (!db.objectStoreNames.contains('reply')) {
+        db.createObjectStore('reply', { keyPath: 'id' });
+    }
+
+    /**
+     * TABLES FOR BACKGROUND SYNC:
+     */
     if (!db.objectStoreNames.contains('sync-pub')) {
         db.createObjectStore('sync-pub', { keyPath: 'id' });
     }
@@ -46,7 +60,9 @@ function clearAllData(tableName) {
         })
 }
 
-//TO DELETE ON INDEX DB ONLY THE DATA WICH IS NOT COMMING FROM THE REST API:
+/**
+ * TO DELETE ON INDEX DB ONLY THE DATA WICH IS NOT COMMING FROM THE REST API:
+ */
 function deleteItemData(tableName, id) {
     return dbPromise
         .then(function (db) {
@@ -61,7 +77,9 @@ function deleteItemData(tableName, id) {
         })
 }
 
-//TO HANDLE PUBLIC VAPID KEY OF THE SERVER:
+/**
+ * TO HANDLE PUBLIC VAPID KEY OF THE SERVER:
+ */
 function urlBase64ToUint8Array(base64String) {
     var padding = '='.repeat((4 - base64String.length % 4) % 4);
     var base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
@@ -76,7 +94,9 @@ function urlBase64ToUint8Array(base64String) {
     return outputArray;
 }
 
-//SAVE THE IMAGE CAPTURE IN A BLOB FILE:
+/**
+ * SAVE THE IMAGE CAPTURE IN A BLOB FILE:
+ */
 function dataURItoBlob(dataURI) {
     var byteString = atob(dataURI.split(',')[1]);
     var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
