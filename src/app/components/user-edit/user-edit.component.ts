@@ -33,8 +33,6 @@ export class UserEditComponent implements OnInit {
     private _cameraService: CameraService,
 
   ) {
-    this.filesToUpload = [];
-
     this.userObj = this._userService.getStoredUserData();
 
     this.materialButtons = [
@@ -71,7 +69,6 @@ export class UserEditComponent implements OnInit {
       this.userObj.fileName = this.getFormattedDate() + ".png";
     }
     this._userService.sendUser(this.userObj);
-
     //this.formQuej.reset();
   }
 
@@ -103,10 +100,12 @@ export class UserEditComponent implements OnInit {
    * MÉTODO PARA COLOCAR LA IMAGEN TOMADA EN EL MODAL Y ALMACENARLA EN UNA VARIABLE TIPO ARCHIVO
    * @param event = ARCHIVO FOTO
    */
+
   addQuejaSnapShot(media: MediaFile) {
     let cardImg = $("#frmU").find(".card-img-top");
     let defaultQuejaImg = $("#frmU").find(".card-img-top > #defaultQuejaImg");
     defaultQuejaImg.css("display", "none");
+    cardImg.find("img").remove();
     cardImg.append('<img class="mb-1" src="' + media.mediaFileUrl + '" width="100%">');
     this.filesToUpload = media.mediaFile;
   }
