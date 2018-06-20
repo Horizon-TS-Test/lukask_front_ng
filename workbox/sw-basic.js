@@ -10,10 +10,11 @@ var SYNC_TYPE = {
 };
 var REST_URLS_PATTERN = {
     medios: /http:\/\/192.168.1.58:8081\/repositorio_lukask\/.*/,
-    pubs: /http:\/\/192.168.1.37:3000\/publication\/\?.*/,
+    firstPubs: /http:\/\/192.168.1.37:3000\/publication\/\?limit=[0-9]+$/,
+    morePubs: /http:\/\/192.168.1.37:3000\/publication\/\?limit=[0-9]+&offset=[0-9]+$/,
     qtype: 'http://192.168.1.37:3000/qtype',
-    comments: /http:\/\/192.168.1.37:3000\/comment\/\?pub_id=.*/,
-    replies: /http:\/\/192.168.1.37:3000\/comment\/\?com_id=.*/,
+    comments: /http:\/\/192.168.1.37:3000\/comment\/\?pub_id=[0-9|a-f|-]+\&(?:limit=[0-9]+|limit=[0-9]+\&offset=[0-9]+)$/,
+    replies: /http:\/\/192.168.1.37:3000\/comment\/\?com_id=[0-9|a-f|-]+\&(?:limit=[0-9]+|limit=[0-9]+\&offset=[0-9]+)\&replies=true$/,
 }
 
 workbox.precaching.suppressWarnings();
@@ -51,125 +52,48 @@ workbox.routing.registerNavigationRoute('/index.html');
 /////////////////////////////////////////////////////////////INDEXED DB DATA STORING//////////////////////////////////////////
 
 /**
- * FUNCTION TO AVOID DATA DUPLICATION INSIDE INDEXED-DB:
- * @param {*} table THE TABLE NAME
- * @param {*} idDataToSave JSON DATA TO SAVE INTO INDEXED-DB
+ * HANDLER TO STORING FIRST PUBS DATA INTO INDEXED DB:
  */
-function verifyStoredData(table, dataToSave) {
-    readAllData(table)
-        .then(function (tableData) {
-            for (var d = 0; d < dataToSave.length; d++) {
-                switch (table) {
-                    case 'publication':
-                        dataToSave[d].id = dataToSave[d].id_publication;
-                        break;
-                    case 'qtype':
-                        dataToSave[d].id = dataToSave[d].id_type_publication;
-                        break;
-                }
-                for (var t = 0; t < tableData.length; t++) {
-                    if (tableData[t].id == dataToSave[d].id) {
-                        deleteItemData(table, tableData[t].id);
-                        tableData.splice(t);
-                        t = tableData.length;
-                    }
-                }
-                writeData(table, dataToSave[d]);
-            }
-        });
-}
-
-/**
- * FUNCTION TO AVOID DATA DUPLICATION ON AN SPECIFC FIELD OF AN INDEXED TABLE:
- * @param {*} table THE TABLE NAME
- * @param {*} dataToSave JSON DATA TO SAVE INTO INDEXED-DB
- */
-function upgradeTableFieldData(table, dataToSave) {
-    readAllData(table)
-        .then(function (tableData) {
-            for (var i = 0; i < dataToSave.length; i++) {
-                let upgradedData = null;
-                for (var t = 0; t < tableData.length; t++) {
-                    let flag = 0;
-                    switch (table) {
-                        case "comment":
-                            if (tableData[t].id == dataToSave[i].publication) {
-                                for (var c = 0; c < tableData[t].comments.length; c++) {
-                                    if (tableData[t].comments[c].id_action == dataToSave[i].id_action) {
-                                        tableData[t].comments[c] = dataToSave[i];
-                                        c = tableData[t].comments.length;
-                                        flag = 1;
-                                    }
-                                }
-                                if (flag == 0) {
-                                    let index = tableData[t].comments.length;
-                                    tableData[t].comments[index] = dataToSave[i];
-                                }
-                            }
-                            break;
-                        case "reply":
-                            if (tableData[t].id == dataToSave[i].action_parent) {
-                                for (var r = 0; r < tableData[t].replies.length; r++) {
-                                    if (tableData[t].replies[r].id_action == dataToSave[i].id_action) {
-                                        tableData[t].replies[r] = dataToSave[i];
-                                        r = tableData[t].replies.length;
-                                        flag = 1;
-                                    }
-                                }
-                                if (flag == 0) {
-                                    let index = tableData[t].replies.length;
-                                    tableData[t].replies[index] = dataToSave[i];
-                                }
-                            }
-                            break;
-                    }
-
-                    upgradedData = tableData[t];
-                    t = tableData.length;
-                }
-                if (upgradedData == null) {
-                    switch (table) {
-                        case "comment":
-                            upgradedData = {
-                                id: dataToSave[i].publication,
-                                comments: [
-                                    dataToSave[i]
-                                ]
-                            }
-                            break;
-                        case "reply":
-                            upgradedData = {
-                                id: dataToSave[i].action_parent,
-                                replies: [
-                                    dataToSave[i]
-                                ]
-                            }
-                            break;
-                    }
-                    tableData[tableData.length] = upgradedData;
-                }
-                else {
-                    deleteItemData(table, upgradedData.id);
-                }
-                writeData(table, upgradedData);
-            }
-        });
-}
-
-/**
- * HANDLER TO STORING PUBS DATA INTO INDEXED DB:
- */
-workbox.routing.registerRoute(REST_URLS_PATTERN.pubs, function (args) {
+workbox.routing.registerRoute(REST_URLS_PATTERN.firstPubs, function (args) {
     return fetch(args.event.request)
         .then(function (res) {
-            //STORE THE RESPONSE ON INDEX DB:
+            var clonedRes = res.clone();
+            clearAllData('publication')
+                .then(function () {
+                    return clonedRes.json();
+                })
+                .then(function (response) {
+                    //STORE THE RESPONSE ON INDEX DB:
+                    console.log("[LUKASK SERVICE WORKER - INDEXED-DB] First Pubs from rest api", response.data);
+                    var pubs = response.data.results;
+
+                    clearAllData('comment')
+                        .then(function () {
+                            clearAllData('reply')
+                                .then(function () {
+                                    verifyStoredDataArray('publication', pubs);
+                                })
+                        })
+                });
+
+            return res;
+        });
+});
+
+/**
+ * HANDLER TO STORING MORE PUBS DATA INTO INDEXED DB:
+ */
+workbox.routing.registerRoute(REST_URLS_PATTERN.morePubs, function (args) {
+    return fetch(args.event.request)
+        .then(function (res) {
             var clonedRes = res.clone();
             clonedRes.json()
                 .then(function (response) {
-                    console.log("[LUKASK SERVICE WORKER - INDEXED-DB] Pubs from rest api", response.data);
+                    //STORE THE RESPONSE ON INDEX DB:
+                    console.log("[LUKASK SERVICE WORKER - INDEXED-DB] More Pubs from rest api", response.data);
                     var pubs = response.data.results;
 
-                    verifyStoredData('publication', pubs);
+                    verifyStoredDataArray('publication', pubs);
                 });
 
             return res;
@@ -182,14 +106,14 @@ workbox.routing.registerRoute(REST_URLS_PATTERN.pubs, function (args) {
 workbox.routing.registerRoute(REST_URLS_PATTERN.qtype, function (args) {
     return fetch(args.event.request)
         .then(function (res) {
-            //STORE THE RESPONSE ON INDEX DB:
             var clonedRes = res.clone();
             clonedRes.json()
                 .then(function (response) {
+                    //STORE THE RESPONSE ON INDEX DB:
                     console.log("[LUKASK SERVICE WORKER - INDEXED-DB] Qtype from rest api", response.data);
                     let types = response.data.results;
 
-                    verifyStoredData('qtype', types);
+                    verifyStoredDataArray('qtype', types);
                 });
 
             return res;
@@ -202,14 +126,14 @@ workbox.routing.registerRoute(REST_URLS_PATTERN.qtype, function (args) {
 workbox.routing.registerRoute(REST_URLS_PATTERN.comments, function (args) {
     return fetch(args.event.request)
         .then(function (res) {
-            //STORE THE RESPONSE ON INDEX DB:
             var clonedRes = res.clone();
             clonedRes.json()
                 .then(function (response) {
+                    //STORE THE RESPONSE ON INDEX DB:
                     console.log("[LUKASK SERVICE WORKER - INDEXED-DB] Comments from rest api", response.comments);
                     let comments = response.comments.results;
 
-                    upgradeTableFieldData('comment', comments);
+                    upgradeTableFieldDataArray('comment', comments);
                 });
             return res;
         });
@@ -221,14 +145,14 @@ workbox.routing.registerRoute(REST_URLS_PATTERN.comments, function (args) {
 workbox.routing.registerRoute(REST_URLS_PATTERN.replies, function (args) {
     return fetch(args.event.request)
         .then(function (res) {
-            //STORE THE RESPONSE ON INDEX DB:
             var clonedRes = res.clone();
             clonedRes.json()
                 .then(function (response) {
+                    //STORE THE RESPONSE ON INDEX DB:
                     console.log("[LUKASK SERVICE WORKER - INDEXED-DB] Replies from rest api", response.comments);
                     let replies = response.comments.results;
 
-                    upgradeTableFieldData('reply', replies);
+                    upgradeTableFieldDataArray('reply', replies);
                 });
             return res;
         });

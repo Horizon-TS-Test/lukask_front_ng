@@ -2,6 +2,7 @@ import { Injectable, EventEmitter } from '@angular/core';
 import { Subject, Observable } from 'rxjs';
 import { Alert } from './../models/alert';
 import { DynaContent } from '../interfaces/dyna-content.interface';
+import { Comment } from '../models/comment';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,7 @@ export class NotifierService {
   private _layerListener = new Subject<DynaContent>();
   public _cameraAction = new EventEmitter<number>();
   public _morePubsRequest = new EventEmitter<boolean>();
+  public _newCommentResp = new EventEmitter<Comment>();
 
   constructor() { }
 
@@ -39,6 +41,10 @@ export class NotifierService {
 
   notifyMorePubsRequest(request: boolean) {
     this._morePubsRequest.emit(request);
+  }
+
+  notifyNewCommentResp(newComment: Comment) {
+    this._newCommentResp.emit(newComment);
   }
 
 }

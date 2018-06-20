@@ -4,6 +4,10 @@ import { Headers, Http, Response } from '@angular/http';
 import { REST_SERV } from '../rest-url/rest-servers';
 import { throwError } from 'rxjs';
 import { UserService } from './user.service';
+import * as lodash from 'lodash';
+
+declare var readAllData: any;
+declare var upgradeTableFieldData: any;
 
 @Injectable({
   providedIn: 'root'
@@ -23,11 +27,18 @@ export class ActionService {
     this.pageLimit = this.DEFAULT_LIMIT;
   }
 
+  /**
+   * MÉTODO PARA OBTENER LOS COMENTARIOS DE UNA PUBLICACIÓN CON FILTRO DE PÁGINA DE LA WEB.
+   * MÉTODO PARA OBTENER LAS RESPUESTAS DE UN COMENTARIO CON FILTRO DE PÁGINA DE LA WEB.
+   * @param parentId ID DE PUBLICACIÓN / COMENTARIO
+   * @param isReplies SI SE TRATA DE OBTENER RESPUESTAS DE UN COMENTARIO
+   * @param pagePattern PATTERN DE PAGINACIÓN
+   * @param moreComments PETICIÓN BAJO DEMANDA
+   */
   private getCommentsWebByPub(parentId: string, isReplies: boolean, pagePattern: string = null, moreComments: boolean = false) {
     const requestHeaders = new Headers({
       "Content-Type": "application/json",
-      'X-Access-Token': this._userService.getUserId(),
-      'Page-Pattern': pagePattern
+      'X-Access-Token': this._userService.getUserId()
     });
     let flag = true;
 
@@ -36,7 +47,7 @@ export class ActionService {
     }
 
     if (flag) {
-      let filter = ((!isReplies) ? "/?pub_id=" + parentId : "/?com_id=" + parentId) + "&limit=" + this.pageLimit + ((isReplies) ? "&replies=true" : "");
+      let filter = ((!isReplies) ? "/?pub_id=" + parentId : "/?com_id=" + parentId) + ((pagePattern) ? pagePattern : "&limit=" + this.pageLimit) + ((isReplies) ? "&replies=true" : "");
 
       return this._http.get(REST_SERV.commentUrl + filter, {
         headers: requestHeaders,
@@ -60,6 +71,67 @@ export class ActionService {
             }
             return { comments: comments, pagePattern: respJson.comments.next };
           }
+        })
+        .catch((error: Response) => {
+          if (error.json().code == 401) {
+            localStorage.clear();
+          }
+          return throwError(error.json());
+        });
+    }
+    return new Promise((resolve, reject) => {
+      this.isFetchedComments = true;
+      resolve(null);
+    });
+  }
+
+  /**
+   * MÉTODO PARA OBTENER LOS COMENTARIOS DE UNA PUBLICACIÓN CON FILTRO DE PÁGINA DE LA CACHE.
+   * MÉTODO PARA OBTENER LAS RESPUESTAS DE UN COMENTARIO CON FILTRO DE PÁGINA DE LA CACHE.
+   * @param parentId ID DE PUBLICACIÓN / COMENTARIO
+   * @param isReplies SI SE TRATA DE OBTENER RESPUESTAS DE UN COMENTARIO
+   * @param pagePattern PATTERN DE PAGINACIÓN
+   * @param moreComments PETICIÓN BAJO DEMANDA
+   */
+  private getCommentsCacheByPub(parentId: string, isReplies: boolean, pagePattern: string = null) {
+    if ('indexedDB' in window) {
+      return readAllData((isReplies) ? 'reply' : 'comment')
+        .then((tableData) => {
+          let comments: Comment[] = [];
+          ////
+          let offset = 0;
+          if (pagePattern) {
+            offset = parseInt(pagePattern.substring(pagePattern.indexOf("=", pagePattern.indexOf("offset")) + 1));
+          }
+          let cont = 0;
+          for (let i = 0; i < tableData.length; i++) {
+            if (parentId == tableData[i].id) {
+              //REF: https://www.npmjs.com/package/lodash
+              //REF: https://stackoverflow.com/questions/43371092/use-lodash-to-sort-array-of-object-by-value
+              let sortedData = lodash.orderBy(((isReplies) ? tableData[i].replies : tableData[i].comments), ['date_register'], ['desc']);
+              ////
+              for (let d = 0; d < sortedData.length; d++) {
+                if (d >= offset && cont < this.pageLimit) {
+                  comments.push(this.extractCommentJson(sortedData[d]));
+                  cont++;
+                }
+              }
+
+              let size = sortedData.length;
+              offset = (offset + this.pageLimit < size) ? offset + this.pageLimit : null;
+
+              i = tableData.length;
+            }
+          }
+
+          if (isReplies) {
+            console.log("[LUKASK QUEJA SERVICE] - REPLIES OF A COMMENT WITH ID " + parentId + " FROM CACHE", comments);
+          }
+          else {
+            console.log("[LUKASK QUEJA SERVICE] - COMMENTS OF A PUBLICATION WITH ID " + parentId + " FROM CACHE", comments);
+          }
+
+          return { comments: comments, pagePattern: (offset) ? "&limit=" + this.pageLimit + "&offset=" + offset : null };
         });
     }
 
@@ -70,16 +142,11 @@ export class ActionService {
   }
 
   /**
-   * COMPLETAR LA CARGA DE COMENTARIOS DESDE CACHÉ
-   * @param parentId 
+   * MÉTODO PARA OBTENER COMENTARIOS/RESPUESTAS SEA DE LA WEB O DE LA CACHÉ
+   * @param parentId ID DE PUBLICACIÓN / COMENTARIO
+   * @param isReplies SI SE TRATA DE OBTENER RESPUESTAS DE UN COMENTARIO
+   * @param pagePattern PATTERN DE PAGINACIÓN
    */
-  private getCommentsCacheByPub(parentId: string) {
-    return new Promise((resolve, reject) => {
-      this.isFetchedComments = true;
-      resolve(null);
-    });
-  }
-
   public getCommentByPub(parentId: string, isReplies: boolean, pagePattern: string = null) {
     /**
      * IMPLEMENTING NETWORK FIRST STRATEGY
@@ -87,7 +154,7 @@ export class ActionService {
     return this.getCommentsWebByPub(parentId, isReplies, pagePattern).then((webComments: any) => {
 
       if (!this.isFetchedComments) {
-        return this.getCommentsCacheByPub(parentId).then((cacheComments: Comment[]) => {
+        return this.getCommentsCacheByPub(parentId, isReplies).then((cacheComments: any) => {
           return cacheComments;
         });
       }
@@ -104,6 +171,12 @@ export class ActionService {
     });
   }
 
+  /**
+   * MÉTODO PARA CARGAR LOS COMENTARIOS O RESPUESTAS SEA DE LA WEB O DE LA CACHÉ:
+   * @param parentId ID DE PUBLICACIÓN / COMENTARIO
+   * @param isReplies SI SE TRATA DE OBTENER RESPUESTAS DE UN COMENTARIO
+   * @param pagePattern PATTERN DE PAGINACIÓN
+   */
   public getMoreCommentByPub(parentId: string, isReplies: boolean, pagePattern: string) {
     /**
      * IMPLEMENTING NETWORK FIRST STRATEGY
@@ -111,7 +184,7 @@ export class ActionService {
     return this.getCommentsWebByPub(parentId, isReplies, pagePattern, true).then((webComments: Comment[]) => {
 
       if (!this.isFetchedComments) {
-        return this.getCommentsCacheByPub(parentId).then((cacheComments: Comment[]) => {
+        return this.getCommentsCacheByPub(parentId, isReplies, pagePattern).then((cacheComments: Comment[]) => {
           return cacheComments;
         });
       }
@@ -151,16 +224,18 @@ export class ActionService {
       .then((response: Response) => {
         let respJson = response.json().comment;
 
+        console.log(respJson);
+        upgradeTableFieldData(((comment.commentParentId) ? "reply" : "comment"), respJson, false);
+
         return respJson;
       })
-      .catch((error) => throwError(error.json()));
+      .catch((error) => throwError(error));
   }
 
   /**
-   * 
+   * MÉTODO PARA GUARDAR UN NUEVO REGISTRO DE APOYO A UNA PUBLICACIÓN:
    */
   public sendRelevance(pubId: string, isRelevance: boolean) {
-    console.log("isRelevance: " + isRelevance);
     const requestHeaders = new Headers(
       {
         'Content-Type': 'application/json',
@@ -181,6 +256,10 @@ export class ActionService {
       });
   }
 
+  /**
+   * MÉTODO PARA EXTRAER LOS DATOS DE UN NUEVO COMENTARIO Y CONVERTIRLO A UN OBJETO DE TIPO MODELO:
+   * @param jsonComment 
+   */
   public extractCommentJson(jsonComment: any) {
     let usr = this._userService.extractUserJson(jsonComment.user_register);
 

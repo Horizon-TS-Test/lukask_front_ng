@@ -10,13 +10,11 @@ import { CONTENT_TYPES } from '../../config/content-type';
 @Component({
   selector: 'comment-form',
   templateUrl: './comment-form.component.html',
-  styleUrls: ['./comment-form.component.css'],
-  providers: [UserService]
+  styleUrls: ['./comment-form.component.css']
 })
 export class CommentFormComponent implements OnInit {
   @Input() commentModel: Comment;
   @Input() modalForm: boolean;
-  @Output() commentResponse = new EventEmitter<Comment>();
   @Output() closeModal = new EventEmitter<boolean>();
 
   public maxChars: number;
@@ -33,7 +31,7 @@ export class CommentFormComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.commentModel.user = this._userService.getStoredUserData();
+    this.commentModel.user = this._userService.getUserProfile();
   }
 
   /**
@@ -57,12 +55,11 @@ export class CommentFormComponent implements OnInit {
   publishComment() {
     this._actionService.sendComment(this.commentModel)
       .then((response) => {
-        console.log(response);
-        this.commentResponse.emit(this._actionService.extractCommentJson(response));
+        this._notifierService.notifyNewCommentResp(this._actionService.extractCommentJson(response));
 
         this.resetComment();
         this.validateLettersNumber(null);
-        
+
         this.closeModal.emit(true);
       })
       .catch(err => {

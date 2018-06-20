@@ -5,7 +5,7 @@
       'p-border-none': isModal == false
     }">
       <div class="card-block">
-        <comment-form [commentModel]="newComment" [modalForm]="false" (commentResponse)="onCommentResponse($event)"></comment-form>
+        <comment-form [commentModel]="newComment" [modalForm]="false"></comment-form>
       </div>
       <ul class="list-group list-group-flush pb-0">
         <li *ngFor="let comment of commentList" class="list-group-item">

@@ -8,6 +8,7 @@ import { CrytoGen } from '../tools/crypto-gen';
   providedIn: 'root'
 })
 export class UserService {
+  public userProfile: User;
 
   constructor() { }
 
@@ -16,6 +17,8 @@ export class UserService {
    */
   storeUserData(jsonUser: any) {
     let cryptoData = CrytoGen.encrypt(JSON.stringify(jsonUser.user_profile));
+
+    this.userProfile = this.extractUserJson(jsonUser.user_profile);
 
     localStorage.setItem('user_id', jsonUser.user_id);
     localStorage.setItem('user_data', cryptoData);
@@ -58,5 +61,19 @@ export class UserService {
     user.person = new Person(jsonUser.person.id_person, jsonUser.person.age, jsonUser.person.identification_card, jsonUser.person.name, jsonUser.person.last_name, jsonUser.person.telephone, jsonUser.person.address);
 
     return user;
+  }
+
+  /**
+   * MÉTODO PARA TOMAR LOS DATOS DEL USUARIO EN UNA VARIABLE GLOBAL DISPONIBLE PARA TODA LA APLICACIÓN:
+   */
+  setUserProfile() {
+    this.userProfile = this.getStoredUserData();
+  }
+
+  /**
+   * MÉTODO PARA OBTENER EL OBJETO USER PROFILE QUE CONTIENE LOS DATOS DEL USUARIO DESENCRIPTADOS:
+   */
+  getUserProfile() {
+    return this.userProfile;
   }
 }

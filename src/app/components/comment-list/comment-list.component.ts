@@ -1,19 +1,21 @@
-import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output, OnDestroy } from '@angular/core';
 import { ActionService } from '../../services/action.service';
 import { Comment } from '../../models/comment';
 import { ArrayManager } from '../../tools/array-manager';
 import { SocketService } from '../../services/socket.service';
 import { REST_SERV } from '../../rest-url/rest-servers';
 import { HorizonButton } from '../../interfaces/horizon-button.interface';
+import { NotifierService } from '../../services/notifier.service';
+import { Subscription } from 'rxjs';
 
-declare var writeData: any;
+declare var upgradeTableFieldDataArray: any;
 
 @Component({
   selector: 'comment-list',
   templateUrl: './comment-list.component.html',
   styleUrls: ['./comment-list.component.css']
 })
-export class CommentListComponent implements OnInit {
+export class CommentListComponent implements OnInit, OnDestroy {
   @Input() pubId: string;
   @Input() isModal: boolean;
   @Output() closeModal = new EventEmitter<boolean>();
@@ -22,6 +24,9 @@ export class CommentListComponent implements OnInit {
 
   private LOADER_HIDE: string = "hide";
   private LOADER_ON: string = "on";
+
+  private subscriptor: Subscription;
+  private mainComments: any;
 
   public firstPattern: string;
   public pagePattern: string;
@@ -33,7 +38,8 @@ export class CommentListComponent implements OnInit {
 
   constructor(
     private _actionService: ActionService,
-    private _socketService: SocketService
+    private _socketService: SocketService,
+    private _notifierService: NotifierService
   ) {
     this.activeClass = this.LOADER_HIDE;
     this.matButtons = [
@@ -44,12 +50,21 @@ export class CommentListComponent implements OnInit {
       }
     ];
 
+    this.defineMainComments();
     this.listenToSocket();
   }
 
   ngOnInit() {
     this.resetComment();
     this.getComments();
+    this.onCommentResponse();
+  }
+
+  /**
+   * MÉTODO PARA INICIALIZAR LOS DATOS DEL ARRAY SECUNDARIO DE COMENTARIOS:
+   */
+  defineMainComments() {
+    this.mainComments = [];
   }
 
   /**
@@ -63,11 +78,12 @@ export class CommentListComponent implements OnInit {
    * MÉTODO PARA CARGAR LOS COMENTARIOS DESDE EL BACKEND:
    */
   getComments() {
-    if(this.isModal == true) {
+    if (this.isModal == true) {
       this._actionService.pageLimit = this._actionService.MOBILE_LIMIT;
     }
     this._actionService.getCommentByPub(this.pubId, false)
       .then((commentsData: any) => {
+        this.defineMainComments();
         this.commentList = commentsData.comments;
         this.firstPattern = commentsData.pagePattern;
         this.pagePattern = commentsData.pagePattern;
@@ -75,15 +91,33 @@ export class CommentListComponent implements OnInit {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LAS EMISIONES DEL OBJETO EVENT-EMITER DEL COMPONENTE HIJO
-   * @param event EL NUEVO COMENTARIO QUE DEVUELVE EL COMPONENTE HIJO, PROVENIENTE DEL BACKEND
+   * MÉTODO PARA ESCUCHAR LAS EMISIONES DEL OBJETO EVENT-EMITER DEL COMPONENTE HIJO,
+   * EL NUEVO COMENTARIO QUE DEVUELVE EL COMPONENTE HIJO, PROVENIENTE DEL BACKEND:
    */
-  onCommentResponse(event: Comment) {
-    let lastComment: Comment;
-    //REF: https://stackoverflow.com/questions/39019808/angular-2-get-object-from-array-by-id
-    lastComment = this.commentList.find(com => com.commentId === event.commentId);
+  onCommentResponse() {
+    this.subscriptor = this._notifierService._newCommentResp.subscribe((newCom: Comment) => {
+      if (newCom.publicationId == this.pubId) {
+        let lastComment: Comment;
+        //REF: https://stackoverflow.com/questions/39019808/angular-2-get-object-from-array-by-id
+        lastComment = this.commentList.find(com => com.commentId === newCom.commentId);
 
-    ArrayManager.backendServerSays("CREATE", this.commentList, lastComment, event);
+        if (ArrayManager.backendServerSays("CREATE", this.commentList, lastComment, newCom) == true) {
+          this.updatePattern();
+        }
+      }
+    });
+  }
+
+  /**
+   * MÉTODO PARA ACTUALIZAR EL PATTERN QUE VIENE DEL BACKEND PARA NO COMPROMETER LA SECUENCIA 
+   * DE REGISTRO A TRAER DEL BACKEND BAJO DEMANDA, CUANDO SE REGISTRE UN NUEVO COMENTARIO:
+   */
+  updatePattern() {
+    if (this.pagePattern) {
+      let offsetPos = this.pagePattern.indexOf("=", this.pagePattern.indexOf("offset")) + 1;
+      let newOffset = parseInt(this.pagePattern.substring(offsetPos)) + 1;
+      this.pagePattern = this.pagePattern.substring(0, offsetPos) + newOffset;
+    }
   }
 
   /**
@@ -166,18 +200,11 @@ export class CommentListComponent implements OnInit {
    * @param action THIS CAN BE CREATE, UPDATE OR DELETE:
    */
   updateCommentList(commentJson: any, action: string) {
-    console.log(commentJson.publication);
     if (commentJson.description != null && commentJson.publication == this.pubId) {
       let lastComment: Comment, newCom: Comment;
 
-      //PREPPENDING THE BACKEND SERVER IP/DOMAIN:
+      //UPDATING THE BACKEND SERVER IP/DOMAIN:
       commentJson.media_profile = ((commentJson.user_register.media_profile.indexOf("http") == -1) ? REST_SERV.mediaBack : "") + commentJson.user_register.media_profile;
-      ////
-
-      //STORING THE NEW DATA COMMING FROM SOMEWHERE IN INDEXED-DB:
-      /*if ('indexedDB' in window) {
-        writeData('comment', commentJson);
-      }*/
       ////
 
       //REF: https://stackoverflow.com/questions/39019808/angular-2-get-object-from-array-by-id
@@ -187,7 +214,20 @@ export class CommentListComponent implements OnInit {
         newCom = this._actionService.extractCommentJson(commentJson);
       }
 
-      ArrayManager.backendServerSays(action, this.commentList, lastComment, newCom);
+      //STORING THE NEW DATA COMMING FROM SOMEWHERE IN INDEXED-DB:
+      this.mainComments[this.mainComments.length] = commentJson;
+      upgradeTableFieldDataArray("comment", this.mainComments);
+      ////
+
+      if (ArrayManager.backendServerSays(action, this.commentList, lastComment, newCom) == true) {
+        if (action == ArrayManager.CREATE) {
+          this.updatePattern();
+        }
+      }
     }
+  }
+
+  ngOnDestroy() {
+    this.subscriptor.unsubscribe();
   }
 }

@@ -1,23 +1,29 @@
-import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output, OnDestroy } from '@angular/core';
 import { HorizonButton } from '../../interfaces/horizon-button.interface';
 import { Comment } from '../../models/comment';
 import { ActionService } from '../../services/action.service';
 import { SocketService } from '../../services/socket.service';
 import { REST_SERV } from '../../rest-url/rest-servers';
 import { ArrayManager } from '../../tools/array-manager';
+import { Subscription } from 'rxjs';
+import { NotifierService } from '../../services/notifier.service';
+
+declare var upgradeTableFieldDataArray: any;
 
 @Component({
   selector: 'reply-list',
   templateUrl: './reply-list.component.html',
   styleUrls: ['./reply-list.component.css']
 })
-export class ReplyListComponent implements OnInit {
+export class ReplyListComponent implements OnInit, OnDestroy {
   @Input() parentComment: Comment;
   @Output() closeModal: EventEmitter<boolean>;
 
   private _CLOSE = 1;
   private LOADER_HIDE: string = "hide";
   private LOADER_ON: string = "on";
+  private mainReplies: any;
+  private subscriptor: Subscription;
 
   public firstPattern: string;
   public pagePattern: string;
@@ -29,10 +35,11 @@ export class ReplyListComponent implements OnInit {
 
   constructor(
     private _actionService: ActionService,
-    private _socketService: SocketService
+    private _socketService: SocketService,
+    private _notifierService: NotifierService
   ) {
     this.closeModal = new EventEmitter<boolean>();
-
+    this.activeClass = this.LOADER_HIDE;
     this.matButtons = [
       {
         parentContentType: 0,
@@ -41,31 +48,64 @@ export class ReplyListComponent implements OnInit {
       }
     ];
 
-    this.activeClass = this.LOADER_HIDE;
-
+    this.defineMainComments();
     this.listenToSocket();
   }
 
   ngOnInit() {
     this.commentForm = new Comment("", "", "", null, this.parentComment.commentId);
-    this.getRepies();
+    this.getReplies();
+    this.onCommentResponse();
   }
 
-  getRepies() {
+  /**
+   * MÉTODO PARA INICIALIZAR LOS DATOS DEL ARRAY SECUNDARIO DE COMENTARIOS:
+   */
+  defineMainComments() {
+    this.mainReplies = [];
+  }
+
+  /**
+   * MÉTODO PARA OBTENER LAS RESPUESTAS DE UN COMENTARIO SEA DE LA WEB O DE LA CACHÉ:
+   */
+  getReplies() {
     this._actionService.getCommentByPub(this.parentComment.commentId, true)
       .then((repliesData: any) => {
+        this.defineMainComments();
         this.replyList = repliesData.comments;
         this.firstPattern = repliesData.pagePattern;
         this.pagePattern = repliesData.pagePattern;
       });
   }
 
-  onCommentResponse(event: Comment) {
-    let lastComment: Comment;
-    //REF: https://stackoverflow.com/questions/39019808/angular-2-get-object-from-array-by-id
-    lastComment = this.replyList.find(com => com.commentId === event.commentId);
+  /**
+   * MÉTODO PARA ESCUCHAR LAS EMISIONES DEL OBJETO EVENT-EMITER DEL COMPONENTE HIJO,
+   * EL NUEVO COMENTARIO QUE DEVUELVE EL COMPONENTE HIJO, PROVENIENTE DEL BACKEND:
+   */
+  onCommentResponse() {
+    this.subscriptor = this._notifierService._newCommentResp.subscribe((newRep: Comment) => {
+      if (newRep.commentParentId == this.parentComment.commentId) {
+        let lastReply: Comment;
+        //REF: https://stackoverflow.com/questions/39019808/angular-2-get-object-from-array-by-id
+        lastReply = this.replyList.find(com => com.commentId === newRep.commentId);
 
-    ArrayManager.backendServerSays("CREATE", this.replyList, lastComment, event);
+        if (ArrayManager.backendServerSays("CREATE", this.replyList, lastReply, newRep) == true) {
+          this.updatePattern();
+        }
+      }
+    });
+  }
+
+  /**
+   * MÉTODO PARA ACTUALIZAR EL PATTERN QUE VIENE DEL BACKEND PARA NO COMPROMETER LA SECUENCIA 
+   * DE REGISTRO A TRAER DEL BACKEND BAJO DEMANDA, CUANDO SE REGISTRE UNA NUEVA RESPUESTA:
+   */
+  updatePattern() {
+    if (this.pagePattern) {
+      let offsetPos = this.pagePattern.indexOf("=", this.pagePattern.indexOf("offset")) + 1;
+      let newOffset = parseInt(this.pagePattern.substring(offsetPos)) + 1;
+      this.pagePattern = this.pagePattern.substring(0, offsetPos) + newOffset;
+    }
   }
 
   /**
@@ -149,29 +189,35 @@ export class ReplyListComponent implements OnInit {
    * @param action THIS CAN BE CREATE, UPDATE OR DELETE:
    */
   updateCommentList(commentJson: any, action: string) {
-    console.log(commentJson.action_parent);
     if (commentJson.description != null && commentJson.action_parent == this.parentComment.commentId) {
-      let lastComment: Comment, newCom: Comment;
+      let lastReply: Comment, newRep: Comment;
 
-      //PREPPENDING THE BACKEND SERVER IP/DOMAIN:
+      //UPDATING THE BACKEND SERVER IP/DOMAIN:
       commentJson.media_profile = ((commentJson.user_register.media_profile.indexOf("http") == -1) ? REST_SERV.mediaBack : "") + commentJson.user_register.media_profile;
       ////
 
-      //STORING THE NEW DATA COMMING FROM SOMEWHERE IN INDEXED-DB:
-      /*if ('indexedDB' in window) {
-        writeData('comment', commentJson);
-      }*/
-      ////
-
       //REF: https://stackoverflow.com/questions/39019808/angular-2-get-object-from-array-by-id
-      lastComment = (this.replyList) ? this.replyList.find(com => com.commentId === commentJson.id_action) : null;
+      lastReply = (this.replyList) ? this.replyList.find(com => com.commentId === commentJson.id_action) : null;
 
       if (action != ArrayManager.DELETE) {
-        newCom = this._actionService.extractCommentJson(commentJson);
+        newRep = this._actionService.extractCommentJson(commentJson);
       }
 
-      ArrayManager.backendServerSays(action, this.replyList, lastComment, newCom);
+      //STORING THE NEW DATA COMMING FROM SOMEWHERE IN INDEXED-DB:
+      this.mainReplies[this.mainReplies.length] = commentJson;
+      upgradeTableFieldDataArray("reply", this.mainReplies);
+      ////
+
+      if (ArrayManager.backendServerSays(action, this.replyList, lastReply, newRep) == true) {
+        if (action == ArrayManager.CREATE) {
+          this.updatePattern();
+        }
+      }
     }
+  }
+
+  ngOnDestroy() {
+    this.subscriptor.unsubscribe();
   }
 
 }
