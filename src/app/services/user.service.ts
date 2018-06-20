@@ -27,7 +27,6 @@ export class UserService {
    */
   updateUserData(jsonUser: any) {
     let cryptoData = CrytoGen.encrypt(JSON.stringify(jsonUser));
-
     localStorage.setItem('user_data', cryptoData);
   }
 

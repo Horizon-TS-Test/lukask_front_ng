@@ -71,6 +71,7 @@ export class UserEditComponent implements OnInit {
       this.userObj.fileName = this.getFormattedDate() + ".png";
     }
     this._userService.sendUser(this.userObj);
+
     //this.formQuej.reset();
   }
 
