@@ -18,8 +18,8 @@ var dbPromise = idb.open('lukask-store', 1, function (db) {
     if (!db.objectStoreNames.contains('reply')) {
         db.createObjectStore('reply', { keyPath: 'id' });
     }
-    if (!db.objectStoreNames.contains('user')) {
-        db.createObjectStore('user', { keyPath: 'id' });
+    if (!db.objectStoreNames.contains('ownuser')) {
+        db.createObjectStore('ownuser', { keyPath: 'id' });
     }
 
     /**

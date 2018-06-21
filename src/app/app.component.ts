@@ -29,7 +29,7 @@ export class AppComponent implements OnDestroy {
     this.checkLogin();
     if (this.isLoggedIn) {
       this._socketService.connectSocket();
-      this._userService.setUserProfile();
+      this._userService.getRestUserProfile();
     }
 
     this.subscription = this._notifierService.listenAlert().subscribe(
