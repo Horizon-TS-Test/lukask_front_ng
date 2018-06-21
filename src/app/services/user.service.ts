@@ -1,33 +1,60 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { User } from '../models/user';
 import { Person } from '../models/person';
 import { REST_SERV } from '../rest-url/rest-servers';
 import { CrytoGen } from '../tools/crypto-gen';
 
+declare var writeData: any;
+declare var readAllData: any;
+declare var deleteItemData: any;
+
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
+  public userProfile: User;
+  public _userUpdate = new EventEmitter<boolean>();
 
   constructor() { }
 
   /**
-   * MÉTODO PARA ALMACENAR EN EL NAVEGADOR LA INFORMACIÓN DEL 
-   * PERFIL DE USUARIO LUEGO DE HABERSE LOGGEADO:
+   * MÉTODO PARA ALMACENAR EN EL NAVEGADOR LA INFORMACIÓN DEL PERFIL DE USUARIO:
    */
   storeUserData(jsonUser: any) {
     let cryptoData = CrytoGen.encrypt(JSON.stringify(jsonUser.user_profile));
 
+    this.userProfile = this.extractUserJson(jsonUser.user_profile);
+
     localStorage.setItem('user_id', jsonUser.user_id);
     localStorage.setItem('user_data', cryptoData);
+
+    if ('serviceWorker' in navigator && 'SyncManager' in window && 'indexedDB' in window) {
+      readAllData('user')
+        .then((tableData) => {
+          if (tableData.length == 0) {
+            writeData('user', JSON.parse(JSON.stringify({ id: new Date().toISOString(), user_id: jsonUser.user_id })));
+          }
+          else {
+            for (let user of tableData) {
+              deleteItemData('user', user.id)
+                .then(() => {
+                  writeData('user', JSON.parse(JSON.stringify({ id: new Date().toISOString(), user_id: jsonUser.user_id })));
+                });
+            }
+          }
+        });
+    }
   }
 
   /**
    * MÉTODO PARA ACTUALIZAR EN EL NAVEGADOR LA INFORMACIÓN DEL PERFIL DE USUARIO:
    */
-  updateUserData(jsonUser: any) {
+  public updateUserData(jsonUser: any) {
     let cryptoData = CrytoGen.encrypt(JSON.stringify(jsonUser));
     localStorage.setItem('user_data', cryptoData);
+
+    this.setUserProfile();
+    this._userUpdate.emit(true);
   }
 
   /**
@@ -70,15 +97,29 @@ export class UserService {
   }
 
   /**
+   * MÉTODO PARA TOMAR LOS DATOS DEL USUARIO EN UNA VARIABLE GLOBAL DISPONIBLE PARA TODA LA APLICACIÓN:
+   */
+  public setUserProfile() {
+    this.userProfile = this.getStoredUserData();
+    console.log(this.userProfile);
+  }
+
+  /**
+   * MÉTODO PARA OBTENER EL OBJETO USER PROFILE QUE CONTIENE LOS DATOS DEL USUARIO DESENCRIPTADOS:
+   */
+  public getUserProfile() {
+    return this.userProfile;
+  }
+
+  /**
    * MÈTODO PARA EDITAR LOS DATOS DEL PERFIL
    */
-  sendUser(user: User) {
+  public sendUser(user: User) {
     let userFormData: FormData = this.mergeFormData(user);
     this.postUserClient(userFormData)
       .then(
         (response: any) => {
-          let usrData = response.userData;
-          this.updateUserData(usrData);
+          this.updateUserData(response);
         },
         (err) => {
           console.log(err);
@@ -117,7 +158,7 @@ export class UserService {
       xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
           if (xhr.status === 200) {
-            let resp = JSON.parse(xhr.response);
+            let resp = JSON.parse(xhr.response).data;
             console.log(JSON.parse(xhr.response));
             resolve(resp);
           }

@@ -4,7 +4,11 @@ export var CONTENT_TYPES = {
     edit_queja: 2,
     view_queja: 3,
     alert: 4,
-    new_reply: 5,
+    view_replies: 5,
     edit_profile: 6,
+    comment_input: 7,
+    single_map: 8,
+    view_img: 9,
+    view_comments: 10,
     register_profile: 7,
 }

@@ -8,14 +8,15 @@ import { Publication } from '../models/publications';
 import { Media } from '../models/media';
 import { User } from '../models/user';
 import { UserService } from './user.service';
-import { Person } from '../models/person';
 import { SocketService } from './socket.service';
 import { ArrayManager } from '../tools/array-manager';
 import * as lodash from 'lodash';
+import { BackSyncService } from './back-sync.service';
 
 declare var readAllData: any;
 declare var writeData: any;
 declare var deleteItemData: any;
+declare var verifyStoredData: any;
 
 @Injectable({
   providedIn: 'root'
@@ -28,6 +29,7 @@ export class QuejaService {
   private isFetchedPub: boolean;
   private mainMediaJson: any;
   private pagePattern: string;
+  private isPostedPub: boolean;
 
   public DEFAULT_LIMIT: number = 5;
   public ALL: string = "all";
@@ -39,18 +41,23 @@ export class QuejaService {
   constructor(
     private _http: Http,
     private _userService: UserService,
-    private _socketService: SocketService
+    private _socketService: SocketService,
+    private _backSyncService: BackSyncService
   ) {
 
     this.isFetchedQtype = false;
     this.isFetchedPubs = false;
     this.isFetchedPub = false;
 
+    this.defineMainMediaArray();
+    this.listenToSocket();
+  }
+
+  defineMainMediaArray() {
     this.mainMediaJson = [{
       id_pub: '',
       medios: []
     }];
-    this.listenToSocket();
   }
 
   getQuejTypeWeb() {
@@ -121,11 +128,13 @@ export class QuejaService {
     });;
   }
 
+  /**
+   * MÉTODO PARA CARGAR PUBLICACIONES BAJO DEMANDA DESDE LA WEB:
+   */
   getPubsWebByPage(morePubs: boolean = false) {
     const pubHeaders = new Headers({
       'Content-Type': 'application/json',
-      'X-Access-Token': this._userService.getUserId(),
-      'Page-Pattern': this.pagePattern
+      'X-Access-Token': this._userService.getUserId()
     });
     let flag = true;
 
@@ -134,7 +143,7 @@ export class QuejaService {
     }
 
     if (flag) {
-      return this._http.get(REST_SERV.pubsUrl + "/?limit=" + this.DEFAULT_LIMIT, { headers: pubHeaders, withCredentials: true }).toPromise()
+      return this._http.get(REST_SERV.pubsUrl + "/" + ((this.pagePattern) ? this.pagePattern : "?limit=" + this.DEFAULT_LIMIT), { headers: pubHeaders, withCredentials: true }).toPromise()
         .then((response: Response) => {
           const respJson = response.json().data;
           this.pagePattern = respJson.next;
@@ -145,10 +154,12 @@ export class QuejaService {
             transformedPubs.push(this.extractPubJson(pubs[i]));
           }
 
+          this.defineMainMediaArray();
           this.isFetchedPubs = true;
           console.log("[LUKASK QUEJA SERVICE] - PUBLICATIONS FROM WEB", transformedPubs);
           return transformedPubs;
         }).catch((error: Response) => {
+          console.log(error);
           if (error.json().code == 401) {
             localStorage.clear();
           }
@@ -161,7 +172,10 @@ export class QuejaService {
     });
   }
 
-  getPubsCache() {
+  /**
+   * MÉTODO PARA CARGAR PUBLICACIONES BAJO DEMANDA DESDE LA CACHÉ:
+   */
+  getPubsCacheByPage() {
     if ('indexedDB' in window) {
       return readAllData('publication')
         .then((pubs) => {
@@ -169,10 +183,24 @@ export class QuejaService {
           //REF: https://stackoverflow.com/questions/43371092/use-lodash-to-sort-array-of-object-by-value
           let sortedPubs = lodash.orderBy(pubs, ['date_publication'], ['desc']);
           ////
-          let transformedPubs: Publication[] = [];
-          for (let pub of sortedPubs) {
-            transformedPubs.push(this.extractPubJson(pub));
+          let offset = 0;
+          if (this.pagePattern) {
+            offset = parseInt(this.pagePattern.substring(this.pagePattern.indexOf("=", this.pagePattern.indexOf("offset")) + 1));
           }
+          let cont = 0;
+
+          let transformedPubs: Publication[] = [];
+          for (let i = 0; i < sortedPubs.length; i++) {
+            if (i >= offset && cont < this.DEFAULT_LIMIT) {
+              transformedPubs.push(this.extractPubJson(sortedPubs[i]));
+              cont++;
+            }
+          }
+
+          let size = sortedPubs.length;
+          offset = (offset + this.DEFAULT_LIMIT < size) ? offset + this.DEFAULT_LIMIT : null;
+
+          this.pagePattern = (offset) ? "?limit=" + this.DEFAULT_LIMIT + "&offset=" + offset : null;
 
           console.log("[LUKASK QUEJA SERVICE] - PUBLICATIONS FROM CACHE", transformedPubs);
           return transformedPubs
@@ -192,7 +220,7 @@ export class QuejaService {
       this.pubList = webPubs;
 
       if (!this.isFetchedPubs) {
-        return this.getPubsCache().then((cachePubs: Publication[]) => {
+        return this.getPubsCacheByPage().then((cachePubs: Publication[]) => {
           this.pubList = cachePubs;
           return cachePubs;
         });
@@ -218,10 +246,10 @@ export class QuejaService {
      * IMPLEMENTING NETWORK FIRST STRATEGY
     */
     return this.getPubsWebByPage(true).then((webPubs: Publication[]) => {
-      this.pubList = (webPubs) ? this.pubList.concat(webPubs) : this.pubList;
+      this.pubList = (webPubs.length > 0) ? this.pubList.concat(webPubs) : this.pubList;
 
       if (!this.isFetchedPubs) {
-        return this.getPubsCache().then((cachePubs: Publication[]) => {
+        return this.getPubsCacheByPage().then((cachePubs: Publication[]) => {
           this.pubList = this.pubList.concat(cachePubs);
           return this.pubList;
         });
@@ -253,7 +281,6 @@ export class QuejaService {
 
   mergeJSONData(queja: Publication) {
     var json = {
-      user_id: this._userService.getUserId(),
       id: new Date().toISOString(),
       latitude: queja.latitude,
       longitude: queja.longitude,
@@ -261,6 +288,7 @@ export class QuejaService {
       type_publication: queja.type.id,
       date_publication: queja.date_pub,
       location: queja.location,
+      address: queja.address,
       media_files: []
     }
 
@@ -272,52 +300,43 @@ export class QuejaService {
     return json;
   }
 
-  sendQueja(queja: Publication) {
-    /*if ('serviceWorker' in navigator && 'SyncManager' in window) {
-      navigator.serviceWorker.ready
-        .then((serviceW) => {
-          var pub = this.mergeJSONData(queja);
+  /**
+   * MÉTODO PARA GUARDAR UN NUEVO COMENTARIO O RESPUESTA EN EL BACKEND O EN SU DEFECTO PARA BACK SYNC:
+   */
+  public savePub(pub: Publication) {
+    return this.sendQueja(pub).then((response) => {
+      if (!this.isPostedPub) {
+        return this._backSyncService.storeForBackSync('sync-pub', 'sync-new-pub', this.mergeJSONData(pub));
+      }
+      else {
+        this.isPostedPub = false;
+      }
 
-          writeData('sync-pub', pub)
-            .then(function () {
-              serviceW.sync.register('sync-new-pub');
-            })
-            .then(function () {
-              console.log("[LUKASK QUEJA SERVICE] - A new pub has been saved for syncing!!");
-            })
-            .catch(function (err) {
-              console.log(err);
-            });
-        });
-    }
-    //IF THE WEB BROWSER DOESN'T SUPPORT OFFLINE SYNCRONIZATION:
-    else {*/
+      return response;
+    });
+  }
+
+  sendQueja(queja: Publication) {
     let quejaFormData: FormData = this.mergeFormData(queja);
-    this.postQuejaClient(quejaFormData)
+    return this.postQuejaClient(quejaFormData)
       .then(
         (response) => {
           this.updatePubList(response, "CREATE");
-          console.log(response);
+          this.isPostedPub = true;
+          return response;
         },
         (err) => {
           console.log(err);
         }
       );
-    //}
   }
 
   extractPubJson(pubJson) {
     let pub: Publication;
     let usr: User;
-    let person: Person;
     let type: QuejaType;
-    let medios: Media;
 
-    //PREPPENDING THE BACKEND SERVER IP/DOMAIN:
-    pubJson.user_register.media_profile = ((pubJson.user_register.media_profile.indexOf("http") == -1) ? REST_SERV.mediaBack : "") + pubJson.user_register.media_profile;
-    ////
-    usr = new User(pubJson.user_register.email, '', pubJson.user_register.media_profile);
-    usr.person = new Person(pubJson.user_register.person.id_person, pubJson.user_register.person.id_person.age, pubJson.user_register.person.identification_card, pubJson.user_register.person.name, pubJson.user_register.person.last_name, pubJson.user_register.person.telephone, pubJson.user_register.person.address, pubJson.user_register.person.active);
+    usr = this._userService.extractUserJson(pubJson.user_register);
     type = new QuejaType(pubJson.type_publication, pubJson.type_publication_detail);
 
     pub = new Publication(pubJson.id_publication, pubJson.latitude, pubJson.length, pubJson.detail, pubJson.date_publication, pubJson.priority_publication, pubJson.active, type, usr, pubJson.location, pubJson.count_relevance, pubJson.user_relevance);
@@ -340,6 +359,7 @@ export class QuejaService {
     formData.append('type_publication', queja.type.id);
     formData.append('date_publication', queja.date_pub);
     formData.append('location', queja.location);
+    formData.append('address', queja.address);
 
     for (let med of queja.media) {
       formData.append('media_files[]', med.file, med.fileName);
@@ -355,7 +375,7 @@ export class QuejaService {
         if (xhr.readyState === 4) {
           if (xhr.status === 201) {
             console.log(JSON.parse(xhr.response));
-            resolve(JSON.parse(xhr.response).pub);
+            resolve(JSON.parse(xhr.response).data);
           }
           else {
             if (xhr.status == 401) {
@@ -497,7 +517,6 @@ export class QuejaService {
       (socketPub: any) => {
         let stream = socketPub.stream;
         let action = socketPub.payload.action.toUpperCase();
-        let flag = 0;
 
         switch (stream) {
           case "publication":
@@ -538,15 +557,10 @@ export class QuejaService {
    */
   updatePubList(pubJson: any, action: string) {
     let lastPub: Publication, newPub: Publication;
+    let isDeleted: boolean = false;
 
     //PREPPENDING THE BACKEND SERVER IP/DOMAIN:
     pubJson.user_register.media_profile = ((pubJson.user_register.media_profile.indexOf("http") == -1) ? REST_SERV.mediaBack : "") + pubJson.user_register.media_profile;
-    ////
-
-    //STORING THE NEW DATA COMMING FROM SOMEWHERE IN INDEXED-DB
-    if ('indexedDB' in window) {
-      writeData('publication', pubJson);
-    }
     ////
 
     //REF: https://stackoverflow.com/questions/39019808/angular-2-get-object-from-array-by-id
@@ -555,6 +569,11 @@ export class QuejaService {
     if (action != ArrayManager.DELETE) {
       newPub = this.extractPubJson(pubJson);
     }
+    else {
+      isDeleted = true;
+    }
+
+    verifyStoredData('publication', pubJson, isDeleted);
 
     ArrayManager.backendServerSays(action, this.pubList, lastPub, newPub);
   }
@@ -562,18 +581,20 @@ export class QuejaService {
   /**
    * MÉTODO PARA ACTUALIZAR LA INFORMACIÓN DE LOS MEDIOS DE UNA PUBLICACIÓN
    * @param pubId ID DE LA PUBLICACIÓN A SER ACTUALIZADA SUS MEDIOS
-   * @param mediaJson EL VALOR DEL MEDIO A SER AGREGADO
+   * @param isDelete SI ES UN PROCESO DE ELIMINACIÓN O NO
    */
-  updateCachedPubMedia(pubId: string, mediaJson: any) {
+  updateCachedPubMedia(pubId: string, isDelete: boolean) {
     if ('indexedDB' in window) {
-      let newPub: any, lastIndex: number;
+      let newPub: any;
       return readAllData('publication')
         .then((pubs) => {
           for (let i = 0; i < pubs.length; i++) {
             if (pubId == pubs[i].id_publication) {
-              //NEXT IS FOR CLONNING THE JSON OBJECT PROPERLY:
-              newPub = JSON.parse(JSON.stringify(pubs[i]));
-              ////
+              if (isDelete == false) {
+                //NEXT IS FOR CLONNING THE JSON OBJECT PROPERLY:
+                newPub = JSON.parse(JSON.stringify(pubs[i]));
+                ////
+              }
               deleteItemData('publication', pubId);
               i = pubs.length;
             }
@@ -594,6 +615,7 @@ export class QuejaService {
                   for (let m = 0; m < this.mainMediaJson[a].medios.length; m++) {
                     for (let i = 0; i < newPub.medios.length; i++) {
                       if (newPub.medios[i].id_multimedia == this.mainMediaJson[a].medios[m].id_multimedia) {
+                        newPub.medios[i] = this.mainMediaJson[a].medios[m];
                         canWe = false;
                         i = newPub.medios.length;
                       }
@@ -623,6 +645,7 @@ export class QuejaService {
   updatePubMediaList(mediaJson: any, action: string) {
     let ownerPub: Publication;
     let lastMedia: Media, newMedia: Media;
+    let isDelete: boolean = false;
 
     //PREPPENDING THE BACKEND SERVER IP/DOMAIN:
     mediaJson.media_file = ((mediaJson.media_file.indexOf("http") == -1) ? REST_SERV.mediaBack : "") + mediaJson.media_file;
@@ -631,15 +654,17 @@ export class QuejaService {
     //REF: https://stackoverflow.com/questions/39019808/angular-2-get-object-from-array-by-id
     ownerPub = this.pubList.find(pub => pub.id_publication === mediaJson.id_publication);
 
-    //UPDATING THE MEDIA DATA OF A PUBLICATION
-    this.updateCachedPubMedia(mediaJson.id_publication, mediaJson);
-    ////
 
     lastMedia = ownerPub.media.find(med => med.id === mediaJson.id_multimedia);
 
     if (action != ArrayManager.DELETE) {
+      isDelete = true;
       newMedia = new Media(mediaJson.id_multimedia, mediaJson.format_multimedia, mediaJson.media_file, null, null, null, mediaJson.id_publication);
     }
+
+    //UPDATING THE MEDIA DATA OF A PUBLICATION
+    this.updateCachedPubMedia(mediaJson.id_publication, isDelete);
+    ////
 
     ArrayManager.backendServerSays(action, ownerPub.media, lastMedia, newMedia);
   }

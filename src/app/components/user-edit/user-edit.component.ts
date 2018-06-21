@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output, OnDestroy } from '@angular/core';
 import { HorizonButton } from '../../interfaces/horizon-button.interface';
 import { User } from '../../models/user';
 import { Person } from '../../models/person';
@@ -16,7 +16,7 @@ declare var $: any;
   templateUrl: './user-edit.component.html',
   styleUrls: ['./user-edit.component.css']
 })
-export class UserEditComponent implements OnInit {
+export class UserEditComponent implements OnInit, OnDestroy {
   @Output() closeModal = new EventEmitter<boolean>();
 
   private SUBMIT = 0;
@@ -69,7 +69,6 @@ export class UserEditComponent implements OnInit {
       this.userObj.fileName = this.getFormattedDate() + ".png";
     }
     this._userService.sendUser(this.userObj);
-    //this.formQuej.reset();
   }
 
   /**
@@ -119,4 +118,7 @@ export class UserEditComponent implements OnInit {
     return str;
   }
 
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
 }

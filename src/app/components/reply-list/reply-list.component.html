@@ -1,11 +1,11 @@
-<div class="card">
+<div class="p-no-border-rad-card card">
     <div class="card-block">
         <comment [commentModel]="parentComment" [noReplyBtn]="true"></comment>
     </div>
     <div class="card-block">
-        <comment-form [commentModel]="commentForm" (commentResponse)="onCommentResponse($event)"></comment-form>
+        <comment-form [commentModel]="commentForm" [modalForm]="false"></comment-form>
     </div>
-    <ul class="list-group list-group-flush pb-0 max-height-half p-overflow-auto">
+    <ul class="max-height-fourth p-overflow-auto list-group list-group-flush pb-0">
         <li *ngFor="let reply of replyList" class="f-child-full-space list-group-item">
             <comment [commentModel]="reply" [isReply]="true"></comment>
         </li>

@@ -1,4 +1,4 @@
-<div #gmap id="mapa" ></div>
+<div #gmap id="mapa"></div>
 <div class="personal-content personal-over-unset min-height-full max-height-full col-12 p-0" id="personal-edit-q">
   <div class="personal-content min-height-full max-height-full p-overflow-auto">
 
@@ -20,18 +20,26 @@
       <ul class="list-group list-group-flush pb-0">
 
         <li class="list-group-item">
-          <fa name="bullhorn"></fa>
-          <app-select2-bootstrap class="col-11" [fcName]="'quejaType'" [select2Data]="tipoQuejaSelect" (select2Change)="getSelect2Value($event)"></app-select2-bootstrap>
-        </li>
-
-        <li class="list-group-item">
           <fa name="calendar" class="mr-1"></fa>
           <small class="ml-1">2018-04-27 16:25</small>
         </li>
 
         <li class="list-group-item">
+          <fa name="map-marker" class="mr-1"></fa>
+          <small class="ml-1">{{ _locationCity }}</small>
+        </li>
+
+        <li class="list-group-item">
           <fa name="location-arrow" class="mr-1"></fa>
-          <small class="ml-1">Av. Antonio José de Sucre y Almagro</small>
+          <small class="ml-1">{{ _locationAdress }}</small>
+          <button type="button" id="hidden-btn" style="display:none">
+            <fa name="check"></fa>
+          </button>
+        </li>
+
+        <li class="list-group-item">
+          <fa name="bullhorn"></fa>
+          <app-select2-bootstrap class="col-11" [fcName]="'quejaType'" [select2Data]="tipoQuejaSelect" (select2Change)="getSelect2Value($event)"></app-select2-bootstrap>
         </li>
 
         <li class="list-group-item pb-0">

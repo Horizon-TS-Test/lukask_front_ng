@@ -1,22 +1,18 @@
-<div class="top-panel d-flex justify-content-end align-items-center">
+<div class="top-panel d-flex justify-content-end align-items-center" id="id-top-panel">
   <div class="menu-focus">
     <span></span>
   </div>
-  <div class="opcion f-child-full-space py-3 text-center">
-    <a [routerLink]="['/']">
-      Home
-    </a>
-  </div>
+  <a [routerLink]="['/']" class="opcion f-child-full-space py-3 text-center" id="top-option-0" (click)="focusOption('top-option-0')">
+    Home
+  </a>
 
-  <div class="opcion f-child-full-space py-3 text-center">
-    <a [routerLink]="['/mapview']">
-      Mapa
-    </a>
-  </div>
+  <a [routerLink]="['/mapview']" class="opcion f-child-full-space py-3 text-center" id="top-option-1" (click)="focusOption('top-option-1')">
+    Mapa
+  </a>
 
-  <div class="opcion f-child-full-space py-3 text-center">
+  <a [routerLink]="['/']" class="opcion f-child-full-space py-3 text-center" id="top-option-2" (click)="focusOption('top-option-2')">
     Actividad
-  </div>
+  </a>
 </div>
 
 <div class="bot-panel d-flex justify-content-end align-items-center">

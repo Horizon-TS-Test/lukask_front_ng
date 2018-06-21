@@ -17,7 +17,8 @@ export class Publication {
         public user?: User,
         public location?: string,
         public relevance_counter?: number,
-        public user_relevance?: boolean
+        public user_relevance?: boolean,
+        public address?: string
     ) {
         this.media = [];
     }
