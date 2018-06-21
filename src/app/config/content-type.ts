@@ -6,4 +6,5 @@ export var CONTENT_TYPES = {
     alert: 4,
     new_reply: 5,
     edit_profile: 6,
+    register_profile: 7,
 }

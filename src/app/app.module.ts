@@ -45,6 +45,7 @@ import { CommentReplyComponent } from './components/comment-reply/comment-reply.
 import { CommentFormComponent } from './components/comment-form/comment-form.component';
 import { UserService } from './services/user.service';
 import { UserEditComponent } from './components/user-edit/user-edit.component';
+import { UserRegisterComponent } from './components/user-register/user-register.component';
 
 @NgModule({
   declarations: [
@@ -71,7 +72,8 @@ import { UserEditComponent } from './components/user-edit/user-edit.component';
     CommentComponent,
     CommentReplyComponent,
     CommentFormComponent,
-    UserEditComponent
+    UserEditComponent,
+    UserRegisterComponent
   ],
   imports: [
     HttpModule,

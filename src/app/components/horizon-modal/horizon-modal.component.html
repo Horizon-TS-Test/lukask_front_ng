@@ -16,6 +16,8 @@
       </div>
 
       <user-edit *ngSwitchCase="contentTypes.edit_profile" (closeModal)="close($event)"></user-edit>
+      <user-register *ngSwitchCase="contentTypes.register_user" (closeModal)="close($event)"></user-register>
+
     </ng-container>
   </div>
   
