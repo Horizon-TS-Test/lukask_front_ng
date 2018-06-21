@@ -13,7 +13,6 @@ import { CrytoGen } from './../tools/crypto-gen';
 
 import { User } from '../models/user';
 import { SocketService } from './socket.service';
-import { Person } from '../models/person';
 import { UserService } from './user.service';
 
 @Injectable({

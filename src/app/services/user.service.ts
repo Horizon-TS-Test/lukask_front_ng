@@ -4,6 +4,10 @@ import { Person } from '../models/person';
 import { REST_SERV } from '../rest-url/rest-servers';
 import { CrytoGen } from '../tools/crypto-gen';
 
+declare var writeData: any;
+declare var readAllData: any;
+declare var deleteItemData: any;
+
 @Injectable({
   providedIn: 'root'
 })
@@ -22,6 +26,23 @@ export class UserService {
 
     localStorage.setItem('user_id', jsonUser.user_id);
     localStorage.setItem('user_data', cryptoData);
+
+    if ('serviceWorker' in navigator && 'SyncManager' in window && 'indexedDB' in window) {
+      readAllData('user')
+        .then((tableData) => {
+          if (tableData.length == 0) {
+            writeData('user', JSON.parse(JSON.stringify({ id: new Date().toISOString(), user_id: jsonUser.user_id })));
+          }
+          else {
+            for (let user of tableData) {
+              deleteItemData('user', user.id)
+                .then(() => {
+                  writeData('user', JSON.parse(JSON.stringify({ id: new Date().toISOString(), user_id: jsonUser.user_id })));
+                });
+            }
+          }
+        });
+    }
   }
 
   /**

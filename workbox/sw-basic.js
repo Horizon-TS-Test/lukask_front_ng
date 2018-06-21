@@ -6,8 +6,11 @@ importScripts('/assets/js/utility-db.js');
 ///////////
 
 var SYNC_TYPE = {
-    pubSyn: 'sync-new-pub'
+    pubSyn: 'sync-new-pub',
+    comSyn: 'sync-new-comment',
+    relSyn: 'sync-new-relevance',
 };
+
 var REST_URLS_PATTERN = {
     medios: /http:\/\/192.168.1.58:8081\/repositorio_lukask\/.*/,
     firstPubs: /http:\/\/192.168.1.37:3000\/publication\/\?limit=[0-9]+$/,
@@ -15,7 +18,13 @@ var REST_URLS_PATTERN = {
     qtype: 'http://192.168.1.37:3000/qtype',
     comments: /http:\/\/192.168.1.37:3000\/comment\/\?pub_id=[0-9|a-f|-]+\&(?:limit=[0-9]+|limit=[0-9]+\&offset=[0-9]+)$/,
     replies: /http:\/\/192.168.1.37:3000\/comment\/\?com_id=[0-9|a-f|-]+\&(?:limit=[0-9]+|limit=[0-9]+\&offset=[0-9]+)\&replies=true$/,
-}
+};
+
+var REST_URLS = {
+    pub: 'http://192.168.1.37:3000/publication',
+    comment: 'http://192.168.1.37:3000/comment',
+    relevance: 'http://192.168.1.37:3000/relevance',
+};
 
 workbox.precaching.suppressWarnings();
 
@@ -192,35 +201,66 @@ workbox.routing.registerRoute(function (routeData) {
 ///////////
 
 /////////////POST REQUEST TO THE SERVER WITH A BACKGROUND SYNCRONIZATION WAY USING THE SERVICE WORKER://////////////
-function sendData(user_id, formData, indexedTable, restUrl) {
-    fetch(restUrl, {
-        method: 'POST',
-        body: formData,
-        credentials: true,
-        headers: {
-            "Pass-Key": user_id
-        }
-    }).then(function (res) {
-        console.log('Data sent', res);
-        if (res.ok) {
-            res.json()
-                .then(function (restData) {
-                    writeData('publication', restData.pub);
-                    //ALWAYS IT MUST BE "id" FOR GENERIC PURPOSES:
-                    deleteItemData(indexedTable, formData.get('id'));
-                    ////
-                });
-        }
-    }).catch(function (err) {
-        console.log('Error while sending data', err);
-    });
+
+/**
+ * MÉTODO PARA OBTENER EL ID DEL USUARIO DESDE EL STORAGE PARA ENVIAR UN FETCH REQUEST:
+ */
+function getUserId() {
+    return readAllData('user')
+        .then((tableData) => {
+            for (let user of tableData) {
+                return user.user_id;
+            }
+        });
+}
+
+/**
+ * MÉTODO GENÉRICO PARA ENVIAR UN FETCH REQUEST AL SERVIDOR:
+ * @param {*} restUrl EL URL DEL HTTP REQUEST
+ * @param {*} formData EL REQUEST BODY
+ * @param {*} indexedTable LA TABLA EN LA QUE SE VA A ALMACENAR LA RESPUESTA DEL SERVIDOR
+ * @param {*} syncTable LA TABLA EN LA QUE SE ALMACENA LOS DATOS DEL PROCESO BACK-SYNC
+ */
+function sendData(restUrl, formData, indexedTable, syncTable) {
+    getUserId()
+        .then(function (userId) {
+            fetch(restUrl, {
+                method: 'POST',
+                body: formData,
+                credentials: 'include',
+                headers: {
+                    "Pass-Key": userId
+                }
+            }).then(function (res) {
+                console.log('[LUKASK SERVICE WORKER] Fetch response', res);
+                if (res.ok) {
+                    res.json()
+                        .then(function (restData) {
+                            switch (indexedTable) {
+                                case 'publication':
+                                    verifyStoredData(indexedTable, restData.data, false);
+                                    break;
+                                default:
+                                    console.log("indexedTable", restData.data);
+                                    upgradeTableFieldData(indexedTable, restData.data);
+                                    break;
+                            }
+                            //ALWAYS IT MUST BE "id" FOR GENERIC PURPOSES:
+                            deleteItemData(syncTable, formData.get('id'));
+                            ////
+                        });
+                }
+            }).catch(function (err) {
+                console.log('Error while sending data', err);
+            });
+        });
 }
 
 /**
  * BACKGROUND SYNCRONIZATION:
  */
 self.addEventListener('sync', function (event) {
-    console.log('[LUKASK SERVICE WORKER] Background syncing', event);
+    console.log('[LUKASK SERVICE WORKER] Background syncing!!!', event);
 
     switch (event.tag) {
         case SYNC_TYPE.pubSyn:
@@ -239,11 +279,55 @@ self.addEventListener('sync', function (event) {
                             formData.append('detail', pub.detail);
                             formData.append('type_publication', pub.type_publication);
                             formData.append('date_publication', pub.date_publication);
+                            formData.append('location', pub.location);
+                            formData.append('address', pub.address);
                             for (var media of pub.media_files) {
                                 formData.append('media_files[]', media.file, media.fileName);
                             }
 
-                            sendData(pub.user_id, formData, 'sync-pub', REST_URLS.pub);
+                            sendData(REST_URLS.pub, formData, 'publication', 'sync-pub');
+                        }
+                    })
+            );
+            break;
+        case SYNC_TYPE.comSyn:
+            console.log('[LUKASK SERVICE WORKER] Syncing new comments');
+            event.waitUntil(
+                readAllData('sync-comment')
+                    .then(function (data) {
+                        for (var com of data) {
+                            console.log("com: ", com);
+                            //SENDING COMMENT TO THE BACKEND SERVER:
+                            var formData = new FormData();
+                            //ALWAYS IT MUST BE "id" FOR GENERIC PURPOSES:
+                            formData.append('id', com.id);
+                            //
+                            formData.append('description', com.description);
+                            formData.append('id_publication', com.id_publication);
+                            formData.append('action_parent', com.action_parent);
+                            formData.append('active', com.active);
+
+                            sendData(REST_URLS.comment, formData, (com.action_parent == "") ? 'comment' : 'reply', 'sync-comment');
+                        }
+                    })
+            );
+            break;
+        case SYNC_TYPE.relSyn:
+            console.log('[LUKASK SERVICE WORKER] Syncing new relevance');
+            event.waitUntil(
+                readAllData('sync-relevance')
+                    .then(function (data) {
+                        for (var com of data) {
+                            console.log("relevance: ", com);
+                            //SENDING COMMENT TO THE BACKEND SERVER:
+                            var formData = new FormData();
+                            //ALWAYS IT MUST BE "id" FOR GENERIC PURPOSES:
+                            formData.append('id', com.id);
+                            //
+                            formData.append('id_publication', com.id_publication);
+                            formData.append('active', com.active);
+
+                            sendData(REST_URLS.relevance, formData, 'publication', 'sync-relevance');
                         }
                     })
             );

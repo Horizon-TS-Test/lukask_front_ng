@@ -47,13 +47,14 @@ export class CommentFormComponent implements OnInit {
    */
   resetComment() {
     this.commentModel.description = "";
+    this.commentModel.active = true;
   }
 
   /**
    * MÉTODO PARA ENVIAR UN COMENTARIO AL BACKEND:
    */
   publishComment() {
-    this._actionService.sendComment(this.commentModel)
+    this._actionService.saveComment(this.commentModel)
       .then((response) => {
         this._notifierService.notifyNewCommentResp(this._actionService.extractCommentJson(response));
 

@@ -18,12 +18,21 @@ var dbPromise = idb.open('lukask-store', 1, function (db) {
     if (!db.objectStoreNames.contains('reply')) {
         db.createObjectStore('reply', { keyPath: 'id' });
     }
+    if (!db.objectStoreNames.contains('user')) {
+        db.createObjectStore('user', { keyPath: 'id' });
+    }
 
     /**
      * TABLES FOR BACKGROUND SYNC:
      */
     if (!db.objectStoreNames.contains('sync-pub')) {
         db.createObjectStore('sync-pub', { keyPath: 'id' });
+    }
+    if (!db.objectStoreNames.contains('sync-comment')) {
+        db.createObjectStore('sync-comment', { keyPath: 'id' });
+    }
+    if (!db.objectStoreNames.contains('sync-relevance')) {
+        db.createObjectStore('sync-relevance', { keyPath: 'id' });
     }
 });
 //////////////////////////////////////////////////////////////////

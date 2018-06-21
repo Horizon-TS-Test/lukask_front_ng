@@ -11,6 +11,7 @@ import { UserService } from './user.service';
 import { SocketService } from './socket.service';
 import { ArrayManager } from '../tools/array-manager';
 import * as lodash from 'lodash';
+import { BackSyncService } from './back-sync.service';
 
 declare var readAllData: any;
 declare var writeData: any;
@@ -28,6 +29,7 @@ export class QuejaService {
   private isFetchedPub: boolean;
   private mainMediaJson: any;
   private pagePattern: string;
+  private isPostedPub: boolean;
 
   public DEFAULT_LIMIT: number = 5;
   public ALL: string = "all";
@@ -39,7 +41,8 @@ export class QuejaService {
   constructor(
     private _http: Http,
     private _userService: UserService,
-    private _socketService: SocketService
+    private _socketService: SocketService,
+    private _backSyncService: BackSyncService
   ) {
 
     this.isFetchedQtype = false;
@@ -278,7 +281,6 @@ export class QuejaService {
 
   mergeJSONData(queja: Publication) {
     var json = {
-      user_id: this._userService.getUserId(),
       id: new Date().toISOString(),
       latitude: queja.latitude,
       longitude: queja.longitude,
@@ -286,6 +288,7 @@ export class QuejaService {
       type_publication: queja.type.id,
       date_publication: queja.date_pub,
       location: queja.location,
+      address: queja.address,
       media_files: []
     }
 
@@ -297,38 +300,35 @@ export class QuejaService {
     return json;
   }
 
-  sendQueja(queja: Publication) {
-    /*if ('serviceWorker' in navigator && 'SyncManager' in window) {
-      navigator.serviceWorker.ready
-        .then((serviceW) => {
-          var pub = this.mergeJSONData(queja);
+  /**
+   * MÉTODO PARA GUARDAR UN NUEVO COMENTARIO O RESPUESTA EN EL BACKEND O EN SU DEFECTO PARA BACK SYNC:
+   */
+  public savePub(pub: Publication) {
+    return this.sendQueja(pub).then((response) => {
+      if (!this.isPostedPub) {
+        return this._backSyncService.storeForBackSync('sync-pub', 'sync-new-pub', this.mergeJSONData(pub));
+      }
+      else {
+        this.isPostedPub = false;
+      }
 
-          writeData('sync-pub', pub)
-            .then(function () {
-              serviceW.sync.register('sync-new-pub');
-            })
-            .then(function () {
-              console.log("[LUKASK QUEJA SERVICE] - A new pub has been saved for syncing!!");
-            })
-            .catch(function (err) {
-              console.log(err);
-            });
-        });
-    }
-    //IF THE WEB BROWSER DOESN'T SUPPORT OFFLINE SYNCRONIZATION:
-    else {*/
+      return response;
+    });
+  }
+
+  sendQueja(queja: Publication) {
     let quejaFormData: FormData = this.mergeFormData(queja);
-    this.postQuejaClient(quejaFormData)
+    return this.postQuejaClient(quejaFormData)
       .then(
         (response) => {
           this.updatePubList(response, "CREATE");
-          console.log(response);
+          this.isPostedPub = true;
+          return response;
         },
         (err) => {
           console.log(err);
         }
       );
-    //}
   }
 
   extractPubJson(pubJson) {
@@ -359,6 +359,7 @@ export class QuejaService {
     formData.append('type_publication', queja.type.id);
     formData.append('date_publication', queja.date_pub);
     formData.append('location', queja.location);
+    formData.append('address', queja.address);
 
     for (let med of queja.media) {
       formData.append('media_files[]', med.file, med.fileName);
@@ -374,7 +375,7 @@ export class QuejaService {
         if (xhr.readyState === 4) {
           if (xhr.status === 201) {
             console.log(JSON.parse(xhr.response));
-            resolve(JSON.parse(xhr.response).pub);
+            resolve(JSON.parse(xhr.response).data);
           }
           else {
             if (xhr.status == 401) {

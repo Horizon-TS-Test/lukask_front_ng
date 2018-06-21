@@ -5,6 +5,7 @@ import { REST_SERV } from '../rest-url/rest-servers';
 import { throwError } from 'rxjs';
 import { UserService } from './user.service';
 import * as lodash from 'lodash';
+import { BackSyncService } from './back-sync.service';
 
 declare var readAllData: any;
 declare var upgradeTableFieldData: any;
@@ -14,6 +15,8 @@ declare var upgradeTableFieldData: any;
 })
 export class ActionService {
   private isFetchedComments: boolean;
+  private isPostedComment: boolean;
+  private isPostedRelevance: boolean;
 
   private DEFAULT_LIMIT: number = 2;
   public MOBILE_LIMIT: number = 5;
@@ -21,9 +24,11 @@ export class ActionService {
 
   constructor(
     private _http: Http,
-    private _userService: UserService
+    private _userService: UserService,
+    private _backSyncService: BackSyncService
   ) {
     this.isFetchedComments = false;
+    this.isPostedComment = false;
     this.pageLimit = this.DEFAULT_LIMIT;
   }
 
@@ -73,10 +78,12 @@ export class ActionService {
           }
         })
         .catch((error: Response) => {
-          if (error.json().code == 401) {
+          /*if (error.json().code == 401) {
             localStorage.clear();
-          }
-          return throwError(error.json());
+          }*/
+          //return throwError(error.json());
+          console.log(error);
+          return throwError(error);
         });
     }
     return new Promise((resolve, reject) => {
@@ -164,10 +171,11 @@ export class ActionService {
 
       return webComments;
     }).catch((error: Response) => {
-      if (error.json().code == 401) {
+      /*if (error.json().code == 401) {
         localStorage.clear();
-      }
-      return throwError(error.json());
+      }*/
+      //return throwError(error.json());
+      return throwError(error);
     });
   }
 
@@ -222,14 +230,48 @@ export class ActionService {
     return this._http.post(REST_SERV.commentUrl, requestBody, { headers: requestHeaders, withCredentials: true })
       .toPromise()
       .then((response: Response) => {
-        let respJson = response.json().comment;
+        let respJson = response.json().data;
 
         console.log(respJson);
         upgradeTableFieldData(((comment.commentParentId) ? "reply" : "comment"), respJson, false);
 
+        this.isPostedComment = true;
         return respJson;
       })
       .catch((error) => throwError(error));
+  }
+
+  /**
+   * MÉTODO PARA GUARDAR UN NUEVO COMENTARIO O RESPUESTA EN EL BACKEND O EN SU DEFECTO PARA BACK SYNC:
+   */
+  public saveComment(comment: Comment) {
+    return this.sendComment(comment).then((response) => {
+      if (!this.isPostedComment) {
+        return this._backSyncService.storeForBackSync('sync-comment', 'sync-new-comment', this.mergeJSONData(comment));
+      }
+      else {
+        this.isPostedComment = false;
+      }
+
+      return response;
+    });
+  }
+
+  /**
+   * MÉTODO PARA CREAR UN OBJETO JSON A PARTIR DE UN MODELO
+   * @param comment EL OBJETO MODELO
+   */
+  mergeJSONData(comment: Comment) {
+    var json = {
+      id: new Date().toISOString(),
+      description: comment.description,
+      id_publication: comment.publicationId,
+      action_parent: (comment.commentParentId) ? comment.commentParentId : "",
+      active: comment.active
+    }
+    /////
+
+    return json;
   }
 
   /**
@@ -250,10 +292,27 @@ export class ActionService {
     return this._http.post(REST_SERV.relevanceUrl, requestBody, { headers: requestHeaders, withCredentials: true })
       .toPromise()
       .then((response: Response) => {
-        let respJson = response.json().relevanceData.active;
+        this.isPostedRelevance = false;
+        let respJson = response.json().data.active;
 
         return respJson;
       });
+  }
+
+  /**
+   * MÉTODO PARA GUARDAR UN NUEVO COMENTARIO O RESPUESTA EN EL BACKEND O EN SU DEFECTO PARA BACK SYNC:
+   */
+  public saveRelevance(pubId: string, isRelevance: boolean) {
+    return this.sendRelevance(pubId, isRelevance).then((response) => {
+      if (!this.isPostedRelevance) {
+        return this._backSyncService.storeForBackSync('sync-relevance', 'sync-new-relevance', this.mergeJSONData(new Comment(null, null, pubId, null, null, isRelevance)));
+      }
+      else {
+        this.isPostedRelevance = false;
+      }
+
+      return response;
+    });
   }
 
   /**

@@ -43,7 +43,7 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
   private subscription: Subscription;
   private alertData: Alert;
   private pubFilterList: Publication[];
-  
+
   public _locationCity: string;
   public _locationAdress: string;
   public _ref: any;
@@ -282,13 +282,13 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
   }
 
   publishQueja() {
-    this.newPub = new Publication("", this._gps.latitude, this._gps.longitude, this.formQuej.value.fcnDetail, this.getFormattedDate(), null, null, new QuejaType(this.quejaType, null), null, this._locationCity);
+    this.newPub = new Publication("", this._gps.latitude, this._gps.longitude, this.formQuej.value.fcnDetail, this.getFormattedDate(), null, null, new QuejaType(this.quejaType, null), null, this._locationCity, null, null, this._locationAdress);
     if (this.filesToUpload.length > 0) {
       for (let i = 0; i < this.filesToUpload.length; i++) {
         this.newPub.media.push(new Media("", "", "", null, this.filesToUpload[i], i + "-" + this.getFormattedDate() + ".png"));
       }
     }
-    this._quejaService.sendQueja(this.newPub);
+    this._quejaService.savePub(this.newPub);
     this.formQuej.reset();
   }
 
@@ -298,7 +298,6 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
   getButtonAction(actionEvent: number) {
     switch (actionEvent) {
       case this._SUBMIT:
-        console.log("Submit! has been requested");
         this.publishQueja();
         break;
       case this._CLOSE:
