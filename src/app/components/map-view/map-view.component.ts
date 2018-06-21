@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ContentService } from '../../services/content.service';
 import { ViewChild } from '@angular/core';
-import { } from '@types/googlemaps';
 import { Publication } from '../../models/publications';
 import { QuejaService } from '../../services/queja.service';
 import pubIcons from '../../data/pub-icons';
@@ -11,7 +10,6 @@ import { NotifierService } from '../../services/notifier.service';
 import { CONTENT_TYPES } from '../../config/content-type';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
-
 
 declare var google: any;
 declare var $: any;
@@ -54,6 +52,8 @@ export class MapViewComponent implements OnInit {
       mapTypeId: google.maps.MapTypeId.ROADMAP,
       styles: styleMap
     };
+    
+    this.focusInnerOption();
 
     /**
      * PARA SUBSCRIBIRSE AL EVENTO DE ACTUALIZACIÓN DEL SOCKET, QUE TRAE 
@@ -77,6 +77,13 @@ export class MapViewComponent implements OnInit {
 
     //TOMANDO QUERY PARAMS:
     this.getQueryParams();
+  }
+
+  /**
+   * MÉTODO PARA DAR FOCUS A LA OPCIÓN ASOCIADA A ESTE CONTENIDO PRINCIPAL DE NAVEGACIÓN:
+   */
+  focusInnerOption() {
+    this._contentService.focusMenuOption($("#id-top-panel"), "top-option-1");
   }
 
   /**
@@ -110,7 +117,7 @@ export class MapViewComponent implements OnInit {
   }
 
   /**
-   * METODO QUE RECORRE LA LISTA DE QUEJAS Y CREA EL MARKER DE CADA UNA
+   * MÉTODO QUE RECORRE LA LISTA DE QUEJAS Y CREA EL MARKER DE CADA UNA
    */
   fetchPub() {
     for (let pub of this.pubList) {

@@ -1,0 +1,28 @@
+<div [ngClass]="{ 'personal-content min-height-full max-height-full p-overflow-auto': isModal == true }">
+  <div [ngClass]="{ 'col-12 py-1 px-1': isModal == true }">
+    <div class="p-no-border-rad-card card" [ngClass]="{
+      'p-shadow-card': isModal == true,
+      'p-border-none': isModal == false
+    }">
+      <div class="card-block">
+        <comment-form [commentModel]="newComment" [modalForm]="false"></comment-form>
+      </div>
+      <ul class="list-group list-group-flush pb-0">
+        <li *ngFor="let comment of commentList" class="list-group-item">
+          <comment [commentModel]="comment"></comment>
+        </li>
+      </ul>
+      <div *ngIf="pagePattern || firstPattern" class="card-footer text-center">
+        <a href="#" (click)="askForMore($event)" class="p-dark-text-color">
+          <small *ngIf="pagePattern">Ver comentarios anteriores</small>
+          <small *ngIf="!pagePattern && firstPattern">Ocultar comentarios anteriores</small>
+        </a>
+        <div class="bottom-loader {{ activeClass }} col-12 d-flex justify-content-center align-items-center">
+          <img src="/assets/images/forms/preloader.gif" width="50px">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<material-btn-list [materialBtns]="matButtons" (someBtnAction)="getButtonAction($event)"></material-btn-list>

@@ -2,17 +2,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 
 import { QuejaService } from '../../services/queja.service';
 import { Publication } from '../../models/publications';
-import { SocketService } from '../../services/socket.service';
 import { Subscription } from 'rxjs';
-import { User } from '../../models/user';
-import { REST_SERV } from '../../rest-url/rest-servers';
-import { Media } from '../../models/media';
-import { ContentService } from '../../services/content.service';
 import { NotifierService } from '../../services/notifier.service';
-
-declare var $: any;
-declare var writeData: any;
-declare var deleteItemData: any;
 
 @Component({
   selector: 'app-quejas-list',
@@ -30,8 +21,6 @@ export class QuejaListComponent implements OnInit, OnDestroy {
 
   constructor(
     private _quejaService: QuejaService,
-    private _socketService: SocketService,
-    private _contentService: ContentService,
     private _notifierService: NotifierService
   ) {
     this.activeClass = this.LOADER_HIDE;

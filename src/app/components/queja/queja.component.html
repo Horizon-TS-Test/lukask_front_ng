@@ -1,20 +1,8 @@
 <div class="col-12 py-0 px-1">
-  <div class="personal-queja card mb-3 pb-0">
+  <div class="personal-queja p-shadow-card p-no-border-rad-card card mb-3 pb-0">
     <div class="card-header d-flex justify-content-between align-items-center">
       <div class="d-flex justify-content-center align-items-center">
-        <a href="#" (click)="onRelevance($event)" class="ml-1 p-1 btn btn-sm btn-info no-border-button" [ngClass]="{ 'dark': queja.user_relevance }"
-          title="Apoyo">
-          <fa name="star"></fa>
-        </a>
-        <a href="#" class="ml-1 p-1 btn btn-sm btn-info no-border-button" title="Comentar">
-          <fa name="pencil"></fa>
-        </a>
-        <a href="#" (click)="geolocatePub($event)" class="ml-1 p-1 btn btn-sm btn-info no-border-button" title="Geolocalizar">
-          <fa name="map-marker"></fa>
-        </a>
-        <a href="#" class="ml-1 p-1 btn btn-sm btn-info no-border-button" title="Denunciar">
-          <fa name="ban"></fa>
-        </a>
+        <task-list [queja]="queja"></task-list>
       </div>
       <div>
         <small>{{queja.date_pub}}</small>
@@ -48,22 +36,6 @@
         {{queja.detail}}
       </div>
     </a>
-    <ul class="list-group list-group-flush pb-0">
-      <li class="list-group-item pb-0">
-        <comment-form [commentModel]="newComment" (commentResponse)="onCommentResponse($event)"></comment-form>
-      </li>
-      <li *ngFor="let comment of commentList" class="list-group-item">
-        <comment [commentModel]="comment"></comment>
-      </li>
-    </ul>
-    <div *ngIf="pagePattern || firstPattern" class="card-footer text-center">
-      <a href="#" (click)="askForMore($event)" class="p-dark-text-color">
-        <small *ngIf="pagePattern">Ver respuestas anteriores</small>
-        <small *ngIf="!pagePattern && firstPattern">Ocultar respuestas anteriores</small>
-      </a>
-      <div class="bottom-loader {{ activeClass }} col-12 d-flex justify-content-center align-items-center">
-        <img src="/assets/images/forms/preloader.gif" width="50px">
-      </div>
-    </div>
+    <comment-list [pubId]="queja.id_publication" [isModal]="false"></comment-list>
   </div>
 </div>

@@ -1,0 +1,5 @@
+<owl-carousel class="personal-owl-nav" [options]="carouselOptions" [carouselClasses]="['owl-theme']">
+  <img *ngFor="let med of media" src="{{ med.url }}" width="100%">
+</owl-carousel>
+
+<material-btn-list [materialBtns]="materialBtn" (someBtnAction)="getButtonAction($event)"></material-btn-list>

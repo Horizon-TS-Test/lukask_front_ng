@@ -1,36 +1,51 @@
-<div class="col-12 py-0 px-1">
-  <div *ngIf="quejaDetail" class="personal-queja card mb-3 pb-0">
-    <div class="card-header d-flex justify-content-between align-items-center">
-      <div class="d-flex justify-content-center align-items-center">
-        <a href="#" class="ml-1 btn btn-sm btn-outline-info personal-icon-btn" title="Apoyo">
-          <fa name="star"></fa>
-        </a>
-        <a href="#" class="ml-1 btn btn-sm btn-outline-info personal-icon-btn" title="Comentar">
-          <fa name="pencil"></fa>
-        </a>
-        <a href="#" class="ml-1 btn btn-sm btn-outline-info personal-icon-btn" title="Localizar">
-          <fa name="map-marker"></fa>
-        </a>
-        <a href="#" class="ml-1 btn btn-sm btn-outline-info personal-icon-btn" title="Denunciar">
-          <fa name="ban"></fa>
+<div class="personal-content min-height-full max-height-full p-overflow-auto" id="idQuejaDetail">
+  <div class="col-12 pt-1 px-1">
+    <div *ngIf="quejaDetail" class="personal-queja p-shadow-card p-no-border-rad-card card mb-3 pb-0">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <task-list [queja]="quejaDetail" [isDetail]="true"></task-list>
+      </div>
+      <div class="personal-usr-queja py-0 card-block d-flex justify-content-end align-items-center">
+        {{ quejaDetail.user.person.name }} {{ quejaDetail.user.person.last_name }}
+        <div class="ml-2 my-0 personal-profile-img" [style.background-image]="_domSanitizer.bypassSecurityTrustStyle('url(' + quejaDetail.user.profileImg + ')')">
+        </div>
+      </div>
+      <div class="personal-content relative-background">
+        <owl-carousel id="corousel-detail-q" class="personal-owl-nav" [options]="carouselOptions" [carouselClasses]="['owl-theme']">
+          <a href="#" *ngFor="let med of quejaDetail.media" (click)="viewImg($event)" class="card-img-top">
+            <img src="{{med.url}}" width="100%" class="mb-1">
+          </a>
+        </owl-carousel>
+      </div>
+      <div class="relative-background card-block text-justify pb-4">
+        {{ quejaDetail.detail }}
+
+        <a href="#" (click)="viewComments($event)" class="p-float-link down-right-corner p-dark-text-color">
+          <small>Ver comentarios</small>
         </a>
       </div>
-      <div>
-        <small>{{quejaDetail.date_pub}}</small>
+
+      <ul class="list-group list-group-flush pb-0">
+        <li class="list-group-item">
+          <fa name="calendar" class="mr-1"></fa>
+          <small class="ml-1">{{ quejaDetail.date_pub }}</small>
+        </li>
+        <li class="list-group-item">
+          <fa name="bullhorn" class="mr-1"></fa>
+          <small class="ml-1">{{ quejaDetail.type.description }}</small>
+        </li>
+        <li class="list-group-item">
+          <fa name="map-marker" class="mr-1"></fa>
+          <small class="ml-1">{{ quejaDetail.location }}</small>
+        </li>
+        <li class="list-group-item">
+          <fa name="location-arrow" class="mr-1"></fa>
+          <small class="ml-1">Av. Alfonso Chávez km 301</small>
+        </li>
+      </ul>
+
+      <div class="card-block p-0">
+        <div #mapRef></div>
       </div>
-    </div>
-    <div class="personal-usr-queja py-0 card-block d-flex justify-content-end align-items-center">
-      {{quejaDetail.user.username}}
-      <div class="ml-2 my-0 personal-profile-img" [style.background-image]="_domSanitizer.bypassSecurityTrustStyle('url(' + quejaDetail.user.profileImg + ')')">
-      </div>
-    </div>
-    <div class="card-img-top">
-      <owl-carousel id="corousel-detail-q" class="personal-owl-carousel personal-owl-nav" [options]="carouselOptions" [carouselClasses]="['owl-theme']">
-        <img *ngFor="let med of quejaDetail.media" class="mb-1" src="{{med.url}}" width="100%">
-      </owl-carousel>
-    </div>
-    <div class="card-block text-justify">
-      {{quejaDetail.detail}}
     </div>
   </div>
 </div>

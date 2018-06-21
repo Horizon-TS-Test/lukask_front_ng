@@ -41,10 +41,14 @@ import { HorizonModalComponent } from './components/horizon-modal/horizon-modal.
 import { MaterialButtonComponent } from './components/material-button/material-button.component';
 import { MaterialBtnListComponent } from './components/material-btn-list/material-btn-list.component';
 import { CommentComponent } from './components/comment/comment.component';
-import { CommentReplyComponent } from './components/comment-reply/comment-reply.component';
+import { ReplyListComponent } from './components/reply-list/reply-list.component';
 import { CommentFormComponent } from './components/comment-form/comment-form.component';
 import { UserService } from './services/user.service';
 import { UserEditComponent } from './components/user-edit/user-edit.component';
+import { TaskListComponent } from './components/task-list/task-list.component';
+import { SingleMapComponent } from './components/single-map/single-map.component';
+import { ImgViewerComponent } from './components/img-viewer/img-viewer.component';
+import { CommentListComponent } from './components/comment-list/comment-list.component';
 
 @NgModule({
   declarations: [
@@ -69,9 +73,13 @@ import { UserEditComponent } from './components/user-edit/user-edit.component';
     MaterialButtonComponent,
     MaterialBtnListComponent,
     CommentComponent,
-    CommentReplyComponent,
+    ReplyListComponent,
     CommentFormComponent,
-    UserEditComponent
+    UserEditComponent,
+    TaskListComponent,
+    SingleMapComponent,
+    ImgViewerComponent,
+    CommentListComponent
   ],
   imports: [
     HttpModule,
@@ -85,6 +93,6 @@ import { UserEditComponent } from './components/user-edit/user-edit.component';
   ],
   providers: [appRoutingProviders, ContentService, UserService, AuthGuardService, LoginGuardService, NotifierService, CameraService, SocketService, BrowserNotifierService, QuejaService],
   bootstrap: [AppComponent],
-  entryComponents: [AlertComponent, HorizonModalComponent]
+  entryComponents: [AlertComponent, HorizonModalComponent, SingleMapComponent]
 })
 export class AppModule { }
