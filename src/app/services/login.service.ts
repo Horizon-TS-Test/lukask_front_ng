@@ -39,7 +39,7 @@ export class LoginService {
         console.log(respJson);
         if (response.status === 200) {
           this._socketService.connectSocket();
-          this._userService.storeUserData(respJson.data);
+          this._userService.storeUserCredentials(respJson.data);
         }
         return respJson;
       });

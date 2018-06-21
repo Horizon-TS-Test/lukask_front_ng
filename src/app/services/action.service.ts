@@ -43,7 +43,7 @@ export class ActionService {
   private getCommentsWebByPub(parentId: string, isReplies: boolean, pagePattern: string = null, moreComments: boolean = false) {
     const requestHeaders = new Headers({
       "Content-Type": "application/json",
-      'X-Access-Token': this._userService.getUserId()
+      'X-Access-Token': this._userService.getUserKey()
     });
     let flag = true;
 
@@ -217,7 +217,7 @@ export class ActionService {
     const requestHeaders = new Headers(
       {
         'Content-Type': 'application/json',
-        'X-Access-Token': this._userService.getUserId()
+        'X-Access-Token': this._userService.getUserKey()
       }
     );
     const requestBody = JSON.stringify({
@@ -281,7 +281,7 @@ export class ActionService {
     const requestHeaders = new Headers(
       {
         'Content-Type': 'application/json',
-        'X-Access-Token': this._userService.getUserId()
+        'X-Access-Token': this._userService.getUserKey()
       }
     );
     const requestBody = JSON.stringify({
