@@ -1330,8 +1330,9 @@ p, label, div {
 
 ////ETILOS PARA FORMULARIO
 ////ESTILO INPUT USER EDIT
-input[type=text], textarea{
+input[type=text], input[type=password], input[type=email], textarea{
     border-top: none;
     border-left: none;
     border-right: none;
+    border-radius: 0;
 }

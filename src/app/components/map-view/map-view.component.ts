@@ -52,7 +52,7 @@ export class MapViewComponent implements OnInit {
       mapTypeId: google.maps.MapTypeId.ROADMAP,
       styles: styleMap
     };
-    
+
     this.focusInnerOption();
 
     /**
@@ -66,6 +66,9 @@ export class MapViewComponent implements OnInit {
     });
     ////
 
+    //TOMANDO QUERY PARAMS, ESTO DEBE IR ANTES DE INTENTAR DAR FOCUS EN LOS MARKERS:
+    this.getQueryParams();
+
     //Definición del mapa
     this.map = new google.maps.Map(this.gmapElement.nativeElement, mapProp);
     this.getPubs();
@@ -74,9 +77,6 @@ export class MapViewComponent implements OnInit {
      * MÉTODO QUE EJECUTA LA ACCIÓN DEL MARKER
      */
     $("#idviewPub").on(("click"), (event) => { });
-
-    //TOMANDO QUERY PARAMS:
-    this.getQueryParams();
   }
 
   /**
@@ -168,12 +168,20 @@ export class MapViewComponent implements OnInit {
   }
 
   getPubs() {
-    this._quejaService.getPubList().then((pubs: Publication[]) => {
-      this.pubList = pubs;
+    this.pubList = this._quejaService.getPubListObj();
+    if (!this.pubList) {
+      this._quejaService.getPubList().then((pubs: Publication[]) => {
+        this.pubList = pubs;
+        this.fetchPub();
+        //HACIENDO FOCUS UNA PUBLICACIÓN EN EL MAPA      
+        this.metodFocusPubId();
+      });
+    }
+    else {
       this.fetchPub();
       //HACIENDO FOCUS UNA PUBLICACIÓN EN EL MAPA      
       this.metodFocusPubId();
-    });
+    }
   }
 
   /**
@@ -189,11 +197,12 @@ export class MapViewComponent implements OnInit {
    * METODO QUE ENFOCA EL MARKER BUSCADO
    */
   focus() {
-    let focusZoom = 19;
-    for (let pub of this.pubList) {
-      if (this.focusPubId == pub.id_publication) {
-        this.map.setCenter({ lat: pub.latitude, lng: pub.longitude });
+    let focusZoom = 25;
+    for (let i = 0; i < this.pubList.length; i++) {
+      if (this.focusPubId == this.pubList[i].id_publication) {
+        this.map.setCenter({ lat: this.pubList[i].latitude, lng: this.pubList[i].longitude });
         this.map.setZoom(focusZoom);
+        i = this.pubList.length;
       }
     }
   }

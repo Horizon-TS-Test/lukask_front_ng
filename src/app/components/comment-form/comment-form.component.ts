@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActionService } from '../../services/action.service';
 import { PatternManager } from '../../tools/pattern-manager';
@@ -6,19 +6,21 @@ import { Comment } from '../../models/comment';
 import { UserService } from '../../services/user.service';
 import { NotifierService } from '../../services/notifier.service';
 import { CONTENT_TYPES } from '../../config/content-type';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'comment-form',
   templateUrl: './comment-form.component.html',
   styleUrls: ['./comment-form.component.css']
 })
-export class CommentFormComponent implements OnInit {
+export class CommentFormComponent implements OnInit, OnDestroy {
   @Input() commentModel: Comment;
   @Input() modalForm: boolean;
   @Output() closeModal = new EventEmitter<boolean>();
 
   public maxChars: number;
   public restChars: number;
+  public subscription: Subscription;
 
   constructor(
     public _domSanitizer: DomSanitizer,
@@ -28,9 +30,23 @@ export class CommentFormComponent implements OnInit {
   ) {
     this.maxChars = 200;
     this.restChars = this.maxChars;
+
+    this.subscription = this._userService._userUpdate.subscribe((update: boolean) => {
+      if (update) {
+        this.setUser();
+      }
+    });
   }
 
   ngOnInit() {
+    this.commentModel.active = true;
+    this.setUser();
+  }
+
+  /**
+   * MÉTODO PARA ASIGNAR UN VALOR AL PERFIL DE USUARIO A MOSTRAR EN EL FORMULARIO DE COMENTARIO:
+   */
+  setUser() {
     this.commentModel.user = this._userService.getUserProfile();
   }
 
@@ -47,7 +63,6 @@ export class CommentFormComponent implements OnInit {
    */
   resetComment() {
     this.commentModel.description = "";
-    this.commentModel.active = true;
   }
 
   /**
@@ -80,4 +95,7 @@ export class CommentFormComponent implements OnInit {
     }
   }
 
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
 }

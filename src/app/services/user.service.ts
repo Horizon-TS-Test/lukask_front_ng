@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { User } from '../models/user';
 import { Person } from '../models/person';
 import { REST_SERV } from '../rest-url/rest-servers';
@@ -13,6 +13,7 @@ declare var deleteItemData: any;
 })
 export class UserService {
   public userProfile: User;
+  public _userUpdate = new EventEmitter<boolean>();
 
   constructor() { }
 
@@ -48,9 +49,12 @@ export class UserService {
   /**
    * MÉTODO PARA ACTUALIZAR EN EL NAVEGADOR LA INFORMACIÓN DEL PERFIL DE USUARIO:
    */
-  updateUserData(jsonUser: any) {
+  public updateUserData(jsonUser: any) {
     let cryptoData = CrytoGen.encrypt(JSON.stringify(jsonUser));
     localStorage.setItem('user_data', cryptoData);
+
+    this.setUserProfile();
+    this._userUpdate.emit(true);
   }
 
   /**
@@ -95,27 +99,27 @@ export class UserService {
   /**
    * MÉTODO PARA TOMAR LOS DATOS DEL USUARIO EN UNA VARIABLE GLOBAL DISPONIBLE PARA TODA LA APLICACIÓN:
    */
-  setUserProfile() {
+  public setUserProfile() {
     this.userProfile = this.getStoredUserData();
+    console.log(this.userProfile);
   }
 
   /**
    * MÉTODO PARA OBTENER EL OBJETO USER PROFILE QUE CONTIENE LOS DATOS DEL USUARIO DESENCRIPTADOS:
    */
-  getUserProfile() {
+  public getUserProfile() {
     return this.userProfile;
   }
 
   /**
    * MÈTODO PARA EDITAR LOS DATOS DEL PERFIL
    */
-  sendUser(user: User) {
+  public sendUser(user: User) {
     let userFormData: FormData = this.mergeFormData(user);
     this.postUserClient(userFormData)
       .then(
         (response: any) => {
-          let usrData = response.userData;
-          this.updateUserData(usrData);
+          this.updateUserData(response);
         },
         (err) => {
           console.log(err);
@@ -154,7 +158,7 @@ export class UserService {
       xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
           if (xhr.status === 200) {
-            let resp = JSON.parse(xhr.response);
+            let resp = JSON.parse(xhr.response).data;
             console.log(JSON.parse(xhr.response));
             resolve(resp);
           }
