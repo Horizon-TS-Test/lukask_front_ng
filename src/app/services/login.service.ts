@@ -36,7 +36,6 @@ export class LoginService {
     return this._http.post(REST_SERV.loginUrl, requestBody, { headers: requestHeaders, withCredentials: true }).toPromise()
       .then((response: Response) => {
         let respJson = response.json();
-        console.log(respJson);
         if (response.status === 200) {
           this._socketService.connectSocket();
           this._userService.storeUserCredentials(respJson.data);

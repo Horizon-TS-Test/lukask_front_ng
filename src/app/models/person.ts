@@ -8,6 +8,6 @@ export class Person {
         public telephone?: string,
         public address?: string,
         public birthdate?: string,
-        public mobile?: string,
+        public cell_phone?: string,
     ) {}
 }

@@ -118,6 +118,8 @@ export class UserService {
     formData.append('last_name', user.person.last_name);
     formData.append('telephone', user.person.telephone);
     formData.append('address', user.person.address);
+    formData.append('cell_phone', user.person.cell_phone);
+    formData.append('birthdate', user.person.birthdate);
     formData.append('user_file', user.file, user.fileName);
     formData.append('is_active', "true");
 

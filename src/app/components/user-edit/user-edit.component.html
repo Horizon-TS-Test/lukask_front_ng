@@ -60,9 +60,9 @@
 
         <li class="list-group-item pb-0">
           <div class="col-12 pb-0" style="color:transparent">_</div>
-          <div class="col-12 pb-0">Celular:</div>
+          <div class="col-12 pb-0">Célular:</div>
           <div class="col-12 pb-0">
-            <input type="text" name="celular" #mobile="ngModel" [(ngModel)]="userObj.person.mobile" class="form-control pb-0" required/>
+            <input type="text" name="celular" #mobile="ngModel" [(ngModel)]="userObj.person.cell_phone" class="form-control pb-0" required/>
           </div>
         </li>
       
@@ -71,25 +71,20 @@
           <div class="col-12 pb-0">Fecha:</div>
           <div class="col-12 pb-0">
             <input type="date" name="fecha" #birthdate="ngModel" [(ngModel)]="userObj.person.birthdate" class="form-control pb-0" max="3000-12-31" 
-            min="1000-01-01" class="form-control" required/>
+            min="1000-01-01" class="form-control" required (ngModelChange)="calcular()" style="border-top: none;border-left: none;border-right: none;"/>
           </div>
-        </li>
-        <li>
-            <div style="position: relative">
-                <input type='text' class="form-control" id='datetimepicker1' />
-            </div>
         </li>
 
         <li class="list-group-item pb-0">
           <div class="col-12 pb-0" style="color:transparent">_</div>
           <div class="col-12 pb-0">Edad:</div>
           <div class="col-12 pb-0">
-            <input type="text" name="fecha" #age="ngModel" [(ngModel)]="userObj.person.age" class="form-control pb-0" required/>
+            <input type="text" name="fecha" #age="ngModel" [(ngModel)]="userObj.person.age" class="form-control pb-0"  readonly="readonly" required/>
           </div>
         </li>
+
       </ul>
     </form>
   </div>
 </div>
-
 <material-btn-list [materialBtns]="materialButtons" (someBtnAction)="actionBtn($event)"></material-btn-list>

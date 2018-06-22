@@ -68,8 +68,33 @@ export class UserEditComponent implements OnInit, OnDestroy {
       this.userObj.file = this.filesToUpload;
       this.userObj.fileName = this.getFormattedDate() + ".png";
     }
+    console.log("this.userObj...............................");
+    console.log(this.userObj);
     this._userService.sendUser(this.userObj);
+
   }
+  /**
+   * Método que llama a la función para calcular la edad dada una fecha de nacimiento
+   */
+  calcular() {
+    this.age();
+  }
+
+  /**
+   * Funcion que calcula la edad
+  */
+  age() {
+    var hoy = new Date();
+    var cumpleanos = new Date(this.userObj.person.birthdate);
+    var edad = hoy.getFullYear() - cumpleanos.getFullYear();
+    var m = hoy.getMonth() - cumpleanos.getMonth();
+
+    if (m < 0 || (m === 0 && hoy.getDate() < cumpleanos.getDate())) {
+      edad--;
+    }
+    this.userObj.person.age = edad;
+  }
+
 
   /**
    * MÉTODO PARA MOSTRAR EL MODAL DE LA CAMARA
