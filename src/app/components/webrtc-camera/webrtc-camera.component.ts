@@ -4,7 +4,6 @@ import { NotifierService } from '../../services/notifier.service';
 import { CAMERA_ACTIONS } from '../../config/camera-actions';
 import { Subscription } from 'rxjs';
 import { CameraService } from '../../services/camera.service';
-import { ContentService } from '../../services/content.service';
 
 import { ImageCapture } from 'image-capture';
 import { MediaFile } from '../../interfaces/media-file.interface';
@@ -32,7 +31,6 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     private _notifierService: NotifierService,
     private _cameraService: CameraService,
-    private _contentService: ContentService,
   ) {
     this._frontCamera = { id: "", description: "" };
     this._backCamera = { id: "", description: "" };

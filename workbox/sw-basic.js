@@ -432,8 +432,8 @@ self.addEventListener('push', function (event) {
 
     var options = {
         body: defaultNotifData.content,
-        icon: '/assets/images/logo/logo-1.svg',
-        badge: '/assets/images/logo/logo-1.svg',
+        icon: '/assets/icons/lukask-96x96.png',
+        badge: '/assets/icons/icons/lukask-72x72.png',
         data: {
             url: defaultNotifData.open_url
         }

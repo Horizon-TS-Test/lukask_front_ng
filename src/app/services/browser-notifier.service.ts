@@ -7,16 +7,18 @@ export class BrowserNotifierService {
 
   constructor() { }
 
-  displayConfirmNotification() {
+  /**
+   * MÉTODO PARA MOSTRAR UNA NOTIFICACIÓN EN EL NAVEGADOR O EN EL MÓBIL:
+   */
+  public displayConfirmNotification() {
     if ('serviceWorker' in navigator) {
       let options: any = {
         body: 'You successfully subscribed to my site',
-        icon: '/src/images/icons/app-icon-96x96.png',
-        image: '/src/images/sf-boat.jpg',
+        icon: '/assets/icons/lukask-96x96.png',
         dir: 'ltr',
         lang: 'es-US', //BCP 47
-        vibrate: [100, 50, 200], //THIS IS FOR SOME DEVICES NOT FOR ALL
-        badge: '/src/images/icons/app-icon-96x96.png', //SHOW ON NOTIFICATION BAR
+        vibrate: [500, 200, 200, 100], //THIS IS FOR SOME DEVICES NOT FOR ALL
+        badge: '/assets/icons/lukask-96x96.png', //SHOW ON NOTIFICATION BAR
         //ADITIONAL OPTIONS:
         tag: 'confirm-notification', //TO ALLOW NOTIFICATIONS WILL STACK AND SHOW ONE GROUP OF NOTIFICATIONS
         renotify: false, //TO SPECIFY JUST ONE VIBRATION OF THE FIRST NOTIFICATION INCOMMING OF A GROUP OF NOTIFICATIONS
@@ -24,12 +26,12 @@ export class BrowserNotifierService {
           {
             action: 'confirm',
             title: "Oh yes!",
-            icon: '/src/images/icons/app-icon-96x96.png'
+            //icon: '/assets/icons/lukask-96x96.png'
           },
           {
             action: 'cancel',
             title: "Oh crap!",
-            icon: '/src/images/icons/app-icon-96x96.png'
+            //icon: '/assets/icons/lukask-96x96.png'
           }
         ]
       };
