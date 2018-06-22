@@ -9,6 +9,7 @@ var SYNC_TYPE = {
     pubSyn: 'sync-new-pub',
     comSyn: 'sync-new-comment',
     relSyn: 'sync-new-relevance',
+    userSyn: 'sync-update-user',
 };
 
 var REST_URLS_PATTERN = {
@@ -24,6 +25,7 @@ var REST_URLS = {
     pub: 'http://192.168.1.37:3000/publication',
     comment: 'http://192.168.1.37:3000/comment',
     relevance: 'http://192.168.1.37:3000/relevance',
+    user: 'http://192.168.1.37:3000/user',
 };
 
 workbox.precaching.suppressWarnings();
@@ -206,10 +208,10 @@ workbox.routing.registerRoute(function (routeData) {
  * MÉTODO PARA OBTENER EL ID DEL USUARIO DESDE EL STORAGE PARA ENVIAR UN FETCH REQUEST:
  */
 function getUserId() {
-    return readAllData('user')
+    return readAllData('ownuser')
         .then((tableData) => {
             for (let user of tableData) {
-                return user.user_id;
+                return user.user_key;
             }
         });
 }
@@ -223,13 +225,13 @@ function getUserId() {
  */
 function sendData(restUrl, formData, indexedTable, syncTable) {
     getUserId()
-        .then(function (userId) {
+        .then(function (userKey) {
             fetch(restUrl, {
                 method: 'POST',
                 body: formData,
                 credentials: 'include',
                 headers: {
-                    "Pass-Key": userId
+                    "Pass-Key": userKey
                 }
             }).then(function (res) {
                 console.log('[LUKASK SERVICE WORKER] Fetch response', res);
@@ -240,8 +242,9 @@ function sendData(restUrl, formData, indexedTable, syncTable) {
                                 case 'publication':
                                     verifyStoredData(indexedTable, restData.data, false);
                                     break;
+                                case '':
+                                    break;
                                 default:
-                                    console.log("indexedTable", restData.data);
                                     upgradeTableFieldData(indexedTable, restData.data);
                                     break;
                             }
@@ -317,17 +320,47 @@ self.addEventListener('sync', function (event) {
             event.waitUntil(
                 readAllData('sync-relevance')
                     .then(function (data) {
-                        for (var com of data) {
-                            console.log("relevance: ", com);
-                            //SENDING COMMENT TO THE BACKEND SERVER:
+                        for (var rel of data) {
+                            console.log("relevance: ", rel);
+                            //SENDING RELEVANCE TO THE BACKEND SERVER:
                             var formData = new FormData();
                             //ALWAYS IT MUST BE "id" FOR GENERIC PURPOSES:
-                            formData.append('id', com.id);
+                            formData.append('id', rel.id);
                             //
-                            formData.append('id_publication', com.id_publication);
-                            formData.append('active', com.active);
+                            formData.append('id_publication', rel.id_publication);
+                            formData.append('active', rel.active);
 
                             sendData(REST_URLS.relevance, formData, 'publication', 'sync-relevance');
+                        }
+                    })
+            );
+            break;
+        case SYNC_TYPE.userSyn:
+            console.log('[LUKASK SERVICE WORKER] Syncing user to update');
+            event.waitUntil(
+                readAllData('sync-user-profile')
+                    .then(function (data) {
+                        for (var prof of data) {
+                            console.log("userProfile: ", prof);
+                            //SENDING USER PROFILE TO THE BACKEND SERVER FOR UPDATE:
+                            var formData = new FormData();
+                            //ALWAYS IT MUST BE "id" FOR GENERIC PURPOSES:
+                            formData.append('id', prof.id);
+                            //
+                            formData.append('email', prof.username);
+                            formData.append('identification_card', prof.person.identification_card);
+                            formData.append('name', prof.person.name);
+                            formData.append('last_name', prof.person.last_name);
+                            formData.append('age', prof.person.age);
+                            formData.append('birthdate', prof.person.birthdate);
+                            formData.append('cell_phone', prof.person.cell_phone);
+                            formData.append('telephone', prof.person.telephone);
+                            formData.append('address', prof.person.address);
+                            formData.append('user_file', prof.file, prof.fileName);
+                            formData.append('is_active', prof.isActive);
+
+
+                            sendData(REST_URLS.user + "/" + prof.id, formData, '', 'sync-user-profile');
                         }
                     })
             );

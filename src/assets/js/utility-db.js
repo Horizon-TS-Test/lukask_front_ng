@@ -34,6 +34,9 @@ var dbPromise = idb.open('lukask-store', 1, function (db) {
     if (!db.objectStoreNames.contains('sync-relevance')) {
         db.createObjectStore('sync-relevance', { keyPath: 'id' });
     }
+    if (!db.objectStoreNames.contains('sync-user-profile')) {
+        db.createObjectStore('sync-user-profile', { keyPath: 'id' });
+    }
 });
 //////////////////////////////////////////////////////////////////
 

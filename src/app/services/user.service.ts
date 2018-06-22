@@ -4,6 +4,7 @@ import { Person } from '../models/person';
 import { REST_SERV } from '../rest-url/rest-servers';
 import { CrytoGen } from '../tools/crypto-gen';
 import { Http, Headers, Response } from '@angular/http';
+import { BackSyncService } from './back-sync.service';
 
 declare var writeData: any;
 declare var readAllData: any;
@@ -17,7 +18,8 @@ export class UserService {
   public _userUpdate = new EventEmitter<boolean>();
 
   constructor(
-    private _http: Http
+    private _http: Http,
+    private _backSyncService: BackSyncService,
   ) { }
 
   /**
@@ -88,14 +90,26 @@ export class UserService {
   }
 
   /**
+   * MÉTODO PARA ACTUALIZAR UN PERFIL DE USUARIO EN EL BACKEND O EN SU DEFECTO PARA BACK SYNC:
+   */
+  public saveUser(user: User) {
+    this.sendUser(user).then((response: any) => {
+      if (!(response == true)) {
+        this._backSyncService.storeForBackSync('sync-user-profile', 'sync-update-user', user);
+      }
+    });
+  }
+
+  /**
    * MÉTODO PARA EDITAR LOS DATOS DEL PERFIL
    */
   public sendUser(user: User) {
     let userFormData: FormData = this.mergeFormData(user);
-    this.postUserClient(userFormData)
+    return this.postUserClient(userFormData)
       .then(
         (response: any) => {
           this.updateUserData(response);
+          return true;
         },
         (err) => {
           console.log(err);
@@ -104,7 +118,7 @@ export class UserService {
   }
 
   /**
-   * MÉTODO PARA TOMAR LOS DATOS QUE BIENEN POR POST 
+   * MÉTODO PARA TOMAR LOS DATOS QUE BIENEN POR POST
    */
   mergeFormData(user: User) {
     let formData = new FormData();
@@ -161,8 +175,8 @@ export class UserService {
     let user: User;
 
     jsonUser.media_profile = (jsonUser.media_profile.indexOf("http") == -1) ? REST_SERV.mediaBack + jsonUser.media_profile : jsonUser.media_profile;
-    user = new User(jsonUser.email, '', jsonUser.media_profile, true, null, null, jsonUser.id);
-    user.person = new Person(jsonUser.person.id_person, jsonUser.person.age, jsonUser.person.identification_card, jsonUser.person.name, jsonUser.person.last_name, jsonUser.person.telephone, jsonUser.person.address);
+    user = new User(jsonUser.email, '', jsonUser.media_profile, jsonUser.is_active, null, null, jsonUser.id);
+    user.person = new Person(jsonUser.person.id_person, jsonUser.person.age, jsonUser.person.identification_card, jsonUser.person.name, jsonUser.person.last_name, jsonUser.person.telephone, jsonUser.person.address, jsonUser.person.active, jsonUser.person.birthdate, jsonUser.person.cell_phone);
 
     return user;
   }
