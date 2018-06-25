@@ -22,10 +22,12 @@ export class UserEditComponent implements OnInit, OnDestroy {
   private SUBMIT = 0;
   private CLOSE = 1;
   private subscription: Subscription;
+  private tempBirthdate;
 
   public materialButtons: HorizonButton[];
   public userObj: User;
   public filesToUpload: any;
+
 
   constructor(
     private _userService: UserService,
@@ -33,6 +35,7 @@ export class UserEditComponent implements OnInit, OnDestroy {
     private _cameraService: CameraService,
 
   ) {
+
     this.userObj = this._userService.getStoredUserData();
 
     this.materialButtons = [
@@ -58,7 +61,10 @@ export class UserEditComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.userObj.person.birthdate = this.convertDateFormat(this.userObj.person.birthdate);
+    this.tempBirthdate = this.userObj.person.birthdate;
   }
+
 
   /**
    * MÉTODO PARA EDITAR UN PERFIL DE USUARIO:
@@ -68,20 +74,43 @@ export class UserEditComponent implements OnInit, OnDestroy {
       this.userObj.file = this.filesToUpload;
       this.userObj.fileName = this.getFormattedDate() + ".png";
     }
-    console.log("this.userObj...............................");
-    console.log(this.userObj);
+    this.formmatSendDate();
     this._userService.sendUser(this.userObj);
+    this.restartDate();
+  }
+
+  /**
+   * MÉTODO PARA AGREGAR EL FORMATO MAS HORA EN LA FECHA DE NACIMIENTO:
+  */
+  formmatSendDate() {
+    var date = new Date();
+    this.userObj.person.birthdate = this.userObj.person.birthdate + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
 
   }
   /**
-   * Método que llama a la función para calcular la edad dada una fecha de nacimiento
+   * MÉTODO QUE RETORNA A LA FECHA CON EL FORMATO SIN HORA
+   */
+  restartDate() {
+    this.userObj.person.birthdate = this.tempBirthdate;
+  }
+
+  /**
+   * MÉTODO QUE TRANSFORMA UN STRING EN FORMATO DE FECHA:
+   */
+  convertDateFormat(string) {
+    var info = string.split('-');
+    return info[0] + '-' + info[1] + '-' + info[2].substr(0, 2);
+  }
+
+  /**
+   * MÉTODO QUE LLAMA A LA FUNCIÓN PARA CALCULAR LA EDAD DADA UNA FECHA DE NACIMIENTO
    */
   calcular() {
     this.age();
   }
 
   /**
-   * Funcion que calcula la edad
+   * MÉTODO QUE CALCULA LA EDAD
   */
   age() {
     var hoy = new Date();
@@ -93,6 +122,8 @@ export class UserEditComponent implements OnInit, OnDestroy {
       edad--;
     }
     this.userObj.person.age = edad;
+    this.userObj.person.birthdate = this.convertDateFormat(this.userObj.person.birthdate);
+    this.tempBirthdate = this.userObj.person.birthdate;
   }
 
 

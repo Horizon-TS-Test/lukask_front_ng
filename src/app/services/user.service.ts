@@ -91,6 +91,8 @@ export class UserService {
    * MÉTODO PARA EDITAR LOS DATOS DEL PERFIL
    */
   public sendUser(user: User) {
+    console.log("poner algo...");
+    console.log(user.person.birthdate);
     let userFormData: FormData = this.mergeFormData(user);
     this.postUserClient(userFormData)
       .then(
@@ -164,8 +166,7 @@ export class UserService {
 
     jsonUser.media_profile = (jsonUser.media_profile.indexOf("http") == -1) ? REST_SERV.mediaBack + jsonUser.media_profile : jsonUser.media_profile;
     user = new User(jsonUser.email, '', jsonUser.media_profile, true, null, null, jsonUser.id);
-    user.person = new Person(jsonUser.person.id_person, jsonUser.person.age, jsonUser.person.identification_card, jsonUser.person.name, jsonUser.person.last_name, jsonUser.person.telephone, jsonUser.person.address);
-
+    user.person = new Person(jsonUser.person.id_person, jsonUser.person.age, jsonUser.person.identification_card, jsonUser.person.name, jsonUser.person.last_name, jsonUser.person.telephone, jsonUser.person.address, jsonUser.person.birthdate, jsonUser.person.cell_phone);
     return user;
   }
 
@@ -193,6 +194,7 @@ export class UserService {
     const user_key = localStorage.getItem("user_key") ? localStorage.getItem("user_key") : '';
     return user_key;
   }
+
 
   /**
    * MÉTODO PARA TOMAR LOS DATOS DEL USUARIO EN UNA VARIABLE GLOBAL DISPONIBLE PARA TODA LA APLICACIÓN:

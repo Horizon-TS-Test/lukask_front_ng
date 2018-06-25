@@ -69,9 +69,11 @@
         <li class="list-group-item pb-0">
           <div class="col-12 pb-0" style="color:transparent">_</div>
           <div class="col-12 pb-0">Fecha:</div>
+          
           <div class="col-12 pb-0">
             <input type="date" name="fecha" #birthdate="ngModel" [(ngModel)]="userObj.person.birthdate" class="form-control pb-0" max="3000-12-31" 
             min="1000-01-01" class="form-control" required (ngModelChange)="calcular()" style="border-top: none;border-left: none;border-right: none;"/>
+            <label style="position: absolute;z-index: 1; margin-top: -30px; background-color: white;width: 100px;color: black;overflow: hidden;">{{userObj.person.birthdate}}</label>
           </div>
         </li>
 
