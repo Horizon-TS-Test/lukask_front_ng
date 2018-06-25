@@ -1,13 +1,95 @@
 <div class="personal-content personal-over-unset min-height-full max-height-full col-12 p-0" id="personal-edit-p">
   <div class="personal-content min-height-full max-height-full p-overflow-auto">
-    <form #formUser class="pb-0 min-height-full card" id="frmU" (ngSubmit)="editProfile()">
+    <form #formUser class="min-height-full card pb-3" id="frmU" (ngSubmit)="editProfile()">
       <div id="loading-content"></div>
       <div class="card-header d-flex justify-content-between align-items-center">
-        Datos Perfil
+        Registro de Usuario
       </div>
       <div class="card-img-top d-flex flex-wrap justify-content-center align-items-center">
-        <img class="mb-1" id="defaultQuejaImg"  width="100%">
+        <img class="mb-1" id="defaultQuejaImg" src="{{userObj.profileImg}}" width="100%">
+
+        <a href="#" (click)="newMedia($event)" class="personal-center-btn btn btn-lg btn-outline-info p-0 d-flex justify-content-center align-items-center">
+          <fa name="camera"></fa>
+        </a>
+
       </div>
+
+      <ul class="list-group list-group-flush pb-0">
+
+        <li class="list-group-item pb-0">
+          <div class="col-12 pb-0">Cédula :</div>
+          <div class="col-12 pb-0">
+            <input type="text" name="ci" #idCard="ngModel" [(ngModel)]="userObj.person.identification_card" class="form-control pb-0 "
+              required/>
+            
+          </div>
+        </li>
+
+        <li class="list-group-item pb-0">
+          <div class="col-12 pb-0">Nombre :</div>
+          <div class="col-12 pb-0">
+            <input type="text" name="nombre" #name="ngModel" [(ngModel)]="userObj.person.name" class="form-control pb-0 " required />
+          </div>
+        </li>
+
+        <li class="list-group-item pb-0">
+          <div class="col-12 pb-0">Apellido :</div>
+          <div class="col-12 pb-0">
+            <input type="text" name="apellido" #lastName="ngModel" [(ngModel)]="userObj.person.last_name" class="form-control pb-0 "
+              required/>
+          </div>
+        </li>
+
+        <li class="list-group-item pb-0">
+          <div class="col-12 pb-0">Dirección:</div>
+          <div class="col-12 pb-0">
+            <input type="text" name="direccion" #address="ngModel" [(ngModel)]="userObj.person.address" class="form-control pb-0" required/>
+          </div>
+        </li>
+
+        <li class="list-group-item pb-0">
+          <div class="col-6 pb-0">Telefóno:</div>
+          <div class="col-6 pb-0">Célular:</div>
+          <div class="col-6 pb-0">
+            <input type="text" name="telefono" #telephone="ngModel" [(ngModel)]="userObj.person.telephone" class="form-control pb-0"
+              required/>
+          </div>
+          <div class="col-6 pb-0">
+            <input type="text" name="celular" #mobile="ngModel" [(ngModel)]="userObj.person.cell_phone" class="form-control pb-0" required/>
+          </div>
+        </li>
+
+        <li class="list-group-item pb-0">
+          <div class="col-6 pb-0">Fecha Nacimiento:</div>
+          <div class="col-6 pb-0">Edad:</div>
+          <div class="col-6 pb-0">
+            <input type="date" name="fecha" #birthdate="ngModel" [(ngModel)]="userObj.person.birthdate" class="form-control pb-0" max="3000-12-31"
+              min="1000-01-01" class="form-control" required (ngModelChange)="calcular()" style="border-top: none;border-left: none;border-right: none;"
+            />
+            <label style="position: absolute;z-index: 1; margin-top: -30px; background-color: white;width: 100px;color: black;overflow: hidden;">{{userObj.person.birthdate}}</label>
+          </div>
+          <div class="col-6 pb-0">
+            <input  type="text" name="age" #age="ngModel" [(ngModel)]="userObj.person.age" class="form-control pb-0" readonly="readonly" style="background-color: white" required/>
+          </div>
+        </li>
+
+        <li class="list-group-item pb-0">
+          <div class="col-12 pb-0">Email:</div>
+          <div class="col-12 pb-0">
+            <input type="text" name="email" #email="ngModel" [(ngModel)]="userObj.username" class="form-control pb-0" required/>
+          </div>
+        </li>
+
+        <li class="list-group-item pb-0">
+          <div class="col-12 pb-0">Clave :</div>
+          <div class="col-12 pb-0">
+            <input type="password" name="ci" #password="ngModel" [(ngModel)]="userObj.password" class="form-control pb-0 " required/>
+          </div>
+        </li>
+
+      </ul>
     </form>
   </div>
 </div>
+
+<material-btn-list [materialBtns]="materialButtons" (someBtnAction)="actionBtn($event)"></material-btn-list>

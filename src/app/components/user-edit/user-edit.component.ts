@@ -58,6 +58,7 @@ export class UserEditComponent implements OnInit, OnDestroy {
       (snapShot: MediaFile) => {
         this.addQuejaSnapShot(snapShot);
       });
+
   }
 
   ngOnInit() {
@@ -103,8 +104,8 @@ export class UserEditComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO QUE LLAMA A LA FUNCIÓN PARA CALCULAR LA EDAD DADA UNA FECHA DE NACIMIENTO
-   */
+  * MÉTODO QUE LLAMA A LA FUNCIÓN PARA CALCULAR LA EDAD DADA UNA FECHA DE NACIMIENTO
+  */
   calcular() {
     this.age();
   }

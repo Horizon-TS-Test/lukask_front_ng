@@ -2,7 +2,7 @@ import { Person } from "./person";
 
 export class User {
     public person: Person;
-
+    
     constructor(
         public username: string,
         public password: string,
@@ -11,5 +11,7 @@ export class User {
         public file?: any,
         public fileName?: string,
         public id?: string
-    ) { }
+    ) {
+        this.person = new Person();
+     }
 }

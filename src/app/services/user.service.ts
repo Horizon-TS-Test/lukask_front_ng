@@ -88,13 +88,87 @@ export class UserService {
   }
 
   /**
+   * MÉTODO PARA REGISTRAR LOS DATOS DEL PERFIL
+   */
+  public registerUser(user: User) {
+    console.log("User service ts...");
+    console.log(user);
+    let userFormData: FormData = this.mergeFormDataPost(user);
+
+    this.postUserClient(userFormData)
+      .then(
+        (response: any) => {
+          console.log("response");
+          console.log(response);
+          //this.updateUserData(response);
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+  }
+
+  /**
+   * MÉTODO PARA ENVIAR MEDIANTE POST LOS DATOS DEL PERFIL
+   * @param userFormData 
+  */
+  postUserClient(userFormData: FormData) {
+    return new Promise((resolve, reject) => {
+      let xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 201) {
+            let resp = JSON.parse(xhr.response).data;
+            console.log(JSON.parse(xhr.response));
+            resolve(resp);
+          }
+          else {
+            if (xhr.status == 401) {
+              localStorage.clear();
+            }
+            reject(xhr.response);
+          }
+        }
+      };
+      xhr.open("post", REST_SERV.userUrl, true);
+      xhr.setRequestHeader('X-Access-Token', this.getUserKey());
+      xhr.withCredentials = true;
+      xhr.send(userFormData);
+    });
+  }
+
+  /**
+    * MÉTODO PARA TOMAR LOS DATOS QUE BIENEN POR POST PARA REGISTRO
+    */
+  mergeFormDataPost(user: User) {
+    let formData = new FormData();
+
+    formData.append('id', user.id);
+    formData.append('email', user.username);
+    formData.append('password', user.password);
+    formData.append('person_id', user.person.id_person);
+    formData.append('age', user.person.age + "");
+    formData.append('identification_card', user.person.identification_card);
+    formData.append('name', user.person.name);
+    formData.append('last_name', user.person.last_name);
+    formData.append('telephone', user.person.telephone);
+    formData.append('address', user.person.address);
+    formData.append('cell_phone', user.person.cell_phone);
+    formData.append('birthdate', user.person.birthdate);
+    formData.append('user_file', user.file, user.fileName);
+    formData.append('is_active', "true");
+
+    return formData;
+  }
+
+  /**
    * MÉTODO PARA EDITAR LOS DATOS DEL PERFIL
    */
   public sendUser(user: User) {
     console.log("poner algo...");
     console.log(user.person.birthdate);
     let userFormData: FormData = this.mergeFormData(user);
-    this.postUserClient(userFormData)
+    this.patchUserClient(userFormData)
       .then(
         (response: any) => {
           this.updateUserData(response);
@@ -128,11 +202,13 @@ export class UserService {
     return formData;
   }
 
+
+
   /**
    * MÉTODO PARA ENVIAR MEDIANTE POST LOS DATOS DEL PERFIL
    * @param userFormData 
    */
-  postUserClient(userFormData: FormData) {
+  patchUserClient(userFormData: FormData) {
     return new Promise((resolve, reject) => {
       let xhr = new XMLHttpRequest();
       xhr.onreadystatechange = function () {
