@@ -13,7 +13,7 @@ declare var $: any;
 })
 export class TaskListComponent implements OnInit {
   @Input() queja: Publication;
-  @Input() isDetail: boolean;
+  @Input() isModal: boolean;
 
   constructor(
     private _actionService: ActionService,
@@ -47,7 +47,7 @@ export class TaskListComponent implements OnInit {
    */
   geolocatePub(event: any) {
     event.preventDefault();
-    if (this.isDetail) {
+    if (this.isModal == true) {
       this._contentService.elementScrollInside($("#idQuejaDetail"), $("#sigle-map").offset().top);
     }
     else {

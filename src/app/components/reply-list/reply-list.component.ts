@@ -17,6 +17,7 @@ declare var upgradeTableFieldDataArray: any;
 })
 export class ReplyListComponent implements OnInit, OnDestroy {
   @Input() parentComment: Comment;
+  @Input() focusReplyId: string;
   @Output() closeModal: EventEmitter<boolean>;
 
   private _CLOSE = 1;
@@ -53,7 +54,7 @@ export class ReplyListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.commentForm = new Comment("", "", "", null, this.parentComment.commentId);
+    this.commentForm = new Comment("", "", this.parentComment.publicationId, null, this.parentComment.commentId);
     this.getReplies();
     this.onCommentResponse();
   }

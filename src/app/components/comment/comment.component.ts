@@ -14,6 +14,8 @@ import { User } from '../../models/user';
 })
 export class CommentComponent implements OnInit, OnDestroy {
   @Input() commentModel: Comment;
+  @Input() focusCommentId: string;
+  @Input() focusReplyId: string;
   @Input() isReply: boolean;
   @Input() noReplyBtn: boolean;
 
@@ -33,6 +35,11 @@ export class CommentComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    if (this.focusReplyId !== undefined && this.focusCommentId == this.commentModel.commentId) {
+      setTimeout(() => {
+        this.viewReplies();
+      }, 500);
+    }
   }
 
   /**
@@ -50,9 +57,11 @@ export class CommentComponent implements OnInit, OnDestroy {
    * MÉTODO PARA SOLICITAR LA APERTURA DE UN HORIZON MODAL PARA MOSTRAR LAS RESPUESTAS DE UN COMENTARIO:
    * @param event 
    */
-  addNewReply(event: any) {
-    event.preventDefault();
-    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_replies, contentData: this.commentModel });
+  viewReplies(event: any = null) {
+    if (event) {
+      event.preventDefault();
+    }
+    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_replies, contentData: { parentComment: this.commentModel, replyId: this.focusReplyId } });
   }
 
   ngOnDestroy() {

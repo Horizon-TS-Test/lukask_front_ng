@@ -383,33 +383,35 @@ self.addEventListener('notificationclick', function (event) {
     var action = event.action;
 
     console.log(notification);
-    if (action == 'confirm') {
-        console.log("confirm was chosen");
-        //notification.close();
-    }
-    else {
-        console.log(action);
-        //TO MAKE THE SERVICE WORKER WAIT UNTIL THE EVENT HAS BEEN COMPLETED:
-        event.waitUntil(
-            //TO HANDLE THE TABS OF THE WEB BROWSER:
-            clients.matchAll()
-                .then(function (clientsArray) {
-                    var client = clientsArray.find(function (cli) {
-                        return cli.visibilityState === 'visible';
-                    });
+    console.log("la acción es: " + action);
+    //TO MAKE THE SERVICE WORKER WAIT UNTIL THE EVENT HAS BEEN COMPLETED:
+    event.waitUntil(
+        //TO HANDLE THE TABS OF THE WEB BROWSER:
+        clients.matchAll()
+            .then(function (clientsArray) {
+                var client = clientsArray.find(function (cli) {
+                    return cli.visibilityState === 'visible';
+                });
 
-                    //IF THE WEB BROWSER IS OPEN:
-                    if (client !== undefined) {
-                        client.navigate(notification.data.url);
+                //IF THE WEB BROWSER IS OPEN:
+                if (client !== undefined) {
+                    //NEXT IS USED TO OPEN A NEW TAB AND NAVIGATE TO THE REQUESTED URL:
+                    //client.navigate(notification.data.url);
+                    if (action.indexOf("/") !== -1) {
+                        client.navigate(action);
                         client.focus();
                     }
-                    //IF ITS CLOSED:
-                    else {
-                        clients.openWindow(notification.data.url);
+                }
+                //IF ITS CLOSED:
+                else {
+                    //clients.openWindow(notification.data.url);
+                    if (action.indexOf("/") == -1) {
+                        action = notification.data.url;
                     }
-                })
-        );
-    }
+                    clients.openWindow(action);
+                }
+            })
+    );
     notification.close();
 });
 /////
@@ -430,17 +432,56 @@ self.addEventListener('push', function (event) {
         defaultNotifData = JSON.parse(event.data.text());
     }
 
+    console.log(defaultNotifData);
+
     var options = {
         body: defaultNotifData.content,
         icon: '/assets/icons/lukask-96x96.png',
         badge: '/assets/icons/icons/lukask-72x72.png',
+        tag: 'confirm-notification', //TO ALLOW NOTIFICATIONS WILL STACK AND SHOW ONE GROUP OF NOTIFICATIONS
         data: {
             url: defaultNotifData.open_url
-        }
+        },
+        actions: [ //THESE ARE THE OPTIONS DISPLAYED ON THE NOTIFICATION
+            /*{
+                action: '/',
+                title: "Mural",
+                //icon: '/assets/icons/lukask-96x96.png'
+            },
+            {
+                action: '/mapview',
+                title: "Mapa",
+                //icon: '/assets/icons/lukask-96x96.png'
+            }*/
+        ]
     };
 
+    if (defaultNotifData.actions) {
+        for (var action of defaultNotifData.actions) {
+            options.actions[options.actions.length] = action;
+        }
+    }
+
     event.waitUntil(
-        self.registration.showNotification(defaultNotifData.title, options)
+        clients.matchAll()
+            .then(function (clientsArray) {
+                var client = clientsArray.find(function (cli) {
+                    return cli.visibilityState === 'visible';
+                });
+
+                //IF THE WEB BROWSER IS OPEN:
+                if (client == undefined) {
+                    self.registration.showNotification(defaultNotifData.title, options);
+                }
+                /*if (client !== undefined) {
+                    client.navigate(notification.data.url);
+                    client.focus();
+                }
+                //IF ITS CLOSED:
+                else {
+                    clients.openWindow(notification.data.url);
+                }*/
+            })
     );
 });
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////

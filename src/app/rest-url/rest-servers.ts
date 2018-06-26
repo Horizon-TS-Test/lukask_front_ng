@@ -12,5 +12,5 @@ export var REST_SERV = {
     mediaBack: 'http://192.168.1.58:8081',
     socketServerUrl: 'http://192.168.1.37:3000',
     userUrl:'http://192.168.1.37:3000/user/',
-    pushSub: 'http://192.168.1.8:3200/subscribe',
+    pushSub: 'http://192.168.1.6:3200/subscribe',
 }

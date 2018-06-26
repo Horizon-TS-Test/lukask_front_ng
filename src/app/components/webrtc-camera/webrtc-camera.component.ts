@@ -173,9 +173,7 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
    */
   takeSnapShot() {
     if (this.imageCapture) {
-      console.log("this.imageCapture.takePhoto()");
-      console.log(this.imageCapture.takePhoto());
-      this.imageCapture.takePhoto().then(blob => {
+      this.imageCapture.takePhoto().then((blob: any) => {
         console.log(blob);
         this.snapShot = {
           mediaFileUrl: URL.createObjectURL(blob),

@@ -49,6 +49,7 @@ import { TaskListComponent } from './components/task-list/task-list.component';
 import { SingleMapComponent } from './components/single-map/single-map.component';
 import { ImgViewerComponent } from './components/img-viewer/img-viewer.component';
 import { CommentListComponent } from './components/comment-list/comment-list.component';
+import { NotificationComponent } from './components/notification/notification.component';
 
 @NgModule({
   declarations: [
@@ -79,7 +80,8 @@ import { CommentListComponent } from './components/comment-list/comment-list.com
     TaskListComponent,
     SingleMapComponent,
     ImgViewerComponent,
-    CommentListComponent
+    CommentListComponent,
+    NotificationComponent
   ],
   imports: [
     HttpModule,
