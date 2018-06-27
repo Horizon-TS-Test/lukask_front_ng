@@ -1336,3 +1336,15 @@ input[type=text], input[type=password], input[type=email], input[type=date], tex
     border-right: none;
     border-radius: 0;
 }
+
+////ESTILO VALIDACION DE USER REGISTER
+.p-validate-input{
+    color: #FAC9D9;
+    background-color:#E91E63; 
+    border-radius:5px;
+    font-size: 11px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    
+}

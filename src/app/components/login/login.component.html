@@ -2,6 +2,7 @@
   id="local-content-1">
 
   <form #frmLogin="ngForm" class="col-12 col-sm-7 col-md-6 py-2" id="frmL" (ngSubmit)="onLogin()">
+    <div class="row" style="padding-top: 60%"></div>
     <div id="loading-content"></div>
 
     <div class="form-group row pb-1" [ngClass]="{ 'has-danger': !user_name.valid && user_name.touched }">
@@ -29,6 +30,13 @@
       </div>
     </div>
 
-  </form>
+    <div class="row" style="padding-top: 70%">
+      <div class="col-12 offset-sm-3 col-sm-9 d-flex justify-content-center align-items-center d-sm-block" style="font-size: 12px">
+        Aun no formas parte de LUKAS? &nbsp;
+        <a href="#" (click)="openLayer($event, contentTypes.register_user)" style="color:#61C2DF; cursor: pointer">
+          Registrate</a>
+      </div>
+    </div>
 
+  </form>
 </div>

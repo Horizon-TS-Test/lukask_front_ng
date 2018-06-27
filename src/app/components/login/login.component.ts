@@ -7,6 +7,7 @@ import { ALERT_TYPES } from '../../config/alert-types';
 import { AlertComponent } from '../alert/alert.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NotifierService } from '../../services/notifier.service';
+import { CONTENT_TYPES } from '../../config/content-type';
 
 declare var $: any;
 
@@ -17,8 +18,9 @@ declare var $: any;
 })
 export class LoginComponent implements OnInit {
   private alertData: Alert;
-
+  
   public user: User;
+  public contentTypes: any;
 
   constructor(
     private _loginService: LoginService,
@@ -28,6 +30,7 @@ export class LoginComponent implements OnInit {
     private _router: Router,
   ) {
     this.resetForm();
+    this.contentTypes = CONTENT_TYPES;
   }
 
   ngOnInit() {
@@ -75,6 +78,16 @@ export class LoginComponent implements OnInit {
 
   setAlert() {
     this._notifierService.sendAlert(this.alertData);
+  }
+
+  /**
+ * MÉTODO PARA SOLICITAR QUE SE INCRUSTE DINÁMICAMENTE UN HORIZON MODAL CON CIERTO CONTENIDO EN SU INTERIOR
+ * @param event EVENTO CLICK DEL ELEMENTO <a href="#">
+ * @param contType TIPO DE CONTENIDO A MOSTRAR DENTRO DEL HORIZON MODAL
+ */
+  openLayer(event: any, contType: number) {
+    event.preventDefault();
+    this._notifierService.notifyNewContent({ contentType: contType, contentData: null });
   }
 
 }

@@ -68,4 +68,11 @@ export class PanelOpcionesComponent implements OnInit {
     this._contentService.focusMenuOption($("#id-top-panel"), idContent);
   }
 
+  /**
+  * MÉTODO PARA SALIR DE LA APP
+  **/
+  logout() {
+    localStorage.clear();
+  }
+
 }

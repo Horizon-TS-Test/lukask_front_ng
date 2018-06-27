@@ -78,6 +78,7 @@ export class UserEditComponent implements OnInit, OnDestroy {
     this.formmatSendDate();
     this._userService.sendUser(this.userObj);
     this.restartDate();
+    //this.closeModal.emit(true);
   }
 
   /**
@@ -106,7 +107,7 @@ export class UserEditComponent implements OnInit, OnDestroy {
   /**
   * MÉTODO QUE LLAMA A LA FUNCIÓN PARA CALCULAR LA EDAD DADA UNA FECHA DE NACIMIENTO
   */
-  calcular() {
+  calculate() {
     this.age();
   }
 

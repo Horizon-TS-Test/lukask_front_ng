@@ -91,14 +91,10 @@ export class UserService {
    * MÉTODO PARA REGISTRAR LOS DATOS DEL PERFIL
    */
   public registerUser(user: User) {
-    console.log("User service ts...");
-    console.log(user);
     let userFormData: FormData = this.mergeFormDataPost(user);
-
     this.postUserClient(userFormData)
       .then(
         (response: any) => {
-          console.log("response");
           console.log(response);
           //this.updateUserData(response);
         },
@@ -130,7 +126,7 @@ export class UserService {
           }
         }
       };
-      xhr.open("post", REST_SERV.userUrl, true);
+      xhr.open("post", REST_SERV.signUrl, true);
       xhr.setRequestHeader('X-Access-Token', this.getUserKey());
       xhr.withCredentials = true;
       xhr.send(userFormData);
@@ -252,7 +248,6 @@ export class UserService {
   getStoredUserData() {
     let storedData = localStorage.getItem('user_data');
     let userData = CrytoGen.decrypt(storedData);
-
     return this.extractUserJson(JSON.parse(userData));
   }
 

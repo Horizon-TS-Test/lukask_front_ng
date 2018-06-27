@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 import { User } from '../../models/user';
 import { Subscription } from 'rxjs';
 import { CameraService } from '../../services/camera.service';
@@ -15,6 +15,7 @@ declare var $: any;
   styleUrls: ['./user-register.component.css']
 })
 export class UserRegisterComponent implements OnInit {
+  @Output() closeModal = new EventEmitter<boolean>();
 
   private SUBMIT = 0;
   private CLOSE = 1;
@@ -58,7 +59,7 @@ export class UserRegisterComponent implements OnInit {
   /**
    * MÉTODO PARA COLOCAR LA IMAGEN TOMADA EN EL MODAL Y ALMACENARLA EN UNA VARIABLE TIPO ARCHIVO
    * @param event = ARCHIVO FOTO
-   */
+  */
 
   addQuejaSnapShot(media: MediaFile) {
     let cardImg = $("#frmU").find(".card-img-top");
@@ -72,7 +73,7 @@ export class UserRegisterComponent implements OnInit {
   ngOnInit() {
   }
 
-  
+
 
   /**
  * MÉTODO PARA AGREGAR EL FORMATO MAS HORA EN LA FECHA DE NACIMIENTO:
@@ -108,12 +109,12 @@ export class UserRegisterComponent implements OnInit {
         this.registerProfile();
         break;
       case this.CLOSE:
-        //this.closeModal.emit(true);
+        this.closeModal.emit(true);
         break;
     }
   }
 
-  calcular() {
+  calculate() {
     this.age();
   }
 
@@ -132,7 +133,6 @@ export class UserRegisterComponent implements OnInit {
     this.userObj.person.age = edad;
     this.userObj.person.birthdate = this.convertDateFormat(this.userObj.person.birthdate);
     this.tempBirthdate = this.userObj.person.birthdate;
-
   }
 
   /**
@@ -158,9 +158,7 @@ export class UserRegisterComponent implements OnInit {
       this.userObj.file = this.filesToUpload;
       this.userObj.fileName = this.getFormattedDate() + ".png";
     }
-    this.formmatSendDate();    
-    console.log("Los datos...................................");
-    console.log(this.userObj);
+    this.formmatSendDate();
     this._userService.registerUser(this.userObj);
     this.restartDate();
   }
@@ -173,5 +171,4 @@ export class UserRegisterComponent implements OnInit {
     event.preventDefault();
     this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.new_media, contentData: null });
   }
-
 }

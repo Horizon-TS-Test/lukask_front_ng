@@ -1012,10 +1012,19 @@ p, label, div {
 .p-primary-text-color {
   color: #848b76 !important; }
 
-input[type=text], input[type=password], input[type=email], textarea {
+input[type=text], input[type=password], input[type=email], input[type=date], textarea {
   border-top: none;
   border-left: none;
   border-right: none;
   border-radius: 0; }
+
+.p-validate-input {
+  color: #FAC9D9;
+  background-color: #E91E63;
+  border-radius: 5px;
+  font-size: 11px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1; }
 
 /*# sourceMappingURL=styles.css.map */
