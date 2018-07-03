@@ -260,6 +260,8 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
     geocoder.geocode({ 'latLng': { lat: this._gps.latitude, lng: this._gps.longitude } }, (results, status) => {
       if (status === google.maps.GeocoderStatus.OK) {
         var str = results[0].formatted_address;
+        console.log("str..........................................");
+        console.log(str);
         var dir = str.split(",");
         this._locationAdress = dir[0];
         this._locationCity = dir[1];

@@ -76,9 +76,9 @@
         </li>
 
         <li class="list-group-item pb-0">
-          <div class="col-6 pb-0">Fecha Nacimiento:</div>
-          <div class="col-6 pb-0">Edad:</div>
-          <div class="col-6 pb-0">
+          <div class="col-8 pb-0">Fecha Nacimiento:</div>
+          <div class="col-4 pb-0">Edad:</div>
+          <div class="col-8 pb-0">
             <input type="date" name="birthdate" #birthdate="ngModel" [(ngModel)]="userObj.person.birthdate" class="form-control pb-0"
               max="3000-12-31" min="1000-01-01" class="form-control" required (ngModelChange)="calculate()" style="border-top: none;border-left: none;border-right: none;"
             />
@@ -87,7 +87,7 @@
               La fecha es incorrecta!
             </span>
           </div>
-          <div class="col-6 pb-0">
+          <div class="col-4 pb-0">
             <input type="text" name="age" #age="ngModel" [(ngModel)]="userObj.person.age" class="form-control pb-0" readonly="readonly"
               style="background-color: white" required/>
           </div>
@@ -112,6 +112,29 @@
             </span>
           </div>
         </li>
+
+        <li class="list-group-item pb-0">
+          <div class="col-4 pb-0">Provincia :</div>
+          <div class="col-8 pb-0">
+            <app-select2-bootstrap class="col-11" [fcName]="'province'" [select2Data]="provinceSelect" (select2Change)="getProvinciaSelect($event)"></app-select2-bootstrap>
+          </div>
+        </li>
+        <li class="list-group-item pb-0">
+          <div class="col-4 pb-0">Cantón :</div>
+          <div class="col-8 pb-0">
+            <app-select2-bootstrap class="col-11" [fcName]="'canton'" [select2Data]="cantonSelect" (select2Change)="getCantonSelect($event)"></app-select2-bootstrap>
+          </div>
+        </li>
+        <li class="list-group-item pb-0">
+          <div class="col-4 pb-0">Parroquia :</div>
+          <div class="col-8 pb-0">
+            <app-select2-bootstrap class="col-11" [fcName]="'parroquia'" [select2Data]="parroquiaSelect" (select2Change)="getParroquiaSelect($event)"></app-select2-bootstrap>
+          </div>
+        </li>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
 
       </ul>
     </form>

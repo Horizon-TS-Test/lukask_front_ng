@@ -89,5 +89,4 @@ export class LoginComponent implements OnInit {
     event.preventDefault();
     this._notifierService.notifyNewContent({ contentType: contType, contentData: null });
   }
-
 }

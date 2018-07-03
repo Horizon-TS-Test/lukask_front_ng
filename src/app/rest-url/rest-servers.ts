@@ -14,4 +14,8 @@ export var REST_SERV = {
     socketServerUrl: 'http://127.0.0.1:8070',
     userUrl: 'http://127.0.0.1:8070/user/',
     signUrl: 'http://127.0.0.1:8070/signIn/',
+    provinceUrl:'http://127.0.0.1:8070/province/',
+    cantonUrl:'http://127.0.0.1:8070/canton/',
+    parroquiaUrl:'http://127.0.0.1:8070/parroquia/',
+    
 }

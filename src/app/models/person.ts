@@ -1,3 +1,5 @@
+import { Parroquia } from "./parroquia";
+
 export class Person {
     constructor(
         public id_person?: string,
@@ -9,5 +11,8 @@ export class Person {
         public address?: string,
         public birthdate?: string,
         public cell_phone?: string,
-    ) {}
+        public parroquia?: Parroquia,
+    ) {
+        this.parroquia = new Parroquia();
+    }
 }

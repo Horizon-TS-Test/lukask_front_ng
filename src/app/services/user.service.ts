@@ -4,6 +4,11 @@ import { Person } from '../models/person';
 import { REST_SERV } from '../rest-url/rest-servers';
 import { CrytoGen } from '../tools/crypto-gen';
 import { Http, Headers, Response } from '@angular/http';
+import { Province } from '../models/province';
+import { Canton } from '../models/canton';
+import { Parroquia } from '../models/parroquia';
+import { throwError } from 'rxjs';
+
 
 declare var writeData: any;
 declare var readAllData: any;
@@ -13,12 +18,22 @@ declare var deleteItemData: any;
   providedIn: 'root'
 })
 export class UserService {
+  private provinceList: Province[];
+  private cantonList: Canton[];
+  private parroquiaList: Parroquia[];
+  private isFetchedProvince: boolean;
+  private isFetchedCanton: boolean;
+  private isFetchedParroquia: boolean;
+  private _userService: UserService;
+
   public userProfile: User;
   public _userUpdate = new EventEmitter<boolean>();
 
   constructor(
     private _http: Http
-  ) { }
+  ) {
+    this.isFetchedProvince = false;
+  }
 
   /**
    * MÉTODO PARA ALMACENAR EN EL LOCAL STORAGE DEL NAVEGADOR LAS CREDENCIALES PUBLICAS DEL USUARIO:
@@ -152,6 +167,9 @@ export class UserService {
     formData.append('cell_phone', user.person.cell_phone);
     formData.append('birthdate', user.person.birthdate);
     formData.append('user_file', user.file, user.fileName);
+    formData.append('province', user.person.parroquia.canton.province.id_province);
+    formData.append('canton', user.person.parroquia.canton.id_canton);
+    formData.append('parroquia', user.person.parroquia.id_parroquia);
     formData.append('is_active', "true");
 
     return formData;
@@ -280,4 +298,202 @@ export class UserService {
   public getUserProfile() {
     return this.userProfile;
   }
+
+  /**
+   * MÉTODO PARA OBTENER LAS PROVINCIAS
+   * */
+  getProvinceList() {
+    return this.getProvinceWeb().then((webProvince: Province[]) => {
+      this.provinceList = webProvince;
+      console.log("webProvince.....................................");
+      console.log(webProvince);
+      if (!this.isFetchedProvince) {
+        return this.getProvinceCache().then((cacheProvince: Province[]) => {
+          this.provinceList = cacheProvince;
+          return cacheProvince;
+        });
+      }
+      else {
+        this.isFetchedProvince = false;
+      }
+
+      return webProvince;
+    }).catch((error: Response) => {
+      if (error.json().code == 401) {
+        localStorage.clear();
+      }
+      return throwError(error.json());
+    });
+  }
+
+  getProvinceWeb() {
+    const qTheaders = new Headers({ 'Content-Type': 'application/json' });
+
+    return this._http.get(REST_SERV.provinceUrl, { headers: qTheaders, withCredentials: true }).toPromise()
+      .then((response: Response) => {
+        const qtypes = response.json().data.results;
+        let transformedProvinces: Province[] = [];
+
+        for (let type of qtypes) {
+          transformedProvinces.push(new Province(type.id_province, type.description_province));
+        }
+
+        this.isFetchedProvince = true;
+        console.log("[LUKASK QUEJA SERVICE] - QUEJA TYPES FROM WEB", transformedProvinces);
+        return transformedProvinces;
+      })
+      .catch((error: Response) => {
+        if (error.json().code == 401) {
+          localStorage.clear();
+        }
+        return throwError(error.json());
+      });
+  }
+
+  getProvinceCache() {
+    if ('indexedDB' in window) {
+      return readAllData('qtype')
+        .then((qtypes) => {
+          let transformedProvinces: Province[] = [];
+          for (let type of qtypes) {
+            transformedProvinces.push(new Province(type.id_type_publication, type.description));
+          }
+
+          console.log("[LUKASK QUEJA SERVICE] - QUEJA TYPES FROM CACHE", transformedProvinces);
+          return transformedProvinces;
+        });
+    }
+    return new Promise((resolve, reject) => {
+      reject(null);
+    });
+  }
+
+  /**
+   * MÉTODO PARA OBTENER LAS PROVINCIAS
+   * */
+  getCantonList(id_provincia: any) {
+    return this.getCantonWeb(id_provincia).then((webCanton: Canton[]) => {
+      this.cantonList = webCanton;
+      if (!this.isFetchedCanton) {
+        return this.getCantonCache().then((cacheCanton: Canton[]) => {
+          this.cantonList = cacheCanton;
+          return cacheCanton;
+        });
+      }
+      else {
+        this.isFetchedCanton = false;
+      }
+
+      return webCanton;
+    }).catch((error: Response) => {
+      if (error.json().code == 401) {
+        localStorage.clear();
+      }
+      return throwError(error.json());
+    });
+  }
+
+  getCantonWeb(id_provincia: any) {
+    const qTheaders = new Headers({ 'Content-Type': 'application/json' });
+    return this._http.get(REST_SERV.cantonUrl + id_provincia, { headers: qTheaders, withCredentials: true }).toPromise()
+      .then((response: Response) => {
+        const qtypes = response.json().data;
+        let transformedCantones: Canton[] = [];
+        for (let type of qtypes) {
+          transformedCantones.push(new Canton(type.id_canton, type.description_canton));
+        }
+        this.isFetchedCanton = true;
+        return transformedCantones;
+      })
+      .catch((error: Response) => {
+        if (error.json().code == 401) {
+          localStorage.clear();
+        }
+        return throwError(error.json());
+      });
+  }
+
+  getCantonCache() {
+    if ('indexedDB' in window) {
+      return readAllData('qtype')
+        .then((qtypes) => {
+          let transformedCantones: Canton[] = [];
+          for (let type of qtypes) {
+            transformedCantones.push(new Canton(type.id_type_publication, type.description));
+          }
+
+          console.log("[LUKASK QUEJA SERVICE] - QUEJA TYPES FROM CACHE", transformedCantones);
+          return transformedCantones;
+        });
+    }
+    return new Promise((resolve, reject) => {
+      reject(null);
+    });
+  }
+
+  /**
+   * MÉTODO PARA OBTENER LAS PARROQUIAS
+   * */
+
+  getParroquiaList(canton_id: any) {
+    return this.getParroquiaWeb(canton_id).then((webParroquia: Parroquia[]) => {
+      console.log("Datos en  get Parroquia List");
+      console.log(webParroquia);
+      this.parroquiaList = webParroquia;
+      if (!this.isFetchedParroquia) {
+        return this.getParroquiaCache().then((cacheParroquia: Parroquia[]) => {
+          this.parroquiaList = cacheParroquia;
+          return cacheParroquia;
+        });
+      }
+      else {
+        this.isFetchedParroquia = false;
+      }
+      return this.parroquiaList;
+    }).catch((error: Response) => {
+      if (error.json().code == 401) {
+        localStorage.clear();
+      }
+      return throwError(error.json());
+    });
+  }
+
+  getParroquiaWeb(canton_id: any) {
+    const qTheaders = new Headers({ 'Content-Type': 'application/json' });
+    return this._http.get(REST_SERV.parroquiaUrl + canton_id, { headers: qTheaders, withCredentials: true }).toPromise()
+      .then((response: Response) => {
+        const qtypes = response.json().data.parishs;
+        let transformedParroquias: Parroquia[] = [];
+        for (let type of qtypes) {
+          transformedParroquias.push(new Parroquia(type.id_canton, type.description_));
+        }
+        this.isFetchedCanton = true;
+        console.log("[LUKASK CANTON SERVICE] - CANTON TYPES FROM WEB", transformedParroquias);
+        return transformedParroquias;
+      })
+      .catch((error: Response) => {
+        if (error.json().code == 401) {
+          localStorage.clear();
+        }
+        return throwError(error.json());
+      });
+  }
+
+  getParroquiaCache() {
+    if ('indexedDB' in window) {
+      return readAllData('qtype')
+        .then((qtypes) => {
+          let transformedParroquias: Parroquia[] = [];
+          for (let type of qtypes) {
+            transformedParroquias.push(new Parroquia(type.id_type_publication, type.description));
+          }
+          console.log("[LUKASK QUEJA SERVICE] - QUEJA TYPES FROM CACHE", transformedParroquias);
+          return transformedParroquias;
+        });
+    }
+    return new Promise((resolve, reject) => {
+      reject(null);
+    });
+  }
+
 }

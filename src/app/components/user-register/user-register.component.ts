@@ -7,6 +7,10 @@ import { HorizonButton } from '../../interfaces/horizon-button.interface';
 import { NotifierService } from '../../services/notifier.service';
 import { CONTENT_TYPES } from '../../config/content-type';
 import { UserService } from '../../services/user.service';
+import { Province } from '../../models/province';
+import { Canton } from '../../models/canton';
+import { Parroquia } from '../../models/parroquia';
+import { Select2 } from '../../interfaces/select2.interface';
 
 declare var $: any;
 @Component({
@@ -21,10 +25,20 @@ export class UserRegisterComponent implements OnInit {
   private CLOSE = 1;
   private subscription: Subscription;
   private tempBirthdate;
+  private province: string;
+  private canton: string;
+  private parroquia: string;
 
   public materialButtons: HorizonButton[];
   public userObj: User;
   public filesToUpload: any;
+
+  public provinceList: Province[];
+  public provinceSelect: Select2[];
+  public cantonList: Canton[];
+  public cantonSelect: Select2[];
+  public parroquiaList: Parroquia[];
+  public parroquiaSelect: Select2[];
 
   constructor(
     private _userService: UserService,
@@ -71,9 +85,8 @@ export class UserRegisterComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.getProvince();
   }
-
-
 
   /**
  * MÉTODO PARA AGREGAR EL FORMATO MAS HORA EN LA FECHA DE NACIMIENTO:
@@ -81,8 +94,8 @@ export class UserRegisterComponent implements OnInit {
   formmatSendDate() {
     var date = new Date();
     this.userObj.person.birthdate = this.userObj.person.birthdate + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-
   }
+
   /**
    * MÉTODO QUE RETORNA A LA FECHA CON EL FORMATO SIN HORA
    */
@@ -100,9 +113,9 @@ export class UserRegisterComponent implements OnInit {
   }
 
   /**
- * MÉTODO PARA EJECUTAR LA FUNCION SEGUN LA ACCION DEL BOTON
- * @param event = EVENTO DE LA CAMARA
- */
+  * MÉTODO PARA EJECUTAR LA FUNCION SEGUN LA ACCION DEL BOTON
+  * @param event = EVENTO DE LA CAMARA
+  */
   actionBtn(event: number) {
     switch (event) {
       case this.SUBMIT:
@@ -159,7 +172,7 @@ export class UserRegisterComponent implements OnInit {
       this.userObj.fileName = this.getFormattedDate() + ".png";
     }
     this.formmatSendDate();
-    this._userService.registerUser(this.userObj);
+    //this._userService.registerUser(this.userObj);
     this.restartDate();
   }
 
@@ -170,5 +183,103 @@ export class UserRegisterComponent implements OnInit {
   newMedia(event: any) {
     event.preventDefault();
     this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.new_media, contentData: null });
+  }
+
+  /**
+   * MÉTODO QUE TRAE LAS PROVINCIAS EXISTENTES EN EL SISTEMA
+   */
+  getProvince() {
+    /*  this.provinceSelect = [];
+      this.provinceSelect.push({ value: "1", data: "Chimborazo" });
+      this.provinceSelect.push({ value: "2", data: "Carchi" });
+      this.provinceSelect.push({ value: "3", data: "Imbabura" });
+      this.provinceSelect.push({ value: "4", data: "Pichincha" });
+      this.provinceSelect.push({ value: "5", data: "Carchi" });
+      this.provinceSelect.push({ value: "6", data: "Sto. Domingo de los Tsachilas" });
+  */
+    this._userService.getProvinceList().then((qProvinces) => {
+      this.provinceList = qProvinces;
+      this.provinceSelect = [];
+      this.provinceSelect.push({ value: "1", data: "Chimborazo" });
+      for (let type of this.provinceList) {
+        if (!this.province) {
+          this.province = type.id_province;
+        }
+        this.provinceSelect.push({ value: type.id_province, data: type.name });
+      }
+    });
+  }
+
+  /**
+   * METODO QUE CAPTURA LA PROVINCIA DESDE EL SELECT
+   * @param event 
+   */
+  getProvinciaSelect(event: string) {
+    this.province = event;
+    this.userObj.person.parroquia.canton.province.id_province = this.province;
+    this.getCanton(this.province);
+  }
+
+  /**
+   * MÉTODO QUE TRAE LAS PROVINCIAS EXISTENTES EN EL SISTEMA
+   */
+  getCanton(id_provincia: any) {
+    /*  this.cantonSelect = [];
+      this.cantonSelect.push({ value: "1", data: "Esmeraldas" });
+      this.cantonSelect.push({ value: "2", data: "Otavalo" });
+      this.cantonSelect.push({ value: "3", data: "Tena" });
+      this.cantonSelect.push({ value: "4", data: "Pastaza" });
+    */
+
+    this._userService.getCantonList(id_provincia).then((qCantones) => {
+      this.cantonList = qCantones;
+      this.cantonSelect = [];
+      for (let type of this.cantonList) {
+        if (!this.canton) {
+          this.canton = type.id_canton;
+        }
+        this.cantonSelect.push({ value: type.id_canton, data: type.name });
+      }
+    });
+  }
+
+  /**
+ * METODO QUE CAPTURA LA PROVINCIA DESDE EL SELECT
+ * @param event 
+ */
+  getCantonSelect(event: string) {
+    this.canton = event;
+    this.userObj.person.parroquia.canton.id_canton = this.canton;
+    this.getParroquia(this.canton);
+  }
+
+
+  /**
+   * MÉTODO QUE TRAE LAS PROVINCIAS EXISTENTES EN EL SISTEMA
+   */
+  getParroquia(id_canton: any) {
+    console.log("Datos de parroquia");
+    console.log(id_canton);
+    this._userService.getParroquiaList(id_canton).then((qParroquia) => {
+      this.parroquiaList = qParroquia;
+      this.parroquiaSelect = [];
+      console.log("qParroquia...........................................");
+      console.log(qParroquia);
+      for (let type of this.parroquiaList) {
+        if (!this.parroquia) {
+          this.parroquia = type.id_parroquia;
+        }
+        this.parroquiaSelect.push({ value: type.id_parroquia, data: type.name });
+      }
+    });
+  }
+
+  /**
+   * METODO QUE CAPTURA LA PROVINCIA DESDE EL SELECT
+   * @param event 
+   */
+  getParroquiaSelect(event: string) {
+    this.parroquia = event;
+    this.userObj.person.parroquia.id_parroquia = this.parroquia;
   }
 }

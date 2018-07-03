@@ -8,6 +8,10 @@ import { CONTENT_TYPES } from '../../config/content-type';
 import { Subscription } from 'rxjs';
 import { CameraService } from '../../services/camera.service';
 import { MediaFile } from '../../interfaces/media-file.interface';
+import { Province } from '../../models/province';
+import { Canton } from '../../models/canton';
+import { Parroquia } from '../../models/parroquia';
+import { Select2 } from '../../interfaces/select2.interface';
 
 declare var $: any;
 
@@ -23,6 +27,18 @@ export class UserEditComponent implements OnInit, OnDestroy {
   private CLOSE = 1;
   private subscription: Subscription;
   private tempBirthdate;
+
+  private province: string;
+  private canton: string;
+  private parroquia: string;
+
+  public provinceList: Province[];
+  public provinceSelect: Select2[];
+  public cantonList: Canton[];
+  public cantonSelect: Select2[];
+  public parroquiaList: Parroquia[];
+  public parroquiaSelect: Select2[];
+
 
   public materialButtons: HorizonButton[];
   public userObj: User;
@@ -75,8 +91,10 @@ export class UserEditComponent implements OnInit, OnDestroy {
       this.userObj.file = this.filesToUpload;
       this.userObj.fileName = this.getFormattedDate() + ".png";
     }
+    console.log("this.userObj................................");
+    console.log(this.userObj);
     this.formmatSendDate();
-    this._userService.sendUser(this.userObj);
+    //this._userService.sendUser(this.userObj);
     this.restartDate();
     //this.closeModal.emit(true);
   }
@@ -179,4 +197,89 @@ export class UserEditComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.subscription.unsubscribe();
   }
+
+  /**
+     * METODO QUE CAPTURA LA PROVINCIA DESDE EL SELECT
+     * @param event 
+     */
+  getProvinciaSelect(event: string) {
+    this.province = event;
+    console.log("this.province");
+    console.log(this.province);
+    this.userObj.person.parroquia.canton.province.id_province = this.province;
+
+    this.getCanton();
+  }
+
+  /**
+   * MÉTODO QUE TRAE LAS PROVINCIAS EXISTENTES EN EL SISTEMA
+   */
+  getCanton() {
+    this.cantonSelect = [];
+    this.cantonSelect.push({ value: "1", data: "Esmeraldas" });
+    this.cantonSelect.push({ value: "2", data: "Otavalo" });
+    this.cantonSelect.push({ value: "3", data: "Tena" });
+    this.cantonSelect.push({ value: "4", data: "Pastaza" });
+
+    /*
+    this._userService.getCantonList().then((qCantones) => {
+      this.cantonList = qCantones;
+      this.cantonSelect = [];
+
+      for (let type of this.cantonList) {
+        if (!this.canton) {
+          this.canton = type.id_canton;
+        }
+        this.cantonSelect.push({ value: type.id_canton, data: type.name });
+      }
+    });*/
+  }
+
+  /**
+ * METODO QUE CAPTURA LA PROVINCIA DESDE EL SELECT
+ * @param event 
+ */
+  getCantonSelect(event: string) {
+    this.canton = event;
+    console.log("this.canton");
+    console.log(this.canton);
+    this.userObj.person.parroquia.canton.id_canton = this.canton;
+    this.getParroquia();
+  }
+
+
+  /**
+   * MÉTODO QUE TRAE LAS PROVINCIAS EXISTENTES EN EL SISTEMA
+   */
+  getParroquia() {
+    this.parroquiaSelect = [];
+    this.parroquiaSelect.push({ value: "1", data: "060101 Lizarzaburu" });
+    this.parroquiaSelect.push({ value: "2", data: "060102 Maldonado" });
+    this.parroquiaSelect.push({ value: "3", data: "060103 Velasco" });
+    this.parroquiaSelect.push({ value: "4", data: "060104 Veloz" });
+    this.parroquiaSelect.push({ value: "5", data: "060105 Yaruquìes" });
+
+    /*this._userService.getParroquiaList().then((qParroquias) => {
+      this.parroquiaList = qParroquias;
+      this.parroquiaSelect = [];
+
+      for (let type of this.parroquiaList) {
+        if (!this.parroquia) {
+          this.parroquia = type.id_parroquia;
+        }
+        this.parroquiaSelect.push({ value: type.id_parroquia, data: type.name });
+      }
+    });*/
+  }
+  /**
+   * METODO QUE CAPTURA LA PROVINCIA DESDE EL SELECT
+   * @param event 
+   */
+  getParroquiaSelect(event: string) {
+    this.parroquia = event;
+    console.log("this.parroquia");
+    console.log(this.parroquia);
+    this.userObj.person.parroquia.id_parroquia = this.parroquia;
+  }
+
 }
