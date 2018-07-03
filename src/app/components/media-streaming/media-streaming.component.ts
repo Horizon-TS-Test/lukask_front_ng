@@ -39,7 +39,8 @@ export class MediaStreamingComponent implements OnInit {
     this.initCarousel();
   }
 
-  ngAfterViewInit() { }
+  ngAfterViewInit() {
+  }
 
   /**
    * MÉTODO PARA DEFINIR LAS PROPIEDADES DEL CAROUSEL DE SECCIONES:
@@ -49,10 +50,6 @@ export class MediaStreamingComponent implements OnInit {
       items: 1, dots: false, loop: false, margin: 5,
       nav: false, stagePadding: 0, autoWidth: false
     };
-
-    $(".owl-carousel").on("dragged.owl.carousel", (event) => {
-      alert("dragged!!!");
-    });
   }
 
   sendCameraAction(event: any, action: number) {

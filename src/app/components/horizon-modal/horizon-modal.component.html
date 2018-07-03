@@ -10,7 +10,7 @@
     }"></a>
     <ng-container [ngSwitch]="_dynaContent.contentType">
       <ng-container *ngSwitchCase="contentTypes.new_queja">
-        <owl-carousel id="corousel-edit-q" class="personal-owl-nav" [options]="carouselOptions" [carouselClasses]="['owl-theme']">
+        <owl-carousel id="carousel-edit-q" class="personal-owl-nav owl-carousel" [options]="carouselOptions" [carouselClasses]="['owl-theme']">
           <div>
             <a href="#" class="no-border-button secondary p-float-btn top-right-corner mt-2 mr-2" (click)="newMedia($event)">
               <span class="personal-site-icon">f</span>
@@ -19,8 +19,8 @@
           </div>
 
           <div>
-            <a href="#" class="p-transparent-btn xs p-float-btn top-right-corner" (click)="newMedia($event)">
-              <span class="personal-site-icon">j</span>
+            <a href="#" class="p-transparent-btn xs p-float-btn top-right-corner pr-1" (click)="newMedia($event)">
+              <fa name="chevron-left"></fa>
             </a>
             <media-streaming (closeModal)="close($event)"></media-streaming>
           </div>

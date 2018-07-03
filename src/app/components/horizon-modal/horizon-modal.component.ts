@@ -41,6 +41,10 @@ export class HorizonModalComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this._contentService.slideDownUp(this.self);
     }, 100);
+
+    $("#carousel-edit-q").on("dragged.owl.carousel", (event) => {
+      console.log("dragged!!!");
+    });
   }
 
   /**
@@ -51,10 +55,6 @@ export class HorizonModalComponent implements OnInit, OnDestroy {
       items: 1, dots: false, loop: false, margin: 5,
       nav: false, stagePadding: 0, autoWidth: false
     };
-
-    $(".owl-carousel").on("dragged.owl.carousel", (event) => {
-      alert("dragged!!!");
-    });
   }
 
   /**

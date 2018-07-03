@@ -340,6 +340,8 @@ p, label, div {
 
 /*OWL CAROUSEL WITH NAV BUTTONS CUSTOMIZED*/
 .personal-owl-nav {
+    display: unset !important;
+
     .owl-nav {
         position: absolute;
         bottom: 5px;
@@ -1118,7 +1120,7 @@ p, label, div {
 /*************************************
 ///////PERSONAL EDIT-QUEJA:
 *************************************/
-#corousel-edit-q {
+#carousel-edit-q {
     .owl-item:first-child {
         z-index: 1;
     }

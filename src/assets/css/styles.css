@@ -282,29 +282,31 @@ p, label, div {
       font-size: 6.9rem; } }
 
 /*OWL CAROUSEL WITH NAV BUTTONS CUSTOMIZED*/
-.personal-owl-nav .owl-nav {
-  position: absolute;
-  bottom: 5px;
-  right: 5px;
-  z-index: 3;
-  color: #fff; }
-  .personal-owl-nav .owl-nav button {
-    outline: none;
-    border-radius: 50% !important;
-    width: 30px;
-    height: 30px;
-    background: rgba(255, 255, 255, 0.7) !important;
-    transition: all .5s !important; }
-    .personal-owl-nav .owl-nav button i {
-      vertical-align: middle;
-      font-size: 1.2rem;
-      color: #004360; }
-  .personal-owl-nav .owl-nav button:first-child i {
-    margin-right: 2px; }
-  .personal-owl-nav .owl-nav button:last-child i {
-    margin-left: 2px; }
-  .personal-owl-nav .owl-nav button:hover {
-    opacity: .7; }
+.personal-owl-nav {
+  display: unset !important; }
+  .personal-owl-nav .owl-nav {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    z-index: 3;
+    color: #fff; }
+    .personal-owl-nav .owl-nav button {
+      outline: none;
+      border-radius: 50% !important;
+      width: 30px;
+      height: 30px;
+      background: rgba(255, 255, 255, 0.7) !important;
+      transition: all .5s !important; }
+      .personal-owl-nav .owl-nav button i {
+        vertical-align: middle;
+        font-size: 1.2rem;
+        color: #004360; }
+    .personal-owl-nav .owl-nav button:first-child i {
+      margin-right: 2px; }
+    .personal-owl-nav .owl-nav button:last-child i {
+      margin-left: 2px; }
+    .personal-owl-nav .owl-nav button:hover {
+      opacity: .7; }
 
 .personal-ul, .personal-ul li {
   list-style: disc; }
@@ -860,7 +862,7 @@ p, label, div {
 /*************************************
 ///////PERSONAL EDIT-QUEJA:
 *************************************/
-#corousel-edit-q .owl-item:first-child {
+#carousel-edit-q .owl-item:first-child {
   z-index: 1; }
 
 #frmQ .card-img-top {
