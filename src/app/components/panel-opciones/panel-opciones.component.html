@@ -23,8 +23,12 @@
     <a href="#" *ngIf="isAble" (click)="subscribe($event)" class="ml-1 btn btn-outline-info">
       <fa name="bell"></fa>
     </a>
-    <a href="#"  (click)="openLayer($event, contentTypes.edit_profile)" class="ml-1 btn btn-outline-info">
+    <a href="#" (click)="openLayer($event, contentTypes.edit_profile)" class="ml-1 btn btn-outline-info">
       <fa name="cog"></fa>
+    </a>
+    <a href="#" (click)="openLayer($event, contentTypes.view_notifs)" class="relative-background ml-1 btn btn-outline-info">
+      <span *ngIf="entriesNumber > 0" class="news-number">{{ entriesNumber }}</span>
+      <fa name="inbox"></fa>
     </a>
     <!--form class="form-inline">
       <div class="input-group col-8">

@@ -525,7 +525,6 @@ p, label, div {
     z-index: 9999999;
     right: $nav-x;
     bottom: $nav-menu-bottom-lg;
-    overflow: hidden;
     text-indent: 100%;
     white-space: nowrap;
     width: $nav-menu-size-lg;
@@ -550,7 +549,7 @@ p, label, div {
     box-shadow: 1px 2px 4px 2px $primary-a !important;
     background: $primary-dark;
 
-    span {
+    .nav-icon {
         background: $secondary-text;
     }
 }
@@ -735,11 +734,11 @@ p, label, div {
     box-shadow: none;
     background: transparent;
     
-    span {
+    .nav-icon {
         background: transparent;
     }
 
-    span::before, span::after {
+    .nav-icon::before, .nav-icon::after {
         background: $primary-dark;
     }
 }
@@ -753,7 +752,6 @@ p, label, div {
     z-index: 9999998 !important;
     background: $secondary-text;
     transition: transform .3s ease;
-
 }
 .top-panel {
     top: 0;
@@ -845,7 +843,13 @@ p, label, div {
     background-size: cover !important;
     background-position: center center !important;
     background-repeat: no-repeat !important;
+    flex: 0 0 auto !important;
 }
+.profile-img-notif {
+    width: 60px;
+    height: 60px;
+}
+
 .pers-profile-img-comen {
     width: 40px;
     height: 40px;
@@ -855,6 +859,7 @@ p, label, div {
     background-size: cover !important;
     background-position: center center !important;
     background-repeat: no-repeat !important;
+    flex: 0 0 auto !important;
 }
 
 .personal-queja {
@@ -1113,6 +1118,11 @@ p, label, div {
 /*************************************
 ///////PERSONAL EDIT-QUEJA:
 *************************************/
+#corousel-edit-q {
+    .owl-item:first-child {
+        z-index: 1;
+    }
+}
 
 #frmQ {
     .card-img-top {
@@ -1151,16 +1161,6 @@ p, label, div {
     .card-block {
         border: none !important;
     }
-
-    .btn {
-        border: none !important;
-        background: transparent !important;
-
-        fa, span {
-            font-size: 1.5rem !important;
-            color: $primary !important;
-        }
-    }
 }
 
 .default-back {
@@ -1191,38 +1191,50 @@ p, label, div {
 /////////////////
 
 ///PERSONAL BUTTONS:
-.personal-center-btn {
-    position: absolute;
+.p-transparent-btn {
     border-radius: 50% !important;
     width: 80px;
     height: 80px;
     background: rgba(0, 0, 0, .3) !important;
-    border-color: rgba(255, 255, 255, .8) !important;
+    border: solid 1px rgba(255, 255, 255, .8) !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    padding: 0px !important;
 
-    fa {
+    fa, span {
         font-size: 40px;
         color: rgba(255, 255, 255, .8) !important
     }
 }
-.p-float-btn-sm {
-    position: absolute;
-    z-index: 1;
-    border-radius: 50% !important;
+.p-transparent-btn.sm {
     width: 40px;
     height: 40px;
-    top: 5px;
-    left: 5px;
-    background: rgba(0, 0, 0, .3) !important;
-    border-color: rgba(255, 255, 255, .8) !important;
 
-    fa {
+    fa, span {
         font-size: 20px;
-        color: rgba(255, 255, 255, .8) !important
     }
 }
-.p-float-link {
+.p-transparent-btn.xs {
+    width: 30px;
+    height: 30px;
+
+    fa, span {
+        font-size: 1.1rem !important;;
+    }
+}
+
+.p-float-btn, .p-float-link {
     position: absolute;
     z-index: 1;
+}
+.top-left-corner {
+    top: 5px;
+    left: 5px;
+}
+.top-right-corner {
+    top: 5px;
+    right: 10px;
 }
 .down-right-corner {
     bottom: 3px;
@@ -1259,6 +1271,10 @@ p, label, div {
         color: $secondary-text !important;
     }
 }
+.p-sec-btn {
+    background: $primary-dark !important;
+    border-color: $primary-dark !important;
+}
 
 .no-border-button {
     border: none !important;
@@ -1274,6 +1290,12 @@ p, label, div {
 
     fa, span {
         color: $primary-dark !important;
+    }
+}
+.no-border-button.secondary {
+
+    fa, span {
+        color: $primary-text !important;
     }
 }
 .no-border-button:hover {
@@ -1336,3 +1358,59 @@ input[type=text], input[type=password], input[type=email], textarea{
     border-right: none;
     border-radius: 0;
 }
+
+/////////////////////////////////////////NOTIFICATIONS////////////////////////////////////////////////////////
+.p-notif-container {
+    position: fixed;
+    z-index: 10000000001;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    max-width: 400px;
+    opacity: 0;
+    transition: opacity .4s;
+
+    .p-notification {
+        position: relative;
+        opacity: 0;
+        transform: translateX(-100%);
+        transition: opacity 0s .4s, transform .7s ease;
+    }
+    .p-notification.on {
+        opacity: 1;
+        transform: translateX(0);
+        transition: opacity 0s .3s, transform .5s ease;
+    }
+}
+.p-notif-container.active {
+    opacity: 1;
+    transition: opacity .2s;
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+////ESTILOS PARA NÚMERO DE NOTIFICACIONES:
+.news-number {
+    position: absolute;
+    right: -5px;
+    top: -5px;
+    width: 17px;
+    height: 17px;
+    border-radius: 50%;
+    color: $secondary-text;
+    font-size: .6rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: $primary-dark;
+}
+.news-main {
+    position: fixed;
+    right: unset;
+    top: unset;
+    z-index: 10000000;
+    right: $nav-x + $nav-menu-size-lg - .5rem;
+    bottom: $nav-menu-bottom-lg + $nav-menu-size-lg - .5rem;
+    background: $primary;
+}
+////

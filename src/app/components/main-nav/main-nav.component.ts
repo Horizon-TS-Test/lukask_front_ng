@@ -11,21 +11,29 @@ declare var $: any;
 })
 export class MainNavComponent implements OnInit {
   public mainNav: Nav[];
+  public newEntries: boolean;
+  public entriesNumber: number;
 
   constructor() {
+    this.newEntries = true;
+    this.entriesNumber = 0;
   }
 
   ngOnInit() {
-    $("#menu-nav").on("click", function () {
-      if (!$(".top-panel").hasClass("slide-in")) {
-        $(".top-panel").addClass("slide-in");
-        $(".bot-panel").addClass("slide-in");
-      }
-      else {
-        $(".top-panel").removeClass("slide-in");
-        $(".bot-panel").removeClass("slide-in");
-      }
-    });
+  }
+
+  public openPanel(event: any) {
+    event.preventDefault();
+    if (!$(".top-panel").hasClass("slide-in")) {
+      this.newEntries = false;
+      $(".top-panel").addClass("slide-in");
+      $(".bot-panel").addClass("slide-in");
+    }
+    else {
+      this.newEntries = true;
+      $(".top-panel").removeClass("slide-in");
+      $(".bot-panel").removeClass("slide-in");
+    }
   }
 
 }

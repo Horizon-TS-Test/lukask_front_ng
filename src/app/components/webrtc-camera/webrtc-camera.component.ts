@@ -58,7 +58,14 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
             break;
           case CAMERA_ACTIONS.flash_off:
             break;
-          case CAMERA_ACTIONS.flash_auto:
+          case CAMERA_ACTIONS.init_transmision:
+            //AQUÍ DEBES LLAMAR A TUS MÉTODOS PARA LA TRANSMISIÓN DENNYS :D 
+            break;
+          case CAMERA_ACTIONS.pause_transmision:
+            //AQUÍ DEBES LLAMAR A TUS MÉTODOS PARA LA TRANSMISIÓN DENNYS :D
+            break;
+          case CAMERA_ACTIONS.stop_transmision:
+            //AQUÍ DEBES LLAMAR A TUS MÉTODOS PARA LA TRANSMISIÓN DENNYS :D
             break;
           case CAMERA_ACTIONS.stop_stream:
             this.stopStream();
@@ -90,7 +97,7 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * Iniciar transmición
+   * MÉTODO PARA INICIAR LA CAPTURA DE LA CÁMARA:
    */
   startLiveCamp(infoCamp: Device) {
     this._navigator = <any>navigator;
@@ -109,7 +116,7 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * Obtiene los dispositivos disponibles hardware disponibles del dispositivo(smartphone o PC) que esta ejecutando la aplicación.
+   * MÉTODO PARA ENCONTRAR LOS DIFERENTES DISPOSITIVOS DE AUDIO Y VIDEO:
    * @param deviceInfos Información  de los dispositivos
    */
   getDevices(deviceInfos: any) {
@@ -121,7 +128,7 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * Permite elegir las cámaras disponibles.
+   * MÉTODO PARA ESCOGER ENTRE LAS CÁMARAS DE VIDEO ENCONTRADAS
    * @param device
    */
   setCamera(device: any) {
@@ -137,7 +144,7 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * Iniciar transmición con la cámara frontal
+   * MÉTODO PARA INICIAR LA CAPTURA DE IMAGEN DE LA CÁMARA FRONTAL:
    */
   startFrontLiveCam() {
     this.backCamera = false;
@@ -146,7 +153,7 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * Inicicar transmición con la cámara trasera.
+   * MÉTODO PARA INICIAR LA CAPTURA DE IMAGEN DE LA CÁMARA TRASERA:
    */
   startBackLiveCam() {
     if (this.swapCamera) {
@@ -157,7 +164,7 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * Deterner transmición
+   * MÉTODO PARA DETENER LA CAPTURA DE IMAGEN DE LA CÁMARA:
    */
   stopStream() {
     if (this.localStream !== undefined) {
@@ -169,7 +176,7 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * obtener captura del video en transmición
+   * MÉTODO PARA OBTENER UNA CAPTURA DE IMAGEN (SNAP SHOT) DEL STREAM
    */
   takeSnapShot() {
     if (this.imageCapture) {
@@ -183,6 +190,9 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
       });
     }
   }
+
+  ///*****************************AQUÍ DEBES LLAMAR A TUS MÉTODOS PARA LA TRANSMISIÓN DENNYS :D********
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
 
   ngOnDestroy() {
     this.subscription.unsubscribe();

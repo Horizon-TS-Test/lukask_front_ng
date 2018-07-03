@@ -14,6 +14,7 @@ declare var $: any;
 export class PanelOpcionesComponent implements OnInit {
   public contentTypes: any;
   public isAble: boolean;
+  public entriesNumber: number;
 
   constructor(
     private _notifierService: NotifierService,
@@ -21,6 +22,7 @@ export class PanelOpcionesComponent implements OnInit {
     private _contentService: ContentService,
   ) {
     this.contentTypes = CONTENT_TYPES;
+    this.entriesNumber = 0;
   }
 
   ngOnInit() {

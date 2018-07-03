@@ -3,6 +3,7 @@ import { Http, Headers, Response } from '@angular/http';
 import { REST_SERV } from '../rest-url/rest-servers';
 import { VAPID_KEY } from '../config/vapid';
 import { BrowserNotifierService } from './browser-notifier.service';
+import { UserService } from './user.service';
 
 declare var urlBase64ToUint8Array: any;
 
@@ -13,7 +14,8 @@ export class SubscribeService {
 
   constructor(
     private _http: Http,
-    private _browserNotifierService: BrowserNotifierService
+    private _browserNotifierService: BrowserNotifierService,
+    private _userService: UserService
   ) { }
 
   /**
@@ -72,6 +74,7 @@ export class SubscribeService {
         }
       })
       .then((newSub) => {//SENDING REQUEST TO OUR SUBS SERVER TO ALSO SEND THE REQUEST AT THE SAME TIME TO FIREBASE
+        console.log(newSub);
         return this.callPushSub(newSub);
       })
       .catch((err) => {
@@ -84,7 +87,7 @@ export class SubscribeService {
    * @param newSub LOS DATOS DEL ENDPOINT PARA LA SUBSCRIPCIÓN
    */
   private callPushSub(newSub: any) {
-    const subBody = JSON.stringify(newSub);
+    const subBody = JSON.stringify({ user_id: this._userService.getUserProfile().id, push_id: newSub });
     const subHeaders = new Headers({ 'Content-Type': 'application/json' });
 
     return this._http.post(REST_SERV.pushSub, subBody, { headers: subHeaders }).toPromise()

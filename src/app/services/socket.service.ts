@@ -13,6 +13,7 @@ export class SocketService {
   private socket;
   public _publicationUpdate = new EventEmitter<any>();
   public _commentUpdate = new EventEmitter<any>();
+  public _notificationUpdate = new EventEmitter<any>();
 
   constructor() { }
 
@@ -30,6 +31,10 @@ export class SocketService {
           break;
         case "comments":
           this._commentUpdate.emit(backendData);
+          break;
+        case "notification_received":
+          console.log("NOtificación!!!");
+          this._notificationUpdate.emit(backendData);
           break;
       }
     });

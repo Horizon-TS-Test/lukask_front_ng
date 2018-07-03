@@ -39,7 +39,7 @@ export class UserService {
     const reqHeaders = new Headers({ 'Content-Type': 'application/json', 'X-Access-Token': this.getUserKey() });
     let userId = CrytoGen.decrypt(localStorage.getItem("user_id"));
 
-    this._http.get(REST_SERV.userUrl + userId + "/", { headers: reqHeaders, withCredentials: true }).toPromise()
+    this._http.get(REST_SERV.userUrl + "/" + userId, { headers: reqHeaders, withCredentials: true }).toPromise()
       .then((response: Response) => {
         const userJson = response.json().data;
         this.updateUserData(userJson);

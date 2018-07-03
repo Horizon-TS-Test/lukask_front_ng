@@ -1,0 +1,33 @@
+<div class="personal-content personal-over-unset min-height-full col-12 p-0 d-flex align-items-center">
+  <app-webrtc-camera></app-webrtc-camera>
+
+  <div class="p-float-btn-sm">
+    <owl-carousel id="corousel-live-op" class="personal-owl-nav" [options]="carouselOptions" [carouselClasses]="['owl-theme']">
+      <div class="d-flex justify-content-center align-items-center">
+        <a href="#" class="p-transparent-btn" (click)="sendCameraAction($event, cameraActions.init_transmision)">
+          <span class="personal-site-icon">g</span>
+        </a>
+      </div>
+
+      <div class="d-flex justify-content-center align-items-center">
+        <a href="#" class="p-transparent-btn mt-1" (click)="sendCameraAction($event, cameraActions.pause_transmision)">
+          <span class="personal-site-icon">h</span>
+        </a>
+      </div>
+
+      <div class="d-flex justify-content-center align-items-center">
+        <a href="#" class="p-transparent-btn mt-1" (click)="sendCameraAction($event, cameraActions.stop_transmision)">
+          <span class="personal-site-icon">i</span>
+        </a>
+      </div>
+
+      <div class="d-flex justify-content-center align-items-center">
+        <a href="#" class="p-transparent-btn mt-1" (click)="sendCameraAction($event, cameraActions.change_camera)">
+            <span class="personal-site-icon">k</span>
+        </a>
+      </div>
+    </owl-carousel>
+  </div>
+
+  <material-btn-list [materialBtns]="matButtons" (someBtnAction)="getButtonAction($event)"></material-btn-list>
+</div>

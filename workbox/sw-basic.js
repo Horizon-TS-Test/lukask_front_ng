@@ -437,6 +437,9 @@ self.addEventListener('push', function (event) {
     var options = {
         body: defaultNotifData.content,
         icon: '/assets/icons/lukask-96x96.png',
+        dir: 'ltr',
+        lang: 'es-US', //BCP 47
+        vibrate: [500, 200, 200, 100], //THIS IS FOR SOME DEVICES NOT FOR ALL
         badge: '/assets/icons/icons/lukask-72x72.png',
         tag: 'confirm-notification', //TO ALLOW NOTIFICATIONS WILL STACK AND SHOW ONE GROUP OF NOTIFICATIONS
         data: {

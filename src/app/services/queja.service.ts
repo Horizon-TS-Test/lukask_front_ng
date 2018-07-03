@@ -138,12 +138,12 @@ export class QuejaService {
     });
     let flag = true;
 
-    if (morePubs && !this.pagePattern) {
+    if (morePubs == true && !this.pagePattern) {
       flag = false;
     }
 
     if (flag) {
-      return this._http.get(REST_SERV.pubsUrl + "/" + ((this.pagePattern) ? this.pagePattern : "?limit=" + this.DEFAULT_LIMIT), { headers: pubHeaders, withCredentials: true }).toPromise()
+      return this._http.get(REST_SERV.pubsUrl + "/" + ((this.pagePattern && morePubs == true) ? this.pagePattern : "?limit=" + this.DEFAULT_LIMIT), { headers: pubHeaders, withCredentials: true }).toPromise()
         .then((response: Response) => {
           const respJson = response.json().data;
           this.pagePattern = respJson.next;

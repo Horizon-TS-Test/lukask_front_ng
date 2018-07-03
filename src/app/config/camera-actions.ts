@@ -5,5 +5,8 @@ export var CAMERA_ACTIONS = {
     flash_off: 4,
     flash_auto: 5,
     snap_shot: 6,
-    stop_stream: 7
+    stop_stream: 7,
+    init_transmision: 8,
+    stop_transmision: 9,
+    pause_transmision: 10
 }

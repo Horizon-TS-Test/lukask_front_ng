@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ContentService } from '../../services/content.service';
 import { NotifierService } from '../../services/notifier.service';
 import { ActivatedRoute } from '@angular/router';
+import { NotificationService } from '../../services/notification.service';
 
 declare var $: any;
 
@@ -19,7 +20,7 @@ export class InicioComponent implements OnInit {
   constructor(
     private _contentService: ContentService,
     private _notifierService: NotifierService,
-    private _activatedRoute: ActivatedRoute,
+    private _activatedRoute: ActivatedRoute
   ) { }
 
   ngOnInit() {
