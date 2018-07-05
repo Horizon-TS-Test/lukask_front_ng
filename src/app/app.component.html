@@ -1,7 +1,7 @@
 <app-content-layer></app-content-layer>
 <!--app-portada></app-portada-->
 <router-outlet></router-outlet>
-<app-main-nav [ngClass]="{'d-none': !isLoggedIn}"></app-main-nav>
+<app-main-nav *ngIf="_enableMainMenu == true"></app-main-nav>
 
 <!-- EVERY COMPONENT TEMPLATE IN THE ENTIRE APP MUST HAVE NEXT SECTION TO ADD ALERT MESSAGES DINAMICALLY -->
 <div #alert_parent></div>

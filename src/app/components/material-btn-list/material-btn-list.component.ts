@@ -8,6 +8,7 @@ import { HorizonButton } from '../../interfaces/horizon-button.interface';
 })
 export class MaterialBtnListComponent implements OnInit {
   @Input() materialBtns: HorizonButton[];
+  @Input() isModal: boolean;
   @Output() someBtnAction: EventEmitter<number>;
 
   constructor() {

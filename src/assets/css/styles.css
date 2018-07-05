@@ -956,6 +956,9 @@ p, label, div {
   bottom: -100%;
   transition: all .3s ease; }
 
+.personal-material-btn.no-modal {
+  z-index: 1000000000; }
+
 .personal-material-btn.show {
   bottom: 3px;
   transition: all .5s ease; }

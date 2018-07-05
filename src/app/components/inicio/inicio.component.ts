@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ContentService } from '../../services/content.service';
 import { NotifierService } from '../../services/notifier.service';
-import { ActivatedRoute } from '@angular/router';
-import { NotificationService } from '../../services/notification.service';
 
 declare var $: any;
 
@@ -13,18 +11,13 @@ declare var $: any;
 })
 export class InicioComponent implements OnInit {
   private self: any;
-  public focusPubId: string;
-  public focusComId: string;
-  public focusRepId: string;
 
   constructor(
     private _contentService: ContentService,
-    private _notifierService: NotifierService,
-    private _activatedRoute: ActivatedRoute
+    private _notifierService: NotifierService
   ) { }
 
   ngOnInit() {
-    this.getQueryParams();
     this.self = $("#local-content-1");
     this._contentService.fadeInComponent();
     this.focusInnerOption();
@@ -33,17 +26,6 @@ export class InicioComponent implements OnInit {
       if (this._contentService.isBottomScroll(this.self)) {
         this._notifierService.notifyMorePubsRequest(true);
       }
-    });
-  }
-
-  /**
-   * MÉTODO PARA OBTENER LOS PARÁMETROS QUE LLEGAN EN EL URL:
-   */
-  getQueryParams() {
-    this._activatedRoute.queryParams.subscribe(params => {
-      this.focusPubId = params['pubId'];
-      this.focusComId = params['comId'];
-      this.focusRepId = params['repId'];
     });
   }
 

@@ -35,6 +35,10 @@ export class QuejaComponent implements OnInit, OnDestroy {
   ngOnInit() {
   }
 
+  /**
+   * MÉTODO QUE ESCUCHA LA ACTUALIZACIÓN DE LOS DATOS DE PERFIL DEL USUARIO LOGEADO 
+   * PARA ACTUALIZAR LA INFORMACIÓN DE LAS PUBLICACIONES QUE PERTENECEN AL MISMO PERFIL:
+   */
   setOwnUserProfile() {
     this.userProfile = this._userService.getUserProfile();
     if (this.queja.user.id == this.userProfile.id) {

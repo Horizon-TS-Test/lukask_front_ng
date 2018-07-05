@@ -1,7 +1,5 @@
 import { Component, OnInit, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { HorizonNotification } from '../../models/horizon-notification';
-import { User } from '../../models/user';
-import { Person } from '../../models/person';
 import { HorizonButton } from '../../interfaces/horizon-button.interface';
 import { NotificationService } from '../../services/notification.service';
 import { Subscription } from 'rxjs';

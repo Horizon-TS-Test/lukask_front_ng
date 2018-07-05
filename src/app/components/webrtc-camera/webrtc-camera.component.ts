@@ -85,7 +85,6 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit() {
     this.initVariables();
-    console.log("startCamera", this.startCamera);
   }
 
   ngAfterViewInit() {

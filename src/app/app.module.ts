@@ -53,6 +53,8 @@ import { HorizonNotificationComponent } from './components/horizon-notification/
 import { NotificationService } from './services/notification.service';
 import { NotificationListComponent } from './components/notification-list/notification-list.component';
 import { MediaStreamingComponent } from './components/media-streaming/media-streaming.component';
+import { ActivityComponent } from './components/activity/activity.component';
+import { RouterService } from './services/router.service';
 
 @NgModule({
   declarations: [
@@ -86,7 +88,8 @@ import { MediaStreamingComponent } from './components/media-streaming/media-stre
     CommentListComponent,
     HorizonNotificationComponent,
     NotificationListComponent,
-    MediaStreamingComponent
+    MediaStreamingComponent,
+    ActivityComponent
   ],
   imports: [
     HttpModule,
@@ -98,7 +101,7 @@ import { MediaStreamingComponent } from './components/media-streaming/media-stre
     OwlModule,
     ServiceWorkerModule.register('/sw-workbox.js', { enabled: environment.production })
   ],
-  providers: [appRoutingProviders, ContentService, UserService, AuthGuardService, LoginGuardService, NotifierService, CameraService, SocketService, BrowserNotifierService, QuejaService, NotificationService],
+  providers: [appRoutingProviders, ContentService, UserService, AuthGuardService, LoginGuardService, NotifierService, CameraService, SocketService, BrowserNotifierService, QuejaService, NotificationService, RouterService],
   bootstrap: [AppComponent],
   entryComponents: [AlertComponent, HorizonModalComponent, SingleMapComponent, HorizonNotificationComponent]
 })

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, Output, SimpleChanges, OnChanges, EventEmitter } from '@angular/core';
 import { NotifierService } from '../../services/notifier.service';
 import { CONTENT_TYPES } from '../../config/content-type';
 import { SubscribeService } from '../../services/subscribe.service';
@@ -11,10 +11,12 @@ declare var $: any;
   templateUrl: './panel-opciones.component.html',
   styleUrls: ['./panel-opciones.component.css']
 })
-export class PanelOpcionesComponent implements OnInit {
+export class PanelOpcionesComponent implements OnInit, OnChanges {
+  @Input() entriesNumber: number;
+  @Output() seenEntries = new EventEmitter<boolean>();
+
   public contentTypes: any;
   public isAble: boolean;
-  public entriesNumber: number;
 
   constructor(
     private _notifierService: NotifierService,
@@ -22,7 +24,6 @@ export class PanelOpcionesComponent implements OnInit {
     private _contentService: ContentService,
   ) {
     this.contentTypes = CONTENT_TYPES;
-    this.entriesNumber = 0;
   }
 
   ngOnInit() {
@@ -49,6 +50,9 @@ export class PanelOpcionesComponent implements OnInit {
    */
   openLayer(event: any, contType: number) {
     event.preventDefault();
+    if (contType == this.contentTypes.view_notifs) {
+      this.seenEntries.emit(true);
+    }
     this._notifierService.notifyNewContent({ contentType: contType, contentData: null });
   }
 
@@ -70,4 +74,22 @@ export class PanelOpcionesComponent implements OnInit {
     this._contentService.focusMenuOption($("#id-top-panel"), idContent);
   }
 
+  /**
+   * MÉTODO PARA DETECTAR LOS CAMBIOS DE UNA PROPIEDAD INYECTADA DESDE EL COMPONENTE PADRE DE ESTE COMPONENTE:
+   * @param changes LOS CAMBIOS GENERADOS
+   */
+  ngOnChanges(changes: SimpleChanges) {
+
+    for (let property in changes) {
+      if (property === 'entriesNumber') {
+        /*console.log('Previous:', changes[property].previousValue);
+        console.log('Current:', changes[property].currentValue);
+        console.log('firstChange:', changes[property].firstChange);*/
+
+        if (changes[property].currentValue) {
+          this.entriesNumber = changes[property].currentValue;
+        }
+      }
+    }
+  }
 }
