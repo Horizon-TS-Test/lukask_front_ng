@@ -7,6 +7,7 @@ import { UserService } from '../../services/user.service';
 import { NotifierService } from '../../services/notifier.service';
 import { CONTENT_TYPES } from '../../config/content-type';
 import { Subscription } from 'rxjs';
+import { DateManager } from '../../tools/date-manager';
 
 @Component({
   selector: 'comment-form',
@@ -40,6 +41,7 @@ export class CommentFormComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.commentModel.active = true;
+    this.commentModel.date = DateManager.getFormattedDate();
     this.setUser();
   }
 

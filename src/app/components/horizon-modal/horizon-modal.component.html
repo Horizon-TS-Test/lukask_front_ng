@@ -3,23 +3,52 @@
 
   <div class="min-height-full personal-dyna-cont horizon-modal col-12 p-0 d-flex flex-column justify-content-center">
     <a href="#" (click)="onClickClose($event)" class="f-child-full-space" [ngClass]="{
-      'f-child-order-0': _dynaContent.contentType == contentTypes.view_replies,
-      'f-child-order-1': _dynaContent.contentType != contentTypes.view_replies,
+      'f-child-order-0': _dynaContent.contentType == contentTypes.view_replies || _dynaContent.contentType == contentTypes.view_notifs,
+      'f-child-order-1': _dynaContent.contentType != contentTypes.view_replies && _dynaContent.contentType == contentTypes.view_notifs,
       'absolute-background': _dynaContent.contentType == contentTypes.view_img,
       'f-child-full-space': _dynaContent.contentType != contentTypes.view_img
     }"></a>
     <ng-container [ngSwitch]="_dynaContent.contentType">
-      <edit-queja *ngSwitchCase="contentTypes.new_queja" (closeModal)="close($event)"></edit-queja>
+      <ng-container *ngSwitchCase="contentTypes.new_queja">
+        <owl-carousel id="carousel-edit-q" class="personal-owl-nav owl-carousel" [options]="carouselOptions" [carouselClasses]="['owl-theme']">
+          <div>
+            <a href="#" class="no-border-button secondary p-float-btn top-right-corner mt-2 mr-2" (click)="initStreaming($event)">
+              <span class="personal-site-icon">f</span>
+            </a>
+            <edit-queja (closeModal)="close($event)"></edit-queja>
+          </div>
+
+          <div>
+            <a href="#" class="p-transparent-btn xs p-float-btn top-right-corner pr-1" (click)="initStreaming($event, true)">
+              <fa name="chevron-left"></fa>
+            </a>
+            <media-streaming [initStream]="initStream" (closeModal)="close($event)"></media-streaming>
+          </div>
+        </owl-carousel>
+      </ng-container>
+
       <new-media *ngSwitchCase="contentTypes.new_media" (closeModal)="close($event)"></new-media>
-      <queja-detail *ngSwitchCase="contentTypes.view_queja" [idQueja]="_dynaContent.contentData" (closeModal)="close($event)"></queja-detail>
+
+      <queja-detail *ngSwitchCase="contentTypes.view_queja" [idQueja]="_dynaContent.contentData" [isModal]="true" (closeModal)="close($event)"></queja-detail>
+
       <div class="personal-dyna-down col-12 p-0" *ngSwitchCase="contentTypes.view_replies">
-        <reply-list [parentComment]="_dynaContent.contentData" (closeModal)="close($event)"></reply-list>
+        <reply-list [parentComment]="_dynaContent.contentData.parentComment" [focusReplyId]="_dynaContent.contentData.parentComment.replyId"
+          (closeModal)="close($event)"></reply-list>
       </div>
+
       <comment-form *ngSwitchCase="contentTypes.comment_input" [commentModel]="_dynaContent.contentData" [modalForm]="true" (closeModal)="close($event)"></comment-form>
+
       <img-viewer *ngSwitchCase="contentTypes.view_img" [media]="_dynaContent.contentData" (closeModal)="close($event)"></img-viewer>
-      <comment-list *ngSwitchCase="contentTypes.view_comments" [pubId]="_dynaContent.contentData" [isModal]="true" (closeModal)="close($event)"></comment-list>
+
+      <comment-list *ngSwitchCase="contentTypes.view_comments" [pubId]="_dynaContent.contentData.pubId" [commentId]="_dynaContent.contentData.comId"
+        [replyId]="_dynaContent.contentData.replyId" [isModal]="true" (closeModal)="close($event)"></comment-list>
+
       <user-edit *ngSwitchCase="contentTypes.edit_profile" (closeModal)="close($event)"></user-edit>
+
+      <div class="personal-dyna-down col-12 p-0" *ngSwitchCase="contentTypes.view_notifs">
+        <notification-list (closeModal)="close($event)"></notification-list>
+      </div>
     </ng-container>
   </div>
-  
+
 </div>

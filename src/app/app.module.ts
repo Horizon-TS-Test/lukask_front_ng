@@ -49,6 +49,10 @@ import { TaskListComponent } from './components/task-list/task-list.component';
 import { SingleMapComponent } from './components/single-map/single-map.component';
 import { ImgViewerComponent } from './components/img-viewer/img-viewer.component';
 import { CommentListComponent } from './components/comment-list/comment-list.component';
+import { HorizonNotificationComponent } from './components/horizon-notification/horizon-notification.component';
+import { NotificationService } from './services/notification.service';
+import { NotificationListComponent } from './components/notification-list/notification-list.component';
+import { MediaStreamingComponent } from './components/media-streaming/media-streaming.component';
 
 @NgModule({
   declarations: [
@@ -79,7 +83,10 @@ import { CommentListComponent } from './components/comment-list/comment-list.com
     TaskListComponent,
     SingleMapComponent,
     ImgViewerComponent,
-    CommentListComponent
+    CommentListComponent,
+    HorizonNotificationComponent,
+    NotificationListComponent,
+    MediaStreamingComponent
   ],
   imports: [
     HttpModule,
@@ -91,8 +98,8 @@ import { CommentListComponent } from './components/comment-list/comment-list.com
     OwlModule,
     ServiceWorkerModule.register('/sw-workbox.js', { enabled: environment.production })
   ],
-  providers: [appRoutingProviders, ContentService, UserService, AuthGuardService, LoginGuardService, NotifierService, CameraService, SocketService, BrowserNotifierService, QuejaService],
+  providers: [appRoutingProviders, ContentService, UserService, AuthGuardService, LoginGuardService, NotifierService, CameraService, SocketService, BrowserNotifierService, QuejaService, NotificationService],
   bootstrap: [AppComponent],
-  entryComponents: [AlertComponent, HorizonModalComponent, SingleMapComponent]
+  entryComponents: [AlertComponent, HorizonModalComponent, SingleMapComponent, HorizonNotificationComponent]
 })
 export class AppModule { }

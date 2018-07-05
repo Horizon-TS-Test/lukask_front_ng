@@ -1,8 +1,6 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { ContentService } from '../../services/content.service';
 import { NotifierService } from '../../services/notifier.service';
 import { CAMERA_ACTIONS } from '../../config/camera-actions';
-import { DynaContent } from '../../interfaces/dyna-content.interface';
 import { HorizonButton } from '../../interfaces/horizon-button.interface';
 
 declare var $: any;
@@ -24,7 +22,6 @@ export class NewMediaComponent implements OnInit {
   public matButtons: HorizonButton[];
 
   constructor(
-    private _contentService: ContentService,
     private _notifierService: NotifierService
   ) {
     this.cameraActions = CAMERA_ACTIONS;

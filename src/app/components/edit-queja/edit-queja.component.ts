@@ -1,5 +1,4 @@
 import { Component, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
-import { ContentService } from '../../services/content.service';
 import { Publication } from '../../models/publications';
 import { Select2 } from '../../interfaces/select2.interface';
 import { QuejaService } from '../../services/queja.service';
@@ -18,6 +17,7 @@ import { HorizonButton } from '../../interfaces/horizon-button.interface';
 import { ViewChild } from '@angular/core';
 import { Alert } from '../../models/alert';
 import { ALERT_TYPES } from '../../config/alert-types';
+import { DateManager } from '../../tools/date-manager';
 
 declare var google: any;
 declare var $: any;
@@ -53,6 +53,7 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
   public formQuej: FormGroup;
   public filesToUpload: any[];
   public matButtons: HorizonButton[];
+  public carouselOptions: any;
 
   constructor(
     private _quejaService: QuejaService,
@@ -141,15 +142,6 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
     defaultQuejaImg.css("display", "none");
     cardImg.append('<img class="mb-1" src="' + media.mediaFileUrl + '" width="100%">');
     this.filesToUpload.push(media.mediaFile);
-  }
-
-  /**
-   * METODO PARA OBTENER LA FECHA
-   */
-  getFormattedDate() {
-    var date = new Date();
-    var str = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-    return str;
   }
 
   newMedia(event: any) {
@@ -282,10 +274,10 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
   }
 
   publishQueja() {
-    this.newPub = new Publication("", this._gps.latitude, this._gps.longitude, this.formQuej.value.fcnDetail, this.getFormattedDate(), null, null, new QuejaType(this.quejaType, null), null, this._locationCity, null, null, this._locationAdress);
+    this.newPub = new Publication("", this._gps.latitude, this._gps.longitude, this.formQuej.value.fcnDetail, DateManager.getFormattedDate(), null, null, new QuejaType(this.quejaType, null), null, this._locationCity, null, null, this._locationAdress);
     if (this.filesToUpload.length > 0) {
       for (let i = 0; i < this.filesToUpload.length; i++) {
-        this.newPub.media.push(new Media("", "", "", null, this.filesToUpload[i], i + "-" + this.getFormattedDate() + ".png"));
+        this.newPub.media.push(new Media("", "", "", null, this.filesToUpload[i], i + "-" + DateManager.getFormattedDate() + ".png"));
       }
     }
     this._quejaService.savePub(this.newPub);

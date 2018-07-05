@@ -11,7 +11,7 @@
       <div class="card-img-top d-flex flex-wrap justify-content-center align-items-center">
         <img class="mb-1" id="defaultQuejaImg" src="/assets/images/edit-queja/window.jpg" width="100%">
 
-        <a href="#" class="personal-center-btn btn btn-lg btn-outline-info p-0 d-flex justify-content-center align-items-center"
+        <a href="#" class="p-transparent-btn p-float-btn"
           (click)="newMedia($event)">
           <fa name="camera"></fa>
         </a>
@@ -52,7 +52,6 @@
       </ul>
     </form>
 
+    <material-btn-list [materialBtns]="matButtons" (someBtnAction)="getButtonAction($event)"></material-btn-list>
   </div>
 </div>
-
-<material-btn-list [materialBtns]="matButtons" (someBtnAction)="getButtonAction($event)"></material-btn-list>

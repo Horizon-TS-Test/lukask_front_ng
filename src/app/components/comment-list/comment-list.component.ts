@@ -17,6 +17,8 @@ declare var upgradeTableFieldDataArray: any;
 })
 export class CommentListComponent implements OnInit, OnDestroy {
   @Input() pubId: string;
+  @Input() commentId: string;
+  @Input() replyId: string;
   @Input() isModal: boolean;
   @Output() closeModal = new EventEmitter<boolean>();
 
@@ -96,7 +98,7 @@ export class CommentListComponent implements OnInit, OnDestroy {
    */
   onCommentResponse() {
     this.subscriptor = this._notifierService._newCommentResp.subscribe((newCom: Comment) => {
-      if (newCom.publicationId == this.pubId) {
+      if (newCom.publicationId == this.pubId && !newCom.commentParentId) {
         let lastComment: Comment;
         //REF: https://stackoverflow.com/questions/39019808/angular-2-get-object-from-array-by-id
         lastComment = this.commentList.find(com => com.commentId === newCom.commentId);
@@ -200,7 +202,7 @@ export class CommentListComponent implements OnInit, OnDestroy {
    * @param action THIS CAN BE CREATE, UPDATE OR DELETE:
    */
   updateCommentList(commentJson: any, action: string) {
-    if (commentJson.description != null && commentJson.publication == this.pubId) {
+    if (commentJson.description != null && commentJson.publication == this.pubId && !commentJson.action_parent) {
       let lastComment: Comment, newCom: Comment;
 
       //UPDATING THE BACKEND SERVER IP/DOMAIN:

@@ -282,29 +282,31 @@ p, label, div {
       font-size: 6.9rem; } }
 
 /*OWL CAROUSEL WITH NAV BUTTONS CUSTOMIZED*/
-.personal-owl-nav .owl-nav {
-  position: absolute;
-  bottom: 5px;
-  right: 5px;
-  z-index: 3;
-  color: #fff; }
-  .personal-owl-nav .owl-nav button {
-    outline: none;
-    border-radius: 50% !important;
-    width: 30px;
-    height: 30px;
-    background: rgba(255, 255, 255, 0.7) !important;
-    transition: all .5s !important; }
-    .personal-owl-nav .owl-nav button i {
-      vertical-align: middle;
-      font-size: 1.2rem;
-      color: #004360; }
-  .personal-owl-nav .owl-nav button:first-child i {
-    margin-right: 2px; }
-  .personal-owl-nav .owl-nav button:last-child i {
-    margin-left: 2px; }
-  .personal-owl-nav .owl-nav button:hover {
-    opacity: .7; }
+.personal-owl-nav {
+  display: unset !important; }
+  .personal-owl-nav .owl-nav {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    z-index: 3;
+    color: #fff; }
+    .personal-owl-nav .owl-nav button {
+      outline: none;
+      border-radius: 50% !important;
+      width: 30px;
+      height: 30px;
+      background: rgba(255, 255, 255, 0.7) !important;
+      transition: all .5s !important; }
+      .personal-owl-nav .owl-nav button i {
+        vertical-align: middle;
+        font-size: 1.2rem;
+        color: #004360; }
+    .personal-owl-nav .owl-nav button:first-child i {
+      margin-right: 2px; }
+    .personal-owl-nav .owl-nav button:last-child i {
+      margin-left: 2px; }
+    .personal-owl-nav .owl-nav button:hover {
+      opacity: .7; }
 
 .personal-ul, .personal-ul li {
   list-style: disc; }
@@ -419,7 +421,6 @@ p, label, div {
   z-index: 9999999;
   right: 1rem;
   bottom: 0.9rem;
-  overflow: hidden;
   text-indent: 100%;
   white-space: nowrap;
   width: 2.7rem;
@@ -439,7 +440,7 @@ p, label, div {
   -moz-box-shadow: 1px 2px 4px 2px rgba(93, 190, 182, 0.5) !important;
   box-shadow: 1px 2px 4px 2px rgba(93, 190, 182, 0.5) !important;
   background: #004360; }
-  .personal-nav-btn span {
+  .personal-nav-btn .nav-icon {
     background: #fff; }
 
 .personal-primary-nav {
@@ -572,9 +573,9 @@ p, label, div {
 .cd-nav-trigger.menu-is-open {
   box-shadow: none;
   background: transparent; }
-  .cd-nav-trigger.menu-is-open span {
+  .cd-nav-trigger.menu-is-open .nav-icon {
     background: transparent; }
-  .cd-nav-trigger.menu-is-open span::before, .cd-nav-trigger.menu-is-open span::after {
+  .cd-nav-trigger.menu-is-open .nav-icon::before, .cd-nav-trigger.menu-is-open .nav-icon::after {
     background: #004360; }
 
 .top-panel, .bot-panel {
@@ -658,7 +659,12 @@ p, label, div {
   background-color: #aaa;
   background-size: cover !important;
   background-position: center center !important;
-  background-repeat: no-repeat !important; }
+  background-repeat: no-repeat !important;
+  flex: 0 0 auto !important; }
+
+.profile-img-notif {
+  width: 60px;
+  height: 60px; }
 
 .pers-profile-img-comen {
   width: 40px;
@@ -668,7 +674,8 @@ p, label, div {
   background-color: #aaa;
   background-size: cover !important;
   background-position: center center !important;
-  background-repeat: no-repeat !important; }
+  background-repeat: no-repeat !important;
+  flex: 0 0 auto !important; }
 
 .personal-queja .personal-usr-queja {
   background: #5dbeb6;
@@ -855,6 +862,9 @@ p, label, div {
 /*************************************
 ///////PERSONAL EDIT-QUEJA:
 *************************************/
+#carousel-edit-q .owl-item:first-child {
+  z-index: 1; }
+
 #frmQ .card-img-top {
   position: relative; }
   #frmQ .card-img-top img {
@@ -878,12 +888,6 @@ p, label, div {
   box-shadow: none !important; }
   .personal-new-media-pan .card-block {
     border: none !important; }
-  .personal-new-media-pan .btn {
-    border: none !important;
-    background: transparent !important; }
-    .personal-new-media-pan .btn fa, .personal-new-media-pan .btn span {
-      font-size: 1.5rem !important;
-      color: #5dbeb6 !important; }
 
 .default-back {
   background-size: cover !important;
@@ -903,34 +907,43 @@ p, label, div {
 .select2-container--open {
   width: unset !important; }
 
-.personal-center-btn {
-  position: absolute;
+.p-transparent-btn {
   border-radius: 50% !important;
   width: 80px;
   height: 80px;
   background: rgba(0, 0, 0, 0.3) !important;
-  border-color: rgba(255, 255, 255, 0.8) !important; }
-  .personal-center-btn fa {
+  border: solid 1px rgba(255, 255, 255, 0.8) !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  padding: 0px !important; }
+  .p-transparent-btn fa, .p-transparent-btn span {
     font-size: 40px;
     color: rgba(255, 255, 255, 0.8) !important; }
 
-.p-float-btn-sm {
-  position: absolute;
-  z-index: 1;
-  border-radius: 50% !important;
+.p-transparent-btn.sm {
   width: 40px;
-  height: 40px;
-  top: 5px;
-  left: 5px;
-  background: rgba(0, 0, 0, 0.3) !important;
-  border-color: rgba(255, 255, 255, 0.8) !important; }
-  .p-float-btn-sm fa {
-    font-size: 20px;
-    color: rgba(255, 255, 255, 0.8) !important; }
+  height: 40px; }
+  .p-transparent-btn.sm fa, .p-transparent-btn.sm span {
+    font-size: 20px; }
 
-.p-float-link {
+.p-transparent-btn.xs {
+  width: 30px;
+  height: 30px; }
+  .p-transparent-btn.xs fa, .p-transparent-btn.xs span {
+    font-size: 1.1rem !important; }
+
+.p-float-btn, .p-float-link {
   position: absolute;
   z-index: 1; }
+
+.top-left-corner {
+  top: 5px;
+  left: 5px; }
+
+.top-right-corner {
+  top: 5px;
+  right: 10px; }
 
 .down-right-corner {
   bottom: 3px;
@@ -962,6 +975,10 @@ p, label, div {
   .custom-btn fa, .custom-btn span {
     color: #fff !important; }
 
+.p-sec-btn {
+  background: #004360 !important;
+  border-color: #004360 !important; }
+
 .no-border-button {
   border: none !important;
   background: transparent !important; }
@@ -972,6 +989,9 @@ p, label, div {
 
 .no-border-button.dark fa, .no-border-button.dark span {
   color: #004360 !important; }
+
+.no-border-button.secondary fa, .no-border-button.secondary span {
+  color: #848b76 !important; }
 
 .no-border-button:hover {
   opacity: .8; }
@@ -1017,5 +1037,52 @@ input[type=text], input[type=password], input[type=email], textarea {
   border-left: none;
   border-right: none;
   border-radius: 0; }
+
+.p-notif-container {
+  position: fixed;
+  z-index: 10000000001;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100px;
+  max-width: 400px;
+  opacity: 0;
+  transition: opacity .4s; }
+  .p-notif-container .p-notification {
+    position: relative;
+    opacity: 0;
+    transform: translateX(-100%);
+    transition: opacity 0s .4s, transform .7s ease; }
+  .p-notif-container .p-notification.on {
+    opacity: 1;
+    transform: translateX(0);
+    transition: opacity 0s .3s, transform .5s ease; }
+
+.p-notif-container.active {
+  opacity: 1;
+  transition: opacity .2s; }
+
+.news-number {
+  position: absolute;
+  right: -5px;
+  top: -5px;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  color: #fff;
+  font-size: .6rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #004360; }
+
+.news-main {
+  position: fixed;
+  right: unset;
+  top: unset;
+  z-index: 10000000;
+  right: 3.2rem;
+  bottom: 3.1rem;
+  background: #5dbeb6; }
 
 /*# sourceMappingURL=styles.css.map */

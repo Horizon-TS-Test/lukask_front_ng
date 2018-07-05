@@ -7,6 +7,7 @@ export class Comment {
         public publicationId?: string,
         public user?: User,
         public commentParentId?: string,
-        public active?: boolean
+        public active?: boolean,
+        public date?: string,
     ) { }
 }

@@ -2,7 +2,7 @@
   <div class="col-12 pt-1 px-1">
     <div *ngIf="quejaDetail" class="personal-queja p-shadow-card p-no-border-rad-card card mb-3 pb-0">
       <div class="card-header d-flex justify-content-between align-items-center">
-        <task-list [queja]="quejaDetail" [isDetail]="true"></task-list>
+        <task-list [queja]="quejaDetail" [isModal]="isModal"></task-list>
       </div>
       <div class="personal-usr-queja py-0 card-block d-flex justify-content-end align-items-center">
         {{ quejaDetail.user.person.name }} {{ quejaDetail.user.person.last_name }}

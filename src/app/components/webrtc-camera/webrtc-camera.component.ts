@@ -1,10 +1,9 @@
-import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, Input } from '@angular/core';
 import { Device } from '../../interfaces/device.interface';
 import { NotifierService } from '../../services/notifier.service';
 import { CAMERA_ACTIONS } from '../../config/camera-actions';
 import { Subscription } from 'rxjs';
 import { CameraService } from '../../services/camera.service';
-import { ContentService } from '../../services/content.service';
 
 import { ImageCapture } from 'image-capture';
 import { MediaFile } from '../../interfaces/media-file.interface';
@@ -17,6 +16,8 @@ declare var $: any;
   styleUrls: ['./webrtc-camera.component.css']
 })
 export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
+  @Input() startCamera: boolean;
+
   private _frontCamera: Device;
   private _backCamera: Device;
   private _video: any;
@@ -32,7 +33,6 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     private _notifierService: NotifierService,
     private _cameraService: CameraService,
-    private _contentService: ContentService,
   ) {
     this._frontCamera = { id: "", description: "" };
     this._backCamera = { id: "", description: "" };
@@ -43,6 +43,10 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
     this.subscription = this._notifierService._cameraAction.subscribe(
       (cameraAction: number) => {
         switch (cameraAction) {
+          case CAMERA_ACTIONS.start_camera:
+            this.startCamera = true;
+            this.startFrontLiveCam();
+            break;
           case CAMERA_ACTIONS.snap_shot:
             this.takeSnapShot();
             break;
@@ -60,9 +64,17 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
             break;
           case CAMERA_ACTIONS.flash_off:
             break;
-          case CAMERA_ACTIONS.flash_auto:
+          case CAMERA_ACTIONS.init_transmision:
+            //AQUÍ DEBES LLAMAR A TUS MÉTODOS PARA LA TRANSMISIÓN DENNYS :D 
+            break;
+          case CAMERA_ACTIONS.pause_transmision:
+            //AQUÍ DEBES LLAMAR A TUS MÉTODOS PARA LA TRANSMISIÓN DENNYS :D
+            break;
+          case CAMERA_ACTIONS.stop_transmision:
+            //AQUÍ DEBES LLAMAR A TUS MÉTODOS PARA LA TRANSMISIÓN DENNYS :D
             break;
           case CAMERA_ACTIONS.stop_stream:
+            this.startCamera = false;
             this.stopStream();
             break;
         }
@@ -73,6 +85,7 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit() {
     this.initVariables();
+    console.log("startCamera", this.startCamera);
   }
 
   ngAfterViewInit() {
@@ -92,26 +105,28 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * Iniciar transmición
+   * MÉTODO PARA INICIAR LA CAPTURA DE LA CÁMARA:
    */
   startLiveCamp(infoCamp: Device) {
-    this._navigator = <any>navigator;
-    this._navigator.getUserMedia = (this._navigator.getUserMedia || this._navigator.webkitGetUserMedia || this._navigator.mozGetUserMedia || this._navigator.msGetUserMedia);
-    this._navigator.mediaDevices.getUserMedia({
-      video: { deviceId: infoCamp.id ? { exact: infoCamp.id } : undefined }
-    }).then((stream) => {
-      console.log("stream", stream)
-      this.localStream = stream;
-      this._video.srcObject = stream;
+    if (!(this.startCamera == false)) {
+      this._navigator = <any>navigator;
+      this._navigator.getUserMedia = (this._navigator.getUserMedia || this._navigator.webkitGetUserMedia || this._navigator.mozGetUserMedia || this._navigator.msGetUserMedia);
+      this._navigator.mediaDevices.getUserMedia({
+        video: { deviceId: infoCamp.id ? { exact: infoCamp.id } : undefined }
+      }).then((stream) => {
+        console.log("stream", stream)
+        this.localStream = stream;
+        this._video.srcObject = stream;
 
-      this.mediaStreamTrack = stream.getVideoTracks()[0];
-      this.imageCapture = new ImageCapture(this.mediaStreamTrack);
-      console.log(this.imageCapture);
-    }).catch(error => console.error('getUserMedia() error:', error));
+        this.mediaStreamTrack = stream.getVideoTracks()[0];
+        this.imageCapture = new ImageCapture(this.mediaStreamTrack);
+        console.log(this.imageCapture);
+      }).catch(error => console.error('getUserMedia() error:', error));
+    }
   }
 
   /**
-   * Obtiene los dispositivos disponibles hardware disponibles del dispositivo(smartphone o PC) que esta ejecutando la aplicación.
+   * MÉTODO PARA ENCONTRAR LOS DIFERENTES DISPOSITIVOS DE AUDIO Y VIDEO:
    * @param deviceInfos Información  de los dispositivos
    */
   getDevices(deviceInfos: any) {
@@ -123,7 +138,7 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * Permite elegir las cámaras disponibles.
+   * MÉTODO PARA ESCOGER ENTRE LAS CÁMARAS DE VIDEO ENCONTRADAS
    * @param device
    */
   setCamera(device: any) {
@@ -139,7 +154,7 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * Iniciar transmición con la cámara frontal
+   * MÉTODO PARA INICIAR LA CAPTURA DE IMAGEN DE LA CÁMARA FRONTAL:
    */
   startFrontLiveCam() {
     this.backCamera = false;
@@ -148,7 +163,7 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * Inicicar transmición con la cámara trasera.
+   * MÉTODO PARA INICIAR LA CAPTURA DE IMAGEN DE LA CÁMARA TRASERA:
    */
   startBackLiveCam() {
     if (this.swapCamera) {
@@ -159,7 +174,7 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * Deterner transmición
+   * MÉTODO PARA DETENER LA CAPTURA DE IMAGEN DE LA CÁMARA:
    */
   stopStream() {
     if (this.localStream !== undefined) {
@@ -171,13 +186,11 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * obtener captura del video en transmición
+   * MÉTODO PARA OBTENER UNA CAPTURA DE IMAGEN (SNAP SHOT) DEL STREAM
    */
   takeSnapShot() {
     if (this.imageCapture) {
-      console.log("this.imageCapture.takePhoto()");
-      console.log(this.imageCapture.takePhoto());
-      this.imageCapture.takePhoto().then(blob => {
+      this.imageCapture.takePhoto().then((blob: any) => {
         console.log(blob);
         this.snapShot = {
           mediaFileUrl: URL.createObjectURL(blob),
@@ -188,8 +201,12 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  ///*****************************AQUÍ DEBES LLAMAR A TUS MÉTODOS PARA LA TRANSMISIÓN DENNYS :D********
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
+
   ngOnDestroy() {
     this.subscription.unsubscribe();
+    this.stopStream();
   }
 
   /**

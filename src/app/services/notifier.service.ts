@@ -14,6 +14,7 @@ export class NotifierService {
   public _cameraAction = new EventEmitter<number>();
   public _morePubsRequest = new EventEmitter<boolean>();
   public _newCommentResp = new EventEmitter<Comment>();
+  public _closeModal = new EventEmitter<boolean>();
 
   constructor() { }
 
@@ -45,6 +46,10 @@ export class NotifierService {
 
   notifyNewCommentResp(newComment: Comment) {
     this._newCommentResp.emit(newComment);
+  }
+
+  notifyCloseModal() {
+    this._closeModal.emit(true);
   }
 
 }
