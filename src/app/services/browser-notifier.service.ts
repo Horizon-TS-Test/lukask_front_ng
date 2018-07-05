@@ -15,10 +15,10 @@ export class BrowserNotifierService {
       let options: any = {
         body: 'Te has subscrito a Lukask para recibir actualizaciones de otros usuarios',
         icon: '/assets/icons/lukask-96x96.png',
-        dir: 'ltr',
+        dir: 'rtl',
         lang: 'es-US', //BCP 47
         vibrate: [500, 200, 200, 100], //THIS IS FOR SOME DEVICES NOT FOR ALL
-        badge: '/assets/icons/badged-ico.png',
+        badge: '/assets/icons/badged-icon.png',
         //ADITIONAL OPTIONS:
         tag: 'confirm-notification', //TO ALLOW NOTIFICATIONS WILL STACK AND SHOW ONE GROUP OF NOTIFICATIONS
         renotify: false, //TO SPECIFY JUST ONE VIBRATION OF THE FIRST NOTIFICATION INCOMMING OF A GROUP OF NOTIFICATIONS

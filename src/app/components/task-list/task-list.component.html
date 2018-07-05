@@ -1,15 +1,18 @@
 <div class="d-flex justify-content-center align-items-center">
-  <a href="#" (click)="onRelevance($event)" class="ml-1 p-1 no-border-button" [ngClass]="{ 'dark': queja.user_relevance }"
+  <a href="#" (click)="onRelevance($event)" class="ml-1 p-1 no-border-button" [ngClass]="{
+    'dark': queja.user_relevance == true,
+    'secondary': queja.user_relevance == false
+  }"
     title="Apoyo">
     <fa name="star"></fa>
   </a>
-  <a href="#" class="ml-1 p-1 no-border-button" title="Comentar">
+  <a href="#" class="ml-1 p-1 no-border-button secondary" title="Comentar">
     <fa name="pencil"></fa>
   </a>
-  <a href="#" (click)="geolocatePub($event)" class="ml-1 p-1 no-border-button" title="Geolocalizar">
+  <a href="#" (click)="geolocatePub($event)" class="ml-1 p-1 no-border-button secondary" title="Geolocalizar">
     <fa name="map-marker"></fa>
   </a>
-  <a href="#" class="ml-1 p-1 no-border-button" title="Denunciar">
+  <a href="#" class="ml-1 p-1 no-border-button secondary" title="Denunciar">
     <fa name="ban"></fa>
   </a>
 </div>

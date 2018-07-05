@@ -114,7 +114,11 @@ export class ContentService {
   isBottomScroll(domElement: any) {
     let elementScroll = domElement.scrollTop();
     let elementHeight = domElement.height();
-    let docHeight = domElement.children().first().height();
+    let docHeight = 0;
+    domElement.children().each((index, element) => {
+      docHeight = docHeight + $(element).height();
+    });
+
     if (elementScroll + elementHeight >= docHeight - 10) {
       return true;
     }
@@ -180,6 +184,8 @@ export class ContentService {
 
     navContainer.find("a").each((index, element) => {
       if ($(element).attr("id") === idContent) {
+        $(element).addClass("focused");
+        $(element).siblings().removeClass("focused");
         menuFocus.css({
           left: optionLeft,
           width: $(element).width()

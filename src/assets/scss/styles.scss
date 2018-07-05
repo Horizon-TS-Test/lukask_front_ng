@@ -57,6 +57,14 @@ img {
         height: 130px;
     }
 }
+.lukask-logo {
+    position: absolute;
+    left: 9px;
+    background-image: url("/assets/images/logo/logo-1.svg");
+    width: 45px;
+    height: 45px;
+}
+
 .personal-logo, .personal-isologo {
     background-position: center center;
     background-repeat: no-repeat;
@@ -526,7 +534,7 @@ p, label, div {
 #menu-nav {
     z-index: 9999999;
     right: $nav-x;
-    bottom: $nav-menu-bottom-lg;
+    bottom: $nav-menu-bottom;
     text-indent: 100%;
     white-space: nowrap;
     width: $nav-menu-size-lg;
@@ -546,9 +554,9 @@ p, label, div {
 .personal-nav-btn {
     position: fixed;
     //box-shadow: 0 0 10px $primary;
-    -webkit-box-shadow: 1px 2px 4px 2px $primary-a !important;
-    -moz-box-shadow: 1px 2px 4px 2px $primary-a !important;
-    box-shadow: 1px 2px 4px 2px $primary-a !important;
+    -webkit-box-shadow: 1px 2px 4px 2px $primary-a;
+    -moz-box-shadow: 1px 2px 4px 2px $primary-a;
+    box-shadow: 1px 2px 4px 2px $primary-a;
     background: $primary-dark;
 
     .nav-icon {
@@ -751,17 +759,48 @@ p, label, div {
     position: fixed;
     left: 0;
     width: 100%;
+    height: 55px;
     z-index: 9999998 !important;
     background: $secondary-text;
     transition: transform .3s ease;
 }
+.p-home-panel {
+    position: fixed;
+    top: 0px;
+    z-index: 2;
+    height: 55px;
+    width: 100%;
+    background: $secondary-text;
+    border-bottom: solid 1px rgba(0,0,0,0.2) !important;
+    -webkit-box-shadow: 2px 1px 3px rgba(0,0,0,0.2) !important;
+    -moz-box-shadow: 2px 1px 3px rgba(0,0,0,0.2) !important;
+    box-shadow: 2px 1px 3px rgba(0,0,0,0.2) !important;
+}
+.p-top-margin-home {
+    margin-top: 55px;
+}
+
 .top-panel {
     top: 0;
-    transform: translateY(-100%);
+    transform: translateY(-110%);
+    background: $secondary-text;
+    -webkit-box-shadow: 2px 1px 3px rgba(0,0,0,0.2) !important;
+    -moz-box-shadow: 2px 1px 3px rgba(0,0,0,0.2) !important;
+    box-shadow: 2px 1px 3px rgba(0,0,0,0.2) !important;
     
     .opcion {
         background: transparent;
-        color: $primary !important;
+        transition: all .5s ease;
+
+        fa, span {
+            color: $primary;
+            font-size: 1.5rem;
+        }
+    }
+    .opcion.focused {
+        fa, span {
+            color: $primary-dark;
+        }
     }
     
     .menu-focus {
@@ -774,21 +813,14 @@ p, label, div {
         width: 30%;
         border-bottom: 2px solid $primary-dark;
         transition: all .5s ease;
-
-        span {
-            position: absolute;
-            width: 100%;
-            height: 5px;
-            bottom: 0;
-            left: 0;
-            background: $secondary-text;
-            border: 1px solid $secondary-text;
-        }
     }
 }
 .bot-panel {
-    bottom: 0;
-    transform: translateY(100%);
+    bottom: -1px;
+    transform: translateY(110%);
+    -webkit-box-shadow: 2px -1px 3px rgba(0,0,0,0.2) !important;
+    -moz-box-shadow: 2px -1px 3px rgba(0,0,0,0.2) !important;
+    box-shadow: 2px -1px 3px rgba(0,0,0,0.2) !important;
 
     button {
         color: $primary !important;
@@ -1281,30 +1313,62 @@ p, label, div {
     border-color: $primary-dark !important;
 }
 
+.custom-panel-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    border: solid 1px $secondary-text;
+    background: $secondary-text;
+    -webkit-box-shadow: 1px 2px 4px 2px rgba(0,0,0,0.2) !important;
+    -moz-box-shadow: 1px 2px 4px 2px rgba(0,0,0,0.2) !important;
+    box-shadow: 1px 2px 4px 2px rgba(0,0,0,0.2) !important;
+
+    fa, span {
+        margin-left: 1px;
+        color: $primary;
+    }
+}
+.custom-panel-btn:hover {
+    border: solid 1px $primary;
+    background: $primary;
+
+    fa, span {
+        color: $secondary-text;
+    }
+}
+
 .no-border-button {
     border: none !important;
     background: transparent !important;
     
     fa, span {
-        font-size: 1.1rem !important;
-        color: $primary !important;
+        font-size: 1.1rem;
+        color: $primary;
         transition: all .5s ease;
-    }    
+    }
 }
 .no-border-button.dark {
 
     fa, span {
-        color: $primary-dark !important;
+        color: $primary-dark;
     }
 }
 .no-border-button.secondary {
 
     fa, span {
-        color: $primary-text !important;
+        color: $primary-text;
     }
 }
 .no-border-button:hover {
     opacity: .8;
+}
+.no-border-button.md {
+    fa, span {
+        font-size: 1.3rem;
+    }
 }
 /////////////////////
 

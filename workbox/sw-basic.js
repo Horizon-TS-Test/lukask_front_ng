@@ -440,9 +440,9 @@ self.addEventListener('push', function (event) {
         "//": "Visual Options",
         title: defaultNotifData.title,
         body: defaultNotifData.content,
-        dir: 'ltr',
+        dir: 'rtl',
         icon: defaultNotifData.icon_image,
-        badge: '/assets/icons/badged-ico.png',
+        badge: '/assets/icons/badged-icon.png',
         vibrate: [500, 200, 200, 100], //THIS IS FOR SOME DEVICES NOT FOR ALL
 
         "//": "Behavioural Options",

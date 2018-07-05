@@ -22,8 +22,6 @@ export class AppComponent implements OnDestroy {
   private subscription: Subscription;
   private socketSubscription: Subscription;
 
-  public _enableMainMenu: boolean;
-
   constructor(
     private _userService: UserService,
     private _contentService: ContentService,
@@ -35,8 +33,7 @@ export class AppComponent implements OnDestroy {
   ) {
     this._routerService.listenRouteChanges();
 
-    this.checkLogin();
-    if (this._enableMainMenu) {
+    if (this.checkLogin()) {
       this._socketService.connectSocket();
       this._userService.getRestUserProfile();
     }
@@ -54,8 +51,8 @@ export class AppComponent implements OnDestroy {
    * MÉTODO PARA VERIFICAR SI UN USUARIO ESTÁ LOGEADO Y MOSTRAR EL MENÚ PRINCIPAL:
    */
   checkLogin() {
-    //this.isLoggedIn = true;
-    this._enableMainMenu = this._userService.isLoggedIn();
+    //return true;
+    return this._userService.isLoggedIn();
   }
 
   /**

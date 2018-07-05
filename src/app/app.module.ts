@@ -55,6 +55,7 @@ import { NotificationListComponent } from './components/notification-list/notifi
 import { MediaStreamingComponent } from './components/media-streaming/media-streaming.component';
 import { ActivityComponent } from './components/activity/activity.component';
 import { RouterService } from './services/router.service';
+import { HomePanelComponent } from './components/home-panel/home-panel.component';
 
 @NgModule({
   declarations: [
@@ -89,7 +90,8 @@ import { RouterService } from './services/router.service';
     HorizonNotificationComponent,
     NotificationListComponent,
     MediaStreamingComponent,
-    ActivityComponent
+    ActivityComponent,
+    HomePanelComponent
   ],
   imports: [
     HttpModule,

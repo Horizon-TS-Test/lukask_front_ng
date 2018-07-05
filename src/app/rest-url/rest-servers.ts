@@ -13,5 +13,5 @@ export var REST_SERV = {
     socketServerUrl: 'http://192.168.1.37:3000',
     userUrl:'http://192.168.1.37:3000/user',
     notifUrl:'http://192.168.1.37:3000/notification',
-    pushSub: 'http://192.168.1.5:3200/subscribe',
+    pushSub: 'http://192.168.1.8:3200/subscribe',
 }
