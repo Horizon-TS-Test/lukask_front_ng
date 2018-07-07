@@ -7,13 +7,15 @@ import { CameraService } from '../../services/camera.service';
 
 import { ImageCapture } from 'image-capture';
 import { MediaFile } from '../../interfaces/media-file.interface';
+import { WebrtcSocketService } from '../../services/webrtc-socket.service';
 
 declare var $: any;
 
 @Component({
   selector: 'app-webrtc-camera',
   templateUrl: './webrtc-camera.component.html',
-  styleUrls: ['./webrtc-camera.component.css']
+  styleUrls: ['./webrtc-camera.component.css'],
+  providers: [WebrtcSocketService]
 })
 export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() startCamera: boolean;
@@ -29,10 +31,12 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
   private mediaStreamTrack: any;
   private imageCapture: any;
   private subscription: Subscription;
+  private opAcctionCamera:number;
 
   constructor(
     private _notifierService: NotifierService,
     private _cameraService: CameraService,
+    private _webrtcSocketService: WebrtcSocketService,
   ) {
     this._frontCamera = { id: "", description: "" };
     this._backCamera = { id: "", description: "" };
@@ -42,9 +46,10 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
     //LISTEN FOR ANY CAMERA EVENT:
     this.subscription = this._notifierService._cameraAction.subscribe(
       (cameraAction: number) => {
+        this.opAcctionCamera = cameraAction;
         switch (cameraAction) {
           case CAMERA_ACTIONS.start_camera:
-            this.startCamera = true;
+            //this.startCamera = true;
             this.startFrontLiveCam();
             break;
           case CAMERA_ACTIONS.snap_shot:
@@ -66,6 +71,8 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
             break;
           case CAMERA_ACTIONS.init_transmision:
             //AQUÍ DEBES LLAMAR A TUS MÉTODOS PARA LA TRANSMISIÓN DENNYS :D 
+            console.log("Inicio la transmicion")
+            this._webrtcSocketService.presenter();
             break;
           case CAMERA_ACTIONS.pause_transmision:
             //AQUÍ DEBES LLAMAR A TUS MÉTODOS PARA LA TRANSMISIÓN DENNYS :D
@@ -86,6 +93,7 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit() {
     this.initVariables();
     console.log("startCamera", this.startCamera);
+    this.connectTOsocket();
   }
 
   ngAfterViewInit() {
@@ -93,8 +101,9 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
       console.log("dispositivos", data);
       this.getDevices(data);
     }).catch(this.handleError);
-
+    
     this.startFrontLiveCam();
+    
   }
 
   /**
@@ -202,7 +211,11 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ///*****************************AQUÍ DEBES LLAMAR A TUS MÉTODOS PARA LA TRANSMISIÓN DENNYS :D********
+  connectTOsocket(){
+    this._webrtcSocketService.connecToKurento();
+  }
   /////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
