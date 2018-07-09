@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ContentService } from '../../services/content.service';
 import { QuejaService } from '../../services/queja.service';
 import { NotifierService } from '../../services/notifier.service';
+import { ActionService } from '../../services/action.service';
 
 declare var $: any;
 
@@ -15,7 +16,7 @@ export class InicioComponent implements OnInit {
 
   constructor(
     private _contentService: ContentService,
-    private _notifierService: NotifierService,
+    private _notifierService: NotifierService
   ) {
   }
 

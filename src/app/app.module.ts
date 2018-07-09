@@ -49,6 +49,12 @@ import { TaskListComponent } from './components/task-list/task-list.component';
 import { SingleMapComponent } from './components/single-map/single-map.component';
 import { ImgViewerComponent } from './components/img-viewer/img-viewer.component';
 import { CommentListComponent } from './components/comment-list/comment-list.component';
+import { PagosComponent } from './components/pagos/pagos.component';
+import { PagosInicioComponent } from './components/pagos-inicio/pagos-inicio.component';
+import { PagosBusquedaComponent } from './components/pagos-busqueda/pagos-busqueda.component';
+import { PagosListComponent } from './components/pagos-list/pagos-list.component';
+import { PagosDatosComponent } from './components/pagos-datos/pagos-datos.component';
+
 
 @NgModule({
   declarations: [
@@ -79,7 +85,12 @@ import { CommentListComponent } from './components/comment-list/comment-list.com
     TaskListComponent,
     SingleMapComponent,
     ImgViewerComponent,
-    CommentListComponent
+    CommentListComponent,
+    PagosComponent,
+    PagosInicioComponent,
+    PagosBusquedaComponent,
+    PagosListComponent,
+    PagosDatosComponent
   ],
   imports: [
     HttpModule,
