@@ -7,15 +7,16 @@ import { ActionService } from '../../services/action.service';
 import { UserService } from '../../services/user.service';
 import { User } from '../../models/user';
 import { Subscription } from 'rxjs';
+import { Pagos } from '../../interfaces/planillas-data';
+import planillasData from '../../data/planillas-data';
 
 @Component({
-  selector: 'app-queja',
-  templateUrl: './queja.component.html',
-  styleUrls: ['./queja.component.css'],
-  providers: [ActionService]
+  selector: 'app-pagos-datos',
+  templateUrl: './pagos-datos.component.html',
+  styleUrls: ['./pagos-datos.component.css']
 })
-export class QuejaComponent implements OnInit, OnDestroy {
-  @Input() queja: Publication;
+export class PagosDatosComponent implements OnInit {
+  public Pagoslist: Pagos[]; 
 
   private subscription: Subscription;
   public userProfile: User;
@@ -24,23 +25,15 @@ export class QuejaComponent implements OnInit, OnDestroy {
     public _domSanitizer: DomSanitizer,
     private _notifierService: NotifierService,
     private _userService: UserService
-  ) {
-    this.subscription = this._userService._userUpdate.subscribe((update: boolean) => {
-      if (update) {
-        this.setOwnUserProfile();
-      }
-    });
+  ) { 
+
+    this.Pagoslist = planillasData;
   }
 
   ngOnInit() {
   }
-
-  setOwnUserProfile() {
-    this.userProfile = this._userService.getUserProfile();
-    if (this.queja.user.id == this.userProfile.id) {
-      this.queja.user = this.userProfile;
-    }
-  }
+ 
+ 
 
   /**
    * MÉTODO PARA SOLICITAR LA APERTURA DE UN HORIZON MODAL PARA VER EL DETALLE DE UNA QUEJA:
@@ -48,10 +41,6 @@ export class QuejaComponent implements OnInit, OnDestroy {
    */
   viewQuejaDetail(event: any) {
     event.preventDefault();
-    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.new_queja, contentData: this.queja.id_publication });
-  }
-
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
+    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.new_queja, contentData: this.Pagoslist[0].direccion });
   }
 }

@@ -1,0 +1,41 @@
+<div class="col-12 py-0 px-1">
+    <div class="personal-pagos p-shadow-card p-no-border-rad-card card mb-3 pb-0">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <div class="d-flex justify-content-center align-items-center">
+          <task-list [queja]="queja"></task-list>
+        </div>
+        <div>
+          <small>{{queja.date_pub}}</small>
+        </div>
+      </div>
+      <div class="personal-usr-pagos py-0 card-block d-flex justify-content-end align-items-center">
+        {{queja.user.person.name}} {{queja.user.person.last_name}}
+        <div class="ml-2 my-0 personal-profile-img" [style.background-image]="_domSanitizer.bypassSecurityTrustStyle('url(' + queja.user.profileImg + ')')">
+        </div>
+      </div>
+      <a href="#" (click)="viewQuejaDetail($event)">
+        <div class="card-img-top d-flex flex-wrap justify-content-center align-items-center">
+          <span *ngIf="queja.media.length > 3">
+            <fa name="ellipsis-h"></fa>
+          </span>
+  
+          <ng-container *ngFor="let med of queja.media; let i = index">
+  
+            <ng-container *ngIf="queja.media.length == 2">
+              <img [ngClass]="{'mr-1': i % 2 == 0}" class="mb-1" src="{{med.url}}" width="48%">
+            </ng-container>
+  
+            <ng-container *ngIf="queja.media.length == 1 || queja.media.length > 2">
+              <img *ngIf="i == 0" class="mb-1" src="{{med.url}}" width="100%">
+              <img *ngIf="i >= 1 && i <= 2" [ngClass]="{'mr-1': i % 2 != 0}" class="mb-1" src="{{med.url}}" width="48%">
+            </ng-container>
+  
+          </ng-container>
+        </div>
+        <div class="card-block text-justify">
+          {{queja.detail}}
+        </div>
+      </a>
+      <comment-list [pubId]="queja.id_publication" [isModal]="false"></comment-list>
+    </div>
+  </div>
