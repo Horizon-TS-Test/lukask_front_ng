@@ -1,4 +1,12 @@
 <section class="personal-fadeout py-0 d-flex flex-column justify-content-start align-items-center">
-    <home-panel class="w-100"></home-panel>
-    <app-quejas-list></app-quejas-list>
+  <home-panel class="w-100"></home-panel>
+
+  <owl-carousel id="carousel-home" class="personal-owl-nav p-top-margin-home owl-carousel" [options]="carouselOptions" [carouselClasses]="['owl-theme']">
+    <div>
+      <app-quejas-list></app-quejas-list>
+    </div>
+    <div>
+      <app-map-view></app-map-view>
+    </div>
+  </owl-carousel>
 </section>

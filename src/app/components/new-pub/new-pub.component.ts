@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output, AfterViewInit } from '@angular/core';
 import { HorizonButton } from '../../interfaces/horizon-button.interface';
 
 declare var $: any;
@@ -8,7 +8,7 @@ declare var $: any;
   templateUrl: './new-pub.component.html',
   styleUrls: ['./new-pub.component.css']
 })
-export class NewPubComponent implements OnInit {
+export class NewPubComponent implements OnInit, AfterViewInit {
   @Output() closeModal = new EventEmitter<boolean>();
 
   private _SUBMIT = 0;
@@ -25,12 +25,12 @@ export class NewPubComponent implements OnInit {
       {
         parentContentType: 0,
         action: this._SUBMIT,
-        icon: "check"
+        icon: 'check'
       },
       {
         parentContentType: 0,
         action: this._CLOSE,
-        icon: "close"
+        icon: 'close'
       }
     ];
   }
@@ -57,13 +57,12 @@ export class NewPubComponent implements OnInit {
    * HANDLE CAMERA STATUS ON DRAG THE CAROUSEL:
    */
   handleCameraStatus() {
-    this.customCarousel = $("#carousel-edit-q");
-    this.customCarousel.on("dragged.owl.carousel", (event) => {
-      let streamView = this.customCarousel.find(".owl-item:last-child");
-      if (streamView.hasClass("active")) {
+    this.customCarousel = $('#carousel-edit-q');
+    this.customCarousel.on('dragged.owl.carousel', (event) => {
+      const streamView = this.customCarousel.find('.owl-item:last-child');
+      if (streamView.hasClass('active')) {
         this.initStream = true;
-      }
-      else {
+      } else {
         this.initStream = false;
       }
     });
@@ -77,11 +76,10 @@ export class NewPubComponent implements OnInit {
   initStreaming(event: any, cancel: boolean = false) {
     event.preventDefault();
     if (cancel) {
-      $(".owl-carousel").trigger('prev.owl.carousel');
+      $('.owl-carousel').trigger('prev.owl.carousel');
       this.initStream = false;
-    }
-    else {
-      $(".owl-carousel").trigger('next.owl.carousel');
+    } else {
+      $('.owl-carousel').trigger('next.owl.carousel');
       this.initStream = true;
     }
   }

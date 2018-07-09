@@ -2,6 +2,7 @@ import { Component, OnInit, Input, Output, SimpleChanges, OnChanges, EventEmitte
 import { NotifierService } from '../../services/notifier.service';
 import { CONTENT_TYPES } from '../../config/content-type';
 import { ContentService } from '../../services/content.service';
+import { MENU_OPTIONS } from '../../config/menu-option';
 
 declare var $: any;
 
@@ -15,12 +16,14 @@ export class PanelOpcionesComponent implements OnInit, OnChanges {
   @Output() seenEntries = new EventEmitter<boolean>();
 
   public contentTypes: any;
+  public menuOptions: any;
 
   constructor(
     private _notifierService: NotifierService,
     private _contentService: ContentService,
   ) {
     this.contentTypes = CONTENT_TYPES;
+    this.menuOptions = MENU_OPTIONS;
   }
 
   ngOnInit() { }
@@ -32,7 +35,7 @@ export class PanelOpcionesComponent implements OnInit, OnChanges {
    */
   openLayer(event: any, contType: number) {
     event.preventDefault();
-    if (contType == this.contentTypes.view_notifs) {
+    if (contType === this.contentTypes.view_notifs) {
       this.seenEntries.emit(true);
     }
     this._notifierService.notifyNewContent({ contentType: contType, contentData: null });
@@ -42,8 +45,9 @@ export class PanelOpcionesComponent implements OnInit, OnChanges {
    * MÉTODO PARA SOLICITAR QUE SE DE FOCUS A UNA OPCIÓN SELECCIONADA DEL MENÚ DE NAVEGACIÓN:
    * @param idContent ID HTML DE LA OPCIÓN SELECCIONADA
    */
-  focusOption(idContent: string) {
-    this._contentService.focusMenuOption($("#id-top-panel"), idContent);
+  focusOption(idContent: string, menuOption: number) {
+    this._contentService.focusMenuOption($('#id-top-panel'), idContent);
+    this._notifierService.notifyChangeMenuOption(menuOption);
   }
 
   /**
@@ -52,7 +56,7 @@ export class PanelOpcionesComponent implements OnInit, OnChanges {
    */
   ngOnChanges(changes: SimpleChanges) {
 
-    for (let property in changes) {
+    for (const property in changes) {
       if (property === 'entriesNumber') {
         /*console.log('Previous:', changes[property].previousValue);
         console.log('Current:', changes[property].currentValue);

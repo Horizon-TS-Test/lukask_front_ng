@@ -1,4 +1,4 @@
-export var CONTENT_TYPES = {
+export const CONTENT_TYPES = {
     new_media: 0,
     new_pub: 1,
     edit_queja: 2,
@@ -11,5 +11,5 @@ export var CONTENT_TYPES = {
     view_img: 9,
     view_comments: 10,
     new_notification: 11,
-    view_notifs: 12,
+    view_notifs: 12
 }
