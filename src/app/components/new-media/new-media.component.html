@@ -1,22 +1,31 @@
-<div class="personal-content personal-over-unset min-height-full col-12 p-0" id="personal-media">
+<div class="personal-content min-height-full relative-background col-12 p-0">
   <app-webrtc-camera></app-webrtc-camera>
 
-  <div class="personal-new-media-pan card pr-0">
-    <div class="pr-0 card-block d-flex flex-column justify-content-center align-items-center">
-      <a href="#" class="btn btn-outline-info" (click)="sendCameraAction($event, cameraActions.start_video)">
-        <span class="personal-site-icon">e</span>
-      </a>
-      <a href="#" class="mt-1 btn btn-outline-info" (click)="sendCameraAction($event, cameraActions.change_camera)">
-        <span class="personal-site-icon">d</span>
-      </a>
-      <a href="#" class="mt-1 btn btn-outline-info" (click)="sendCameraAction($event, cameraActions.snap_shot)">
+  <owl-carousel id="corousel-snapshot-op" class="personal-owl-nav" [options]="carouselOptions" [carouselClasses]="['owl-theme']">
+    <div class="d-flex justify-content-center align-items-center min-height-full-modal">
+      <a href="#" class="p-transparent-btn" (click)="sendCameraAction($event, cameraActions.snap_shot)">
         <fa name="camera"></fa>
       </a>
-      <a href="#" class="mt-1 btn btn-outline-info" (click)="sendCameraAction($event, 0)">
+    </div>
+
+    <div class="d-flex justify-content-center align-items-center min-height-full-modal">
+      <a href="#" class="p-transparent-btn" (click)="sendCameraAction($event, cameraActions.change_camera)">
+        <span class="personal-site-icon">d</span>
+      </a>
+    </div>
+
+    <div class="d-flex justify-content-center align-items-center min-height-full-modal">
+      <a href="#" class="p-transparent-btn" (click)="sendCameraAction($event, 0)">
         <span class="personal-site-icon">b</span>
       </a>
     </div>
-  </div>
+
+    <div class="d-flex justify-content-center align-items-center min-height-full-modal">
+      <a href="#" class="p-transparent-btn" (click)="sendCameraAction($event, cameraActions.start_video)">
+        <span class="personal-site-icon">e</span>
+      </a>
+    </div>
+  </owl-carousel>
 
   <material-btn-list [materialBtns]="matButtons" (someBtnAction)="getButtonAction($event)"></material-btn-list>
 </div>

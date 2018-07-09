@@ -56,6 +56,7 @@ import { MediaStreamingComponent } from './components/media-streaming/media-stre
 import { ActivityComponent } from './components/activity/activity.component';
 import { RouterService } from './services/router.service';
 import { HomePanelComponent } from './components/home-panel/home-panel.component';
+import { NewPubComponent } from './components/new-pub/new-pub.component';
 
 @NgModule({
   declarations: [
@@ -91,7 +92,8 @@ import { HomePanelComponent } from './components/home-panel/home-panel.component
     NotificationListComponent,
     MediaStreamingComponent,
     ActivityComponent,
-    HomePanelComponent
+    HomePanelComponent,
+    NewPubComponent
   ],
   imports: [
     HttpModule,

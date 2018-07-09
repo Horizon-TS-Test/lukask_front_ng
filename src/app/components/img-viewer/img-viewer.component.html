@@ -1,5 +1,9 @@
-<owl-carousel class="personal-owl-nav" [options]="carouselOptions" [carouselClasses]="['owl-theme']">
-  <img *ngFor="let med of media" src="{{ med.url }}" width="100%">
-</owl-carousel>
+<div class="min-height-full-modal d-flex justify-content-center align-items-center">
+  <div class="p-float-div w-100">
+    <owl-carousel class="personal-owl-nav" [options]="carouselOptions" [carouselClasses]="['owl-theme']">
+      <img *ngFor="let med of media" src="{{ med.url }}" width="100%">
+    </owl-carousel>
+  </div>
+</div>
 
 <material-btn-list [materialBtns]="materialBtn" (someBtnAction)="getButtonAction($event)"></material-btn-list>

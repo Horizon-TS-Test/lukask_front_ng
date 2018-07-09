@@ -8,8 +8,6 @@ import { CameraService } from '../../services/camera.service';
 import { ImageCapture } from 'image-capture';
 import { MediaFile } from '../../interfaces/media-file.interface';
 
-declare var $: any;
-
 @Component({
   selector: 'app-webrtc-camera',
   templateUrl: './webrtc-camera.component.html',
@@ -100,7 +98,8 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
    * Inicializar variables
    */
   initVariables() {
-    this._video = document.querySelector("#video");
+    let videoArray = document.querySelectorAll(".video-camera");
+    this._video = videoArray.item(videoArray.length - 1);
   }
 
   /**

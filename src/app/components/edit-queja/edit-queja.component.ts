@@ -12,7 +12,6 @@ import { Gps } from '../../interfaces/gps.interface';
 import { Media } from '../../models/media';
 import { MediaFile } from '../../interfaces/media-file.interface';
 import { DynaContent } from '../../interfaces/dyna-content.interface';
-import { HorizonButton } from '../../interfaces/horizon-button.interface';
 
 import { ViewChild } from '@angular/core';
 import { Alert } from '../../models/alert';
@@ -28,14 +27,10 @@ declare var $: any;
   styleUrls: ['./edit-queja.component.css'],
 })
 export class EditQuejaComponent implements OnInit, OnDestroy {
-  @Output() closeModal: EventEmitter<boolean>;
   //Declacion de variables del mapa
   @ViewChild('gmap') gmapElement: any;
   private map: any;
 
-  private _SUBMIT = 0;
-  private _CLOSE = 1;
-  private self: any;
 
   private quejaType: string;
   private _gps: Gps;
@@ -52,7 +47,6 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
   public quejaTypeList: QuejaType[];
   public formQuej: FormGroup;
   public filesToUpload: any[];
-  public matButtons: HorizonButton[];
   public carouselOptions: any;
 
   constructor(
@@ -77,24 +71,9 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
         this.addQuejaSnapShot(snapShot);
       }
     );
-
-    this.closeModal = new EventEmitter<boolean>();
-    this.matButtons = [
-      {
-        parentContentType: 0,
-        action: this._SUBMIT,
-        icon: "check"
-      },
-      {
-        parentContentType: 0,
-        action: this._CLOSE,
-        icon: "close"
-      }
-    ];
   }
 
   ngOnInit() {
-    this.self = $("#personal-edit-q");
     $("#hidden-btn").on(("click"), (event) => { }); //NO TOCAR!
 
     this.formQuej = this.setFormGroup();
@@ -144,6 +123,10 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
     this.filesToUpload.push(media.mediaFile);
   }
 
+  /**
+   * MÉTODO PARA ABRIR LA CÁMARA PARA TOMAR UNA FOTOGRAFÍA:
+   * @param event 
+   */
   newMedia(event: any) {
     event.preventDefault();
     this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.new_media, contentData: null });
@@ -282,20 +265,6 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
     }
     this._quejaService.savePub(this.newPub);
     this.formQuej.reset();
-  }
-
-  /**
-   * MÉTODO PARA ESCUCHAR LA ACCIÓN DEL EVENTO DE CLICK DE UN BOTÓN DINÁMICO:
-   */
-  getButtonAction(actionEvent: number) {
-    switch (actionEvent) {
-      case this._SUBMIT:
-        this.publishQueja();
-        break;
-      case this._CLOSE:
-        this.closeModal.emit(true);
-        break;
-    }
   }
 
   ngOnDestroy() {

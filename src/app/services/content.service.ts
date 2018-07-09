@@ -199,4 +199,17 @@ export class ContentService {
     });
   }
 
+  public manageBodyOverflow(hide: boolean = false) {
+    if (!hide) {
+      if (!$("body").hasClass("p-body-overflow")) {
+        $("body").addClass("p-body-overflow");
+      }
+    }
+    else {
+      if ($("body").hasClass("p-body-overflow")) {
+        $("body").removeClass("p-body-overflow");
+      }
+    }
+  }
+
 }

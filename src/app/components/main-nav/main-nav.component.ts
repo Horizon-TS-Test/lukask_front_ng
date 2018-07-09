@@ -31,6 +31,9 @@ export class MainNavComponent implements OnInit {
     this.menuSubscription = this._routerService._enableMainMenu.subscribe(
       (enable: boolean) => {
         this._enableMainMenu = enable;
+        if (enable == true) {
+          this.forceClickMenu();
+        }
       }
     );
 
@@ -40,6 +43,17 @@ export class MainNavComponent implements OnInit {
   }
 
   ngOnInit() { }
+
+  forceClickMenu() {
+    setTimeout(() => {
+      let menu: HTMLElement = document.getElementById('menu-nav') as HTMLElement;
+      if (menu) {
+        if (!menu.classList.contains("menu-is-open")) {
+          menu.click();
+        }
+      }
+    }, 1000);
+  }
 
   /**
    * MÉTODO PARA ABRIR EL PANEL PRINCIPAL DE OPCIONES AL DAR CLICK EN EL BOTÓN DE MENÚ:
