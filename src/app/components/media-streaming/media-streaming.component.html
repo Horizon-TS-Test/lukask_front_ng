@@ -1,5 +1,9 @@
 <div class="personal-content personal-over-unset min-height-full col-12 p-0 d-flex align-items-center">
   <app-webrtc-camera [startCamera]="initStream"></app-webrtc-camera>
+  
+  <a href="#" class="p-transparent-btn xs p-float-btn top-left-corner" (click)="sendCameraAction($event, cameraActions.join_transmision)">
+    <fa name="eye"></fa>
+  </a>
 
   <div class="p-float-btn-sm">
     <owl-carousel id="corousel-live-op" class="personal-owl-nav" [options]="carouselOptions" [carouselClasses]="['owl-theme']">

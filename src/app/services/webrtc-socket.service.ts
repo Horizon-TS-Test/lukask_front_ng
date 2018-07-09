@@ -22,10 +22,22 @@ export class WebrtcSocketService {
     this.kurentoWs.onmessage = (message) =>{ 
       
       var parsedMessage = JSON.parse(message.data);
-      console.log("mesnaje desde mid ", parsedMessage);
+      console.log("parsedMessage.keyWord", parsedMessage.keyWord)
       switch(parsedMessage.keyWord){
         case 'presenterResponse':
           this.presenterResponse(parsedMessage);
+          break;
+        
+        case 'viewerResponse':
+          this.viewerResponse(parsedMessage);
+          break;
+        
+        case 'stopCommunication':
+          this.dispose();
+          break;
+        
+        case 'iceCandidate':
+          this.webRtcPeer.addIceCandidate(parsedMessage.candidate);
           break;
         
       }
@@ -49,7 +61,6 @@ export class WebrtcSocketService {
         }
         this.webRtcPeer.generateOffer((error, offerSdp) => {this.onOfferPresenter(error, offerSdp)});
       });
-      console.log("options", options)
     }
   }
 
@@ -92,6 +103,58 @@ export class WebrtcSocketService {
     this.kurentoWs.send(jsonMessage);
   }
 
+  /**
+   * Proceso de presentaacio de video para los clientes(viewer)
+   */
+  startViewer(){
+    if(!this.webRtcPeer){
+
+      let options = {
+        remoteVideo: this._videoData,
+        onicecandidate : (candidate) =>{ this.onIceCandidate(candidate)}
+      }
+
+      this.webRtcPeer = kurentoUtils.WebRtcPeer.WebRtcPeerRecvonly(options, (error)  =>{
+          if(error) {
+            console.log("error", error);
+          }
+          this.webRtcPeer.generateOffer((error, offerSdp) => {this.onOfferViewer(error, offerSdp)})
+      });
+    }
+  }
+
+  /**
+   * Procesa la oferta del cliente
+   * @param error 
+   * @param offerSdp 
+   */
+  onOfferViewer(error, offerSdp){
+    if(error){
+      console.log(error);
+      return error;
+    }
+    
+    let message = {
+      keyWord : 'viewer',
+      sdpOffer : offerSdp
+    }
+    this.sendMessage(message)
+  }
+
+  /**
+   * Procese a detener la transmicion del presenter.
+   */
+  stop(){
+    if(this.webRtcPeer){
+      var messege = {
+        keyWord : 'stop'
+      }
+
+      this.sendMessage(messege);
+      this.dispose();
+    }
+  }
+
   /***********************************
   * Respuestas desde el servidor node 
   ************************************/
@@ -108,6 +171,17 @@ export class WebrtcSocketService {
     }else{
       this.webRtcPeer.processAnswer(message.sdpAnswer);
     }
+  }
+
+  viewerResponse(message){
+    console.log("respuesta desde servidor midd", message)
+      if(message.response != 'accepted'){
+        let errorMsg = message.message ? message.message : 'Unknow error';
+        console.warn('Call not accepted for the following reason: ' + errorMsg);
+        this.dispose();
+      } else {
+        this.webRtcPeer.processAnswer(message.sdpAnswer);
+      }
   }
 
   dispose(){

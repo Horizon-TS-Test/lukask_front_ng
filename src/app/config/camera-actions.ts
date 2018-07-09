@@ -9,5 +9,6 @@ export var CAMERA_ACTIONS = {
     init_transmision: 8,
     stop_transmision: 9,
     pause_transmision: 10,
-    start_camera: 11
+    start_camera: 11,
+    join_transmision: 12
 }

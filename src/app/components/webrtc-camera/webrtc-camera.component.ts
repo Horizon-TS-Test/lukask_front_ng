@@ -79,6 +79,10 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
             break;
           case CAMERA_ACTIONS.stop_transmision:
             //AQUÍ DEBES LLAMAR A TUS MÉTODOS PARA LA TRANSMISIÓN DENNYS :D
+            this._webrtcSocketService.stop();
+            break;
+          case CAMERA_ACTIONS.join_transmision:
+            this._webrtcSocketService.startViewer();
             break;
           case CAMERA_ACTIONS.stop_stream:
             this.startCamera = false;
@@ -87,7 +91,6 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       }
     );
-    /////
   }
 
   ngOnInit() {
