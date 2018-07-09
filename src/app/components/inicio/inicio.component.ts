@@ -30,6 +30,7 @@ export class InicioComponent implements OnInit, AfterViewInit {
 
     this.subscriptor = this._notifierService._changeMenuOption.subscribe(
       (menuOption: number) => {
+        console.log(menuOption);
         switch (menuOption) {
           case MENU_OPTIONS.home:
             break;
