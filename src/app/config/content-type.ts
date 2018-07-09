@@ -10,4 +10,5 @@ export var CONTENT_TYPES = {
     single_map: 8,
     view_img: 9,
     view_comments: 10,
+    pagos_busq: 11,
 }
