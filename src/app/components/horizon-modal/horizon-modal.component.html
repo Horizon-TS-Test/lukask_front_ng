@@ -19,6 +19,7 @@
       <img-viewer *ngSwitchCase="contentTypes.view_img" [media]="_dynaContent.contentData" (closeModal)="close($event)"></img-viewer>
       <comment-list *ngSwitchCase="contentTypes.view_comments" [pubId]="_dynaContent.contentData" [isModal]="true" (closeModal)="close($event)"></comment-list>
       <user-edit *ngSwitchCase="contentTypes.edit_profile" (closeModal)="close($event)"></user-edit>
+      <app-pagos-busqueda *ngSwitchCase="contentTypes.pagos_busq" (closeModal)="close($event)"></app-pagos-busqueda>
     </ng-container>
   </div>
   
