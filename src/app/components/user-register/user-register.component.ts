@@ -171,8 +171,14 @@ export class UserRegisterComponent implements OnInit {
       this.userObj.file = this.filesToUpload;
       this.userObj.fileName = this.getFormattedDate() + ".png";
     }
+
+    /*this.userObj.objParroquia.id_parroquia = this.parroquia;
+    this.userObj.objParroquia.canton.id_canton = this.canton;
+    this.userObj.objParroquia.canton.province.id_province = this.province;*/
+    console.log("Objetooooooosssssss.........");
+    console.log(this.userObj);
     this.formmatSendDate();
-    //this._userService.registerUser(this.userObj);
+    this._userService.registerUser(this.userObj);
     this.restartDate();
   }
 
@@ -189,18 +195,10 @@ export class UserRegisterComponent implements OnInit {
    * MÉTODO QUE TRAE LAS PROVINCIAS EXISTENTES EN EL SISTEMA
    */
   getProvince() {
-    /*  this.provinceSelect = [];
-      this.provinceSelect.push({ value: "1", data: "Chimborazo" });
-      this.provinceSelect.push({ value: "2", data: "Carchi" });
-      this.provinceSelect.push({ value: "3", data: "Imbabura" });
-      this.provinceSelect.push({ value: "4", data: "Pichincha" });
-      this.provinceSelect.push({ value: "5", data: "Carchi" });
-      this.provinceSelect.push({ value: "6", data: "Sto. Domingo de los Tsachilas" });
-  */
     this._userService.getProvinceList().then((qProvinces) => {
       this.provinceList = qProvinces;
       this.provinceSelect = [];
-      this.provinceSelect.push({ value: "1", data: "Chimborazo" });
+      this.provinceSelect.push({ value: "", data: "" });
       for (let type of this.provinceList) {
         if (!this.province) {
           this.province = type.id_province;
@@ -224,13 +222,6 @@ export class UserRegisterComponent implements OnInit {
    * MÉTODO QUE TRAE LAS PROVINCIAS EXISTENTES EN EL SISTEMA
    */
   getCanton(id_provincia: any) {
-    /*  this.cantonSelect = [];
-      this.cantonSelect.push({ value: "1", data: "Esmeraldas" });
-      this.cantonSelect.push({ value: "2", data: "Otavalo" });
-      this.cantonSelect.push({ value: "3", data: "Tena" });
-      this.cantonSelect.push({ value: "4", data: "Pastaza" });
-    */
-
     this._userService.getCantonList(id_provincia).then((qCantones) => {
       this.cantonList = qCantones;
       this.cantonSelect = [];
@@ -258,18 +249,16 @@ export class UserRegisterComponent implements OnInit {
    * MÉTODO QUE TRAE LAS PROVINCIAS EXISTENTES EN EL SISTEMA
    */
   getParroquia(id_canton: any) {
-    console.log("Datos de parroquia");
-    console.log(id_canton);
     this._userService.getParroquiaList(id_canton).then((qParroquia) => {
-      this.parroquiaList = qParroquia;
+
       this.parroquiaSelect = [];
-      console.log("qParroquia...........................................");
-      console.log(qParroquia);
-      for (let type of this.parroquiaList) {
+      var parroquiaList = qParroquia;
+
+      for (let id in parroquiaList) {
         if (!this.parroquia) {
-          this.parroquia = type.id_parroquia;
+          this.parroquia = parroquiaList[id].id_parroquia;
         }
-        this.parroquiaSelect.push({ value: type.id_parroquia, data: type.name });
+        this.parroquiaSelect.push({ value: parroquiaList[id].id_parroquia, data: parroquiaList[id].name });
       }
     });
   }

@@ -53,6 +53,8 @@ export class UserEditComponent implements OnInit, OnDestroy {
   ) {
 
     this.userObj = this._userService.getStoredUserData();
+    console.log("Datos ****************************");
+    console.log(this.userObj);
 
     this.materialButtons = [
       {
@@ -105,7 +107,6 @@ export class UserEditComponent implements OnInit, OnDestroy {
   formmatSendDate() {
     var date = new Date();
     this.userObj.person.birthdate = this.userObj.person.birthdate + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-
   }
   /**
    * MÉTODO QUE RETORNA A LA FECHA CON EL FORMATO SIN HORA
@@ -199,40 +200,46 @@ export class UserEditComponent implements OnInit, OnDestroy {
   }
 
   /**
-     * METODO QUE CAPTURA LA PROVINCIA DESDE EL SELECT
-     * @param event 
-     */
+   * MÉTODO QUE TRAE LAS PROVINCIAS EXISTENTES EN EL SISTEMA
+   */
+  getProvince() {
+    this._userService.getProvinceList().then((qProvinces) => {
+      this.provinceList = qProvinces;
+      this.provinceSelect = [];
+      this.provinceSelect.push({ value: "", data: "" });
+      for (let type of this.provinceList) {
+        if (!this.province) {
+          this.province = type.id_province;
+        }
+        this.provinceSelect.push({ value: type.id_province, data: type.name });
+      }
+    });
+  }
+
+  /**
+   * METODO QUE CAPTURA LA PROVINCIA DESDE EL SELECT
+   * @param event 
+   */
   getProvinciaSelect(event: string) {
     this.province = event;
-    console.log("this.province");
-    console.log(this.province);
     this.userObj.person.parroquia.canton.province.id_province = this.province;
-
-    this.getCanton();
+    this.getCanton(this.province);
   }
 
   /**
    * MÉTODO QUE TRAE LAS PROVINCIAS EXISTENTES EN EL SISTEMA
    */
-  getCanton() {
-    this.cantonSelect = [];
-    this.cantonSelect.push({ value: "1", data: "Esmeraldas" });
-    this.cantonSelect.push({ value: "2", data: "Otavalo" });
-    this.cantonSelect.push({ value: "3", data: "Tena" });
-    this.cantonSelect.push({ value: "4", data: "Pastaza" });
-
-    /*
-    this._userService.getCantonList().then((qCantones) => {
+  getCanton(id_provincia: any) {
+    this._userService.getCantonList(id_provincia).then((qCantones) => {
       this.cantonList = qCantones;
       this.cantonSelect = [];
-
       for (let type of this.cantonList) {
         if (!this.canton) {
           this.canton = type.id_canton;
         }
         this.cantonSelect.push({ value: type.id_canton, data: type.name });
       }
-    });*/
+    });
   }
 
   /**
@@ -241,44 +248,35 @@ export class UserEditComponent implements OnInit, OnDestroy {
  */
   getCantonSelect(event: string) {
     this.canton = event;
-    console.log("this.canton");
-    console.log(this.canton);
     this.userObj.person.parroquia.canton.id_canton = this.canton;
-    this.getParroquia();
+    this.getParroquia(this.canton);
   }
 
 
   /**
    * MÉTODO QUE TRAE LAS PROVINCIAS EXISTENTES EN EL SISTEMA
    */
-  getParroquia() {
-    this.parroquiaSelect = [];
-    this.parroquiaSelect.push({ value: "1", data: "060101 Lizarzaburu" });
-    this.parroquiaSelect.push({ value: "2", data: "060102 Maldonado" });
-    this.parroquiaSelect.push({ value: "3", data: "060103 Velasco" });
-    this.parroquiaSelect.push({ value: "4", data: "060104 Veloz" });
-    this.parroquiaSelect.push({ value: "5", data: "060105 Yaruquìes" });
+  getParroquia(id_canton: any) {
+    this._userService.getParroquiaList(id_canton).then((qParroquia) => {
 
-    /*this._userService.getParroquiaList().then((qParroquias) => {
-      this.parroquiaList = qParroquias;
       this.parroquiaSelect = [];
+      var parroquiaList = qParroquia;
 
-      for (let type of this.parroquiaList) {
+      for (let id in parroquiaList) {
         if (!this.parroquia) {
-          this.parroquia = type.id_parroquia;
+          this.parroquia = parroquiaList[id].id_parroquia;
         }
-        this.parroquiaSelect.push({ value: type.id_parroquia, data: type.name });
+        this.parroquiaSelect.push({ value: parroquiaList[id].id_parroquia, data: parroquiaList[id].name });
       }
-    });*/
+    });
   }
+
   /**
    * METODO QUE CAPTURA LA PROVINCIA DESDE EL SELECT
    * @param event 
    */
   getParroquiaSelect(event: string) {
     this.parroquia = event;
-    console.log("this.parroquia");
-    console.log(this.parroquia);
     this.userObj.person.parroquia.id_parroquia = this.parroquia;
   }
 

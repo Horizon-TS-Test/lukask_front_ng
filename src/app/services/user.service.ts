@@ -56,7 +56,8 @@ export class UserService {
       .then((response: Response) => {
         const userJson = response.json().data;
         this.updateUserData(userJson);
-
+        console.log("Datos en user service");
+        console.log(userJson);
         console.log("[LUKASK USER SERVICE] - USER PROFILE FROM WEB", this.getUserProfile());
       })
       .catch((error: Response) => {
@@ -130,10 +131,8 @@ export class UserService {
         if (xhr.readyState === 4) {
           if (xhr.status === 201) {
             let resp = JSON.parse(xhr.response).data;
-            console.log(JSON.parse(xhr.response));
             resolve(resp);
-          }
-          else {
+          } else {
             if (xhr.status == 401) {
               localStorage.clear();
             }
@@ -179,8 +178,6 @@ export class UserService {
    * MÉTODO PARA EDITAR LOS DATOS DEL PERFIL
    */
   public sendUser(user: User) {
-    console.log("poner algo...");
-    console.log(user.person.birthdate);
     let userFormData: FormData = this.mergeFormData(user);
     this.patchUserClient(userFormData)
       .then(
@@ -229,7 +226,6 @@ export class UserService {
         if (xhr.readyState === 4) {
           if (xhr.status === 200) {
             let resp = JSON.parse(xhr.response).data;
-            console.log(JSON.parse(xhr.response));
             resolve(resp);
           }
           else {
@@ -305,8 +301,6 @@ export class UserService {
   getProvinceList() {
     return this.getProvinceWeb().then((webProvince: Province[]) => {
       this.provinceList = webProvince;
-      console.log("webProvince.....................................");
-      console.log(webProvince);
       if (!this.isFetchedProvince) {
         return this.getProvinceCache().then((cacheProvince: Province[]) => {
           this.provinceList = cacheProvince;
@@ -333,11 +327,9 @@ export class UserService {
       .then((response: Response) => {
         const qtypes = response.json().data.results;
         let transformedProvinces: Province[] = [];
-
         for (let type of qtypes) {
           transformedProvinces.push(new Province(type.id_province, type.description_province));
         }
-
         this.isFetchedProvince = true;
         console.log("[LUKASK QUEJA SERVICE] - QUEJA TYPES FROM WEB", transformedProvinces);
         return transformedProvinces;
@@ -421,7 +413,6 @@ export class UserService {
           for (let type of qtypes) {
             transformedCantones.push(new Canton(type.id_type_publication, type.description));
           }
-
           console.log("[LUKASK QUEJA SERVICE] - QUEJA TYPES FROM CACHE", transformedCantones);
           return transformedCantones;
         });
@@ -437,18 +428,7 @@ export class UserService {
 
   getParroquiaList(canton_id: any) {
     return this.getParroquiaWeb(canton_id).then((webParroquia: Parroquia[]) => {
-      console.log("Datos en  get Parroquia List");
-      console.log(webParroquia);
       this.parroquiaList = webParroquia;
-      if (!this.isFetchedParroquia) {
-        return this.getParroquiaCache().then((cacheParroquia: Parroquia[]) => {
-          this.parroquiaList = cacheParroquia;
-          return cacheParroquia;
-        });
-      }
-      else {
-        this.isFetchedParroquia = false;
-      }
       return this.parroquiaList;
     }).catch((error: Response) => {
       if (error.json().code == 401) {
@@ -468,7 +448,7 @@ export class UserService {
           transformedParroquias.push(new Parroquia(type.id_canton, type.description_));
         }
         this.isFetchedCanton = true;
-        console.log("[LUKASK CANTON SERVICE] - CANTON TYPES FROM WEB", transformedParroquias);
+        console.log("[LUKASK CANTON SERVICE] - PARROQUIA TYPES FROM WEB", transformedParroquias);
         return transformedParroquias;
       })
       .catch((error: Response) => {
