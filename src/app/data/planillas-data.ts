@@ -10,7 +10,7 @@ export default [
         fechapago: '03/JULIO/2018',
         subtotal: 15.16,
         total: 30.94,
-        icon: '/assets/images/queja/eer.png'
+        icon: '/assets/images/payments/eer.png'
     },
     {
         factura: '001-001-000014964',
@@ -23,7 +23,7 @@ export default [
         fechapago: '03/JULIO/2018',
         subtotal: 48.75,
         total: 48.75,
-        icon: '/assets/images/queja/emp.jpg'
+        icon: '/assets/images/payments/emp.jpg'
     },
     {
         factura: '001-001-016565070',
@@ -36,7 +36,7 @@ export default [
         fechapago: '03/JULIO/2018',
         subtotal: 56.94,
         total: 56.94,
-        icon: '/assets/images/queja/cnt.jpg'
+        icon: '/assets/images/payments/cnt.jpg'
     }, {
         factura: '001-639-019293070',
         empresa: 'CONSEJO PROVINCIAL DE CHIMBORAZO',
@@ -48,6 +48,6 @@ export default [
         fechapago: '03/JULIO/2018',
         subtotal: 15.16,
         total: 15.16,
-        icon: '/assets/images/queja/cpc.jpg'
+        icon: '/assets/images/payments/cpc.jpg'
     }
 ]

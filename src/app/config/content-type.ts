@@ -11,4 +11,5 @@ export var CONTENT_TYPES = {
     view_img: 9,
     view_comments: 10,
     pagos_busq: 11,
+    payments:12,
 }
