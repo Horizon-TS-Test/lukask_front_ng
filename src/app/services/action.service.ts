@@ -223,7 +223,9 @@ export class ActionService {
       id_publication: comment.publicationId,
       action_parent: (comment.commentParentId) ? comment.commentParentId : "",
       date: comment.date,
-      active: true
+      active: true,
+      userName: this._userService.getUserProfile().person.name,
+      userImage: this._userService.getUserProfile().profileImg
     });
 
     return this._http.post(REST_SERV.commentUrl, requestBody, { headers: requestHeaders, withCredentials: true })
@@ -266,7 +268,9 @@ export class ActionService {
       description: comment.description,
       id_publication: comment.publicationId,
       action_parent: (comment.commentParentId) ? comment.commentParentId : "",
-      active: comment.active
+      active: comment.active,
+      userName: this._userService.getUserProfile().person.name,
+      userImage: this._userService.getUserProfile().profileImg
     }
     /////
 

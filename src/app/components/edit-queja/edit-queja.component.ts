@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy, SimpleChanges, OnChanges, Input } from '@angular/core';
 import { Publication } from '../../models/publications';
 import { Select2 } from '../../interfaces/select2.interface';
 import { QuejaService } from '../../services/queja.service';
@@ -12,12 +12,12 @@ import { Gps } from '../../interfaces/gps.interface';
 import { Media } from '../../models/media';
 import { MediaFile } from '../../interfaces/media-file.interface';
 import { DynaContent } from '../../interfaces/dyna-content.interface';
-import { HorizonButton } from '../../interfaces/horizon-button.interface';
 
 import { ViewChild } from '@angular/core';
 import { Alert } from '../../models/alert';
 import { ALERT_TYPES } from '../../config/alert-types';
 import { DateManager } from '../../tools/date-manager';
+import { ACTION_TYPES } from '../../config/action-types';
 
 declare var google: any;
 declare var $: any;
@@ -27,15 +27,11 @@ declare var $: any;
   templateUrl: './edit-queja.component.html',
   styleUrls: ['./edit-queja.component.css'],
 })
-export class EditQuejaComponent implements OnInit, OnDestroy {
-  @Output() closeModal: EventEmitter<boolean>;
-  //Declacion de variables del mapa
+export class EditQuejaComponent implements OnInit, OnDestroy, OnChanges {
+  @Input() submit: number;
   @ViewChild('gmap') gmapElement: any;
   private map: any;
 
-  private _SUBMIT = 0;
-  private _CLOSE = 1;
-  private self: any;
 
   private quejaType: string;
   private _gps: Gps;
@@ -52,7 +48,6 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
   public quejaTypeList: QuejaType[];
   public formQuej: FormGroup;
   public filesToUpload: any[];
-  public matButtons: HorizonButton[];
   public carouselOptions: any;
 
   constructor(
@@ -77,24 +72,9 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
         this.addQuejaSnapShot(snapShot);
       }
     );
-
-    this.closeModal = new EventEmitter<boolean>();
-    this.matButtons = [
-      {
-        parentContentType: 0,
-        action: this._SUBMIT,
-        icon: "check"
-      },
-      {
-        parentContentType: 0,
-        action: this._CLOSE,
-        icon: "close"
-      }
-    ];
   }
 
   ngOnInit() {
-    this.self = $("#personal-edit-q");
     $("#hidden-btn").on(("click"), (event) => { }); //NO TOCAR!
 
     this.formQuej = this.setFormGroup();
@@ -144,6 +124,10 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
     this.filesToUpload.push(media.mediaFile);
   }
 
+  /**
+   * MÉTODO PARA ABRIR LA CÁMARA PARA TOMAR UNA FOTOGRAFÍA:
+   * @param event 
+   */
   newMedia(event: any) {
     event.preventDefault();
     this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.new_media, contentData: null });
@@ -285,16 +269,21 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LA ACCIÓN DEL EVENTO DE CLICK DE UN BOTÓN DINÁMICO:
+   * MÉTODO PARA DETECTAR LOS CAMBIOS DE UNA PROPIEDAD INYECTADA DESDE EL COMPONENTE PADRE DE ESTE COMPONENTE:
+   * @param changes LOS CAMBIOS GENERADOS
    */
-  getButtonAction(actionEvent: number) {
-    switch (actionEvent) {
-      case this._SUBMIT:
-        this.publishQueja();
-        break;
-      case this._CLOSE:
-        this.closeModal.emit(true);
-        break;
+  ngOnChanges(changes: SimpleChanges) {
+
+    for (const property in changes) {
+      if (property === 'submit') {
+        /*console.log('Previous:', changes[property].previousValue);
+        console.log('Current:', changes[property].currentValue);
+        console.log('firstChange:', changes[property].firstChange);*/
+
+        if (changes[property].currentValue && changes[property].currentValue == ACTION_TYPES.submitPub) {
+          this.publishQueja();
+        }
+      }
     }
   }
 

@@ -14,21 +14,17 @@ declare var $: any;
 })
 export class HorizonModalComponent implements OnInit, OnDestroy {
   private self: any;
-  private customCarousel: any;
   private subscriber: Subscription;
 
   public _ref: any;
   public _dynaContent: DynaContent;
   public contentTypes: any;
-  public carouselOptions: any;
-  public initStream: boolean;
 
   constructor(
     private _contentService: ContentService,
     private _notifierService: NotifierService
   ) {
     this.contentTypes = CONTENT_TYPES;
-    this.initStream = false;
 
     this.subscriber = this._notifierService._closeModal.subscribe((closeIt: boolean) => {
       this.close(closeIt);
@@ -37,58 +33,13 @@ export class HorizonModalComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.self = $(".horizon-modal").last();
-    this.initCarousel();
+    this._contentService.manageBodyOverflow();
   }
 
   ngAfterViewInit() {
     setTimeout(() => {
       this._contentService.slideDownUp(this.self);
     }, 100);
-
-    this.handleCameraStatus();
-  }
-
-  /**
-   * MÉTODO PARA DEFINIR LAS PROPIEDADES DEL CAROUSEL DE SECCIONES:
-   */
-  initCarousel() {
-    this.carouselOptions = {
-      items: 1, dots: false, loop: false, margin: 5,
-      nav: false, stagePadding: 0, autoWidth: false
-    };
-  }
-
-  /**
-   * HANDLE CAMERA STATUS ON DRAG THE CAROUSEL:
-   */
-  handleCameraStatus() {
-    this.customCarousel = $("#carousel-edit-q");
-    this.customCarousel.on("dragged.owl.carousel", (event) => {
-      let streamView = this.customCarousel.find(".owl-item:last-child");
-      if (streamView.hasClass("active")) {
-        this.initStream = true;
-      }
-      else {
-        this.initStream = false;
-      }
-    });
-  }
-
-  /**
-   * MÉTODO PARA ACCEDER A LA OPCIÓN DE INICIAR STREAMING:
-   * @param event 
-   * @param cancel PARA SALIR DE LA OPCIÓN DE INICIAR STREAMING
-   */
-  initStreaming(event: any, cancel: boolean = false) {
-    event.preventDefault();
-    if (cancel) {
-      $(".owl-carousel").trigger('prev.owl.carousel');
-      this.initStream = false;
-    }
-    else {
-      $(".owl-carousel").trigger('next.owl.carousel');
-      this.initStream = true;
-    }
   }
 
   /**
@@ -130,5 +81,6 @@ export class HorizonModalComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscriber.unsubscribe();
+    this._contentService.manageBodyOverflow(true);
   }
 }

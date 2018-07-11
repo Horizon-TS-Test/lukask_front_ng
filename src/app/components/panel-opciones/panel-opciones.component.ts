@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, Output, SimpleChanges, OnChanges, EventEmitter, OnDestroy } from '@angular/core';
 import { NotifierService } from '../../services/notifier.service';
 import { CONTENT_TYPES } from '../../config/content-type';
-import { SubscribeService } from '../../services/subscribe.service';
 import { ContentService } from '../../services/content.service';
+import { MENU_OPTIONS } from '../../config/menu-option';
+import { Subscription } from '../../../../node_modules/rxjs';
 
 declare var $: any;
 
@@ -11,36 +12,40 @@ declare var $: any;
   templateUrl: './panel-opciones.component.html',
   styleUrls: ['./panel-opciones.component.css']
 })
-export class PanelOpcionesComponent implements OnInit {
+export class PanelOpcionesComponent implements OnInit, OnChanges, OnDestroy {
+  @Input() entriesNumber: number;
+  @Output() seenEntries = new EventEmitter<boolean>();
+
+  private subscriber: Subscription;
+
   public contentTypes: any;
-  public isAble: boolean;
-  public entriesNumber: number;
+  public menuOptions: any;
 
   constructor(
     private _notifierService: NotifierService,
-    private _subscribeService: SubscribeService,
-    private _contentService: ContentService,
+    private _contentService: ContentService
   ) {
     this.contentTypes = CONTENT_TYPES;
-    this.entriesNumber = 0;
+    this.menuOptions = MENU_OPTIONS;
+
+    this.subscriber = this._notifierService._changeMenuContent.subscribe((menuOption: number) => {
+      let idOp;
+      switch (menuOption) {
+        case MENU_OPTIONS.home:
+          idOp = 'top-option-0';
+          break;
+        case MENU_OPTIONS.mapview:
+          idOp = 'top-option-1';
+          break;
+        case MENU_OPTIONS.payment:
+          idOp = 'top-option-2';
+          break;
+      }
+      this.focusOption(null, idOp, menuOption, false);
+    });
   }
 
-  ngOnInit() {
-    this.isAbleToSubscribe();
-  }
-
-  /**
-   * MÉTODO PARA HABILITAR O DESHABILITAR EL BOTÓN DE ACTIVAR NOTIFICACIONES 
-   * PUSH DEPENDIENDO DE SI EL NAVEGADOR SOPORTA O NO ESTA FUNCIONALIDAD:
-   */
-  isAbleToSubscribe() {
-    if ('Notification' in window && 'serviceWorker' in navigator) {
-      this.isAble = true;
-    }
-    else {
-      this.isAble = false;
-    }
-  }
+  ngOnInit() { }
 
   /**
    * MÉTODO PARA SOLICITAR QUE SE INCRUSTE DINÁMICAMENTE UN HORIZON MODAL CON CIERTO CONTENIDO EN SU INTERIOR
@@ -49,25 +54,46 @@ export class PanelOpcionesComponent implements OnInit {
    */
   openLayer(event: any, contType: number) {
     event.preventDefault();
+    if (contType === this.contentTypes.view_notifs) {
+      this.seenEntries.emit(true);
+    }
     this._notifierService.notifyNewContent({ contentType: contType, contentData: null });
-  }
-
-  /**
-   * MÉTODO PARA PROCESAR LA SUBSCRIPCIÓN AL SERVIDOR DE NOTIFICACIONES PUSH PARA 
-   * PODER RECIBIR NOTIFICACIONES ACERCA DE NUEVAS ACTUALIZACIONES EN LA APP:
-   * @param event EVENTO CLICK DEL ELEMENTO <a href="#">
-   */
-  subscribe(event: any) {
-    event.preventDefault();
-    this._subscribeService.askForSubscription();
   }
 
   /**
    * MÉTODO PARA SOLICITAR QUE SE DE FOCUS A UNA OPCIÓN SELECCIONADA DEL MENÚ DE NAVEGACIÓN:
    * @param idContent ID HTML DE LA OPCIÓN SELECCIONADA
    */
-  focusOption(idContent: string) {
-    this._contentService.focusMenuOption($("#id-top-panel"), idContent);
+  focusOption(event: any, idContent: string, menuOption: number, notify: boolean = true) {
+    if (event) {
+      event.preventDefault();
+    }
+    this._contentService.focusMenuOption($('#id-top-panel'), idContent);
+    if (notify === true) {
+      this._notifierService.notifyChangeMenuOption(menuOption);
+    }
   }
 
+  /**
+   * MÉTODO PARA DETECTAR LOS CAMBIOS DE UNA PROPIEDAD INYECTADA DESDE EL COMPONENTE PADRE DE ESTE COMPONENTE:
+   * @param changes LOS CAMBIOS GENERADOS
+   */
+  ngOnChanges(changes: SimpleChanges) {
+
+    for (const property in changes) {
+      if (property === 'entriesNumber') {
+        /*console.log('Previous:', changes[property].previousValue);
+        console.log('Current:', changes[property].currentValue);
+        console.log('firstChange:', changes[property].firstChange);*/
+
+        if (changes[property].currentValue) {
+          this.entriesNumber = changes[property].currentValue;
+        }
+      }
+    }
+  }
+
+  ngOnDestroy() {
+    this.subscriber.unsubscribe();
+  }
 }

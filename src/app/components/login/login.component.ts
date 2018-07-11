@@ -1,11 +1,10 @@
-import { Component, OnInit, ViewChild, ViewContainerRef, ContentChild, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { User } from '../../models/user';
 import { LoginService } from '../../services/login.service';
 import { ContentService } from '../../services/content.service';
 import { Alert } from '../../models/alert';
 import { ALERT_TYPES } from '../../config/alert-types';
-import { AlertComponent } from '../alert/alert.component';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { NotifierService } from '../../services/notifier.service';
 
 declare var $: any;
@@ -24,14 +23,13 @@ export class LoginComponent implements OnInit {
     private _loginService: LoginService,
     private _contentService: ContentService,
     private _notifierService: NotifierService,
-    private _activatedRoute: ActivatedRoute,
     private _router: Router,
   ) {
     this.resetForm();
   }
 
   ngOnInit() {
-    this._contentService.fadeInComponent();
+    this._contentService.fadeInComponent($("#loginContainer"));
   }
 
   resetForm() {

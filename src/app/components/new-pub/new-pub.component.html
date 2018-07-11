@@ -1,0 +1,19 @@
+<div class="personal-content min-height-full-modal max-height-full-modal p-overflow-auto relative-background col-12 p-0 d-flex align-items-center">
+  <owl-carousel id="carousel-edit-q" class="personal-owl-nav owl-carousel" [options]="carouselOptions" [carouselClasses]="['owl-theme']">
+    <div>
+      <a href="#" class="no-border-button secondary p-float-btn top-right-corner mt-2 mr-2" (click)="initStreaming($event)">
+        <span class="personal-site-icon">f</span>
+      </a>
+      <edit-queja [submit]="actionType" (closeModal)="close($event)"></edit-queja>
+    </div>
+
+    <div>
+      <a href="#" class="p-transparent-btn xs p-float-btn p-index-2 top-right-corner pr-1" (click)="initStreaming($event, true)">
+        <fa name="chevron-left"></fa>
+      </a>
+      <media-streaming [initStream]="initStream" (closeModal)="close($event)"></media-streaming>
+    </div>
+  </owl-carousel>
+
+  <material-btn-list [animateNext]="initStream" [materialBtns]="matButtons" (someBtnAction)="getButtonAction($event)"></material-btn-list>
+</div>

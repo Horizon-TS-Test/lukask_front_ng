@@ -309,6 +309,8 @@ self.addEventListener('sync', function (event) {
                             formData.append('id_publication', com.id_publication);
                             formData.append('action_parent', com.action_parent);
                             formData.append('active', com.active);
+                            formData.append('userName', com.userName);
+                            formData.append('userImage', com.userImage);
 
                             sendData(REST_URLS.comment, formData, (com.action_parent == "") ? 'comment' : 'reply', 'sync-comment');
                         }
@@ -435,13 +437,17 @@ self.addEventListener('push', function (event) {
     console.log(defaultNotifData);
 
     var options = {
+        "//": "Visual Options",
+        title: defaultNotifData.title,
         body: defaultNotifData.content,
-        icon: '/assets/icons/lukask-96x96.png',
-        dir: 'ltr',
-        lang: 'es-US', //BCP 47
+        dir: 'rtl',
+        icon: defaultNotifData.icon_image,
+        badge: '/assets/icons/badged-icon.png',
         vibrate: [500, 200, 200, 100], //THIS IS FOR SOME DEVICES NOT FOR ALL
-        badge: '/assets/icons/icons/lukask-72x72.png',
+
+        "//": "Behavioural Options",
         tag: 'confirm-notification', //TO ALLOW NOTIFICATIONS WILL STACK AND SHOW ONE GROUP OF NOTIFICATIONS
+        //lang: 'es-US', //BCP 47
         data: {
             url: defaultNotifData.open_url
         },

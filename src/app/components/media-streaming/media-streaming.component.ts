@@ -3,8 +3,6 @@ import { HorizonButton } from '../../interfaces/horizon-button.interface';
 import { NotifierService } from '../../services/notifier.service';
 import { CAMERA_ACTIONS } from '../../config/camera-actions';
 
-declare var $: any;
-
 @Component({
   selector: 'media-streaming',
   templateUrl: './media-streaming.component.html',
@@ -37,7 +35,6 @@ export class MediaStreamingComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    console.log("initStream", this.initStream);
     this.initCarousel();
   }
 
@@ -63,6 +60,7 @@ export class MediaStreamingComponent implements OnInit, OnChanges {
     if (event) {
       event.preventDefault();
     }
+    console.log("action", action);
     this._notifierService.notifyCameraAction(action);
   }
 

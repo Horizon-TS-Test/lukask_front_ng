@@ -16,9 +16,9 @@ export class WebrtcSocketService {
   constructor() { 
   }
 
-  connecToKurento(idUser:any){
+  connecToKurento(idUser:any, _video){
     
-    this._videoData = document.querySelector("#video");
+    this._videoData = _video;
     this.kurentoWs  = new WebSocket(REST_SERV.webRtcSocketServerUrl);
     this.userId = idUser;
     this.kurentoWs.onmessage = (message) =>{ 
@@ -167,7 +167,8 @@ export class WebrtcSocketService {
   stop(){
     if(this.webRtcPeer){
       var messege = {
-        keyWord : 'stop'
+        keyWord : 'stop',
+        idUser : this.userId
       }
 
       this.sendMessage(messege);

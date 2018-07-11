@@ -35,14 +35,12 @@ export class ContentService {
   /**
    * MÉTODO PARA DAR UN EFECTO FADE-IN A UN COMPONENTE AL ABRIRSE POR PRIMERA VEZ:
    */
-  fadeInComponent() {
-    let component = $(".personal-fadeout");
-
+  fadeInComponent(component: any) {
     setTimeout(() => {
       if (!component.hasClass("personal-fadein")) {
         component.addClass("personal-fadein");
       }
-    }, /*2000*/0);
+    }, 0);
   }
 
   /**
@@ -114,7 +112,12 @@ export class ContentService {
   isBottomScroll(domElement: any) {
     let elementScroll = domElement.scrollTop();
     let elementHeight = domElement.height();
-    let docHeight = domElement.children().first().height();
+    let docHeight = 0;
+
+    domElement.children().first().children().each((index, element) => {
+      docHeight = docHeight + $(element).height();
+    });
+
     if (elementScroll + elementHeight >= docHeight - 10) {
       return true;
     }
@@ -180,6 +183,8 @@ export class ContentService {
 
     navContainer.find("a").each((index, element) => {
       if ($(element).attr("id") === idContent) {
+        $(element).addClass("focused");
+        $(element).siblings().removeClass("focused");
         menuFocus.css({
           left: optionLeft,
           width: $(element).width()
@@ -191,6 +196,23 @@ export class ContentService {
         optionLeft += $(element).width();
       }
     });
+  }
+
+  /**
+   * MÉTODO PARA OCULTAR O MOSTRAR EL SCROLL DEL BODY PRINCIPAL AL ABRIR O CERRAR UN HORIZON-MODAL
+   * @param hide 
+   */
+  public manageBodyOverflow(hide: boolean = false) {
+    if (!hide) {
+      if (!$("body").hasClass("p-body-overflow")) {
+        $("body").addClass("p-body-overflow");
+      }
+    }
+    else {
+      if ($("body").hasClass("p-body-overflow")) {
+        $("body").removeClass("p-body-overflow");
+      }
+    }
   }
 
 }
