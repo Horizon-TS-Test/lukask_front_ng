@@ -3,6 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { HorizonButton } from '../../interfaces/horizon-button.interface';
 import { ContentService } from '../../services/content.service';
 
+declare var $: any;
+
 @Component({
   selector: 'app-activity',
   templateUrl: './activity.component.html',
@@ -32,7 +34,7 @@ export class ActivityComponent implements OnInit {
 
   ngOnInit() {
     this.getQueryParams();
-    this._contentService.fadeInComponent();
+    this._contentService.fadeInComponent($("#actContainer"));
   }
 
   /**

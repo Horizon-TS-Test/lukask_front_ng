@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy, SimpleChanges, OnChanges, Input } from '@angular/core';
 import { Publication } from '../../models/publications';
 import { Select2 } from '../../interfaces/select2.interface';
 import { QuejaService } from '../../services/queja.service';
@@ -17,6 +17,7 @@ import { ViewChild } from '@angular/core';
 import { Alert } from '../../models/alert';
 import { ALERT_TYPES } from '../../config/alert-types';
 import { DateManager } from '../../tools/date-manager';
+import { ACTION_TYPES } from '../../config/action-types';
 
 declare var google: any;
 declare var $: any;
@@ -26,8 +27,8 @@ declare var $: any;
   templateUrl: './edit-queja.component.html',
   styleUrls: ['./edit-queja.component.css'],
 })
-export class EditQuejaComponent implements OnInit, OnDestroy {
-  //Declacion de variables del mapa
+export class EditQuejaComponent implements OnInit, OnDestroy, OnChanges {
+  @Input() submit: number;
   @ViewChild('gmap') gmapElement: any;
   private map: any;
 
@@ -265,6 +266,25 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
     }
     this._quejaService.savePub(this.newPub);
     this.formQuej.reset();
+  }
+
+  /**
+   * MÉTODO PARA DETECTAR LOS CAMBIOS DE UNA PROPIEDAD INYECTADA DESDE EL COMPONENTE PADRE DE ESTE COMPONENTE:
+   * @param changes LOS CAMBIOS GENERADOS
+   */
+  ngOnChanges(changes: SimpleChanges) {
+
+    for (const property in changes) {
+      if (property === 'submit') {
+        /*console.log('Previous:', changes[property].previousValue);
+        console.log('Current:', changes[property].currentValue);
+        console.log('firstChange:', changes[property].firstChange);*/
+
+        if (changes[property].currentValue && changes[property].currentValue == ACTION_TYPES.submitPub) {
+          this.publishQueja();
+        }
+      }
+    }
   }
 
   ngOnDestroy() {

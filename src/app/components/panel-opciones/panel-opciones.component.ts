@@ -1,8 +1,9 @@
-import { Component, OnInit, Input, Output, SimpleChanges, OnChanges, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, SimpleChanges, OnChanges, EventEmitter, OnDestroy } from '@angular/core';
 import { NotifierService } from '../../services/notifier.service';
 import { CONTENT_TYPES } from '../../config/content-type';
 import { ContentService } from '../../services/content.service';
 import { MENU_OPTIONS } from '../../config/menu-option';
+import { Subscription } from '../../../../node_modules/rxjs';
 
 declare var $: any;
 
@@ -11,19 +12,37 @@ declare var $: any;
   templateUrl: './panel-opciones.component.html',
   styleUrls: ['./panel-opciones.component.css']
 })
-export class PanelOpcionesComponent implements OnInit, OnChanges {
+export class PanelOpcionesComponent implements OnInit, OnChanges, OnDestroy {
   @Input() entriesNumber: number;
   @Output() seenEntries = new EventEmitter<boolean>();
+
+  private subscriber: Subscription;
 
   public contentTypes: any;
   public menuOptions: any;
 
   constructor(
     private _notifierService: NotifierService,
-    private _contentService: ContentService,
+    private _contentService: ContentService
   ) {
     this.contentTypes = CONTENT_TYPES;
     this.menuOptions = MENU_OPTIONS;
+
+    this.subscriber = this._notifierService._changeMenuContent.subscribe((menuOption: number) => {
+      let idOp;
+      switch (menuOption) {
+        case MENU_OPTIONS.home:
+          idOp = 'top-option-0';
+          break;
+        case MENU_OPTIONS.mapview:
+          idOp = 'top-option-1';
+          break;
+        case MENU_OPTIONS.payment:
+          idOp = 'top-option-2';
+          break;
+      }
+      this.focusOption(null, idOp, menuOption, false);
+    });
   }
 
   ngOnInit() { }
@@ -45,9 +64,14 @@ export class PanelOpcionesComponent implements OnInit, OnChanges {
    * MÉTODO PARA SOLICITAR QUE SE DE FOCUS A UNA OPCIÓN SELECCIONADA DEL MENÚ DE NAVEGACIÓN:
    * @param idContent ID HTML DE LA OPCIÓN SELECCIONADA
    */
-  focusOption(idContent: string, menuOption: number) {
+  focusOption(event: any, idContent: string, menuOption: number, notify: boolean = true) {
+    if (event) {
+      event.preventDefault();
+    }
     this._contentService.focusMenuOption($('#id-top-panel'), idContent);
-    this._notifierService.notifyChangeMenuOption(menuOption);
+    if (notify === true) {
+      this._notifierService.notifyChangeMenuOption(menuOption);
+    }
   }
 
   /**
@@ -67,5 +91,9 @@ export class PanelOpcionesComponent implements OnInit, OnChanges {
         }
       }
     }
+  }
+
+  ngOnDestroy() {
+    this.subscriber.unsubscribe();
   }
 }

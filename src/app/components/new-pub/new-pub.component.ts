@@ -1,5 +1,6 @@
 import { Component, OnInit, EventEmitter, Output, AfterViewInit } from '@angular/core';
 import { HorizonButton } from '../../interfaces/horizon-button.interface';
+import { ACTION_TYPES } from '../../config/action-types';
 
 declare var $: any;
 
@@ -11,25 +12,32 @@ declare var $: any;
 export class NewPubComponent implements OnInit, AfterViewInit {
   @Output() closeModal = new EventEmitter<boolean>();
 
-  private _SUBMIT = 0;
-  private _CLOSE = 1;
   private customCarousel: any;
 
   public carouselOptions: any;
   public initStream: boolean;
   public matButtons: HorizonButton[];
+  public actionType: number;
 
   constructor() {
     this.initStream = false;
     this.matButtons = [
       {
         parentContentType: 0,
-        action: this._SUBMIT,
-        icon: 'check'
+        action: ACTION_TYPES.submitPub,
+        icon: 'check',
+        class: 'animated-btn animate-in'
       },
       {
         parentContentType: 0,
-        action: this._CLOSE,
+        action: ACTION_TYPES.initStream,
+        icon: 'f',
+        customIcon: true,
+        class: 'animated-btn'
+      },
+      {
+        parentContentType: 0,
+        action: ACTION_TYPES.close,
         icon: 'close'
       }
     ];
@@ -89,10 +97,10 @@ export class NewPubComponent implements OnInit, AfterViewInit {
    */
   getButtonAction(actionEvent: number) {
     switch (actionEvent) {
-      case this._SUBMIT:
-        //this.publishQueja();
+      case ACTION_TYPES.submitPub:
+        this.actionType = ACTION_TYPES.submitPub;
         break;
-      case this._CLOSE:
+      case ACTION_TYPES.close:
         this.closeModal.emit(true);
         break;
     }

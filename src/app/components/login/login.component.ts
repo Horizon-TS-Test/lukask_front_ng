@@ -29,7 +29,7 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
-    this._contentService.fadeInComponent();
+    this._contentService.fadeInComponent($("#loginContainer"));
   }
 
   resetForm() {

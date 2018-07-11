@@ -44,7 +44,7 @@ export class MapViewComponent implements OnInit {
   }
 
   ngOnInit() {
-    this._contentService.fadeInComponent();
+    this._contentService.fadeInComponent($("#mapContainer"));
     this.getGps()
     var mapProp = {
       center: new google.maps.LatLng(this.lat, this.lng),
@@ -52,8 +52,6 @@ export class MapViewComponent implements OnInit {
       mapTypeId: google.maps.MapTypeId.ROADMAP,
       styles: styleMap
     };
-
-    this.focusInnerOption();
 
     /**
      * PARA SUBSCRIBIRSE AL EVENTO DE ACTUALIZACIÓN DEL SOCKET, QUE TRAE 

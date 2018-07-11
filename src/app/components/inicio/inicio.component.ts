@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { ContentService } from '../../services/content.service';
 import { NotifierService } from '../../services/notifier.service';
 import { Subscription } from 'rxjs';
@@ -11,11 +11,13 @@ declare var $: any;
   templateUrl: './inicio.component.html',
   styleUrls: ['./inicio.component.css']
 })
-export class InicioComponent implements OnInit, AfterViewInit {
+export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   private self: any;
   private customCarousel: any;
   private subscriptor: Subscription;
 
+  public enableSecondOp: boolean;
+  public enableThirdOp: boolean;
   public carouselOptions: any;
 
   constructor(
@@ -25,21 +27,12 @@ export class InicioComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.self = $('#local-content-1');
-    this._contentService.fadeInComponent();
-    this.focusInnerOption();
-
+    this._contentService.fadeInComponent($("#homeContainer"));
+    
+    this._notifierService.notifyChangeMenuContent(MENU_OPTIONS.home);
     this.subscriptor = this._notifierService._changeMenuOption.subscribe(
       (menuOption: number) => {
-        console.log(menuOption);
-        switch (menuOption) {
-          case MENU_OPTIONS.home:
-            break;
-          case MENU_OPTIONS.mapview:
-            this.changeOwlContent();
-            break;
-          case MENU_OPTIONS.payment:
-            break;
-        }
+        this.changeOwlContent(menuOption);
       });
 
     this.self.scroll(() => {
@@ -62,34 +55,52 @@ export class InicioComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.handleCameraStatus();
-  }
-
-  /**
-   * MÉTODO PARA DAR FOCUS A LA OPCIÓN ASOCIADA A ESTE CONTENIDO PRINCIPAL DE NAVEGACIÓN:
-   */
-  focusInnerOption() {
-    this._contentService.focusMenuOption($('#id-top-panel'), 'top-option-0');
+    this.handleMenuCarousel();
   }
 
   /**
    * HANDLE CAMERA STATUS ON DRAG THE CAROUSEL:
    */
-  handleCameraStatus() {
+  handleMenuCarousel() {
     this.customCarousel = $('#carousel-home');
     this.customCarousel.on('dragged.owl.carousel', (event) => {
-      /*if (streamView.hasClass('active')) {
-        this.initStream = true;
-      } else {
-        this.initStream = false;
-      }*/
+      const menuIndex = event.item.index;
+      switch (menuIndex) {
+        case MENU_OPTIONS.home:
+          break;
+        case MENU_OPTIONS.mapview:
+          this.enableSecondOp = true;
+          break;
+        case MENU_OPTIONS.payment:
+          break;
+      }
+      this._notifierService.notifyChangeMenuContent(menuIndex);
+      console.log("CAROUSEL DRAGGED EVENT: ", event.item.index);
+    });
+
+    this.customCarousel.on('to.owl.carousel', (event, menuIndex) => {
+      switch (menuIndex) {
+        case MENU_OPTIONS.home:
+          break;
+        case MENU_OPTIONS.mapview:
+          this.enableSecondOp = true;
+          break;
+        case MENU_OPTIONS.payment:
+          break;
+      }
+      this._notifierService.notifyChangeMenuContent(menuIndex);
+      console.log("CAROUSEL TO EVENT: ", menuIndex);
     });
   }
 
   /**
-   * MÉTODO PARA ACCEDER A LA OPCIÓN DE INICIAR STREAMING:
+   * MÉTODO PARA NAVEGAR EN CIERTA OPCIÓN DEL CAROUSEL:
    */
-  changeOwlContent() {
-    $('.owl-carousel').trigger('to.owl.carousel', [1, 300, true]);
+  changeOwlContent(option: number) {
+    $('#carousel-home').find('.owl-carousel').trigger('to.owl.carousel', [option, 300, true]);
+  }
+
+  ngOnDestroy() {
+    this.subscriptor.unsubscribe();
   }
 }

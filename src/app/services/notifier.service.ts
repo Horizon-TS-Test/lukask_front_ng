@@ -16,6 +16,7 @@ export class NotifierService {
   public _newCommentResp = new EventEmitter<Comment>();
   public _closeModal = new EventEmitter<boolean>();
   public _changeMenuOption = new EventEmitter<number>();
+  public _changeMenuContent = new EventEmitter<number>();
 
   constructor() { }
 
@@ -55,6 +56,10 @@ export class NotifierService {
 
   notifyChangeMenuOption(option: number) {
     this._changeMenuOption.emit(option);
+  }
+  
+  notifyChangeMenuContent(option: number) {
+    this._changeMenuContent.emit(option);
   }
 
 }
