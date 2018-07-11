@@ -10,15 +10,17 @@ export class WebrtcSocketService {
   public video: any;
   private webRtcPeer:any;
   private _videoData:any;
+  private _cameraBack:any;
+  private _cameraFront:any;
+  private userId:any;
   constructor() { 
   }
 
-  connecToKurento(){
+  connecToKurento(idUser:any){
     
     this._videoData = document.querySelector("#video");
     this.kurentoWs  = new WebSocket(REST_SERV.webRtcSocketServerUrl);
-    console.log("this.video", this._videoData)
-
+    this.userId = idUser;
     this.kurentoWs.onmessage = (message) =>{ 
       
       var parsedMessage = JSON.parse(message.data);
@@ -33,6 +35,7 @@ export class WebrtcSocketService {
           break;
         
         case 'stopCommunication':
+          console.log("se cerro la transmición...")
           this.dispose();
           break;
         
@@ -47,13 +50,26 @@ export class WebrtcSocketService {
   /**
    * Proceso para presentar informacion del video.
    */
-  presenter(){
-    console.log("presenter video")
+  presenter(backCamera, frontCamera){
+    this._cameraBack = backCamera;
+    this._cameraFront = frontCamera;
+    let idCamera =  backCamera.id == "" ? frontCamera.id : backCamera.id;
+    let constraints = {
+      audio : true,
+      video:{
+        deviceId: {exact: idCamera}
+      }
+    }
+    
     if(!this.webRtcPeer){
       let options = {
         localVideo : this._videoData,
+        mediaConstraints : constraints,
         onicecandidate : (candidate) =>{this.onIceCandidate(candidate)} 
       }
+
+      console.log("options....", options);
+
       this.webRtcPeer = kurentoUtils.WebRtcPeer.WebRtcPeerSendonly(options, (error) =>{
           
         if(error) {
@@ -74,7 +90,8 @@ export class WebrtcSocketService {
     }
     let message = {
       keyWord : 'presenter',
-      sdpOffer : offerSdp
+      sdpOffer : offerSdp,
+      userId : this.userId
     };
     this.sendMessage(message);
   }
@@ -88,13 +105,14 @@ export class WebrtcSocketService {
     console.log('candidato local' + JSON.stringify(candidate));
     let message = {
       keyWord : 'onIceCandidate',
-      candidate : candidate
+      candidate : candidate,
+      userId  : this.userId
     }
     this.sendMessage(message);
   }
 
   /**
-   * Envia datos de infromacion al servidor.
+   * Envia datos de informacion al servidor.
    */
   sendMessage(message){
 
@@ -136,7 +154,9 @@ export class WebrtcSocketService {
     
     let message = {
       keyWord : 'viewer',
-      sdpOffer : offerSdp
+      sdpOffer : offerSdp,
+      idOwnerTrans : 1,
+      idUser : this.userId
     }
     this.sendMessage(message)
   }
@@ -173,6 +193,9 @@ export class WebrtcSocketService {
     }
   }
 
+  /**
+   * Respuesta de las clientes conectados a la transmicion
+   */
   viewerResponse(message){
     console.log("respuesta desde servidor midd", message)
       if(message.response != 'accepted'){
@@ -184,6 +207,9 @@ export class WebrtcSocketService {
       }
   }
 
+  /**
+   * Liberamos el WebRtcPeer
+   */
   dispose(){
     if(this.webRtcPeer){
       this.webRtcPeer.dispose();
