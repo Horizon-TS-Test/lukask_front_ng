@@ -1,0 +1,56 @@
+<div class="personal-content personal-over-unset min-height-full max-height-full col-12 p-0" id="personal-payments-q">
+  <div class="personal-content min-height-full max-height-full p-overflow-auto">
+
+      <form #formPagos class="min-height-full card pb-3" id="frmP" (ngSubmit)="envioPagos()">
+      <div id="loading-content"></div>
+
+      <div class="card-header d-flex justify-content-between align-items-center">
+        CANCELAR SU SERVICIO
+      </div>
+      <div class="card-img-top d-flex flex-wrap justify-content-center align-items-center">
+          <img class="mb-1" id="icon" src="{{pagos.icon}}" width="100%">
+      </div>
+      <ul class="list-group list-group-flush pb-0">
+        <li class="list-group-item pb-0">
+          <div class="col-12 pb-0">Factura: {{contentData}}
+            <input type="text" name="factura" #name="ngModel" [(ngModel)]="pagos.factura" class="form-control pb-0" required/>
+          </div>
+        </li>
+        <li class="list-group-item pb-0">
+          <div class="col-12 pb-0">Cédula :
+            <input type="text" name="ci" #name="ngModel" [(ngModel)]="pagos.ci" class="form-control pb-0 " required/>
+          </div>
+        </li>
+
+        <li class="list-group-item pb-0">
+          <div class="col-12 pb-0">Nombre :</div>
+          <div class="col-12 pb-0">
+            <input type="text" name="nombre" #name="ngModel" [(ngModel)]="pagos.nombre" class="form-control pb-0 " required />
+          </div>
+
+        </li>
+
+        <li class="list-group-item pb-0">
+          <div class="col-12 pb-0">Consumo:
+            <input type="text" name="consumo" #name="ngModel" [(ngModel)]="pagos.fechaemision" class="form-control pb-0 " required/>
+          </div>
+        </li>
+
+        <li class="list-group-item pb-0">
+          <div class="col-12 pb-0">Dirección:
+            <input type="text" name="direccion" #name="ngModel" [(ngModel)]="pagos.direccion" class="form-control pb-0" required/>
+          </div>
+        </li>
+        <li class="list-group-item pb-0">
+          <div class="col-12 pb-0">Total:
+            <input type="text" name="total" #name="ngModel" [(ngModel)]="pagos.total" class="form-control pb-0" required/>
+          </div>
+        </li>
+
+      </ul>
+    </form>
+
+  </div>
+</div>
+
+<material-btn-list [materialBtns]="matButtons" (someBtnAction)="getButtonAction($event)"></material-btn-list>
