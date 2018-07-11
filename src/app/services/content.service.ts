@@ -113,7 +113,8 @@ export class ContentService {
     let elementScroll = domElement.scrollTop();
     let elementHeight = domElement.height();
     let docHeight = 0;
-    domElement.children().each((index, element) => {
+
+    domElement.children().first().children().each((index, element) => {
       docHeight = docHeight + $(element).height();
     });
 

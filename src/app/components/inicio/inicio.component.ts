@@ -12,7 +12,7 @@ declare var $: any;
   styleUrls: ['./inicio.component.css']
 })
 export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
-  private self: any;
+  private pubContainer: any;
   private customCarousel: any;
   private subscriptor: Subscription;
 
@@ -26,7 +26,7 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.self = $('#local-content-1');
+    this.pubContainer = $('#pub-container');
     this._contentService.fadeInComponent($("#homeContainer"));
     
     this._notifierService.notifyChangeMenuContent(MENU_OPTIONS.home);
@@ -35,8 +35,8 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
         this.changeOwlContent(menuOption);
       });
 
-    this.self.scroll(() => {
-      if (this._contentService.isBottomScroll(this.self)) {
+    this.pubContainer.scroll(() => {
+      if (this._contentService.isBottomScroll(this.pubContainer)) {
         this._notifierService.notifyMorePubsRequest(true);
       }
     });

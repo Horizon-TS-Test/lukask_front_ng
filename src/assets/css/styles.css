@@ -192,6 +192,8 @@ p, label, div {
   opacity: 0;
   transform: translateY(-100%);
   transition: opacity 0s 0.4s, transform 1s ease; }
+  .bottom-loader .p-owl-img {
+    width: 60px !important; }
 
 .bottom-loader.hide {
   z-index: -1; }
@@ -230,10 +232,10 @@ p, label, div {
   100% {
     transform: scale(1); } }
 .p-home-full-height {
-    overflow-y: auto;
-    width: 100%;
-    height: calc(100vh - 55px);
-}
+  overflow-y: auto;
+  width: 100%;
+  height: calc(100vh - 55px); }
+
 .min-height-full {
   min-height: 110vh !important; }
 
@@ -1052,35 +1054,34 @@ p, label, div {
   font-size: 1.3rem; }
 
 .animated-btn {
-    position: absolute;
-    z-index: -1;
-    top: -100%;
-    left: 0px;
-    visibility: hidden;
-    -webkit-transform: scale(0);
-    -moz-transform: scale(0);
-    -ms-transform: scale(0);
-    -o-transform: scale(0);
-    transform: scale(0);
-    -webkit-transition: -webkit-transform 0.3s, visibility 0s 0.3s;
-    -moz-transition: -moz-transform 0.3s, visibility 0s 0.3s;
-    transition: transform 0.3s, visibility 0s 0.3s;
-}
+  position: absolute;
+  z-index: -1;
+  top: 0px;
+  left: 0px;
+  visibility: hidden;
+  -webkit-transform: scale(0);
+  -moz-transform: scale(0);
+  -ms-transform: scale(0);
+  -o-transform: scale(0);
+  transform: scale(0);
+  -webkit-transition: -webkit-transform 0.3s, visibility 0s 0.3s;
+  -moz-transition: -moz-transform 0.3s, visibility 0s 0.3s;
+  transition: transform 0.3s, visibility 0s 0.3s; }
+
 .animated-btn.animate-in {
-    z-index: 1;
-    visibility: visible;
-    -webkit-transition: all 0s;
-    -moz-transition: all 0s;
-    transition: all 0s;
-    -webkit-transform: scale(1);
-    -moz-transform: scale(1);
-    -ms-transform: scale(1);
-    -o-transform: scale(1);
-    transform: scale(1);
-    -webkit-animation: cd-bounce-in 0.3s linear;
-    -moz-animation: cd-bounce-in 0.3s linear;
-    animation: cd-bounce-in 0.3s linear;
-}
+  z-index: 1;
+  visibility: visible;
+  -webkit-transition: all 0s;
+  -moz-transition: all 0s;
+  transition: all 0s;
+  -webkit-transform: scale(1);
+  -moz-transform: scale(1);
+  -ms-transform: scale(1);
+  -o-transform: scale(1);
+  transform: scale(1);
+  -webkit-animation: cd-bounce-in 0.3s linear;
+  -moz-animation: cd-bounce-in 0.3s linear;
+  animation: cd-bounce-in 0.3s linear; }
 
 .camera-content {
   position: absolute !important;

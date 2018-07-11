@@ -213,6 +213,10 @@ p, label, div {
     opacity: 0;
     transform: translateY(-100%);
     transition: opacity 0s 0.4s, transform 1s ease;
+    
+    .p-owl-img {
+        width: 60px !important;
+    }
 }
 .bottom-loader.hide {
     z-index: -1;
