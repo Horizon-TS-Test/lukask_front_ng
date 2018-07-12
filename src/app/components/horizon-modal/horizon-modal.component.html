@@ -20,7 +20,7 @@
       <comment-list *ngSwitchCase="contentTypes.view_comments" [pubId]="_dynaContent.contentData" [isModal]="true" (closeModal)="close($event)"></comment-list>
       <user-edit *ngSwitchCase="contentTypes.edit_profile" (closeModal)="close($event)"></user-edit>
       <app-pagos-busqueda *ngSwitchCase="contentTypes.pagos_busq" (closeModal)="close($event)"></app-pagos-busqueda>
-      <app-payments *ngSwitchCase="contentTypes.payments" (closeModal)="close($event)"></app-payments>
+      <app-payments *ngSwitchCase="contentTypes.payments" [pagos]="_dynaContent.contentData" (closeModal)="close($event)"></app-payments>
     </ng-container>
   </div>
   

@@ -2,9 +2,8 @@ import { Component, OnInit, OnDestroy, Output, EventEmitter, Input } from '@angu
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { DynaContent } from '../../interfaces/dyna-content.interface';
 import { HorizonButton } from '../../interfaces/horizon-button.interface';
-import { Pagos } from '../../interfaces/planillas-data';
 import planillasData from '../../data/planillas-data';
-
+import { Payment } from '../../models/payments';
 
 declare var $: any;
 
@@ -15,21 +14,20 @@ declare var $: any;
 })
 export class PagosBusquedaComponent implements OnInit{
   @Output() closeModal: EventEmitter<boolean>;
-  @Input() pagos: Pagos[];
-  @Input() pagosPlanilla: Pagos[];
+  @Input() pagos: Payment;
   private _CLOSE = 1;
-    private self: any;
-  public cedula:'';
+  private self: any;
   public _dynaContent: DynaContent;
   public formQuej: FormGroup;
   public matButtons: HorizonButton[];
+  
   
 
   constructor(
     private formBuilder: FormBuilder
   ) {
-    this.pagos = planillasData;
     this.closeModal = new EventEmitter<boolean>();
+    this.pagos = planillasData;
     this.matButtons = [
       {
         parentContentType: 0,

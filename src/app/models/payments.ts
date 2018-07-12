@@ -3,12 +3,13 @@ export class Payment {
         public factura?: string,
         public empresa?: string,
         public nombre?: string,
-        public ci?: number,
-        public medidor?: number,
+        public ci?: string,
+        public medidor?: string,
         public direccion?: string,
         public fechaemision?: string,
         public fechapago?: string,
-        public subtotal?: number,
-        public total?: number
+        public subtotal?: string,
+        public total?: string,
+        public icon?: string
     ) { }
 }

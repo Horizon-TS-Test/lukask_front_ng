@@ -12,6 +12,6 @@ export var REST_SERV = {
     mediaBack: 'http://192.168.1.57:8080',
     pushSub: 'http://192.168.1.19:3200/subscribe',
     socketServerUrl: 'http://192.168.1.42:3000',
-    userUrl:'http://192.168.1.42:3000/user/',
-    paymentUrl:'http://192.168.1.42:3000/user/'
+    userUrl: 'http://192.168.1.42:3000/user/',
+    paymentPay: 'http://192.168.1.42:3000/payment/pay'
 }

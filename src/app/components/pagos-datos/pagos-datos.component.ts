@@ -2,8 +2,7 @@ import { Component, OnInit, Input, OnDestroy, Output } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NotifierService } from '../../services/notifier.service';
 import { CONTENT_TYPES } from '../../config/content-type';
-import planillasData from '../../data/planillas-data';
-import { Pagos } from '../../interfaces/planillas-data';
+import { Payment } from '../../models/payments';
 
 
 @Component({
@@ -12,14 +11,13 @@ import { Pagos } from '../../interfaces/planillas-data';
   styleUrls: ['./pagos-datos.component.css']
 })
 export class PagosDatosComponent implements OnInit {
-  @Input() pagos: Pagos[];
+  @Input() pagos: Payment;
   public contentTypes: any;
 
   constructor(
     private _notifierService: NotifierService
   ) {
     this.contentTypes = CONTENT_TYPES;
-   // this.pagos = planillasData;
   }
 
   ngOnInit() {
@@ -30,7 +28,6 @@ export class PagosDatosComponent implements OnInit {
    */
   viewPagosDetail (event: any, contType: number, pagos: any) {
     event.preventDefault();
-    console.log(pagos);
     this._notifierService.notifyNewContent({ contentType: contType, contentData: pagos });
   }
 }
