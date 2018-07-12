@@ -1056,7 +1056,7 @@ p, label, div {
 .animated-btn {
   position: absolute;
   z-index: -1;
-  top: 0px;
+  top: -100%;
   left: 0px;
   visibility: hidden;
   -webkit-transform: scale(0);
