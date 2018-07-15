@@ -742,6 +742,14 @@ p, label, div {
     height: 180px;
     object-fit: cover; }
 
+.p-pub-media {
+  max-height: 250px; }
+  .p-pub-media img {
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    border-radius: 3px;
+    height: 250px;
+    object-fit: cover; }
+
 /*************************************
 ///////SECTION TO SHOW ALERTS:
 *************************************/

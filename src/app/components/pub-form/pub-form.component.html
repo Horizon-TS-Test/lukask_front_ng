@@ -1,0 +1,37 @@
+<form [formGroup]="formPub" class="p-no-border-rad-card p-border-none card pb-0" id="frmQ" (ngSubmit)="sendPub()">
+  <div #gmap id="mapa"></div>
+
+  <ul class="list-group list-group-flush pb-0">
+
+    <li class="list-group-item">
+      <fa name="calendar" class="mr-1"></fa>
+      <div class="ml-1">2018-04-27 16:25</div>
+    </li>
+
+    <li class="list-group-item">
+      <fa name="map-marker" class="mr-1"></fa>
+      <div class="ml-1">{{ _locationCity }}</div>
+    </li>
+
+    <li class="list-group-item">
+      <fa name="location-arrow" class="mr-1"></fa>
+      <div class="ml-1">{{ _locationAdress }}</div>
+      <button type="button" id="hidden-btn" style="display:none">
+        <fa name="check"></fa>
+      </button>
+    </li>
+
+    <li class="list-group-item">
+      <fa name="bullhorn"></fa>
+      <app-select2-bootstrap class="col-11" [fcName]="'quejaType'" [select2Data]="tipoQuejaSelect" (select2Change)="getSelect2Value($event)"></app-select2-bootstrap>
+    </li>
+
+    <li class="list-group-item pb-0">
+      <div class="form-group row col-12 pb-0">
+        <div class="col-10 pb-0">
+          <textarea name="detail" formControlName="fcnDetail" class="form-control pb-0" cols="30" rows="5"></textarea>
+        </div>
+      </div>
+    </li>
+  </ul>
+</form>
