@@ -4,6 +4,7 @@ import { QuejaService } from '../../services/queja.service';
 import { Publication } from '../../models/publications';
 import { Subscription } from 'rxjs';
 import { NotifierService } from '../../services/notifier.service';
+import { DateManager } from '../../tools/date-manager';
 
 @Component({
   selector: 'app-quejas-list',
@@ -47,6 +48,9 @@ export class QuejaListComponent implements OnInit, OnDestroy {
   getPubList() {
     this._quejaService.getPubList().then((pubs: Publication[]) => {
       this.pubList = pubs;
+      console.log("this.pubList", this.pubList)
+      DateManager.setFormatDate(this.pubList);
+      //setInterval(DateManager.setFormatDate(this.pubList), 60000);
     }).catch(err => {
       console.log(err);
     });
