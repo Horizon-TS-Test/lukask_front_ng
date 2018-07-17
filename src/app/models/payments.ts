@@ -8,8 +8,8 @@ export class Payment {
         public direccion?: string,
         public fechaemision?: string,
         public fechapago?: string,
-        public subtotal?: string,
-        public total?: string,
+        public subtotal?: number,
+        public total?: number,
         public icon?: string
     ) { }
 }

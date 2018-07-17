@@ -15,14 +15,15 @@ export class PaymentsService {
     private _userServices: UserService
   ) { }
 
-/* Envio de los datos para realizar el Post del Pago en Pay Pal */
+  /* Envio de los datos para realizar el Post del Pago en Pay Pal */
 
-public postPagosClient(pagos: Payment) {
+  public postPagosClient(pagos: Payment) {
     const requestHeaders = new Headers({
       'Content-Type': 'application/json',
       'X-Access-Token': this._userServices.getUserKey()
     });
-    const requestBody = JSON.stringify({factura: pagos.factura,
+    const requestBody = JSON.stringify({
+      factura: pagos.factura,
       empresa: pagos.empresa,
       nombre: pagos.nombre,
       ci: pagos.ci,
@@ -33,15 +34,14 @@ public postPagosClient(pagos: Payment) {
       subtotal: pagos.subtotal,
       total: pagos.total,
       icon: pagos.icon
-
     });
 
     return this._http.post(REST_SERV.paymentPay, requestBody, { headers: requestHeaders, withCredentials: true }).toPromise()
-      .then((response: Response) => {
-        let respJson = response.json();
-        console.log(respJson);
-        return respJson;
-      });
+    .then((response: Response) => {
+      let respJson = response.json();
+      console.log(respJson);
+      return respJson;
+    });
   }
 
 }

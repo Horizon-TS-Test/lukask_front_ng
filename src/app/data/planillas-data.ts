@@ -8,8 +8,8 @@ export default [
         direccion: 'VIA A BAÑOS S7N BARRIO NUEVO AMANECER',
         fechaemision: '03/JUNIO/2018',
         fechapago: '03/JULIO/2018',
-        subtotal: '15.16',
-        total: '30.94',
+        subtotal: 15.16,
+        total: 30.94,
         icon: '/assets/images/payments/eer.png'
     },
     {
@@ -21,8 +21,8 @@ export default [
         direccion: 'VIA A BAÑOS S7N BARRIO NUEVO AMANECER',
         fechaemision: '03/JUNIO/2018',
         fechapago: '03/JULIO/2018',
-        subtotal: '48.75',
-        total: '48.75',
+        subtotal: 8.75,
+        total: 48.75,
         icon: '/assets/images/payments/emp.jpg'
     },
     {
@@ -34,8 +34,8 @@ export default [
         direccion: 'VIA A BAÑOS S7N BARRIO NUEVO AMANECER',
         fechaemision: '03/JUNIO/2018',
         fechapago: '03/JULIO/2018',
-        subtotal: '56.94',
-        total: '56.94',
+        subtotal: 56.94,
+        total: 56.94,
         icon: '/assets/images/payments/cnt.jpg'
     }, {
         factura: '001-639-019293070',
@@ -46,8 +46,8 @@ export default [
         direccion: 'VIA A BAÑOS S7N BARRIO NUEVO AMANECER',
         fechaemision: '03/JUNIO/2018',
         fechapago: '03/JULIO/2018',
-        subtotal: '15.16',
-        total: '15.16',
+        subtotal: 5.16,
+        total: 15.16,
         icon: '/assets/images/payments/cpc.jpg'
     }
 ]

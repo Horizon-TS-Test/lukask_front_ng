@@ -28,6 +28,7 @@ export class PagosBusquedaComponent implements OnInit{
   ) {
     this.closeModal = new EventEmitter<boolean>();
     this.pagos = planillasData;
+    
     this.matButtons = [
       {
         parentContentType: 0,

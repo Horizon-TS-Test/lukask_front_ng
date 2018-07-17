@@ -7,7 +7,7 @@ export interface Pagos {
       direccion: string ;
       fechaemision: string ;
       fechapago: string ;
-      subtotal: string ;
-      total: string;
+      subtotal: number ;
+      total: number;
       icon: string;
 }
