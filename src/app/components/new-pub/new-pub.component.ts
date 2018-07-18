@@ -12,15 +12,17 @@ declare var $: any;
 export class NewPubComponent implements OnInit, AfterViewInit {
   @Output() closeModal = new EventEmitter<boolean>();
 
-  private customCarousel: any;
-
-  public carouselOptions: any;
+  public openStream: boolean;
   public initStream: boolean;
+  public hideActionBtns: boolean;
   public matButtons: HorizonButton[];
   public actionType: number;
+  public transmitStyle: string;
 
   constructor() {
     this.initStream = false;
+    this.openStream = false;
+    this.hideActionBtns = false;
     this.matButtons = [
       {
         parentContentType: 0,
@@ -30,7 +32,7 @@ export class NewPubComponent implements OnInit, AfterViewInit {
       },
       {
         parentContentType: 0,
-        action: ACTION_TYPES.initStream,
+        action: ACTION_TYPES.pubStream,
         icon: 'f',
         customIcon: true,
         class: 'animated-btn'
@@ -43,53 +45,37 @@ export class NewPubComponent implements OnInit, AfterViewInit {
     ];
   }
 
-  ngOnInit() {
-    this.initCarousel();
-  }
+  ngOnInit() { }
 
-  ngAfterViewInit() {
-    this.handleCameraStatus();
-  }
-
-  /**
-   * MÉTODO PARA DEFINIR LAS PROPIEDADES DEL CAROUSEL DE SECCIONES:
-   */
-  initCarousel() {
-    this.carouselOptions = {
-      items: 1, dots: false, loop: false, margin: 5,
-      nav: false, stagePadding: 0, autoWidth: false
-    };
-  }
-
-  /**
-   * HANDLE CAMERA STATUS ON DRAG THE CAROUSEL:
-   */
-  handleCameraStatus() {
-    this.customCarousel = $('#carousel-edit-q');
-    this.customCarousel.on('dragged.owl.carousel', (event) => {
-      const streamView = this.customCarousel.find('.owl-item:last-child');
-      if (streamView.hasClass('active')) {
-        this.initStream = true;
-      } else {
-        this.initStream = false;
-      }
-    });
-  }
+  ngAfterViewInit() { }
 
   /**
    * MÉTODO PARA ACCEDER A LA OPCIÓN DE INICIAR STREAMING:
    * @param event 
    * @param cancel PARA SALIR DE LA OPCIÓN DE INICIAR STREAMING
    */
-  initStreaming(event: any, cancel: boolean = false) {
+  initStreaming(event: any) {
     event.preventDefault();
-    if (cancel) {
-      $('.owl-carousel').trigger('prev.owl.carousel');
-      this.initStream = false;
-    } else {
-      $('.owl-carousel').trigger('next.owl.carousel');
+
+    if (this.initStream === false) {
       this.initStream = true;
+      this.transmitStyle = "selected";
     }
+    else {
+      this.initStream = false;
+      this.transmitStyle = null;
+    }
+  }
+
+  /**
+   * MÉTODO PARA DESLIZAR EN PRIMER PLANO LA INTERFAZ DE STREAMING:
+   */
+  private enableStream() {
+    const normalPub = $("#normalPub");
+    const streamingPub = $("#streamingPub");
+    streamingPub.removeClass("next");
+    normalPub.addClass("prev");
+    this.hideActionBtns = true;
   }
 
   /**
@@ -97,8 +83,12 @@ export class NewPubComponent implements OnInit, AfterViewInit {
    */
   getButtonAction(actionEvent: number) {
     switch (actionEvent) {
-      case ACTION_TYPES.submitPub:
-        this.actionType = ACTION_TYPES.submitPub;
+      default:
+        this.actionType = actionEvent;
+        break;
+      case ACTION_TYPES.pubStream:
+        this.actionType = actionEvent;
+        this.enableStream();
         break;
       case ACTION_TYPES.close:
         this.closeModal.emit(true);

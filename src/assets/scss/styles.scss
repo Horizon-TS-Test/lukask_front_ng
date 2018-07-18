@@ -278,6 +278,41 @@ p, label, div {
       transform: scale(1);
     }
 }
+
+
+@-webkit-keyframes cd-bounce-infinit {
+    0% {
+      -webkit-transform: scale(1.2);
+    }
+    60% {
+      -webkit-transform: scale(.9);
+    }
+    100% {
+      -webkit-transform: scale(1.2);
+    }
+}
+@-moz-keyframes cd-bounce-infinit {
+    0% {
+        -moz-transform: scale(1.2);
+      }
+      60% {
+        -moz-transform: scale(.9);
+      }
+      100% {
+        -moz-transform: scale(1.2);
+      }
+}
+@keyframes cd-bounce-infinit {
+    0% {
+        transform: scale(1.2);
+      }
+      60% {
+        transform: scale(.9);
+      }
+      100% {
+        transform: scale(1.2);
+      }
+}
 ////
 
 //HEIGHT:
@@ -340,6 +375,9 @@ p, label, div {
     @include MQ(L) {
         font-size: 5.6rem;
     }
+}
+.personal-site-icon.selected {
+    color: $primary !important;
 }
 
 .icon-size-5 {
@@ -882,6 +920,38 @@ p, label, div {
     background: $primary !important;
 }
 
+//ESTILOS PARA FORMULARIO TRANSPARENTE:
+.transparent-form {
+    position: absolute !important;
+    z-index: 1;
+}
+.transparent-form, .transparent-form ul, .transparent-form ul li {
+    background: rgba(0, 0, 0, .3) !important;
+    border-color: rgba(255, 255, 255, .8) !important;
+    color: $secondary-text !important;
+}
+.transparent-form {
+    ul {
+        li {
+            div {
+                color: $secondary-text !important;
+            }
+        }
+    }
+}
+.transparent-form {
+    ul {
+        li {
+            textarea, textarea:focus {
+                background: transparent;
+                border-color: #fff;
+                color: #fff;
+            }
+        }
+    }
+}
+////
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /*
 * //QUEJA
@@ -947,8 +1017,25 @@ p, label, div {
             height: 180px;
             object-fit: cover;
         }
+        img.full {
+            width: 100%;
+        }
+        img.half {
+            width: 48%;
+        }
     }
 }
+//EDIT-QUEJA
+.p-pub-media {
+    max-height: 250px;
+    img {
+        border: 1px solid rgba(0, 0, 0, .125);
+        border-radius: 3px;
+        height: 250px;
+        object-fit: cover;
+    }
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1345,8 +1432,15 @@ p, label, div {
 }
 
 .no-border-button {
+    width: 27px;
+    height: 27px;
     border: none !important;
     background: transparent !important;
+    transition: all .3s;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
     
     fa, span {
         font-size: 1.1rem;
@@ -1373,6 +1467,21 @@ p, label, div {
     fa, span {
         font-size: 1.3rem;
     }
+}
+
+.focused-btn {
+    background: $primary !important;
+    border-radius: 50%;
+    position: absolute;
+    animation: cd-bounce-infinit 1.2s infinite;
+
+    fa, span {
+        color: $secondary-text
+    }
+}
+.focused-btn.unable {
+    background: $primary-text !important;
+    animation: unset;
 }
 
 .animated-btn {
@@ -1513,5 +1622,22 @@ input[type=text], input[type=password], input[type=email], textarea{
     right: $nav-x + $nav-menu-size-lg - .5rem;
     bottom: $nav-menu-bottom-lg + $nav-menu-size-lg - .5rem;
     background: $primary;
+}
+////
+
+//////////////////CAROUSEL PERSONALIZADO////////////////
+.personal-carousel.prev {
+    position: absolute;
+    transform: translateX(-100%);
+    transition: all .6s;
+}
+.personal-carousel {
+    position: relative;
+    transform: translateX(0);
+    transition: all .4s;
+}
+.personal-carousel.next {
+    position: absolute;
+    transform: translateX(100%);
 }
 ////

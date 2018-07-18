@@ -6,48 +6,67 @@ import { REST_SERV } from '../rest-url/rest-servers';
   providedIn: 'root'
 })
 export class WebrtcSocketService {
-  public kurentoWs : any;
+  private webRtcPeer: any;
+  private _videoData: any;
+  private userId: any;
+
+  public kurentoWs: any;
   public video: any;
-  private webRtcPeer:any;
-  private _videoData:any;
-  private _cameraBack:any;
-  private _cameraFront:any;
-  private userId:any;
-  constructor() { 
+  
+  constructor() {
   }
 
   /**
-   * Inicia proceso de coneccion a socket.
+   * MÉTODO PARA CONECTAR AL WEBSOCKET DE KURENTO CLIENT DEL MIDDLEWARE:
    * @param idUser 
    * @param _video 
    */
-  connecToKurento(idUser:any, _video){
-    
-    this._videoData = _video;
-    this.kurentoWs  = new WebSocket(REST_SERV.webRtcSocketServerUrl);
-    this.userId = idUser;
-    this.kurentoWs.onmessage = (message) =>{ 
-      
+  connecToKurento(idUser: any, _video: any) {
+    let websocketPromise = new Promise((resolve, reject) => {
+      this.kurentoWs = new WebSocket(REST_SERV.webRtcSocketServerUrl);
+
+      this.kurentoWs.onopen = (open) => {
+        console.log("idUser", idUser)
+        this.userId = idUser;
+        this._videoData = _video;
+        this.messageFromKurento();
+        console.log("[WEBRTC-SOCKET SERVICE]: CONEXIÓN EXITOSA AL WEBSOCKET DE KURENTO CLIENT", open);
+        resolve(true);
+      }
+      this.kurentoWs.onerror = (error) => {
+        this.kurentoWs = null;
+        console.log("[WEBRTC-SOCKET SERVICE]: CONEXIÓN FALLIDA AL WEBSOCKET DE KURENTO CLIENT", error);
+        reject(false);
+      }
+    });
+
+    return websocketPromise;
+  }
+
+  /**
+   * MÉTODO PARA RECIBIR LAS RESPUESTAS DEL SERVIDOR MIDDLEWARE DONDE SE EJECUTA EL KURENTO CLIENT:
+   */
+  messageFromKurento() {
+    this.kurentoWs.onmessage = (message) => {
       var parsedMessage = JSON.parse(message.data);
-      console.log("parsedMessage.keyWord", parsedMessage.keyWord)
-      switch(parsedMessage.keyWord){
+      console.log("parsedMessage.keyWord", parsedMessage.keyWord);
+      switch (parsedMessage.keyWord) {
         case 'presenterResponse':
           this.presenterResponse(parsedMessage);
           break;
-        
+
         case 'viewerResponse':
           this.viewerResponse(parsedMessage);
           break;
-        
+
         case 'stopCommunication':
           console.log("se cerro la transmición...")
           this.dispose();
           break;
-        
+
         case 'iceCandidate':
           this.webRtcPeer.addIceCandidate(parsedMessage.candidate);
           break;
-        
       }
     };
   }
@@ -55,32 +74,30 @@ export class WebrtcSocketService {
   /**
    * Proceso para presentar informacion del video.
    */
-  presenter(backCamera, frontCamera){
-    this._cameraBack = backCamera;
-    this._cameraFront = frontCamera;
-    let idCamera =  backCamera.id == "" ? frontCamera.id : backCamera.id;
+  presenter(backCamera, frontCamera) {
+    let idCamera = backCamera.id == "" ? frontCamera.id : backCamera.id;
     let constraints = {
-      audio : true,
-      video:{
-        deviceId: {exact: idCamera}
+      audio: true,
+      video: {
+        deviceId: { exact: idCamera }
       }
     }
-    
-    if(!this.webRtcPeer){
+
+    if (!this.webRtcPeer) {
       let options = {
-        localVideo : this._videoData,
-        mediaConstraints : constraints,
-        onicecandidate : (candidate) =>{this.onIceCandidate(candidate)} 
+        localVideo: this._videoData,
+        mediaConstraints: constraints,
+        onicecandidate: (candidate) => { this.onIceCandidate(candidate) }
       }
 
       console.log("options....", options);
 
-      this.webRtcPeer = kurentoUtils.WebRtcPeer.WebRtcPeerSendonly(options, (error) =>{
-          
-        if(error) {
-            console.log(error);
+      this.webRtcPeer = kurentoUtils.WebRtcPeer.WebRtcPeerSendonly(options, (error) => {
+
+        if (error) {
+          console.log(error);
         }
-        this.webRtcPeer.generateOffer((error, offerSdp) => {this.onOfferPresenter(error, offerSdp)});
+        this.webRtcPeer.generateOffer((error, offerSdp) => { this.onOfferPresenter(error, offerSdp) });
       });
     }
   }
@@ -88,15 +105,15 @@ export class WebrtcSocketService {
   /**
    * Oferta del presentador del video.
    */
-  onOfferPresenter(error, offerSdp){
-    
-    if(error) {
-        console.log("error al ofertar", error)
+  onOfferPresenter(error, offerSdp) {
+
+    if (error) {
+      console.log("error al ofertar", error)
     }
     let message = {
-      keyWord : 'presenter',
-      sdpOffer : offerSdp,
-      userId : this.userId
+      keyWord: 'presenter',
+      sdpOffer: offerSdp,
+      userId: this.userId
     };
     this.sendMessage(message);
   }
@@ -105,13 +122,13 @@ export class WebrtcSocketService {
    * Presenta informacion, de candidato a la transmicion
    * @param candidate 
    */
-  onIceCandidate(candidate){
+  onIceCandidate(candidate) {
 
     console.log('candidato local' + JSON.stringify(candidate));
     let message = {
-      keyWord : 'onIceCandidate',
-      candidate : candidate,
-      userId  : this.userId
+      keyWord: 'onIceCandidate',
+      candidate: candidate,
+      userId: this.userId
     }
     this.sendMessage(message);
   }
@@ -119,29 +136,29 @@ export class WebrtcSocketService {
   /**
    * Envia datos de informacion al servidor.
    */
-  sendMessage(message){
+  sendMessage(message) {
 
-    var jsonMessage  = JSON.stringify(message);
-    console.log("enviando mensaje", jsonMessage);
+    var jsonMessage = JSON.stringify(message);
+    console.log("enviando mensaje", this.kurentoWs);
     this.kurentoWs.send(jsonMessage);
   }
 
   /**
    * Proceso de presentaacio de video para los clientes(viewer)
    */
-  startViewer(){
-    if(!this.webRtcPeer){
+  startViewer(ownerId: string) {
+    if (!this.webRtcPeer) {
 
       let options = {
         remoteVideo: this._videoData,
-        onicecandidate : (candidate) =>{ this.onIceCandidate(candidate)}
+        onicecandidate: (candidate) => { this.onIceCandidate(candidate) }
       }
 
-      this.webRtcPeer = kurentoUtils.WebRtcPeer.WebRtcPeerRecvonly(options, (error)  =>{
-          if(error) {
-            console.log("error", error);
-          }
-          this.webRtcPeer.generateOffer((error, offerSdp) => {this.onOfferViewer(error, offerSdp)})
+      this.webRtcPeer = kurentoUtils.WebRtcPeer.WebRtcPeerRecvonly(options, (error) => {
+        if (error) {
+          console.log("error", error);
+        }
+        this.webRtcPeer.generateOffer((error, offerSdp) => { this.onOfferViewer(error, offerSdp, ownerId) })
       });
     }
   }
@@ -150,18 +167,19 @@ export class WebrtcSocketService {
    * Procesa la oferta del cliente
    * @param error 
    * @param offerSdp 
+   * @param ownerId ID DEL USUARIO DUEÑO DE LA TRANSMISIÓN:
    */
-  onOfferViewer(error, offerSdp){
-    if(error){
+  onOfferViewer(error: any, offerSdp: any, ownerId: string) {
+    if (error) {
       console.log(error);
       return error;
     }
-    
+
     let message = {
-      keyWord : 'viewer',
-      sdpOffer : offerSdp,
-      idOwnerTrans : 1,
-      idUser : this.userId
+      keyWord: 'viewer',
+      sdpOffer: offerSdp,
+      idOwnerTrans: ownerId,
+      idUser: this.userId
     }
     this.sendMessage(message)
   }
@@ -169,13 +187,13 @@ export class WebrtcSocketService {
   /**
    * Procese a detener la transmicion del presenter.
    */
-  stop(){
-    if(this.webRtcPeer){
+  closeTransmissionCnn() {
+    if (this.webRtcPeer) {
       var messege = {
-        keyWord : 'stop',
-        idUser : this.userId
+        keyWord: 'stop',
+        idUser: this.userId
       }
-
+      console.log("messege", messege);
       this.sendMessage(messege);
       this.dispose();
     }
@@ -188,13 +206,13 @@ export class WebrtcSocketService {
   /**
    * respuesta del presenter 
    */
-  presenterResponse(message){
+  presenterResponse(message) {
     console.log("Respuesta desde middleware", message.sdpAnswer)
-    if(message.response != 'accepted'){
-      var errorMsg =  message.message ? message.message : 'Unknow error';
+    if (message.response != 'accepted') {
+      var errorMsg = message.message ? message.message : 'Unknow error';
       console.warn('Call not accepted for the following reason: ' + errorMsg);
       this.dispose();
-    }else{
+    } else {
       this.webRtcPeer.processAnswer(message.sdpAnswer);
     }
   }
@@ -202,22 +220,22 @@ export class WebrtcSocketService {
   /**
    * Respuesta de las clientes conectados a la transmicion
    */
-  viewerResponse(message){
+  viewerResponse(message) {
     console.log("respuesta desde servidor midd", message)
-      if(message.response != 'accepted'){
-        let errorMsg = message.message ? message.message : 'Unknow error';
-        console.warn('Call not accepted for the following reason: ' + errorMsg);
-        this.dispose();
-      } else {
-        this.webRtcPeer.processAnswer(message.sdpAnswer);
-      }
+    if (message.response != 'accepted') {
+      let errorMsg = message.message ? message.message : 'Unknow error';
+      console.warn('Call not accepted for the following reason: ' + errorMsg);
+      this.dispose();
+    } else {
+      this.webRtcPeer.processAnswer(message.sdpAnswer);
+    }
   }
 
   /**
    * Liberamos el WebRtcPeer
    */
-  dispose(){
-    if(this.webRtcPeer){
+  dispose() {
+    if (this.webRtcPeer) {
       this.webRtcPeer.dispose();
       this.webRtcPeer = null;
     }

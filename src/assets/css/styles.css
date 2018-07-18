@@ -231,6 +231,27 @@ p, label, div {
     transform: scale(1.2); }
   100% {
     transform: scale(1); } }
+@-webkit-keyframes cd-bounce-infinit {
+  0% {
+    -webkit-transform: scale(1.2); }
+  60% {
+    -webkit-transform: scale(0.9); }
+  100% {
+    -webkit-transform: scale(1.2); } }
+@-moz-keyframes cd-bounce-infinit {
+  0% {
+    -moz-transform: scale(1.2); }
+  60% {
+    -moz-transform: scale(0.9); }
+  100% {
+    -moz-transform: scale(1.2); } }
+@keyframes cd-bounce-infinit {
+  0% {
+    transform: scale(1.2); }
+  60% {
+    transform: scale(0.9); }
+  100% {
+    transform: scale(1.2); } }
 .p-home-full-height {
   overflow-y: auto;
   width: 100%;
@@ -281,6 +302,9 @@ p, label, div {
   @media only screen and (min-width: 992px) {
     .personal-site-icon {
       font-size: 5.6rem; } }
+
+.personal-site-icon.selected {
+  color: #5dbeb6 !important; }
 
 .icon-size-5 {
   font-size: 5rem; }
@@ -688,6 +712,23 @@ p, label, div {
   color: #fff !important;
   background: #5dbeb6 !important; }
 
+.transparent-form {
+  position: absolute !important;
+  z-index: 1; }
+
+.transparent-form, .transparent-form ul, .transparent-form ul li {
+  background: rgba(0, 0, 0, 0.3) !important;
+  border-color: rgba(255, 255, 255, 0.8) !important;
+  color: #fff !important; }
+
+.transparent-form ul li div {
+  color: #fff !important; }
+
+.transparent-form ul li textarea, .transparent-form ul li textarea:focus {
+  background: transparent;
+  border-color: #fff;
+  color: #fff; }
+
 /*
 * //QUEJA
 */
@@ -740,6 +781,18 @@ p, label, div {
     border: 1px solid rgba(0, 0, 0, 0.125);
     border-radius: 3px;
     height: 180px;
+    object-fit: cover; }
+  .personal-queja .card-img-top img.full {
+    width: 100%; }
+  .personal-queja .card-img-top img.half {
+    width: 48%; }
+
+.p-pub-media {
+  max-height: 250px; }
+  .p-pub-media img {
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    border-radius: 3px;
+    height: 250px;
     object-fit: cover; }
 
 /*************************************
@@ -1034,8 +1087,14 @@ p, label, div {
     color: #fff; }
 
 .no-border-button {
+  width: 27px;
+  height: 27px;
   border: none !important;
-  background: transparent !important; }
+  background: transparent !important;
+  transition: all .3s;
+  display: flex;
+  justify-content: center;
+  align-items: center; }
   .no-border-button fa, .no-border-button span {
     font-size: 1.1rem;
     color: #5dbeb6;
@@ -1052,6 +1111,18 @@ p, label, div {
 
 .no-border-button.md fa, .no-border-button.md span {
   font-size: 1.3rem; }
+
+.focused-btn {
+  background: #5dbeb6 !important;
+  border-radius: 50%;
+  position: absolute;
+  animation: cd-bounce-infinit 1.2s infinite; }
+  .focused-btn fa, .focused-btn span {
+    color: #fff; }
+
+.focused-btn.unable {
+  background: #848b76 !important;
+  animation: unset; }
 
 .animated-btn {
   position: absolute;
@@ -1168,5 +1239,19 @@ input[type=text], input[type=password], input[type=email], textarea {
   right: 3.2rem;
   bottom: 3.1rem;
   background: #5dbeb6; }
+
+.personal-carousel.prev {
+  position: absolute;
+  transform: translateX(-100%);
+  transition: all .6s; }
+
+.personal-carousel {
+  position: relative;
+  transform: translateX(0);
+  transition: all .4s; }
+
+.personal-carousel.next {
+  position: absolute;
+  transform: translateX(100%); }
 
 /*# sourceMappingURL=styles.css.map */

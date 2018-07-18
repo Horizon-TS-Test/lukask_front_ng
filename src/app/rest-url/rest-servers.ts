@@ -1,4 +1,4 @@
-export var REST_SERV = {
+export const REST_SERV = {
     /*socketServerUrl: 'http://127.0.0.1:8070',
     publicationsUrl: 'http://127.0.0.1:8070/publication',
     qTypeUrl: 'http://127.0.0.1:8070/qtype',

@@ -37,5 +37,7 @@
     <div class="personal-dyna-down col-12 p-0" *ngSwitchCase="contentTypes.view_notifs">
       <notification-list (closeModal)="close($event)"></notification-list>
     </div>
+
+    <media-streaming *ngSwitchCase="contentTypes.view_transmission" [openStream]="false" [streamOwnerId]="_dynaContent.contentData" (closeModal)="close($event)"></media-streaming>
   </ng-container>
 </div>

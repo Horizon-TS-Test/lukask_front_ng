@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, Input } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 import { Device } from '../../interfaces/device.interface';
 import { NotifierService } from '../../services/notifier.service';
 import { CAMERA_ACTIONS } from '../../config/camera-actions';
@@ -15,10 +15,12 @@ import { UserService } from '../../services/user.service';
   templateUrl: './webrtc-camera.component.html',
   styleUrls: ['./webrtc-camera.component.css'],
   providers: [WebrtcSocketService]
-  
+
 })
 export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() startCamera: boolean;
+  @Input() streamOwnerId: string;
+  @Output() fileEmitter = new EventEmitter<MediaFile>();
 
   private _frontCamera: Device;
   private _backCamera: Device;
@@ -46,10 +48,9 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
     //LISTEN FOR ANY CAMERA EVENT:
     this.subscription = this._notifierService._cameraAction.subscribe(
       (cameraAction: number) => {
-        console.log("cameraAction", cameraAction)
         switch (cameraAction) {
           case CAMERA_ACTIONS.start_camera:
-            //this.startCamera = true;
+            this.startCamera = true;
             this.startFrontLiveCam();
             break;
           case CAMERA_ACTIONS.snap_shot:
@@ -71,20 +72,19 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
             break;
           case CAMERA_ACTIONS.init_transmision:
             //AQUÍ DEBES LLAMAR A TUS MÉTODOS PARA LA TRANSMISIÓN DENNYS :D 
-            console.log("Inicio la transmicion")
-            this._webrtcSocketService.presenter(this._backCamera, this._frontCamera);
+            this.startTransmission();
             break;
           case CAMERA_ACTIONS.pause_transmision:
             //AQUÍ DEBES LLAMAR A TUS MÉTODOS PARA LA TRANSMISIÓN DENNYS :D
             break;
           case CAMERA_ACTIONS.stop_transmision:
             //AQUÍ DEBES LLAMAR A TUS MÉTODOS PARA LA TRANSMISIÓN DENNYS :D
-            console.log("cameraAction", cameraAction)
-            this._webrtcSocketService.stop();
+            this._webrtcSocketService.closeTransmissionCnn();
             break;
           case CAMERA_ACTIONS.join_transmision:
-            console.log("entro a repetir")
-            this._webrtcSocketService.startViewer();
+            if (this.streamOwnerId) {
+              this.joinTransmission();
+            }
             break;
           case CAMERA_ACTIONS.stop_stream:
             this.startCamera = false;
@@ -98,8 +98,6 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit() {
     this.initVariables();
-    console.log("startCamera", this.startCamera);
-    this.connectTosocket();
   }
 
   ngAfterViewInit() {
@@ -108,11 +106,16 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
       this.getDevices(data);
     }).catch(this.handleError);
 
-    this.startFrontLiveCam();
+    if (this.streamOwnerId) {
+      this.joinTransmission();
+    }
+    else {
+      this.startFrontLiveCam();
+    }
   }
 
   /**
-   * Inicializar variables
+   * MÉTODO PARA INICIAR VARIABLES
    */
   initVariables() {
     let videoArray = document.querySelectorAll(".video-camera");
@@ -216,19 +219,48 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  ///*****************************AQUÍ DEBES LLAMAR A TUS MÉTODOS PARA LA TRANSMISIÓN DENNYS :D********
   /**
-   * Iniciamos la coneccion al socket de kurento Client.
+   * MÉTODO PARA INCIAR LA CONEXIÓN AL SOCKET DE KURENTO CLIENT:
    */
-  connectTosocket(){
-    console.log("userId..", this._userService.userProfile);
-    this._webrtcSocketService.connecToKurento(this._userService.userProfile.id, this._video);
+  connectToStreamingClient() {
+    return this._webrtcSocketService.connecToKurento(this._userService.userProfile.id, this._video);
   }
-  /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  startTransmission() {
+    this.connectToStreamingClient()
+      .then((response: boolean) => {
+        if (response) {
+          this._webrtcSocketService.presenter(this._backCamera, this._frontCamera);
+        }
+      }).catch((response: boolean) => {
+        console.log("[WERTC-CAMERA COMPONENT]: NO SE HA PODIDO INICIAR LA TRANSMISIÓN, FALLO EN LA CONEXIÓN");
+      })
+  }
+
+  /**
+   * MÉTODO PARA UNIRSE A UNA TRANSMISIÓN
+   */
+  joinTransmission() {
+    this.connectToStreamingClient()
+      .then((response: boolean) => {
+        if (response) {
+          this._webrtcSocketService.startViewer(this.streamOwnerId);
+        }
+      })
+      .catch((response: boolean) => {
+        console.log("[WERTC-CAMERA COMPONENT]: NO SE HA PODIDO CONECTARSE A LA TRANSMISIÓN, FALLO EN LA CONEXIÓN");
+      });
+  }
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
-    this.stopStream();
+    if (this._webrtcSocketService.kurentoWs) {
+      console.log("Cerrando webrtc socket");
+      this._webrtcSocketService.closeTransmissionCnn();
+    }
+    else {
+      this.stopStream();
+    }
   }
 
   /**

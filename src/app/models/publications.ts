@@ -18,7 +18,9 @@ export class Publication {
         public location?: string,
         public relevance_counter?: number,
         public user_relevance?: boolean,
-        public address?: string
+        public address?: string,
+        public isTrans?: boolean,
+        public transDone?: boolean
     ) {
         this.media = [];
     }

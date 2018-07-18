@@ -57,6 +57,7 @@ import { ActivityComponent } from './components/activity/activity.component';
 import { RouterService } from './services/router.service';
 import { HomePanelComponent } from './components/home-panel/home-panel.component';
 import { NewPubComponent } from './components/new-pub/new-pub.component';
+import { PubFormComponent } from './components/pub-form/pub-form.component';
 
 @NgModule({
   declarations: [
@@ -93,7 +94,8 @@ import { NewPubComponent } from './components/new-pub/new-pub.component';
     MediaStreamingComponent,
     ActivityComponent,
     HomePanelComponent,
-    NewPubComponent
+    NewPubComponent,
+    PubFormComponent
   ],
   imports: [
     HttpModule,
