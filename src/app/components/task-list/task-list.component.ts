@@ -3,6 +3,8 @@ import { ActionService } from '../../services/action.service';
 import { Publication } from '../../models/publications';
 import { Router } from '@angular/router';
 import { ContentService } from '../../services/content.service';
+import { NotifierService } from '../../services/notifier.service';
+import { CONTENT_TYPES } from '../../config/content-type';
 
 declare var $: any;
 
@@ -18,6 +20,7 @@ export class TaskListComponent implements OnInit {
   constructor(
     private _actionService: ActionService,
     private _contentService: ContentService,
+    private _notifierService: NotifierService,
     private _router: Router
   ) { }
 
@@ -63,6 +66,15 @@ export class TaskListComponent implements OnInit {
         )
       );
     }
+  }
+
+  /**
+   * MÉTODO PARA ABRIR LA TRANSMISIÓN DE UNA PUBLICACIÓN:
+   * @param event 
+   */
+  viewTransmission(event: any) {
+    event.preventDefault();
+    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_transmission, contentData: this.queja.user.id });
   }
 
 }

@@ -11,5 +11,6 @@ export const CONTENT_TYPES = {
     view_img: 9,
     view_comments: 10,
     new_notification: 11,
-    view_notifs: 12
+    view_notifs: 12,
+    view_transmission: 12,
 }
