@@ -3,6 +3,8 @@ import { ContentService } from '../../services/content.service';
 import { NotifierService } from '../../services/notifier.service';
 import { Subscription } from 'rxjs';
 import { MENU_OPTIONS } from '../../config/menu-option';
+import { ACTION_TYPES } from '../../config/action-types';
+import { DynaContent } from '../../interfaces/dyna-content.interface';
 
 declare var $: any;
 
@@ -19,6 +21,7 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   public enableSecondOp: boolean;
   public enableThirdOp: boolean;
   public carouselOptions: any;
+  public focusedPubId: string;
 
   constructor(
     private _contentService: ContentService,
@@ -98,6 +101,17 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   changeOwlContent(option: number) {
     $('#carousel-home').find('.owl-carousel').trigger('to.owl.carousel', [option, 300, true]);
+  }
+
+  /**
+   * MÉTODO PARA CAPTAR LA ACCIÓN DE ALGÚN BOTÓN DEL LA LSITA DE BOTONES, COMPONENTE HIJO
+   * @param $event VALOR DEL TIPO DE ACCIÓN QUE VIENE EN UN EVENT-EMITTER
+   */
+  optionButtonAction(event: DynaContent) {
+    if(event.contentType === ACTION_TYPES.mapFocus) {
+      this.changeOwlContent(MENU_OPTIONS.mapview);
+      this.focusedPubId = event.contentData;
+    }
   }
 
   ngOnDestroy() {

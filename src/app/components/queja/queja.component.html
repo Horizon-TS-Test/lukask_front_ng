@@ -2,7 +2,7 @@
   <div class="personal-queja p-shadow-card p-no-border-rad-card card mb-3 pb-0">
     <div class="card-header d-flex justify-content-between align-items-center">
       <div class="d-flex justify-content-center align-items-center">
-        <task-list [queja]="queja"></task-list>
+        <task-list [queja]="queja" (actionType)="optionButtonAction($event)"></task-list>
       </div>
       <div>
         <small>{{queja.date_pub}}</small>

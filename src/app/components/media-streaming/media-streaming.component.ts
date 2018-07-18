@@ -13,9 +13,8 @@ import { ACTION_TYPES } from '../../config/action-types';
 export class MediaStreamingComponent implements OnInit, OnChanges {
   @Input() openStream: boolean;
   @Input() pubStream: boolean;
+  @Input() streamOwner: string;
   @Output() closeModal: EventEmitter<boolean>;
-
-  private _CLOSE = 1;
 
   public cameraActions: any;
   public _ref: any;
@@ -27,8 +26,14 @@ export class MediaStreamingComponent implements OnInit, OnChanges {
     private _notifierService: NotifierService
   ) {
     this.cameraActions = CAMERA_ACTIONS;
-
     this.closeModal = new EventEmitter<boolean>();
+    this.matButtons = [
+      {
+        parentContentType: 0,
+        action: ACTION_TYPES.close,
+        icon: "close"
+      }
+    ];
   }
 
   ngOnInit() {
@@ -61,15 +66,6 @@ export class MediaStreamingComponent implements OnInit, OnChanges {
   }
 
   /**
-   * MÉTODO PARA CAPTURAR LA IMAGEN DE VISUALIZACIÓN INICIAL DEL STREAMING
-   * @param event OBJECTO MEDIA-FILE QUE LLEGA DESDE EL EVENT EMITTER DEL COMPONENTE HIJO
-   */
-  public captureStreamImg(event: MediaFile) {
-    console.log("Receiving image from child");
-    this.defaultView = event;
-  }
-
-  /**
    * MÉTODO PARA PUBLICAR E INICIAR EL STREAMING:
    */
   private publishStream() {
@@ -81,7 +77,6 @@ export class MediaStreamingComponent implements OnInit, OnChanges {
    * @param changes LOS CAMBIOS GENERADOS
    */
   ngOnChanges(changes: SimpleChanges) {
-
     for (let property in changes) {
       console.log('Previous:', changes[property].previousValue);
       console.log('Current:', changes[property].currentValue);
@@ -110,7 +105,7 @@ export class MediaStreamingComponent implements OnInit, OnChanges {
    */
   public getButtonAction(actionEvent: number) {
     switch (actionEvent) {
-      case this._CLOSE:
+      case ACTION_TYPES.close:
         this.sendCameraAction(event, this.cameraActions.stop_stream);
         this.closeModal.emit(true);
         break;

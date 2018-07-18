@@ -15,7 +15,6 @@ import { MediaFile } from '../../interfaces/media-file.interface';
 })
 export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() startCamera: boolean;
-  @Input() isChild: boolean;
   @Output() fileEmitter = new EventEmitter<MediaFile>();
 
   private _frontCamera: Device;
@@ -196,12 +195,7 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
           mediaFileUrl: URL.createObjectURL(blob),
           mediaFile: blob
         }
-        if (this.isChild == true) {
-          this.fileEmitter.emit(this.snapShot);
-        }
-        else {
-          this._cameraService.notifySnapShot(this.snapShot);
-        }
+        this._cameraService.notifySnapShot(this.snapShot);
       });
     }
   }

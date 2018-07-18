@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { ContentService } from '../../services/content.service';
 import { ViewChild } from '@angular/core';
 import { Publication } from '../../models/publications';
@@ -19,8 +19,8 @@ declare var $: any;
   templateUrl: './map-view.component.html',
   styleUrls: ['./map-view.component.css']
 })
-export class MapViewComponent implements OnInit {
-  private focusPubId: string;
+export class MapViewComponent implements OnInit, OnChanges {
+  @Input() focusPubId: string;
 
   public lat: number;
   public lng: number;
@@ -119,6 +119,7 @@ export class MapViewComponent implements OnInit {
    */
   fetchPub() {
     for (let pub of this.pubList) {
+      console.log(pub);
       this.crearMarker(pub.latitude, pub.longitude, this.defineTypeIcon(pub.type), pub.id_publication, pub.type, pub.type.description);
     }
   }
@@ -176,6 +177,7 @@ export class MapViewComponent implements OnInit {
       });
     }
     else {
+      console.log("Hay valores!!");
       this.fetchPub();
       //HACIENDO FOCUS UNA PUBLICACIÓN EN EL MAPA      
       this.metodFocusPubId();
@@ -186,7 +188,7 @@ export class MapViewComponent implements OnInit {
    * METODO QUE VALIDA SI HAY UN ID DE QUEJA PARA UBICARLO EN EL MAPA
    */
   metodFocusPubId() {
-    if (this.focusPubId != undefined) {
+    if (this.focusPubId) {
       this.focus();
     }
   }
@@ -229,4 +231,18 @@ export class MapViewComponent implements OnInit {
     }
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+    for (let property in changes) {
+      console.log('Previous:', changes[property].previousValue);
+      console.log('Current:', changes[property].currentValue);
+      console.log('firstChange:', changes[property].firstChange);
+
+      if (property === 'focusPubId') {
+        if (changes[property].currentValue) {
+          this.focusPubId = changes[property].currentValue;
+          this.focus();
+        }
+      }
+    }
+  }
 }

@@ -38,6 +38,6 @@
       <notification-list (closeModal)="close($event)"></notification-list>
     </div>
 
-    <media-streaming *ngSwitchCase="contentTypes.view_transmission" (closeModal)="close($event)"></media-streaming>
+    <media-streaming *ngSwitchCase="contentTypes.view_transmission" [streamOwner]="_dynaContent.contentData" (closeModal)="close($event)"></media-streaming>
   </ng-container>
 </div>

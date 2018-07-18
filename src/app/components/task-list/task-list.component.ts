@@ -1,10 +1,11 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 import { ActionService } from '../../services/action.service';
 import { Publication } from '../../models/publications';
 import { Router } from '@angular/router';
 import { ContentService } from '../../services/content.service';
 import { NotifierService } from '../../services/notifier.service';
 import { CONTENT_TYPES } from '../../config/content-type';
+import { ACTION_TYPES } from '../../config/action-types';
 
 declare var $: any;
 
@@ -16,12 +17,12 @@ declare var $: any;
 export class TaskListComponent implements OnInit {
   @Input() queja: Publication;
   @Input() isModal: boolean;
+  @Output() actionType = new EventEmitter<number>();
 
   constructor(
     private _actionService: ActionService,
     private _contentService: ContentService,
-    private _notifierService: NotifierService,
-    private _router: Router
+    private _notifierService: NotifierService
   ) { }
 
   ngOnInit() {
@@ -55,7 +56,7 @@ export class TaskListComponent implements OnInit {
     }
     else {
       //REF:https://github.com/angular/angular/issues/18798#soulfresh
-      this._router.navigateByUrl(
+      /*this._router.navigateByUrl(
         this._router.createUrlTree(
           ['/mapview'],
           {
@@ -64,7 +65,8 @@ export class TaskListComponent implements OnInit {
             }
           }
         )
-      );
+      );*/
+      this.actionType.emit(ACTION_TYPES.mapFocus);
     }
   }
 
