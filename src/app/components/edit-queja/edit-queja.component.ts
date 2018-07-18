@@ -16,6 +16,7 @@ declare var $: any;
 })
 export class EditQuejaComponent implements OnInit, OnDestroy, OnChanges {
   @Input() submit: number;
+  @Input() isStreamPub: number;
 
   private subscription: Subscription;
   public carouselOptions: any;
@@ -86,8 +87,17 @@ export class EditQuejaComponent implements OnInit, OnDestroy, OnChanges {
       /*console.log('Previous:', changes[property].previousValue);
       console.log('Current:', changes[property].currentValue);
       console.log('firstChange:', changes[property].firstChange);*/
-      if (changes[property].currentValue && changes[property].currentValue == ACTION_TYPES.submitPub) {
-        this.submit = changes[property].currentValue
+      switch (property) {
+        case 'submit':
+          if (changes[property].currentValue && changes[property].currentValue == ACTION_TYPES.submitPub) {
+            this.submit = changes[property].currentValue
+          }
+          break;
+        case 'isStreamPub':
+          if (changes[property].currentValue) {
+            this.isStreamPub = changes[property].currentValue;
+          }
+          break;
       }
     }
   }

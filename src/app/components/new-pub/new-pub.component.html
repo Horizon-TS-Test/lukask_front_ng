@@ -5,7 +5,7 @@
     <a href="#" class="no-border-button secondary p-float-btn top-right-corner mt-2 mr-2" (click)="initStreaming($event)">
       <span class="personal-site-icon {{ transmitStyle }}">f</span>
     </a>
-    <edit-queja [submit]="actionType" (closeModal)="close($event)"></edit-queja>
+    <edit-queja [submit]="actionType" [isStreamPub]="initStream" (closeModal)="close($event)"></edit-queja>
   </div>
 
   <div class="personal-carousel next" id="streamingPub">

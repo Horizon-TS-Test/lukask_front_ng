@@ -24,6 +24,7 @@ declare var $: any;
 export class PubFormComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() mediaFiles: MediaFile[];
   @Input() submit: number;
+  @Input() isStreamPub: boolean;
   @ViewChild('gmap') gmapElement: any;
 
   private quejaType: string;
@@ -163,7 +164,7 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges {
    * MÉTODO PARA ENVIAR UNA QUEJA HACIA EL SERVIDOR PARA ALMACENARLO EN LA BASE DE DATOS:
    */
   public sendPub() {
-    this.newPub = new Publication("", this._gps.latitude, this._gps.longitude, this.formPub.value.fcnDetail, DateManager.getFormattedDate(), null, null, new QuejaType(this.quejaType, null), null, this._locationCity, null, null, this._locationAdress);
+    this.newPub = new Publication("", this._gps.latitude, this._gps.longitude, this.formPub.value.fcnDetail, DateManager.getFormattedDate(), null, null, new QuejaType(this.quejaType, null), null, this._locationCity, null, null, this._locationAdress, this.isStreamPub);
     if (this.mediaFiles.length > 0) {
       for (let i = 0; i < this.mediaFiles.length; i++) {
         this.newPub.media.push(new Media("", "", "", null, this.mediaFiles[i].mediaFile, i + "-" + DateManager.getFormattedDate() + ".png"));
@@ -251,6 +252,9 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges {
             break;
           case 'mediaFiles':
             this.mediaFiles = changes[property].currentValue;
+            break;
+          case 'isStreamPub':
+            this.isStreamPub = changes[property].currentValue;
             break;
         }
       }

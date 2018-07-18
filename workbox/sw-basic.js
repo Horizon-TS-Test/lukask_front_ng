@@ -284,6 +284,7 @@ self.addEventListener('sync', function (event) {
                             formData.append('date_publication', pub.date_publication);
                             formData.append('location', pub.location);
                             formData.append('address', pub.address);
+                            formData.append('is_trans', pub.is_trans);
                             for (var media of pub.media_files) {
                                 formData.append('media_files[]', media.file, media.fileName);
                             }
