@@ -28,6 +28,9 @@ export class PagosDatosComponent implements OnInit {
    */
   viewPagosDetail (event: any, contType: number, pagos: any) {
     event.preventDefault();
+    console.log("ciiiiiiiii");
+    //console.log(pagos.ci);
+    console.log(pagos);
     this._notifierService.notifyNewContent({ contentType: contType, contentData: pagos });
   }
 }

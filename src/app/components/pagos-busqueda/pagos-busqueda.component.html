@@ -13,7 +13,7 @@
         <li class="list-group-item">
           <i class="fa fa-id-card" aria-hidden="true"></i>
           <small class="ml-1">Ingrese Cédula : </small>
-          <input type="text" name="cedula" class="form-control  " maxlength="11" required />
+          <input type="text" name="cedula" class="form-control" #idCard="ngModel" [(ngModel)]="pagos.ci" maxlength="11" required />
           <br>
           <br>
           <a style="float: right;" (click)="openLayer($event)" ng-model="mMostrarDiv" class="ml-1 btn btn-outline-info">
@@ -23,13 +23,10 @@
       </ul>
     </form>
     <br>
-
+   
     <div id="divpagos" class="col-12 py-0 px-1" style="display: none;">
-      <div class="personal-pagos p-shadow-card p-no-border-rad-card card mb-3 pb-0">
-        <div class="card-header d-flex justify-content-between align-items-center">
-          <app-pagos-datos *ngFor="let pagos of pagos" [pagos]="pagos"></app-pagos-datos>
-          </div>
-      </div>
+      <app-pagos-datos *ngFor="let pagos of pagos1" [pagos]="pagos">
+      </app-pagos-datos>
     </div>
 
   </div>

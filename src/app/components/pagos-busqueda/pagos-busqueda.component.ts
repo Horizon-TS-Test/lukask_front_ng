@@ -12,23 +12,29 @@ declare var $: any;
   templateUrl: './pagos-busqueda.component.html',
   styleUrls: ['./pagos-busqueda.component.css']
 })
-export class PagosBusquedaComponent implements OnInit{
+export class PagosBusquedaComponent implements OnInit {
   @Output() closeModal: EventEmitter<boolean>;
   @Input() pagos: Payment;
+  @Input() pagos1: Payment;
+
   private _CLOSE = 1;
   private self: any;
   public _dynaContent: DynaContent;
   public formQuej: FormGroup;
   public matButtons: HorizonButton[];
-  
-  
+
+
+
 
   constructor(
     private formBuilder: FormBuilder
   ) {
     this.closeModal = new EventEmitter<boolean>();
     this.pagos = planillasData;
-    
+    this.pagos1 = [];
+
+
+
     this.matButtons = [
       {
         parentContentType: 0,
@@ -61,6 +67,19 @@ export class PagosBusquedaComponent implements OnInit{
   */
   openLayer(event: any) {
     //Poner el Array y poner visible el div
+    console.log("ingresooo a openlayer");
+    console.log(this.pagos.ci);
+    let c = this.pagos.ci;
+    let i = 0;
+    this.pagos1 =[];
+    for (var item in this.pagos) {
+      if (c == this.pagos[item].ci) {
+        i = i + 1;
+        this.pagos1.push(this.pagos[item]);
+        
+      }
+    }
     document.getElementById("divpagos").style.display = "block";
-   }
+
+  }
 }
