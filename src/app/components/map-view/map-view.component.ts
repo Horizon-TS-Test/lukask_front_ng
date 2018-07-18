@@ -10,6 +10,7 @@ import { NotifierService } from '../../services/notifier.service';
 import { CONTENT_TYPES } from '../../config/content-type';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { DateManager } from '../../tools/date-manager';
 
 declare var google: any;
 declare var $: any;
@@ -65,7 +66,7 @@ export class MapViewComponent implements OnInit, OnChanges {
     ////
 
     //TOMANDO QUERY PARAMS, ESTO DEBE IR ANTES DE INTENTAR DAR FOCUS EN LOS MARKERS:
-    this.getQueryParams();
+    //this.getQueryParams();
 
     //Definición del mapa
     this.map = new google.maps.Map(this.gmapElement.nativeElement, mapProp);
@@ -108,11 +109,11 @@ export class MapViewComponent implements OnInit, OnChanges {
   /**
    * MÉTODO PARA OBTENER LOS PARÁMETROS QUE LLEGAN EN EL URL:
    */
-  getQueryParams() {
+  /*getQueryParams() {
     this._activatedRoute.queryParams.subscribe(params => {
       this.focusPubId = params['pubId'];
     });
-  }
+  }*/
 
   /**
    * MÉTODO QUE RECORRE LA LISTA DE QUEJAS Y CREA EL MARKER DE CADA UNA
@@ -177,7 +178,6 @@ export class MapViewComponent implements OnInit, OnChanges {
       });
     }
     else {
-      console.log("Hay valores!!");
       this.fetchPub();
       //HACIENDO FOCUS UNA PUBLICACIÓN EN EL MAPA      
       this.metodFocusPubId();
@@ -233,14 +233,13 @@ export class MapViewComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     for (let property in changes) {
-      console.log('Previous:', changes[property].previousValue);
+      /*console.log('Previous:', changes[property].previousValue);
       console.log('Current:', changes[property].currentValue);
-      console.log('firstChange:', changes[property].firstChange);
+      console.log('firstChange:', changes[property].firstChange);*/
 
       if (property === 'focusPubId') {
         if (changes[property].currentValue) {
           this.focusPubId = changes[property].currentValue;
-          this.focus();
         }
       }
     }

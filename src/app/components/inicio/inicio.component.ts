@@ -92,7 +92,7 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
           break;
       }
       this._notifierService.notifyChangeMenuContent(menuIndex);
-      console.log("CAROUSEL TO EVENT: ", menuIndex);
+      console.log("CAROUSEL 'TO' EVENT: ", menuIndex);
     });
   }
 
@@ -109,8 +109,8 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   optionButtonAction(event: DynaContent) {
     if(event.contentType === ACTION_TYPES.mapFocus) {
-      this.changeOwlContent(MENU_OPTIONS.mapview);
       this.focusedPubId = event.contentData;
+      this.changeOwlContent(MENU_OPTIONS.mapview);
     }
   }
 
