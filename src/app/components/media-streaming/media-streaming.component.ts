@@ -5,6 +5,8 @@ import { CAMERA_ACTIONS } from '../../config/camera-actions';
 import { MediaFile } from '../../interfaces/media-file.interface';
 import { ACTION_TYPES } from '../../config/action-types';
 
+declare var $: any;
+
 @Component({
   selector: 'media-streaming',
   templateUrl: './media-streaming.component.html',
@@ -14,7 +16,7 @@ export class MediaStreamingComponent implements OnInit, OnChanges {
   @Input() openStream: boolean;
   @Input() pubStream: boolean;
   @Input() streamOwnerId: string;
-  @Output() closeModal: EventEmitter<boolean>;
+  @Output() closeModal = new EventEmitter<any>();
 
   public cameraActions: any;
   public _ref: any;
@@ -26,7 +28,6 @@ export class MediaStreamingComponent implements OnInit, OnChanges {
     private _notifierService: NotifierService
   ) {
     this.cameraActions = CAMERA_ACTIONS;
-    this.closeModal = new EventEmitter<boolean>();
     this.matButtons = [
       {
         parentContentType: 0,
@@ -41,6 +42,7 @@ export class MediaStreamingComponent implements OnInit, OnChanges {
   }
 
   ngAfterViewInit() {
+    $(window).resize();
   }
 
   /**
@@ -62,7 +64,12 @@ export class MediaStreamingComponent implements OnInit, OnChanges {
     if (event) {
       event.preventDefault();
     }
-    this._notifierService.notifyCameraAction(action);
+    if (action === this.cameraActions.stop_transmision) {
+      this.closeModal.emit(ACTION_TYPES.close);
+    }
+    else {
+      this._notifierService.notifyCameraAction(action);
+    }
   }
 
   /**

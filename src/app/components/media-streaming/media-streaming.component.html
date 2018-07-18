@@ -1,27 +1,27 @@
 <div class="relative-background personal-content personal-over-unset min-height-full-modal col-12 p-0">
   <app-webrtc-camera [startCamera]="openStream" [streamOwnerId]="streamOwnerId"></app-webrtc-camera>
 
-  <owl-carousel *ngIf="!streamOwner" id="corousel-live-op" class="personal-owl-nav" [options]="carouselOptions" [carouselClasses]="['owl-theme']">
+  <owl-carousel *ngIf="!streamOwnerId" id="corousel-live-op" class="personal-owl-nav" [options]="carouselOptions" [carouselClasses]="['owl-theme']">
     <div class="d-flex justify-content-center align-items-center min-height-full-modal">
-      <a href="#" class="p-transparent-btn" (click)="sendCameraAction($event, cameraActions.init_transmision)">
+      <a href="#" class="p-transparent-btn ml-3" (click)="sendCameraAction($event, cameraActions.init_transmision)">
         <span class="personal-site-icon">g</span>
       </a>
     </div>
 
     <div class="d-flex justify-content-center align-items-center min-height-full-modal">
-      <a href="#" class="p-transparent-btn mt-1" (click)="sendCameraAction($event, cameraActions.pause_transmision)">
+      <a href="#" class="p-transparent-btn ml-3" (click)="sendCameraAction($event, cameraActions.pause_transmision)">
         <span class="personal-site-icon">h</span>
       </a>
     </div>
 
     <div class="d-flex justify-content-center align-items-center min-height-full-modal">
-      <a href="#" class="p-transparent-btn mt-1" (click)="sendCameraAction($event, cameraActions.stop_transmision)">
+      <a href="#" class="p-transparent-btn ml-3" (click)="sendCameraAction($event, cameraActions.stop_transmision)">
         <span class="personal-site-icon">i</span>
       </a>
     </div>
 
     <div class="d-flex justify-content-center align-items-center min-height-full-modal">
-      <a href="#" class="p-transparent-btn mt-1" (click)="sendCameraAction($event, cameraActions.change_camera)">
+      <a href="#" class="p-transparent-btn ml-3" (click)="sendCameraAction($event, cameraActions.change_camera)">
         <span class="personal-site-icon">k</span>
       </a>
     </div>

@@ -5,11 +5,11 @@
     <a href="#" class="no-border-button secondary p-float-btn top-right-corner mt-2 mr-2" (click)="initStreaming($event)">
       <span class="personal-site-icon {{ transmitStyle }}">f</span>
     </a>
-    <edit-queja [submit]="actionType" [isStreamPub]="initStream" (closeModal)="close($event)"></edit-queja>
+    <edit-queja [submit]="actionType" [isStreamPub]="initStream"></edit-queja>
   </div>
 
   <div class="personal-carousel next" id="streamingPub">
-    <media-streaming [openStream]="openStream" [pubStream]="actionType" (closeModal)="close($event)"></media-streaming>
+    <media-streaming [openStream]="openStream" [pubStream]="actionType" (closeModal)="getButtonAction($event)"></media-streaming>
   </div>
 
   <material-btn-list *ngIf="hideActionBtns === false" [animateNext]="initStream" [materialBtns]="matButtons" (someBtnAction)="getButtonAction($event)"></material-btn-list>
