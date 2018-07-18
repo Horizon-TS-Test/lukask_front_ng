@@ -16,6 +16,11 @@ export class WebrtcSocketService {
   constructor() { 
   }
 
+  /**
+   * Inicia proceso de coneccion a socket.
+   * @param idUser 
+   * @param _video 
+   */
   connecToKurento(idUser:any, _video){
     
     this._videoData = _video;

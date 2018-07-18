@@ -24,17 +24,31 @@ export class DateManager {
         return str;
     }
 
+    /**
+     * Proceso para formato de fechas en unidades de tiempo.
+     * @param dataToFormat 
+     */
     public static setFormatDate(dataToFormat:any){
         for(var itemData in dataToFormat){
             this.formatDate(dataToFormat[itemData]);
         }
     }
 
+    /**
+     * Algoritmo para formateo de datos, segun su fecha de creacion o registro
+     * @param itemData 
+     */
     private static formatDate(itemData:any){
+        
+        //Eliminamos caracteres de la fecha.
         let cadena  = itemData.date_pub.replace("T", " ");
         cadena = cadena.replace("Z", "");
+        
+        //Inicializamos variables para los calculos
         let currentDate = moment();
         let localDateData = moment(cadena);
+
+        //Encontramos la cantidad de segundos transcuridos segun la fecha actual a la fecha registrada
         let diff = currentDate.diff(localDateData, 'seconds');
         let textTime:string;
 
@@ -43,18 +57,21 @@ export class DateManager {
             itemData.date_pub = "Hace pocos segundos"
         }else{
             
+            //Encontramos la cantidad de minutos transcuridos segun la fecha actual a la fecha registrada
             diff = currentDate.diff(localDateData, 'minutes');
             textTime = diff > 1 ? " minutos" : " minuto";
             if(diff < _MAXMINUTES){
                 itemData.date_pub = _TEXTFORMAT + diff + textTime;
             }else{
                 
+                //Encontramos la hours de minutos transcuridos segun la fecha actual a la fecha registrada
                 diff = currentDate.diff(localDateData, 'hours');
                 textTime = diff > 1  ? " horas" : " hora";
                 if(diff < _MAXHOURS){
                     itemData.date_pub = _TEXTFORMAT + diff + textTime;
                 }else{
                     
+                    //Encontramos la dias de minutos transcuridos segun la fecha actual a la fecha registrada
                     diff = currentDate.diff(localDateData, 'days');
                     textTime = diff > 1  ? " dias" : " dia";
                     if(diff < _MAXDAYFORWEEK){

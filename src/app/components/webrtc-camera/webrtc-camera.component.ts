@@ -217,6 +217,9 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ///*****************************AQUÍ DEBES LLAMAR A TUS MÉTODOS PARA LA TRANSMISIÓN DENNYS :D********
+  /**
+   * Iniciamos la coneccion al socket de kurento Client.
+   */
   connectTosocket(){
     console.log("userId..", this._userService.userProfile);
     this._webrtcSocketService.connecToKurento(this._userService.userProfile.id, this._video);
