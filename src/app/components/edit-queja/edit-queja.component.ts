@@ -1,10 +1,11 @@
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, SimpleChanges, OnChanges } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { NotifierService } from '../../services/notifier.service';
 import { CONTENT_TYPES } from '../../config/content-type';
 import { CameraService } from '../../services/camera.service';
 import { MediaFile } from '../../interfaces/media-file.interface';
 import { DomSanitizer } from '../../../../node_modules/@angular/platform-browser';
+import { ACTION_TYPES } from '../../config/action-types';
 
 declare var $: any;
 
@@ -13,7 +14,7 @@ declare var $: any;
   templateUrl: './edit-queja.component.html',
   styleUrls: ['./edit-queja.component.css'],
 })
-export class EditQuejaComponent implements OnInit, OnDestroy {
+export class EditQuejaComponent implements OnInit, OnDestroy, OnChanges {
   @Input() submit: number;
 
   private subscription: Subscription;
@@ -73,6 +74,22 @@ export class EditQuejaComponent implements OnInit, OnDestroy {
   newMedia(event: any) {
     event.preventDefault();
     this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.new_media, contentData: null });
+  }
+
+  /**
+   * MÉTODO PARA DETECTAR LOS CAMBIOS DE UNA PROPIEDAD INYECTADA DESDE EL COMPONENTE PADRE DE ESTE COMPONENTE:
+   * @param changes LOS CAMBIOS GENERADOS
+   */
+  ngOnChanges(changes: SimpleChanges) {
+
+    for (const property in changes) {
+      /*console.log('Previous:', changes[property].previousValue);
+      console.log('Current:', changes[property].currentValue);
+      console.log('firstChange:', changes[property].firstChange);*/
+      if (changes[property].currentValue && changes[property].currentValue == ACTION_TYPES.submitPub) {
+        this.submit = changes[property].currentValue
+      }
+    }
   }
 
   ngOnDestroy() {

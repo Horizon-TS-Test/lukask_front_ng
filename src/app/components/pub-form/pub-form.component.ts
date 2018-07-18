@@ -1,4 +1,4 @@
-import { Component, OnInit, SimpleChanges, OnChanges, ViewChild } from '@angular/core';
+import { Component, OnInit, SimpleChanges, OnChanges, ViewChild, Input, AfterViewInit } from '@angular/core';
 import { QuejaService } from '../../services/queja.service';
 import { FormBuilder, FormGroup, Validators } from '../../../../node_modules/@angular/forms';
 import { QuejaType } from '../../models/queja-type';
@@ -11,6 +11,7 @@ import { Media } from '../../models/media';
 import { Alert } from '../../models/alert';
 import { NotifierService } from '../../services/notifier.service';
 import { ALERT_TYPES } from '../../config/alert-types';
+import { MediaFile } from '../../interfaces/media-file.interface';
 
 declare var google: any;
 declare var $: any;
@@ -20,7 +21,9 @@ declare var $: any;
   templateUrl: './pub-form.component.html',
   styleUrls: ['./pub-form.component.css']
 })
-export class PubFormComponent implements OnInit, OnChanges {
+export class PubFormComponent implements OnInit, AfterViewInit, OnChanges {
+  @Input() mediaFiles: MediaFile[];
+  @Input() submit: number;
   @ViewChild('gmap') gmapElement: any;
 
   private quejaType: string;
@@ -33,7 +36,6 @@ export class PubFormComponent implements OnInit, OnChanges {
   public tipoQuejaSelect: Select2[];
   public quejaTypeList: QuejaType[];
   public formPub: FormGroup;
-  public filesToUpload: any[];
   public _locationCity: string;
   public _locationAdress: string;
 
@@ -42,7 +44,6 @@ export class PubFormComponent implements OnInit, OnChanges {
     private _quejaService: QuejaService,
     private formBuilder: FormBuilder
   ) {
-    this.filesToUpload = [];
     this._gps = {
       latitude: 0,
       longitude: 0
@@ -50,12 +51,17 @@ export class PubFormComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    $("#hidden-btn").on(("click"), (event) => { }); //NO TOCAR!
-
-    this.getQuejaType();
     this.formPub = this.setFormGroup();
-    this.getGps();
     this.initMapa();
+  }
+
+  ngAfterViewInit() {
+    this.getGps();
+
+    setTimeout(() => {
+      $("#hidden-btn").on(("click"), (event) => { }); //NO TOCAR!
+      this.getQuejaType();
+    }, 1000);
   }
 
   /**
@@ -158,9 +164,9 @@ export class PubFormComponent implements OnInit, OnChanges {
    */
   public sendPub() {
     this.newPub = new Publication("", this._gps.latitude, this._gps.longitude, this.formPub.value.fcnDetail, DateManager.getFormattedDate(), null, null, new QuejaType(this.quejaType, null), null, this._locationCity, null, null, this._locationAdress);
-    if (this.filesToUpload.length > 0) {
-      for (let i = 0; i < this.filesToUpload.length; i++) {
-        this.newPub.media.push(new Media("", "", "", null, this.filesToUpload[i], i + "-" + DateManager.getFormattedDate() + ".png"));
+    if (this.mediaFiles.length > 0) {
+      for (let i = 0; i < this.mediaFiles.length; i++) {
+        this.newPub.media.push(new Media("", "", "", null, this.mediaFiles[i].mediaFile, i + "-" + DateManager.getFormattedDate() + ".png"));
       }
     }
     this._quejaService.savePub(this.newPub);
@@ -233,13 +239,19 @@ export class PubFormComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges) {
 
     for (const property in changes) {
-      if (property === 'submit') {
-        /*console.log('Previous:', changes[property].previousValue);
-        console.log('Current:', changes[property].currentValue);
-        console.log('firstChange:', changes[property].firstChange);*/
-
-        if (changes[property].currentValue && changes[property].currentValue == ACTION_TYPES.submitPub) {
-          this.sendPub();
+      /*console.log('Previous:', changes[property].previousValue);
+      console.log('Current:', changes[property].currentValue);
+      console.log('firstChange:', changes[property].firstChange);*/
+      if (changes[property].currentValue) {
+        switch (property) {
+          case 'submit':
+            if (changes[property].currentValue == ACTION_TYPES.submitPub || changes[property].currentValue == ACTION_TYPES.pubStream) {
+              this.sendPub();
+            }
+            break;
+          case 'mediaFiles':
+            this.mediaFiles = changes[property].currentValue;
+            break;
         }
       }
     }

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, Input } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 import { Device } from '../../interfaces/device.interface';
 import { NotifierService } from '../../services/notifier.service';
 import { CAMERA_ACTIONS } from '../../config/camera-actions';
@@ -15,6 +15,8 @@ import { MediaFile } from '../../interfaces/media-file.interface';
 })
 export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() startCamera: boolean;
+  @Input() isChild: boolean;
+  @Output() fileEmitter = new EventEmitter<MediaFile>();
 
   private _frontCamera: Device;
   private _backCamera: Device;
@@ -194,7 +196,12 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
           mediaFileUrl: URL.createObjectURL(blob),
           mediaFile: blob
         }
-        this._cameraService.notifySnapShot(this.snapShot);
+        if (this.isChild == true) {
+          this.fileEmitter.emit(this.snapShot);
+        }
+        else {
+          this._cameraService.notifySnapShot(this.snapShot);
+        }
       });
     }
   }

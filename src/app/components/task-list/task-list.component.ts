@@ -48,7 +48,7 @@ export class TaskListComponent implements OnInit {
   geolocatePub(event: any) {
     event.preventDefault();
     if (this.isModal == true) {
-      this._contentService.elementScrollInside($("#idQuejaDetail"), $("#sigle-map").offset().top);
+      this._contentService.elementScrollInside($(".horizon-modal"), $("#sigle-map").offset().top);
     }
     else {
       //REF:https://github.com/angular/angular/issues/18798#soulfresh
