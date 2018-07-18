@@ -47,8 +47,8 @@ export class PaymentsComponent implements OnInit {
   //Envio para los Pagos
   envioPagos () {
     this._payments.postPagosClient(this.pagos).then((data) => {
-      console.log(data);
       document.location.href = data.data.data;
+      //LLamar al get
     });
   }
   getButtonAction(actionEvent: number) {
