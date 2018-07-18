@@ -37,11 +37,9 @@ export class PaymentsService {
     });
 
     return this._http.post(REST_SERV.paymentPay, requestBody, { headers: requestHeaders, withCredentials: true }).toPromise()
-    .then((response: Response) => {
-      let respJson = response.json();
-      console.log(respJson);
-      return respJson;
-    });
+      .then((response: Response) => {
+        const respJson = response.json();
+        return respJson;
+      });
   }
-
 }

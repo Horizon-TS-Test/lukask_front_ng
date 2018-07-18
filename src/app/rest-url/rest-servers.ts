@@ -13,5 +13,7 @@ export var REST_SERV = {
     pushSub: 'http://192.168.1.19:3200/subscribe',
     socketServerUrl: 'http://192.168.1.42:3001',
     userUrl: 'http://192.168.1.42:3001/user/',
-    paymentPay: 'http://192.168.1.42:3001/payment/pay'
+    paymentPay: 'http://192.168.1.42:3001/payment/pay',
+    cancelado:'http://192.168.1.42:3001/payment/cancelado',
+    exitoso:'http://192.168.1.42:3001/payment/exitoso'
 }

@@ -57,6 +57,7 @@ import { PagosDatosComponent } from './components/pagos-datos/pagos-datos.compon
 import { PaymentsComponent } from './components/payments/payments.component';
 
 
+
 @NgModule({
   declarations: [
     AppComponent,

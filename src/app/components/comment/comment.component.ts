@@ -16,6 +16,7 @@ export class CommentComponent implements OnInit, OnDestroy {
   @Input() commentModel: Comment;
   @Input() isReply: boolean;
   @Input() noReplyBtn: boolean;
+  
 
   private subscription: Subscription;
   public userProfile: User;

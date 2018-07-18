@@ -47,11 +47,13 @@
             <input type="text" name="total" #name="ngModel" [(ngModel)]="pagos.total" class="form-control pb-0" required/>
           </div>
         </li>
-
       </ul>
+
     </form>
 
   </div>
 </div>
+
+
 
 <material-btn-list [materialBtns]="matButtons" (someBtnAction)="getButtonAction($event)"></material-btn-list>
