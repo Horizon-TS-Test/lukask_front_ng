@@ -1,13 +1,14 @@
 <div class="col-12 py-0 px-1">
   <div class="personal-pagos p-shadow-card p-no-border-rad-card card mb-3 pb-0">
-    <div class="card-header d-flex justify-content-between align-items-center">
-      <div>
-        <a href="#" (click)="viewPagosDetail($event, contentTypes.payments, pagos)">
-          <div class="card-img-top d-flex flex-wrap justify-content-center align-items-center">
-            <img class="mb-1" src="{{pagos.icon}}" width="100%">
+    <div class="card-header d-flex justify-content-center align-items-center">
+      <a href="#" (click)="viewPagosDetail($event, contentTypes.payments, pagos)">
+        <div class="card-img-top d-flex flex-wrap justify-content-center align-items-center">
+         N° Identificador: {{pagos.medidor}}
+          <div class="ml-2 my-0 personal-profile-img" [style.background-image]="_domSanitizer.bypassSecurityTrustStyle('url(' + pagos.icon + ')')">
           </div>
-        </a>
-      </div>
+        </div>
+      </a>
+
     </div>
   </div>
 </div>

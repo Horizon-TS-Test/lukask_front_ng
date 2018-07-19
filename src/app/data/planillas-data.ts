@@ -30,7 +30,7 @@ export default [
         empresa: 'CORPORACIÓN NACIONAL DE TELECMUNICACIONES',
         nombre: 'MOYON SATAN LUIS GERARDO',
         ci: '0601384530',
-        medidor: 'LTB 10000661069',
+        medidor: '032948977',
         direccion: 'VIA A BAÑOS S7N BARRIO NUEVO AMANECER',
         fechaemision: '03/JUNIO/2018',
         fechapago: '03/JULIO/2018',

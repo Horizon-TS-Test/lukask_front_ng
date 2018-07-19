@@ -18,7 +18,6 @@ declare var $: any;
 export class PaymentsComponent implements OnInit {
   @Output() closeModal: EventEmitter<boolean>;
   @Input() pagos: Payment;
-  private _SUBMIT = 0;
   private _CLOSE = 1;
   private self: any;
   public matButtons: HorizonButton[];
@@ -26,7 +25,6 @@ export class PaymentsComponent implements OnInit {
   
 
   constructor(
-    private formBuilder: FormBuilder,
     private _payments: PaymentsService,
     private _notifierService: NotifierService,
   ) { 
@@ -46,7 +44,7 @@ export class PaymentsComponent implements OnInit {
   }
 
   //Envio para los Pagos PayPal
-  envioPagosPayPal () {
+  envioPagos() {
     console.log(this.pagos);
     this._payments.postPagosClient(this.pagos).then((data) => {
       document.location.href = data.data.data;
@@ -56,20 +54,11 @@ export class PaymentsComponent implements OnInit {
     });
   }
    //Envio para los Pagos
+
    envioPagosCard (event: any) {
-      event.preventDefault();
-      this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.card, contentData: null });
-    
-   /* this._payments.postPagosCards(this.pagos).then((data) => {
-      document.location.href = data.data.data;
-      LLamar al get con alert
-      this.alertData = new Alert({ title: 'Proceso Correcto', message: data.data, type: ALERT_TYPES.success });
-      this.setAlert();
-    });*/
+     console.log("Cin", CONTENT_TYPES.card);
+    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.card, contentData: null });
   }
-  //setAlert() {
-   // this._notifierService.sendAlert(this.alertData);
-  //}
   getButtonAction(actionEvent: number) {
     switch (actionEvent) {
       /*case this._SUBMIT:

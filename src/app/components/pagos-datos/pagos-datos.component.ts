@@ -15,6 +15,7 @@ export class PagosDatosComponent implements OnInit {
   public contentTypes: any;
 
   constructor(
+    public _domSanitizer: DomSanitizer,
     private _notifierService: NotifierService
   ) {
     this.contentTypes = CONTENT_TYPES;

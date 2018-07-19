@@ -1,7 +1,7 @@
 <div class="personal-content personal-over-unset min-height-full max-height-full col-12 p-0" id="personal-payments-q">
   <div class="personal-content min-height-full max-height-full p-overflow-auto">
 
-    <form #formPagos class="min-height-full card pb-3" id="frmP" (ngSubmit)="envioPagos()">
+    <form #formPagos class="min-height-full card pb-3" id="frmP">
       <div id="loading-content"></div>
 
       <div class="card-header d-flex justify-content-between align-items-center">
@@ -47,33 +47,26 @@
             <input type="text" name="total" #name="ngModel" [(ngModel)]="pagos.total" class="form-control pb-0" required/>
           </div>
         </li>
-        <br>
         <li>
-          
-          <div style="text-align: center"> 
-           <div class="btn-group mr-2" role="group" aria-label="First group">
-              <button type="submit" (click)="envioPagosPayPal($event)" class="btn btn-success">
-                <img width="100px" src="https://www.paypalobjects.com/webstatic/es_MX/mktg/logos-buttons/redesign/btn_10.png" alt="PayPal"
-                />
-              </button>
-            </div>
-            <div class="btn-group mr-2" role="group" aria-label="Second group">
-              <button type="submit" (click)= "envioPagosCard($event)" class="btn btn-success">
-                <img width="100px" height="80%" src="https://www.paypalobjects.com/webstatic/es_MX/mktg/logos-buttons/redesign/CI_btn_2.png" alt="Tarjeta PayPal"
-                />
-              </button>
-            </div>
-
+            <div style="text-align: center">
+                <div class="btn-group mr-2" role="group" aria-label="First group">
+                  <button (click)="envioPagos($event)" class="btn btn-success">
+                    <img width="100px" src="https://www.paypalobjects.com/webstatic/es_MX/mktg/logos-buttons/redesign/btn_10.png" alt="PayPal"
+                    />
+                  </button>
+                </div>
+                <div class="btn-group mr-2" role="group" aria-label="Second group">
+                  <button (click)="envioPagosCard($event)" class="btn btn-success">
+                    <img width="100px" height="80%" src="https://www.paypalobjects.com/webstatic/es_MX/mktg/logos-buttons/redesign/CI_btn_2.png"
+                      alt="Tarjeta PayPal" />
+                  </button>
+                </div>
+              </div>
+        </li>
+      </ul>
+    </form>
+    
   </div>
-
-
-  <br>
-  </li>
-  </ul>
-
-  </form>
-
-</div>
 </div>
 
 
