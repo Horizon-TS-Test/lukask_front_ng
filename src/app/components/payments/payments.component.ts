@@ -6,7 +6,7 @@ import { Payment } from '../../models/payments';
 import { Alert } from '../../models/alert';
 import { NotifierService } from '../../services/notifier.service';
 import { ALERT_TYPES } from '../../config/alert-types';
-
+import { CONTENT_TYPES } from '../../config/content-type';
 
 declare var $: any;
 
@@ -56,7 +56,10 @@ export class PaymentsComponent implements OnInit {
     });
   }
    //Envio para los Pagos
-   envioPagosCard () {
+   envioPagosCard (event: any) {
+      event.preventDefault();
+      this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.card, contentData: null });
+    
    /* this._payments.postPagosCards(this.pagos).then((data) => {
       document.location.href = data.data.data;
       LLamar al get con alert
@@ -64,9 +67,9 @@ export class PaymentsComponent implements OnInit {
       this.setAlert();
     });*/
   }
-  setAlert() {
-    this._notifierService.sendAlert(this.alertData);
-  }
+  //setAlert() {
+   // this._notifierService.sendAlert(this.alertData);
+  //}
   getButtonAction(actionEvent: number) {
     switch (actionEvent) {
       /*case this._SUBMIT:

@@ -30,6 +30,8 @@ export class PagosBusquedaComponent implements OnInit {
   ) {
     this.closeModal = new EventEmitter<boolean>();
     this.pagos = planillasData;
+    
+    //let list: number[] = [1, 2, 3];
     this.pagos1 = [];
 
     this.matButtons = [

@@ -47,33 +47,33 @@
             <input type="text" name="total" #name="ngModel" [(ngModel)]="pagos.total" class="form-control pb-0" required/>
           </div>
         </li>
-        <li class="list-group-item pb-0">
-        </li>
+        <br>
         <li>
-          <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-            <div class="btn-group mr-2" role="group" aria-label="First group">
+          
+          <div style="text-align: center"> 
+           <div class="btn-group mr-2" role="group" aria-label="First group">
               <button type="submit" (click)="envioPagosPayPal($event)" class="btn btn-success">
-                <img width="160px" src="https://www.paypalobjects.com/webstatic/es_MX/mktg/logos-buttons/redesign/btn_10.png" alt="PayPal"
+                <img width="100px" src="https://www.paypalobjects.com/webstatic/es_MX/mktg/logos-buttons/redesign/btn_10.png" alt="PayPal"
                 />
               </button>
             </div>
             <div class="btn-group mr-2" role="group" aria-label="Second group">
-              <button type="submit" class="btn btn-success">
-                <img width="138px" src="https://www.paypalobjects.com/webstatic/es_MX/mktg/logos-buttons/redesign/CI_btn_2.png" alt="Tarjeta PayPal"
+              <button type="submit" (click)= "envioPagosCard($event)" class="btn btn-success">
+                <img width="100px" height="80%" src="https://www.paypalobjects.com/webstatic/es_MX/mktg/logos-buttons/redesign/CI_btn_2.png" alt="Tarjeta PayPal"
                 />
               </button>
             </div>
 
-          </div>
-
-          <br>
-
-        </li>
-      </ul>
-
-    </form>
-
   </div>
+
+
+  <br>
+  </li>
+  </ul>
+
+  </form>
+
+</div>
 </div>
 
 

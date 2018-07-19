@@ -64,6 +64,7 @@ import { PagosBusquedaComponent } from './components/pagos-busqueda/pagos-busque
 import { PagosListComponent } from './components/pagos-list/pagos-list.component';
 import { PagosDatosComponent } from './components/pagos-datos/pagos-datos.component';
 import { PaymentsComponent } from './components/payments/payments.component';
+import { PaymentsCardComponent } from './components/payments-card/payments-card.component';
 
 @NgModule({
   declarations: [
@@ -107,7 +108,8 @@ import { PaymentsComponent } from './components/payments/payments.component';
     PagosBusquedaComponent,
     PagosListComponent,
     PagosDatosComponent,
-    PaymentsComponent
+    PaymentsComponent,
+    PaymentsCardComponent
   ],
   imports: [
     HttpModule,

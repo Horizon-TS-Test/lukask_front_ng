@@ -38,8 +38,11 @@
       <notification-list (closeModal)="close($event)"></notification-list>
     </div>
 
-    <media-streaming *ngSwitchCase="contentTypes.view_transmission" [openStream]="false" [streamOwnerId]="_dynaContent.contentData" (closeModal)="close($event)"></media-streaming>
+    <media-streaming *ngSwitchCase="contentTypes.view_transmission" [openStream]="false" [streamOwnerId]="_dynaContent.contentData"
+      (closeModal)="close($event)"></media-streaming>
     <app-pagos-busqueda *ngSwitchCase="contentTypes.pagos_busq" (closeModal)="close($event)"></app-pagos-busqueda>
     <app-payments *ngSwitchCase="contentTypes.payments" [pagos]="_dynaContent.contentData" (closeModal)="close($event)"></app-payments>
+    <app-payments-card *ngSwitchCase="contentTypes.payments"  (closeModal)="close($event)"></app-payments-card>
+
   </ng-container>
 </div>
