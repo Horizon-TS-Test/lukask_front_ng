@@ -1,22 +1,22 @@
 <div class="personal-content personal-over-unset min-height-full max-height-full col-12 p-0" id="personal-payments-q">
   <div class="personal-content min-height-full max-height-full p-overflow-auto">
 
-      <form #formPagos class="min-height-full card pb-3" id="frmP" (ngSubmit)="envioPagos()">
+    <form #formPagos class="min-height-full card pb-3" id="frmP" (ngSubmit)="envioPagos()">
       <div id="loading-content"></div>
 
       <div class="card-header d-flex justify-content-between align-items-center">
-        CANCELAR SU SERVICIO
+        DATOS DEL CONSUMO DEL SERVICIO
       </div>
       <div class="card-img-top d-flex flex-wrap justify-content-center align-items-center">
-          <img class="mb-1" id="icon" src="{{pagos.icon}}" width="100%">
+        <img class="mb-1" id="icon" src="{{pagos.icon}}" width="100%">
       </div>
       <ul class="list-group list-group-flush pb-0">
         <li class="list-group-item pb-0">
-          <div class="col-12 pb-0">Factura: 
+          <div class="col-12 pb-0">Factura:
             <input type="text" name="factura" #name="ngModel" [(ngModel)]="pagos.factura" class="form-control pb-0" required/>
           </div>
         </li>
-        
+
         <li class="list-group-item pb-0">
           <div class="col-12 pb-0">Cédula :
             <input type="text" name="ci" #name="ngModel" [(ngModel)]="pagos.ci" class="form-control pb-0 " required/>
@@ -46,6 +46,28 @@
           <div class="col-12 pb-0">Total:
             <input type="text" name="total" #name="ngModel" [(ngModel)]="pagos.total" class="form-control pb-0" required/>
           </div>
+        </li>
+        <li class="list-group-item pb-0">
+        </li>
+        <li>
+          <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+            <div class="btn-group mr-2" role="group" aria-label="First group">
+              <button type="submit" (click)="envioPagosPayPal($event)" class="btn btn-success">
+                <img width="160px" src="https://www.paypalobjects.com/webstatic/es_MX/mktg/logos-buttons/redesign/btn_10.png" alt="PayPal"
+                />
+              </button>
+            </div>
+            <div class="btn-group mr-2" role="group" aria-label="Second group">
+              <button type="submit" class="btn btn-success">
+                <img width="138px" src="https://www.paypalobjects.com/webstatic/es_MX/mktg/logos-buttons/redesign/CI_btn_2.png" alt="Tarjeta PayPal"
+                />
+              </button>
+            </div>
+
+          </div>
+
+          <br>
+
         </li>
       </ul>
 
