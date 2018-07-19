@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http, Headers, Response } from '../../../node_modules/@angular/http';
 import { REST_SERV } from '../rest-url/rest-servers';
 import { Payment } from '../models/payments';
+import { Card } from '../models/card';
 import { UserService } from './user.service';
 
 
@@ -37,6 +38,39 @@ export class PaymentsService {
     });
 
     return this._http.post(REST_SERV.paymentPay, requestBody, { headers: requestHeaders, withCredentials: true }).toPromise()
+      .then((response: Response) => {
+        const respJson = response.json();
+        return respJson;
+      });
+  }
+
+  /* Envio de los datos para realizar el Post del Pago en Pay Pal con tarjeta*/
+
+  public postPagosCards(pagos: Payment, card: Card) {
+    const requestHeaders = new Headers({
+      'Content-Type': 'application/json',
+      'X-Access-Token': this._userServices.getUserKey()
+    });
+    const requestBody = JSON.stringify({
+      factura: pagos.factura,
+      empresa: pagos.empresa,
+      nombre: pagos.nombre,
+      ci: pagos.ci,
+      medidor: pagos.medidor,
+      direccion: pagos.direccion,
+      fechaemision: pagos.fechaemision,
+      fechapago: pagos.fechapago,
+      subtotal: pagos.subtotal,
+      total: pagos.total,
+      icon: pagos.icon,
+      email: card.email,
+      numerocard: card.numerocard,
+      fechames: card.fechames,
+      fechaanio: card.fechaanio,
+      cvv2: card.cvv2
+    });
+
+    return this._http.post(REST_SERV.paymentCard, requestBody, { headers: requestHeaders, withCredentials: true }).toPromise()
       .then((response: Response) => {
         const respJson = response.json();
         return respJson;
