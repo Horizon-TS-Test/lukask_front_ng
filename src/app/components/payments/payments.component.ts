@@ -57,12 +57,12 @@ export class PaymentsComponent implements OnInit {
   }
    //Envio para los Pagos
    envioPagosCard () {
-    this._payments.postPagosCards(this.pagos).then((data) => {
+   /* this._payments.postPagosCards(this.pagos).then((data) => {
       document.location.href = data.data.data;
-      /*LLamar al get con alert
+      LLamar al get con alert
       this.alertData = new Alert({ title: 'Proceso Correcto', message: data.data, type: ALERT_TYPES.success });
-      this.setAlert();*/
-    });
+      this.setAlert();
+    });*/
   }
   setAlert() {
     this._notifierService.sendAlert(this.alertData);

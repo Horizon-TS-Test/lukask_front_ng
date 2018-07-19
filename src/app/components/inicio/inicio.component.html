@@ -11,6 +11,10 @@
         <app-map-view *ngIf="enableSecondOp" [focusPubId]="focusedPubId"></app-map-view>
         <div *ngIf="!enableSecondOp" class="personal-content min-height-full"></div>
       </div>
+      <div class="p-home-full-height">
+        <app-pagos *ngIf="enableThirdOp"></app-pagos>
+        <div *ngIf="!enableThirdOp" class="personal-content min-height-full"></div>
+      </div>
     </owl-carousel>
   </div>
 </section>

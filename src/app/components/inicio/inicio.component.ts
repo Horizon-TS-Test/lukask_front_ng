@@ -31,10 +31,11 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     this.pubContainer = $('#pub-container');
     this._contentService.fadeInComponent($("#homeContainer"));
-    
+
     this._notifierService.notifyChangeMenuContent(MENU_OPTIONS.home);
     this.subscriptor = this._notifierService._changeMenuOption.subscribe(
       (menuOption: number) => {
+        console.log(menuOption);
         this.changeOwlContent(menuOption);
       });
 
@@ -75,6 +76,7 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
           this.enableSecondOp = true;
           break;
         case MENU_OPTIONS.payment:
+          this.enableThirdOp = true;
           break;
       }
       this._notifierService.notifyChangeMenuContent(menuIndex);
@@ -89,6 +91,7 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
           this.enableSecondOp = true;
           break;
         case MENU_OPTIONS.payment:
+          this.enableThirdOp = true;
           break;
       }
       this._notifierService.notifyChangeMenuContent(menuIndex);
@@ -108,7 +111,7 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
    * @param $event VALOR DEL TIPO DE ACCIÓN QUE VIENE EN UN EVENT-EMITTER
    */
   optionButtonAction(event: DynaContent) {
-    if(event.contentType === ACTION_TYPES.mapFocus) {
+    if (event.contentType === ACTION_TYPES.mapFocus) {
       this.focusedPubId = event.contentData;
       this.changeOwlContent(MENU_OPTIONS.mapview);
     }

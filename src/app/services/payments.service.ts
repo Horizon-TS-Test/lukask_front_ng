@@ -69,7 +69,7 @@ export class PaymentsService {
       fechaanio: card.fechaanio,
       cvv2: card.cvv2
     });
-
+    
     return this._http.post(REST_SERV.paymentCard, requestBody, { headers: requestHeaders, withCredentials: true }).toPromise()
       .then((response: Response) => {
         const respJson = response.json();
