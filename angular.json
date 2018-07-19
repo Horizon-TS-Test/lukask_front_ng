@@ -40,7 +40,6 @@
               "node_modules/jquery/dist/jquery.min.js",
               "node_modules/jquery-smooth-scroll/jquery.smooth-scroll.min.js",
               "node_modules/select2/dist/js/select2.min.js",
-              "src/assets/js/smart-fixed-nav.js",
               "node_modules/tether/dist/js/tether.min.js",
               "node_modules/bootstrap/dist/js/bootstrap.min.js",
               "node_modules/owl.carousel/dist/owl.carousel.min.js",

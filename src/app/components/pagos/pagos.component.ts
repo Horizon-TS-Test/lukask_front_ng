@@ -19,7 +19,6 @@ export class PagosComponent implements OnInit {
 
   ngOnInit() {
     this.self = $("#local-content-1");
-    this._contentService.fadeInComponent();
     this.focusInnerOption();
 
     this.self.scroll(() => {

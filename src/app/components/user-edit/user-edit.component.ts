@@ -1,7 +1,6 @@
 import { Component, OnInit, EventEmitter, Output, OnDestroy } from '@angular/core';
 import { HorizonButton } from '../../interfaces/horizon-button.interface';
 import { User } from '../../models/user';
-import { Person } from '../../models/person';
 import { UserService } from '../../services/user.service';
 import { NotifierService } from '../../services/notifier.service';
 import { CONTENT_TYPES } from '../../config/content-type';
@@ -68,7 +67,7 @@ export class UserEditComponent implements OnInit, OnDestroy {
       this.userObj.file = this.filesToUpload;
       this.userObj.fileName = this.getFormattedDate() + ".png";
     }
-    this._userService.sendUser(this.userObj);
+    this._userService.saveUser(this.userObj);
   }
 
   /**

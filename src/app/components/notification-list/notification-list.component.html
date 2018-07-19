@@ -1,0 +1,27 @@
+<div class="p-no-border-rad-card card">
+  <div class="card-header d-flex justify-content-between">
+    <b>Actividad Reciente</b>
+    <small class="p-dark-text-color">(Sin ver 8)</small>
+  </div>
+  <ul class="max-height-half p-overflow-auto list-group list-group-flush pb-0">
+    <li *ngIf="!notificationList || notificationList.length == 0" class="p-border-none list-group-item py-3 px-2">
+      No existen datos por mostrar.
+    </li>
+    <ng-container *ngIf="notificationList && notificationList.length > 0">
+      <li *ngFor="let notif of notificationList" class="f-child-full-space p-border-none list-group-item p-1">
+        <horizon-notification [inputNotification]="notif" class="w-100"></horizon-notification>
+      </li>
+    </ng-container>
+  </ul>
+  <div *ngIf="pagePattern || firstPattern" class="card-footer text-center">
+    <a href="#" (click)="askForMore($event)" class="p-dark-text-color">
+      <small *ngIf="pagePattern">Ver actividad anterior</small>
+      <small *ngIf="!pagePattern && firstPattern">Ocultar actividad anterior</small>
+    </a>
+    <div class="bottom-loader {{ activeClass }} col-12 d-flex justify-content-center align-items-center">
+      <img src="/assets/images/forms/preloader.gif" width="50px">
+    </div>
+  </div>
+  <div *ngIf="!pagePattern && !firstPattern && notificationList && notificationList.length > 0" class="card-footer py-4"></div>
+</div>
+<material-btn-list [materialBtns]="matButtons" (someBtnAction)="getButtonAction($event)"></material-btn-list>

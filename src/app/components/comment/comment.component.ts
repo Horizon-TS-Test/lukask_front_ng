@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
 import { Comment } from '../../models/comment';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NotifierService } from '../../services/notifier.service';
@@ -12,11 +12,13 @@ import { User } from '../../models/user';
   templateUrl: './comment.component.html',
   styleUrls: ['./comment.component.css']
 })
-export class CommentComponent implements OnInit, OnDestroy {
+export class CommentComponent implements OnInit, OnDestroy, OnChanges {
   @Input() commentModel: Comment;
+  @Input() focusCommentId: string;
+  @Input() focusReplyId: string;
   @Input() isReply: boolean;
   @Input() noReplyBtn: boolean;
-  
+  @Input() hideBtn: boolean;
 
   private subscription: Subscription;
   public userProfile: User;
@@ -34,6 +36,11 @@ export class CommentComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    if (this.focusReplyId !== undefined && this.focusCommentId == this.commentModel.commentId) {
+      setTimeout(() => {
+        this.viewReplies();
+      }, 500);
+    }
   }
 
   /**
@@ -51,11 +58,31 @@ export class CommentComponent implements OnInit, OnDestroy {
    * MÉTODO PARA SOLICITAR LA APERTURA DE UN HORIZON MODAL PARA MOSTRAR LAS RESPUESTAS DE UN COMENTARIO:
    * @param event 
    */
-  addNewReply(event: any) {
-    event.preventDefault();
-    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_replies, contentData: this.commentModel });
+  viewReplies(event: any = null) {
+    if (event) {
+      event.preventDefault();
+    }
+    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_replies, contentData: { parentComment: this.commentModel, replyId: this.focusReplyId } });
   }
 
+  /**
+   * MÉTODO PARA DETECTAR LOS CAMBIOS DE UNA PROPIEDAD INYECTADA DESDE EL COMPONENTE PADRE DE ESTE COMPONENTE:
+   * @param changes LOS CAMBIOS GENERADOS
+   */
+  ngOnChanges(changes: SimpleChanges) {
+    for (let property in changes) {
+      /*console.log('Previous:', changes[property].previousValue);
+      console.log('Current:', changes[property].currentValue);
+      console.log('firstChange:', changes[property].firstChange);*/
+
+      if (property === 'hideBtn') {
+        if (changes[property].currentValue) {
+          this.hideBtn = changes[property].currentValue;
+        }
+      }
+    }
+  }
+  
   ngOnDestroy() {
     this.subscription.unsubscribe();
   }

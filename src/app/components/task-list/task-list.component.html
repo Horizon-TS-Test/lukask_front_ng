@@ -1,15 +1,26 @@
 <div class="d-flex justify-content-center align-items-center">
-  <a href="#" (click)="onRelevance($event)" class="ml-1 p-1 btn btn-sm btn-info no-border-button" [ngClass]="{ 'dark': queja.user_relevance }"
+  <a href="#" (click)="onRelevance($event)" class="no-border-button" [ngClass]="{
+    'dark': queja.user_relevance == true,
+    'secondary': queja.user_relevance == false
+  }"
     title="Apoyo">
     <fa name="star"></fa>
   </a>
-  <a href="#" class="ml-1 p-1 btn btn-sm btn-info no-border-button" title="Comentar">
+  <!--a href="#" class="ml-1 no-border-button secondary" title="Comentar">
     <fa name="pencil"></fa>
-  </a>
-  <a href="#" (click)="geolocatePub($event)" class="ml-1 p-1 btn btn-sm btn-info no-border-button" title="Geolocalizar">
+  </a-->
+  <a href="#" (click)="geolocatePub($event)" class="no-border-button secondary" title="Geolocalizar">
     <fa name="map-marker"></fa>
   </a>
-  <a href="#" class="ml-1 p-1 btn btn-sm btn-info no-border-button" title="Denunciar">
+  <!--a href="#" class="ml-1 no-border-button secondary" title="Denunciar">
     <fa name="ban"></fa>
-  </a>
+  </a-->
+  <div *ngIf="queja.isTrans" class="no-border-button ml-1 d-flex justify-content-center align-items-center">
+    <a href="#" (click)="viewTransmission($event)" [ngClass]="{
+      'unable': queja.isTrans == true && queja.transDone == true,
+      'up-down-animation': queja.isTrans == true && queja.transDone == false
+    }" class="ml-1 no-border-button focused-btn" title="Ver transmisión">
+      <span class="personal-site-icon">q</span>
+    </a>
+  </div>
 </div>

@@ -138,12 +138,12 @@ export class QuejaService {
     });
     let flag = true;
 
-    if (morePubs && !this.pagePattern) {
+    if (morePubs == true && !this.pagePattern) {
       flag = false;
     }
 
     if (flag) {
-      return this._http.get(REST_SERV.pubsUrl + "/" + ((this.pagePattern) ? this.pagePattern : "?limit=" + this.DEFAULT_LIMIT), { headers: pubHeaders, withCredentials: true }).toPromise()
+      return this._http.get(REST_SERV.pubsUrl + "/" + ((this.pagePattern && morePubs == true) ? this.pagePattern : "?limit=" + this.DEFAULT_LIMIT), { headers: pubHeaders, withCredentials: true }).toPromise()
         .then((response: Response) => {
           const respJson = response.json().data;
           this.pagePattern = respJson.next;
@@ -289,6 +289,7 @@ export class QuejaService {
       date_publication: queja.date_pub,
       location: queja.location,
       address: queja.address,
+      is_trans: queja.isTrans,
       media_files: []
     }
 
@@ -339,7 +340,7 @@ export class QuejaService {
     usr = this._userService.extractUserJson(pubJson.user_register);
     type = new QuejaType(pubJson.type_publication, pubJson.type_publication_detail);
 
-    pub = new Publication(pubJson.id_publication, pubJson.latitude, pubJson.length, pubJson.detail, pubJson.date_publication, pubJson.priority_publication, pubJson.active, type, usr, pubJson.location, pubJson.count_relevance, pubJson.user_relevance);
+    pub = new Publication(pubJson.id_publication, pubJson.latitude, pubJson.length, pubJson.detail, pubJson.date_publication, pubJson.priority_publication, pubJson.active, type, usr, pubJson.location, pubJson.count_relevance, pubJson.user_relevance, pubJson.address, pubJson.is_trans, pubJson.trans_done);
     for (let med of pubJson.medios) {
       //PREPPENDING THE BACKEND SERVER IP/DOMAIN:
       med.media_file = ((med.media_file.indexOf("http") == -1) ? REST_SERV.mediaBack : "") + med.media_file;
@@ -360,6 +361,7 @@ export class QuejaService {
     formData.append('date_publication', queja.date_pub);
     formData.append('location', queja.location);
     formData.append('address', queja.address);
+    formData.append('is_trans', queja.isTrans + "");
 
     for (let med of queja.media) {
       formData.append('media_files[]', med.file, med.fileName);

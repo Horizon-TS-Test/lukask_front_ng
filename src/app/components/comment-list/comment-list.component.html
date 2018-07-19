@@ -1,4 +1,4 @@
-<div [ngClass]="{ 'personal-content min-height-full max-height-full p-overflow-auto': isModal == true }">
+<div [ngClass]="{ 'personal-content min-height-full-modal max-height-full-modal p-overflow-auto': isModal == true }">
   <div [ngClass]="{ 'col-12 py-1 px-1': isModal == true }">
     <div class="p-no-border-rad-card card" [ngClass]="{
       'p-shadow-card': isModal == true,
@@ -9,7 +9,7 @@
       </div>
       <ul class="list-group list-group-flush pb-0">
         <li *ngFor="let comment of commentList" class="list-group-item">
-          <comment [commentModel]="comment"></comment>
+          <comment [hideBtn]="hideBtn" [focusCommentId]="commentId" [focusReplyId]="replyId" [commentModel]="comment"></comment>
         </li>
       </ul>
       <div *ngIf="pagePattern || firstPattern" class="card-footer text-center">

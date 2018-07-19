@@ -1,9 +1,12 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, EventEmitter, Output } from '@angular/core';
 
 import { QuejaService } from '../../services/queja.service';
 import { Publication } from '../../models/publications';
 import { Subscription } from 'rxjs';
 import { NotifierService } from '../../services/notifier.service';
+import { ACTION_TYPES } from '../../config/action-types';
+import { DynaContent } from '../../interfaces/dyna-content.interface';
+import { DateManager } from '../../tools/date-manager';
 
 @Component({
   selector: 'app-quejas-list',
@@ -11,6 +14,8 @@ import { NotifierService } from '../../services/notifier.service';
   styleUrls: ['./queja-list.component.css'],
 })
 export class QuejaListComponent implements OnInit, OnDestroy {
+  @Output() actionType = new EventEmitter<DynaContent>();
+  
   private LOADER_HIDE: string = "hide";
   private LOADER_ON: string = "on";
 
@@ -47,6 +52,9 @@ export class QuejaListComponent implements OnInit, OnDestroy {
   getPubList() {
     this._quejaService.getPubList().then((pubs: Publication[]) => {
       this.pubList = pubs;
+      console.log("this.pubList", this.pubList)
+      DateManager.setFormatDate(this.pubList);
+      //setInterval(DateManager.setFormatDate(this.pubList), 60000);
     }).catch(err => {
       console.log(err);
     });
@@ -80,6 +88,16 @@ export class QuejaListComponent implements OnInit, OnDestroy {
           
         }, 1000)
       });
+    }
+  }
+
+  /**
+   * MÉTODO PARA CAPTAR LA ACCIÓN DE ALGÚN BOTÓN DEL LA LSITA DE BOTONES, COMPONENTE HIJO
+   * @param $event VALOR DEL TIPO DE ACCIÓN QUE VIENE EN UN EVENT-EMITTER
+   */
+  optionButtonAction(event: number, pubId: string) {
+    if(event === ACTION_TYPES.mapFocus) {
+      this.actionType.emit({contentType: event, contentData: pubId});
     }
   }
 

@@ -25,15 +25,12 @@ export class PagosBusquedaComponent implements OnInit {
 
 
 
-
   constructor(
     private formBuilder: FormBuilder
   ) {
     this.closeModal = new EventEmitter<boolean>();
     this.pagos = planillasData;
     this.pagos1 = [];
-
-
 
     this.matButtons = [
       {

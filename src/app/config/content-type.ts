@@ -1,6 +1,6 @@
-export var CONTENT_TYPES = {
+export const CONTENT_TYPES = {
     new_media: 0,
-    new_queja: 1,
+    new_pub: 1,
     edit_queja: 2,
     view_queja: 3,
     alert: 4,
@@ -10,6 +10,9 @@ export var CONTENT_TYPES = {
     single_map: 8,
     view_img: 9,
     view_comments: 10,
-    pagos_busq: 11,
-    payments:12,
+    new_notification: 11,
+    view_notifs: 12,
+    view_transmission: 12,
+    pagos_busq: 14,
+    payments:15,
 }

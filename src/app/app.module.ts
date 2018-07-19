@@ -49,14 +49,21 @@ import { TaskListComponent } from './components/task-list/task-list.component';
 import { SingleMapComponent } from './components/single-map/single-map.component';
 import { ImgViewerComponent } from './components/img-viewer/img-viewer.component';
 import { CommentListComponent } from './components/comment-list/comment-list.component';
+import { HorizonNotificationComponent } from './components/horizon-notification/horizon-notification.component';
+import { NotificationService } from './services/notification.service';
+import { NotificationListComponent } from './components/notification-list/notification-list.component';
+import { MediaStreamingComponent } from './components/media-streaming/media-streaming.component';
+import { ActivityComponent } from './components/activity/activity.component';
+import { RouterService } from './services/router.service';
+import { HomePanelComponent } from './components/home-panel/home-panel.component';
+import { NewPubComponent } from './components/new-pub/new-pub.component';
+import { PubFormComponent } from './components/pub-form/pub-form.component';
 import { PagosComponent } from './components/pagos/pagos.component';
 import { PagosInicioComponent } from './components/pagos-inicio/pagos-inicio.component';
 import { PagosBusquedaComponent } from './components/pagos-busqueda/pagos-busqueda.component';
 import { PagosListComponent } from './components/pagos-list/pagos-list.component';
 import { PagosDatosComponent } from './components/pagos-datos/pagos-datos.component';
 import { PaymentsComponent } from './components/payments/payments.component';
-
-
 
 @NgModule({
   declarations: [
@@ -88,6 +95,13 @@ import { PaymentsComponent } from './components/payments/payments.component';
     SingleMapComponent,
     ImgViewerComponent,
     CommentListComponent,
+    HorizonNotificationComponent,
+    NotificationListComponent,
+    MediaStreamingComponent,
+    ActivityComponent,
+    HomePanelComponent,
+    NewPubComponent,
+    PubFormComponent,
     PagosComponent,
     PagosInicioComponent,
     PagosBusquedaComponent,
@@ -105,8 +119,8 @@ import { PaymentsComponent } from './components/payments/payments.component';
     OwlModule,
     ServiceWorkerModule.register('/sw-workbox.js', { enabled: environment.production })
   ],
-  providers: [appRoutingProviders, ContentService, UserService, AuthGuardService, LoginGuardService, NotifierService, CameraService, SocketService, BrowserNotifierService, QuejaService],
+  providers: [appRoutingProviders, ContentService, UserService, AuthGuardService, LoginGuardService, NotifierService, CameraService, SocketService, BrowserNotifierService, QuejaService, NotificationService, RouterService],
   bootstrap: [AppComponent],
-  entryComponents: [AlertComponent, HorizonModalComponent, SingleMapComponent]
+  entryComponents: [AlertComponent, HorizonModalComponent, SingleMapComponent, HorizonNotificationComponent]
 })
 export class AppModule { }

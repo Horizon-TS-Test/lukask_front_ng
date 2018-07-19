@@ -47,12 +47,12 @@ export class ActionService {
     });
     let flag = true;
 
-    if (moreComments && !pagePattern) {
+    if (moreComments == true && !pagePattern) {
       flag = false;
     }
 
     if (flag) {
-      let filter = ((!isReplies) ? "/?pub_id=" + parentId : "/?com_id=" + parentId) + ((pagePattern) ? pagePattern : "&limit=" + this.pageLimit) + ((isReplies) ? "&replies=true" : "");
+      let filter = ((!isReplies) ? "/?pub_id=" + parentId : "/?com_id=" + parentId) + ((pagePattern && moreComments == true) ? pagePattern : "&limit=" + this.pageLimit) + ((isReplies) ? "&replies=true" : "");
 
       return this._http.get(REST_SERV.commentUrl + filter, {
         headers: requestHeaders,
@@ -78,12 +78,10 @@ export class ActionService {
           }
         })
         .catch((error: Response) => {
-          /*if (error.json().code == 401) {
+          if (error.json().code == 401) {
             localStorage.clear();
-          }*/
-          //return throwError(error.json());
-          console.log(error);
-          return throwError(error);
+          }
+          return throwError(error.json());
         });
     }
     return new Promise((resolve, reject) => {
@@ -224,7 +222,10 @@ export class ActionService {
       description: comment.description,
       id_publication: comment.publicationId,
       action_parent: (comment.commentParentId) ? comment.commentParentId : "",
-      active: true
+      date: comment.date,
+      active: true,
+      userName: this._userService.getUserProfile().person.name,
+      userImage: this._userService.getUserProfile().profileImg
     });
 
     return this._http.post(REST_SERV.commentUrl, requestBody, { headers: requestHeaders, withCredentials: true })
@@ -267,7 +268,9 @@ export class ActionService {
       description: comment.description,
       id_publication: comment.publicationId,
       action_parent: (comment.commentParentId) ? comment.commentParentId : "",
-      active: comment.active
+      active: comment.active,
+      userName: this._userService.getUserProfile().person.name,
+      userImage: this._userService.getUserProfile().profileImg
     }
     /////
 

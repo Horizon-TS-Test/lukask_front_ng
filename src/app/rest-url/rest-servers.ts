@@ -1,4 +1,4 @@
-export var REST_SERV = {
+export const REST_SERV = {
     /*socketServerUrl: 'http://127.0.0.1:8070',
     publicationsUrl: 'http://127.0.0.1:8070/publication',
     qTypeUrl: 'http://127.0.0.1:8070/qtype',
@@ -12,7 +12,9 @@ export var REST_SERV = {
     mediaBack: 'http://192.168.1.56:8081',
     pushSub: 'http://192.168.1.19:3200/subscribe',
     socketServerUrl: 'http://192.168.1.42:3001',
+    webRtcSocketServerUrl: 'ws://192.168.1.62:8080/lukaskstreaming',
     userUrl: 'http://192.168.1.42:3001/user/',
+	notifUrl:'http://192.168.1.62:3000/notification',
     paymentPay: 'http://192.168.1.42:3001/payment/pay',
     cancelado:'http://192.168.1.42:3001/payment/cancelado',
     exitoso:'http://192.168.1.42:3001/payment/exitoso'

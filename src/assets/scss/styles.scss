@@ -13,6 +13,9 @@ body {
     background: #222 !important;
     overflow: hidden;
 }
+.p-body-overflow {
+    overflow: hidden;
+}
 
 a {
     text-decoration: none !important;
@@ -57,6 +60,14 @@ img {
         height: 130px;
     }
 }
+.lukask-logo {
+    position: absolute;
+    left: 9px;
+    background-image: url("/assets/images/logo/logo-1.svg");
+    width: 45px;
+    height: 45px;
+}
+
 .personal-logo, .personal-isologo {
     background-position: center center;
     background-repeat: no-repeat;
@@ -91,7 +102,6 @@ img {
 
 .personal-content {
     background: #fff;
-    overflow: hidden;
     width: 100%;
 }
 
@@ -203,6 +213,10 @@ p, label, div {
     opacity: 0;
     transform: translateY(-100%);
     transition: opacity 0s 0.4s, transform 1s ease;
+    
+    .p-owl-img {
+        width: 60px !important;
+    }
 }
 .bottom-loader.hide {
     z-index: -1;
@@ -264,10 +278,56 @@ p, label, div {
       transform: scale(1);
     }
 }
+
+
+@-webkit-keyframes cd-bounce-infinit {
+    0% {
+      -webkit-transform: scale(1.2);
+    }
+    60% {
+      -webkit-transform: scale(.9);
+    }
+    100% {
+      -webkit-transform: scale(1.2);
+    }
+}
+@-moz-keyframes cd-bounce-infinit {
+    0% {
+        -moz-transform: scale(1.2);
+      }
+      60% {
+        -moz-transform: scale(.9);
+      }
+      100% {
+        -moz-transform: scale(1.2);
+      }
+}
+@keyframes cd-bounce-infinit {
+    0% {
+        transform: scale(1.2);
+      }
+      60% {
+        transform: scale(.9);
+      }
+      100% {
+        transform: scale(1.2);
+      }
+}
+////
+
+//HEIGHT:
+.p-home-full-height {
+    overflow-y: auto;
+    width: 100%;
+    height: calc(100vh - 55px);
+}
 ////
 
 //MIN HEIGHT:
 .min-height-full {
+    min-height: 110vh !important;
+}
+.min-height-full-modal {
     min-height: 100vh !important;
 }
 .min-height-half {
@@ -276,6 +336,9 @@ p, label, div {
 ////
 //MAX HEIGHT:
 .max-height-full {
+    max-height: 110vh !important;
+}
+.max-height-full-modal {
     max-height: 100vh !important;
 }
 .max-height-half {
@@ -290,6 +353,9 @@ p, label, div {
 .p-overflow-auto {
     overflow-y: auto;
     overflow-x: hidden;
+}
+.p-overflow-hidden {
+    overflow: hidden;
 }
 ////
 
@@ -309,6 +375,9 @@ p, label, div {
     @include MQ(L) {
         font-size: 5.6rem;
     }
+}
+.personal-site-icon.selected {
+    color: $primary !important;
 }
 
 .icon-size-5 {
@@ -340,6 +409,8 @@ p, label, div {
 
 /*OWL CAROUSEL WITH NAV BUTTONS CUSTOMIZED*/
 .personal-owl-nav {
+    display: unset !important;
+    
     .owl-nav {
         position: absolute;
         bottom: 5px;
@@ -522,10 +593,9 @@ p, label, div {
 ********************************/
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #menu-nav {
-    z-index: 9999999;
+    z-index: 4;
     right: $nav-x;
-    bottom: $nav-menu-bottom-lg;
-    overflow: hidden;
+    bottom: $nav-menu-bottom;
     text-indent: 100%;
     white-space: nowrap;
     width: $nav-menu-size-lg;
@@ -545,12 +615,12 @@ p, label, div {
 .personal-nav-btn {
     position: fixed;
     //box-shadow: 0 0 10px $primary;
-    -webkit-box-shadow: 1px 2px 4px 2px $primary-a !important;
-    -moz-box-shadow: 1px 2px 4px 2px $primary-a !important;
-    box-shadow: 1px 2px 4px 2px $primary-a !important;
+    -webkit-box-shadow: 1px 2px 4px 2px $primary-a;
+    -moz-box-shadow: 1px 2px 4px 2px $primary-a;
+    box-shadow: 1px 2px 4px 2px $primary-a;
     background: $primary-dark;
 
-    span {
+    .nav-icon {
         background: $secondary-text;
     }
 }
@@ -735,33 +805,58 @@ p, label, div {
     box-shadow: none;
     background: transparent;
     
-    span {
+    .nav-icon {
         background: transparent;
     }
 
-    span::before, span::after {
+    .nav-icon::before, .nav-icon::after {
         background: $primary-dark;
     }
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //////PANEL DE OPCIONES:
-.top-panel, .bot-panel {
+.top-panel, .bot-panel, .p-home-panel {
     position: fixed;
-    left: 0;
+    z-index: 3;
+    left: 0px;
     width: 100%;
-    z-index: 9999998 !important;
+    height: 55px;
     background: $secondary-text;
     transition: transform .3s ease;
-
 }
+.p-home-panel {
+    top: 0px;
+    z-index: 2;
+    border-bottom: solid 1px rgba(0,0,0,0.2) !important;
+    -webkit-box-shadow: 2px 1px 3px rgba(0,0,0,0.2) !important;
+    -moz-box-shadow: 2px 1px 3px rgba(0,0,0,0.2) !important;
+    box-shadow: 2px 1px 3px rgba(0,0,0,0.2) !important;
+}
+.p-top-margin-home {
+    margin-top: 55px;
+}
+
 .top-panel {
-    top: 0;
-    transform: translateY(-100%);
+    top: 0px;
+    -webkit-box-shadow: 2px 1px 3px rgba(0,0,0,0.2) !important;
+    -moz-box-shadow: 2px 1px 3px rgba(0,0,0,0.2) !important;
+    box-shadow: 2px 1px 3px rgba(0,0,0,0.2) !important;
+    transform: translateY(-110%);
     
     .opcion {
         background: transparent;
-        color: $primary !important;
+        transition: all .5s ease;
+
+        fa, span {
+            color: $primary;
+            font-size: 1.5rem;
+        }
+    }
+    .opcion.focused {
+        fa, span {
+            color: $primary-dark;
+        }
     }
     
     .menu-focus {
@@ -774,21 +869,14 @@ p, label, div {
         width: 30%;
         border-bottom: 2px solid $primary-dark;
         transition: all .5s ease;
-
-        span {
-            position: absolute;
-            width: 100%;
-            height: 5px;
-            bottom: 0;
-            left: 0;
-            background: $secondary-text;
-            border: 1px solid $secondary-text;
-        }
     }
 }
 .bot-panel {
-    bottom: 0;
-    transform: translateY(100%);
+    bottom: 0px;
+    -webkit-box-shadow: 2px -1px 3px rgba(0,0,0,0.2) !important;
+    -moz-box-shadow: 2px -1px 3px rgba(0,0,0,0.2) !important;
+    box-shadow: 2px -1px 3px rgba(0,0,0,0.2) !important;
+    transform: translateY(110%);
 
     button {
         color: $primary !important;
@@ -832,6 +920,38 @@ p, label, div {
     background: $primary !important;
 }
 
+//ESTILOS PARA FORMULARIO TRANSPARENTE:
+.transparent-form {
+    position: absolute !important;
+    z-index: 1;
+}
+.transparent-form, .transparent-form ul, .transparent-form ul li {
+    background: rgba(0, 0, 0, .3) !important;
+    border-color: rgba(255, 255, 255, .8) !important;
+    color: $secondary-text !important;
+}
+.transparent-form {
+    ul {
+        li {
+            div {
+                color: $secondary-text !important;
+            }
+        }
+    }
+}
+.transparent-form {
+    ul {
+        li {
+            textarea, textarea:focus {
+                background: transparent;
+                border-color: #fff;
+                color: #fff;
+            }
+        }
+    }
+}
+////
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /*
 * //QUEJA
@@ -845,7 +965,13 @@ p, label, div {
     background-size: cover !important;
     background-position: center center !important;
     background-repeat: no-repeat !important;
+    flex: 0 0 auto !important;
 }
+.profile-img-notif {
+    width: 60px;
+    height: 60px;
+}
+
 .pers-profile-img-comen {
     width: 40px;
     height: 40px;
@@ -855,6 +981,7 @@ p, label, div {
     background-size: cover !important;
     background-position: center center !important;
     background-repeat: no-repeat !important;
+    flex: 0 0 auto !important;
 }
 
 .personal-queja {
@@ -890,8 +1017,25 @@ p, label, div {
             height: 180px;
             object-fit: cover;
         }
+        img.full {
+            width: 100%;
+        }
+        img.half {
+            width: 48%;
+        }
     }
 }
+//EDIT-QUEJA
+.p-pub-media {
+    max-height: 250px;
+    img {
+        border: 1px solid rgba(0, 0, 0, .125);
+        border-radius: 3px;
+        height: 250px;
+        object-fit: cover;
+    }
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1049,16 +1193,14 @@ p, label, div {
 ///////DYNAMIC CONTENT:
 *************************************/
 .personal-dyna-cont {
-    position: absolute !important;
+    position: fixed !important;
     left: 0;
     top: 100%;
-    /*width: 100%;
-    height: 100%;*/
     z-index: 10000000000000000;
     transition: all .3s ease;
 }
 .show-dyna-cont {
-    top: 0;
+    top: 0px;
     transition: all .5s ease;
 }
 
@@ -1069,7 +1211,7 @@ p, label, div {
     transition: all .3s ease;
 }
 .personal-dyna-down.show {
-    bottom: 0;
+    bottom: 0px;
     transition: all .5s ease;
 }
 
@@ -1077,10 +1219,10 @@ p, label, div {
     position: fixed;
     background: rgb(37, 35, 35);
     z-index: 10000000000;
-    top: -100%;
+    top: 0;
     left: 0;
     width: 100%;
-    height: 300vh;
+    height: 100vh;
     opacity: 0;
     transition: all .3s ease;
 }
@@ -1097,10 +1239,10 @@ p, label, div {
 
 .absolute-background {
     position: absolute;
-    top: -100%;
-    left: 0;
+    top: 0px;
+    left: 0px;
     width: 100%;
-    height: 300vh;
+    height: 100vh;
 }
 .relative-background {
     position: relative;
@@ -1113,6 +1255,11 @@ p, label, div {
 /*************************************
 ///////PERSONAL EDIT-QUEJA:
 *************************************/
+#carousel-edit-q {
+    .owl-item:first-child {
+        z-index: 1;
+    }
+}
 
 #frmQ {
     .card-img-top {
@@ -1138,31 +1285,6 @@ p, label, div {
 /*************************************
 ///////PERSONAL NEW MEDIA:
 *************************************/
-.personal-new-media-pan {
-    position: absolute !important;
-    top: 0;
-    right: 0;
-    z-index: 1;
-    height: 100%;
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-
-    .card-block {
-        border: none !important;
-    }
-
-    .btn {
-        border: none !important;
-        background: transparent !important;
-
-        fa, span {
-            font-size: 1.5rem !important;
-            color: $primary !important;
-        }
-    }
-}
-
 .default-back {
     background-size: cover !important;
     background-position: center center !important;
@@ -1191,38 +1313,53 @@ p, label, div {
 /////////////////
 
 ///PERSONAL BUTTONS:
-.personal-center-btn {
-    position: absolute;
+.p-transparent-btn {
     border-radius: 50% !important;
     width: 80px;
     height: 80px;
     background: rgba(0, 0, 0, .3) !important;
-    border-color: rgba(255, 255, 255, .8) !important;
+    border: solid 1px rgba(255, 255, 255, .8) !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    padding: 0px !important;
 
-    fa {
+    fa, span {
         font-size: 40px;
         color: rgba(255, 255, 255, .8) !important
     }
 }
-.p-float-btn-sm {
-    position: absolute;
-    z-index: 1;
-    border-radius: 50% !important;
+.p-transparent-btn.sm {
     width: 40px;
     height: 40px;
-    top: 5px;
-    left: 5px;
-    background: rgba(0, 0, 0, .3) !important;
-    border-color: rgba(255, 255, 255, .8) !important;
 
-    fa {
+    fa, span {
         font-size: 20px;
-        color: rgba(255, 255, 255, .8) !important
     }
 }
-.p-float-link {
+.p-transparent-btn.xs {
+    width: 30px;
+    height: 30px;
+
+    fa, span {
+        font-size: 1.1rem !important;;
+    }
+}
+
+.p-float-btn, .p-float-link, .p-float-div {
     position: absolute;
     z-index: 1;
+}
+.p-index-2 {
+    z-index: 2;
+}
+.top-left-corner {
+    top: 5px;
+    left: 5px;
+}
+.top-right-corner {
+    top: 5px;
+    right: 10px;
 }
 .down-right-corner {
     bottom: 3px;
@@ -1232,10 +1369,13 @@ p, label, div {
 //MATERIAL BUTTONS:
 .personal-material-btn {
     position: fixed;
-    z-index: 100000000000000;
+    z-index: 8;
     right: 12px;
     bottom: -100%;
     transition: all .3s ease;
+}
+.personal-material-btn.no-modal {
+    z-index: 4;
 }
 .personal-material-btn.show {
     bottom: 3px;
@@ -1259,31 +1399,126 @@ p, label, div {
         color: $secondary-text !important;
     }
 }
+.p-sec-btn {
+    background: $primary-dark !important;
+    border-color: $primary-dark !important;
+}
+
+.custom-panel-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    border: solid 1px $secondary-text;
+    background: $secondary-text;
+    -webkit-box-shadow: 1px 2px 4px 2px rgba(0,0,0,0.2) !important;
+    -moz-box-shadow: 1px 2px 4px 2px rgba(0,0,0,0.2) !important;
+    box-shadow: 1px 2px 4px 2px rgba(0,0,0,0.2) !important;
+
+    fa, span {
+        margin-left: 1px;
+        color: $primary;
+    }
+}
+.custom-panel-btn:hover {
+    border: solid 1px $primary;
+    background: $primary;
+
+    fa, span {
+        color: $secondary-text;
+    }
+}
 
 .no-border-button {
+    width: 27px;
+    height: 27px;
     border: none !important;
     background: transparent !important;
+    transition: all .3s;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
     
     fa, span {
-        font-size: 1.1rem !important;
-        color: $primary !important;
+        font-size: 1.1rem;
+        color: $primary;
         transition: all .5s ease;
-    }    
+    }
 }
 .no-border-button.dark {
 
     fa, span {
-        color: $primary-dark !important;
+        color: $primary-dark;
+    }
+}
+.no-border-button.secondary {
+
+    fa, span {
+        color: $primary-text;
     }
 }
 .no-border-button:hover {
     opacity: .8;
 }
+.no-border-button.md {
+    fa, span {
+        font-size: 1.3rem;
+    }
+}
+
+.focused-btn {
+    background: $primary !important;
+    border-radius: 50%;
+    position: absolute;
+    animation: cd-bounce-infinit 1.2s infinite;
+
+    fa, span {
+        color: $secondary-text
+    }
+}
+.focused-btn.unable {
+    background: $primary-text !important;
+    animation: unset;
+}
+
+.animated-btn {
+    position: absolute;
+    z-index: -1;
+    top: -100%;
+    left: 0px;
+    visibility: hidden;
+    -webkit-transform: scale(0);
+    -moz-transform: scale(0);
+    -ms-transform: scale(0);
+    -o-transform: scale(0);
+    transform: scale(0);
+    -webkit-transition: -webkit-transform 0.3s, visibility 0s 0.3s;
+    -moz-transition: -moz-transform 0.3s, visibility 0s 0.3s;
+    transition: transform 0.3s, visibility 0s 0.3s;
+}
+.animated-btn.animate-in {
+    z-index: 1;
+    visibility: visible;
+    -webkit-transition: all 0s;
+    -moz-transition: all 0s;
+    transition: all 0s;
+    -webkit-transform: scale(1);
+    -moz-transform: scale(1);
+    -ms-transform: scale(1);
+    -o-transform: scale(1);
+    transform: scale(1);
+    -webkit-animation: cd-bounce-in 0.3s linear;
+    -moz-animation: cd-bounce-in 0.3s linear;
+    animation: cd-bounce-in 0.3s linear;
+}
 /////////////////////
 
 //////CAMERA:
 .camera-content {
-    position: fixed !important;
+    position: absolute !important;
     top: 0 !important;
     min-width: 100% !important; min-height: 100% !important;
     width: auto; height: auto !important;
@@ -1304,18 +1539,15 @@ p, label, div {
         }
     }
 }
+
+.p-camera-center {
+    left: 0px;
+}
 /////////////////////
 
 ///PERSONAL STYLE FOR INPUT CONTROLS:
 .p-border-none {
     border: none !important;
-}
-
-.personal-float-form {
-    position: absolute !important;
-    left: 0;
-    bottom: 0;
-    z-index: 2;
 }
 ////
 
@@ -1336,3 +1568,76 @@ input[type=text], input[type=password], input[type=email], textarea{
     border-right: none;
     border-radius: 0;
 }
+
+/////////////////////////////////////////NOTIFICATIONS////////////////////////////////////////////////////////
+.p-notif-container {
+    position: fixed;
+    z-index: 10000000001;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    max-width: 400px;
+    opacity: 0;
+    transition: opacity .4s;
+
+    .p-notification {
+        position: relative;
+        opacity: 0;
+        transform: translateX(-100%);
+        transition: opacity 0s .4s, transform .7s ease;
+    }
+    .p-notification.on {
+        opacity: 1;
+        transform: translateX(0);
+        transition: opacity 0s .3s, transform .5s ease;
+    }
+}
+.p-notif-container.active {
+    opacity: 1;
+    transition: opacity .2s;
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+////ESTILOS PARA NÚMERO DE NOTIFICACIONES:
+.news-number {
+    position: absolute;
+    right: -5px;
+    top: -5px;
+    width: 17px;
+    height: 17px;
+    border-radius: 50%;
+    color: $secondary-text;
+    font-size: .6rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: $primary-dark;
+}
+.news-main {
+    position: fixed;
+    right: unset;
+    top: unset;
+    z-index: 10000000;
+    right: $nav-x + $nav-menu-size-lg - .5rem;
+    bottom: $nav-menu-bottom-lg + $nav-menu-size-lg - .5rem;
+    background: $primary;
+}
+////
+
+//////////////////CAROUSEL PERSONALIZADO////////////////
+.personal-carousel.prev {
+    position: absolute;
+    transform: translateX(-100%);
+    transition: all .6s;
+}
+.personal-carousel {
+    position: relative;
+    transform: translateX(0);
+    transition: all .4s;
+}
+.personal-carousel.next {
+    position: absolute;
+    transform: translateX(100%);
+}
+////

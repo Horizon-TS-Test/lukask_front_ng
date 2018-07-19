@@ -1,11 +1,7 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { ContentService } from '../../services/content.service';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { NotifierService } from '../../services/notifier.service';
 import { CAMERA_ACTIONS } from '../../config/camera-actions';
-import { DynaContent } from '../../interfaces/dyna-content.interface';
 import { HorizonButton } from '../../interfaces/horizon-button.interface';
-
-declare var $: any;
 
 @Component({
   selector: 'new-media',
@@ -17,14 +13,13 @@ export class NewMediaComponent implements OnInit {
   @Output() closeModal: EventEmitter<boolean>;
 
   private _CLOSE = 1;
-  private self: any;
 
   public cameraActions: any;
   public _ref: any;
   public matButtons: HorizonButton[];
+  public carouselOptions: any;
 
   constructor(
-    private _contentService: ContentService,
     private _notifierService: NotifierService
   ) {
     this.cameraActions = CAMERA_ACTIONS;
@@ -40,11 +35,27 @@ export class NewMediaComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.self = $("#personal-media");
+    this.initCarousel();
   }
 
   ngAfterViewInit() { }
 
+  /**
+   * MÉTODO PARA DEFINIR LAS PROPIEDADES DEL CAROUSEL DE SECCIONES:
+   */
+  initCarousel() {
+    this.carouselOptions = {
+      items: 1, dots: false, loop: false, margin: 5,
+      nav: false, stagePadding: 0, autoWidth: false
+    };
+  }
+
+  /**
+   * MÉTODO PARA ENVIAR LAS DISTINTAS ACCIONES A EJECUTAR EN EL 
+   * COMPONENTE QUE ABRE LA CÁMARA PARA TOMAR FOTOGRAFÍAS:
+   * @param event 
+   * @param action EL TIPO DE ACCIÓN A REALIZAR. VER EL ARCHIVO ../../config/camera-actions.ts
+   */
   sendCameraAction(event: any, action: number) {
     if (event) {
       event.preventDefault();
