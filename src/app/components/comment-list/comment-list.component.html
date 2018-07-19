@@ -9,7 +9,7 @@
       </div>
       <ul class="list-group list-group-flush pb-0">
         <li *ngFor="let comment of commentList" class="list-group-item">
-          <comment [focusCommentId]="commentId" [focusReplyId]="replyId" [commentModel]="comment"></comment>
+          <comment [hideBtn]="hideBtn" [focusCommentId]="commentId" [focusReplyId]="replyId" [commentModel]="comment"></comment>
         </li>
       </ul>
       <div *ngIf="pagePattern || firstPattern" class="card-footer text-center">

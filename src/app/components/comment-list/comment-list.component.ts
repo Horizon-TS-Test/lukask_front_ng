@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, EventEmitter, Output, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output, OnDestroy, OnChanges, SimpleChange, SimpleChanges } from '@angular/core';
 import { ActionService } from '../../services/action.service';
 import { Comment } from '../../models/comment';
 import { ArrayManager } from '../../tools/array-manager';
@@ -15,11 +15,12 @@ declare var upgradeTableFieldDataArray: any;
   templateUrl: './comment-list.component.html',
   styleUrls: ['./comment-list.component.css']
 })
-export class CommentListComponent implements OnInit, OnDestroy {
+export class CommentListComponent implements OnInit, OnDestroy, OnChanges {
   @Input() pubId: string;
   @Input() commentId: string;
   @Input() replyId: string;
   @Input() isModal: boolean;
+  @Input() hideBtn: boolean;
   @Output() closeModal = new EventEmitter<boolean>();
 
   private _CLOSE = 1;
@@ -224,6 +225,24 @@ export class CommentListComponent implements OnInit, OnDestroy {
       if (ArrayManager.backendServerSays(action, this.commentList, lastComment, newCom) == true) {
         if (action == ArrayManager.CREATE) {
           this.updatePattern();
+        }
+      }
+    }
+  }
+
+  /**
+   * MÉTODO PARA DETECTAR LOS CAMBIOS DE UNA PROPIEDAD INYECTADA DESDE EL COMPONENTE PADRE DE ESTE COMPONENTE:
+   * @param changes LOS CAMBIOS GENERADOS
+   */
+  ngOnChanges(changes: SimpleChanges) {
+    for (let property in changes) {
+      /*console.log('Previous:', changes[property].previousValue);
+      console.log('Current:', changes[property].currentValue);
+      console.log('firstChange:', changes[property].firstChange);*/
+
+      if (property === 'hideBtn') {
+        if (changes[property].currentValue) {
+          this.hideBtn = changes[property].currentValue;
         }
       }
     }

@@ -36,6 +36,6 @@
         {{queja.detail}}
       </div>
     </a>
-    <comment-list [pubId]="queja.id_publication" [isModal]="false"></comment-list>
+    <comment-list [pubId]="queja.id_publication" [hideBtn]="queja.isTrans == true && queja.transDone == false" [isModal]="false"></comment-list>
   </div>
 </div>
