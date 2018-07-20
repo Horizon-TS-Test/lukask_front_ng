@@ -8,8 +8,8 @@
         <comment-form [commentModel]="newComment" [modalForm]="false"></comment-form>
       </div>
       <ul class="list-group list-group-flush pb-0">
-        <li *ngFor="let comment of commentList" class="list-group-item">
-          <comment [hideBtn]="hideBtn" [focusCommentId]="commentId" [focusReplyId]="replyId" [commentModel]="comment"></comment>
+        <li *ngFor="let comment of commentList" class="pb-1 list-group-item">
+          <comment class="col-12 p-0" [hideBtn]="hideBtn" [focusCommentId]="commentId" [focusReplyId]="replyId" [commentModel]="comment"></comment>
         </li>
       </ul>
       <div *ngIf="pagePattern || firstPattern" class="card-footer text-center">
@@ -34,8 +34,8 @@
       No existen comentarios por mostrar.
     </li>
     <ng-container *ngIf="commentList && commentList.length > 0">
-      <li *ngFor="let comment of commentList" class="f-child-full-space list-group-item">
-        <comment [hideBtn]="hideBtn" [focusCommentId]="commentId" [focusReplyId]="replyId" [commentModel]="comment"></comment>
+      <li *ngFor="let comment of commentList" class="f-child-full-space pb-1 list-group-item">
+        <comment class="col-12 p-0" [hideBtn]="hideBtn" [focusCommentId]="commentId" [focusReplyId]="replyId" [commentModel]="comment"></comment>
       </li>
     </ng-container>
   </ul>

@@ -1,10 +1,11 @@
-import { Component, OnInit, Output, EventEmitter, OnChanges, SimpleChanges, SimpleChange, Input } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, OnChanges, SimpleChanges, SimpleChange, Input, OnDestroy } from '@angular/core';
 import { HorizonButton } from '../../interfaces/horizon-button.interface';
 import { NotifierService } from '../../services/notifier.service';
 import { CAMERA_ACTIONS } from '../../config/camera-actions';
 import { MediaFile } from '../../interfaces/media-file.interface';
 import { ACTION_TYPES } from '../../config/action-types';
 import { CONTENT_TYPES } from '../../config/content-type';
+import { Subscription } from '../../../../node_modules/rxjs';
 
 declare var $: any;
 
@@ -13,12 +14,19 @@ declare var $: any;
   templateUrl: './media-streaming.component.html',
   styleUrls: ['./media-streaming.component.css']
 })
-export class MediaStreamingComponent implements OnInit, OnChanges {
+export class MediaStreamingComponent implements OnInit, OnChanges, OnDestroy {
   @Input() startCamera: boolean;
   @Input() initTrans: boolean;
   @Input() streamOwnerId: string;
   @Input() pubId: string;
   @Output() closeModal = new EventEmitter<any>();
+
+  private subscriber: Subscription;
+  private ANIMATE_BTN_H: string = "animated-btn-h";
+  private ANIMATE_IN: string = "animate-in";
+  private ANIMATE_BTN_V: string = "animated-btn-v";
+  private ANIMATE_OUT: string = "animate-out";
+  private animatedClass: string;
 
   public cameraActions: any;
   public _ref: any;
@@ -30,11 +38,13 @@ export class MediaStreamingComponent implements OnInit, OnChanges {
     private _notifierService: NotifierService
   ) {
     this.cameraActions = CAMERA_ACTIONS;
+    this.animatedClass = this.ANIMATE_BTN_H + " " + this.ANIMATE_IN;
   }
 
   ngOnInit() {
     this.initCarousel();
     this.initButtons();
+    this.subscribeBtnEmitter();
   }
 
   ngAfterViewInit() { }
@@ -46,7 +56,7 @@ export class MediaStreamingComponent implements OnInit, OnChanges {
           action: ACTION_TYPES.viewComments,
           icon: 'v',
           customIcon: true,
-          class: 'animated-btn animate-in'
+          class: this.animatedClass
         },
         {
           action: ACTION_TYPES.close,
@@ -64,6 +74,20 @@ export class MediaStreamingComponent implements OnInit, OnChanges {
       items: 1, dots: false, loop: false, margin: 5,
       nav: false, stagePadding: 0, autoWidth: false
     };
+  }
+
+  private subscribeBtnEmitter() {
+    this._notifierService.initShowBtnEmitter();
+    this.subscriber = this._notifierService._showHorizonMaterialBtn
+      .subscribe((showBtn: boolean) => {
+        if (showBtn == true) {
+          this.animatedClass = this.ANIMATE_BTN_H + " " + this.ANIMATE_IN;
+        }
+        else {
+          this.animatedClass = this.ANIMATE_BTN_V + " " + this.ANIMATE_OUT;
+        }
+        this.initButtons();
+      });
   }
 
   /**
@@ -126,4 +150,8 @@ export class MediaStreamingComponent implements OnInit, OnChanges {
     }
   }
 
+  ngOnDestroy() {
+    this.subscriber.unsubscribe();
+    this._notifierService.closeShowBtnEmitter();
+  }
 }

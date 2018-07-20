@@ -13,7 +13,7 @@ declare var upgradeTableFieldDataArray: any;
 @Component({
   selector: 'comment-list',
   templateUrl: './comment-list.component.html',
-  styleUrls: ['./comment-list.component.css']
+  styleUrls: ['./comment-list.component.css'],
 })
 export class CommentListComponent implements OnInit, OnDestroy, OnChanges {
   @Input() pubId: string;
@@ -43,7 +43,7 @@ export class CommentListComponent implements OnInit, OnDestroy, OnChanges {
   constructor(
     private _actionService: ActionService,
     private _socketService: SocketService,
-    private _notifierService: NotifierService
+    private _notifierService: NotifierService,
   ) {
     this.activeClass = this.LOADER_HIDE;
     this.matButtons = [
@@ -52,12 +52,16 @@ export class CommentListComponent implements OnInit, OnDestroy, OnChanges {
         icon: "close"
       }
     ];
-
-    this.defineMainComments();
-    this.listenToSocket();
   }
 
   ngOnInit() {
+    if (this.halfModal) {
+      this._notifierService.notifyShowHorizonBtn(false);
+    }
+
+    this.defineMainComments();
+    this.listenToSocket();
+
     this.resetComment();
     this.getComments();
     this.onCommentResponse();
@@ -250,5 +254,8 @@ export class CommentListComponent implements OnInit, OnDestroy, OnChanges {
 
   ngOnDestroy() {
     this.subscriptor.unsubscribe();
+    if (this.halfModal) {
+      this._notifierService.notifyShowHorizonBtn();
+    }
   }
 }

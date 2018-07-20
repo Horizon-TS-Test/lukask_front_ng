@@ -7,16 +7,24 @@
     'pl-3': !isReply,
     'pl-4': isReply
   }">
-    <small>
+    <div class="col-12 p-0 d-flex justify-content-between align-items-center">
+      <strong>{{commentModel.user.person.name}}</strong>
+      <small>2 personas apoyan esto</small>
+    </div>
+    <div>
       {{ commentModel.description }}
-    </small>
-    <div class="mt-2 d-flex">
-      <a href="#" class="mr-1 btn btn-sm btn-outline-info personal-icon-btn" title="Apoyo">
-        <fa name="star"></fa>
-      </a>
-      <a *ngIf="!isReply && !noReplyBtn && hideBtn === false" href="#" (click)="viewReplies($event)" class="mr-1 btn btn-sm btn-outline-info personal-icon-btn" title="Ver respuestas">
-        <fa name="reply"></fa>
-      </a>
+    </div>
+    <div class="col-12 p-0 mt-2 d-flex justify-content-between align-items-end">
+      <div>
+        <a href="#" class="mr-1 btn btn-sm btn-outline-info personal-icon-btn" title="Apoyo">
+          <fa name="star"></fa>
+        </a>
+        <a *ngIf="!isReply && !noReplyBtn && hideBtn === false" href="#" (click)="viewReplies($event)" class="mr-1 btn btn-sm btn-outline-info personal-icon-btn"
+          title="Ver respuestas">
+          <fa name="reply"></fa>
+        </a>
+      </div>
+      <small>Hace 2 minutos</small>
     </div>
   </span>
 </div>

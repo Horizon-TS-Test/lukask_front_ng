@@ -255,7 +255,6 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnDestroy() {
     this.subscription.unsubscribe();
     if (this._webrtcSocketService.kurentoWs) {
-      console.log("Cerrando webrtc socket");
       this._webrtcSocketService.closeTransmissionCnn();
     }
     else {
