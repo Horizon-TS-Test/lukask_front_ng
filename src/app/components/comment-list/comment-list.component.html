@@ -1,4 +1,4 @@
-<div [ngClass]="{ 'personal-content min-height-full-modal max-height-full-modal p-overflow-auto': isModal == true }">
+<div *ngIf="!halfModal" [ngClass]="{ 'personal-content min-height-full-modal max-height-full-modal p-overflow-auto': isModal == true }">
   <div [ngClass]="{ 'col-12 py-1 px-1': isModal == true }">
     <div class="p-no-border-rad-card card" [ngClass]="{
       'p-shadow-card': isModal == true,
@@ -23,6 +23,22 @@
       </div>
     </div>
   </div>
+</div>
+
+<div *ngIf="halfModal" class="p-no-border-rad-card p-transparent-card card">
+  <div class="card-block">
+    <comment-form [commentModel]="newComment" [modalForm]="false"></comment-form>
+  </div>
+  <ul class="max-height-fourth p-overflow-auto list-group list-group-flush pb-0">
+    <li *ngIf="!commentList || commentList.length == 0" class="secondary-color p-border-none list-group-item py-3 px-4">
+      No existen comentarios por mostrar.
+    </li>
+    <ng-container *ngIf="commentList && commentList.length > 0">
+      <li *ngFor="let comment of commentList" class="f-child-full-space list-group-item">
+        <comment [hideBtn]="hideBtn" [focusCommentId]="commentId" [focusReplyId]="replyId" [commentModel]="comment"></comment>
+      </li>
+    </ng-container>
+  </ul>
 </div>
 
 <material-btn-list [materialBtns]="matButtons" (someBtnAction)="getButtonAction($event)"></material-btn-list>

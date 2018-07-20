@@ -1,14 +1,19 @@
-<div class="fixed-background" [ngClass]="{ 'opacity-light': _dynaContent.contentType == contentTypes.comment_input }"></div>
+<div class="fixed-background" [ngClass]="{
+  'opacity-light': _dynaContent.contentType == contentTypes.comment_input,
+  'opacity-almost-null': _dynaContent.contentType == contentTypes.view_comments && _dynaContent.contentData.halfModal
+}"></div>
 
 <div class="min-height-full-modal max-height-full-modal p-overflow-auto personal-dyna-cont horizon-modal col-12 p-0" [ngClass]="{
   'personal-content': _dynaContent.contentType != contentTypes.view_replies && 
   _dynaContent.contentType != contentTypes.view_notifs && 
   _dynaContent.contentType != contentTypes.view_img && 
   _dynaContent.contentType != contentTypes.comment_input &&
-  _dynaContent.contentType != contentTypes.new_media
+  _dynaContent.contentType != contentTypes.new_media &&
+  _dynaContent.contentType != contentTypes.view_comments &&
+  !_dynaContent.contentData.halfModal
 }">
 
-  <a href="#" *ngIf="_dynaContent.contentType == contentTypes.view_replies || _dynaContent.contentType == contentTypes.view_notifs || _dynaContent.contentType == contentTypes.view_img || _dynaContent.contentType == contentTypes.comment_input"
+  <a href="#" *ngIf="_dynaContent.contentType == contentTypes.view_replies || _dynaContent.contentType == contentTypes.view_notifs || _dynaContent.contentType == contentTypes.view_img || _dynaContent.contentType == contentTypes.comment_input || (_dynaContent.contentType == contentTypes.view_comments && _dynaContent.contentData.halfModal)"
     (click)="onClickClose($event)" class="absolute-background"></a>
 
   <ng-container [ngSwitch]="_dynaContent.contentType">
@@ -29,8 +34,13 @@
 
     <img-viewer *ngSwitchCase="contentTypes.view_img" [media]="_dynaContent.contentData" (closeModal)="close($event)"></img-viewer>
 
-    <comment-list *ngSwitchCase="contentTypes.view_comments" [pubId]="_dynaContent.contentData.pubId" [commentId]="_dynaContent.contentData.comId"
-      [replyId]="_dynaContent.contentData.replyId" [isModal]="true" (closeModal)="close($event)"></comment-list>
+    <div [ngClass]="{'personal-dyna-down col-12 p-0': _dynaContent.contentData.halfModal}" *ngSwitchCase="contentTypes.view_comments">
+      <comment-list *ngIf="!_dynaContent.contentData.halfModal" [pubId]="_dynaContent.contentData.pubId" [commentId]="_dynaContent.contentData.comId"
+        [replyId]="_dynaContent.contentData.replyId" [isModal]="true" (closeModal)="close($event)"></comment-list>
+
+      <comment-list *ngIf="_dynaContent.contentData.halfModal" [pubId]="_dynaContent.contentData.pubId" [halfModal]="_dynaContent.contentData.halfModal"
+        [isModal]="true" (closeModal)="close($event)"></comment-list>
+    </div>
 
     <user-edit *ngSwitchCase="contentTypes.edit_profile" (closeModal)="close($event)"></user-edit>
 
@@ -38,6 +48,7 @@
       <notification-list (closeModal)="close($event)"></notification-list>
     </div>
 
-    <media-streaming *ngSwitchCase="contentTypes.view_transmission" [openStream]="false" [streamOwnerId]="_dynaContent.contentData" (closeModal)="close($event)"></media-streaming>
+    <media-streaming *ngSwitchCase="contentTypes.view_transmission" [startCamera]="false" [streamOwnerId]="_dynaContent.contentData.userOwner"
+      [pubId]="_dynaContent.contentData.pubId" (closeModal)="close($event)"></media-streaming>
   </ng-container>
 </div>

@@ -36,12 +36,10 @@ export class UserEditComponent implements OnInit, OnDestroy {
 
     this.materialButtons = [
       {
-        parentContentType: 1,
         action: this.SUBMIT,
         icon: "check"
       },
       {
-        parentContentType: 1,
         action: this.CLOSE,
         icon: "close"
       }

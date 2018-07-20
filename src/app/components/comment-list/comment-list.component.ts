@@ -21,6 +21,7 @@ export class CommentListComponent implements OnInit, OnDestroy, OnChanges {
   @Input() replyId: string;
   @Input() isModal: boolean;
   @Input() hideBtn: boolean;
+  @Input() halfModal: boolean;
   @Output() closeModal = new EventEmitter<boolean>();
 
   private _CLOSE = 1;
@@ -47,7 +48,6 @@ export class CommentListComponent implements OnInit, OnDestroy, OnChanges {
     this.activeClass = this.LOADER_HIDE;
     this.matButtons = [
       {
-        parentContentType: 1,
         action: this._CLOSE,
         icon: "close"
       }

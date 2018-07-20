@@ -706,12 +706,16 @@ p, label, div {
 .p-transparent-card {
   background-color: rgba(0, 0, 0, 0.4) !important;
   border-color: #fff !important; }
-  .p-transparent-card div, .p-transparent-card ul, .p-transparent-card li {
+  .p-transparent-card div {
     background-color: transparent !important;
-    border-color: #fff !important; }
-
-.p-transparent-card a, .p-transparent-card div, .p-transparent-card span {
-  color: #fff !important; }
+    border-color: #fff !important;
+    color: #fff !important; }
+  .p-transparent-card ul li {
+    background-color: transparent !important;
+    border-color: #fff !important;
+    color: #fff !important; }
+  .p-transparent-card a, .p-transparent-card span {
+    color: #fff !important; }
 
 .personal-icon-btn {
   border-color: #5dbeb6 !important;

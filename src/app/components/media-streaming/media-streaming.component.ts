@@ -4,6 +4,7 @@ import { NotifierService } from '../../services/notifier.service';
 import { CAMERA_ACTIONS } from '../../config/camera-actions';
 import { MediaFile } from '../../interfaces/media-file.interface';
 import { ACTION_TYPES } from '../../config/action-types';
+import { CONTENT_TYPES } from '../../config/content-type';
 
 declare var $: any;
 
@@ -13,9 +14,10 @@ declare var $: any;
   styleUrls: ['./media-streaming.component.css']
 })
 export class MediaStreamingComponent implements OnInit, OnChanges {
-  @Input() openStream: boolean;
-  @Input() pubStream: boolean;
+  @Input() startCamera: boolean;
+  @Input() initTrans: boolean;
   @Input() streamOwnerId: string;
+  @Input() pubId: string;
   @Output() closeModal = new EventEmitter<any>();
 
   public cameraActions: any;
@@ -28,21 +30,30 @@ export class MediaStreamingComponent implements OnInit, OnChanges {
     private _notifierService: NotifierService
   ) {
     this.cameraActions = CAMERA_ACTIONS;
-    this.matButtons = [
-      {
-        parentContentType: 0,
-        action: ACTION_TYPES.close,
-        icon: "close"
-      }
-    ];
   }
 
   ngOnInit() {
     this.initCarousel();
+    this.initButtons();
   }
 
-  ngAfterViewInit() {
-    $(window).resize();
+  ngAfterViewInit() { }
+
+  initButtons() {
+    if (this.streamOwnerId) {
+      this.matButtons = [
+        {
+          action: ACTION_TYPES.viewComments,
+          icon: 'v',
+          customIcon: true,
+          class: 'animated-btn animate-in'
+        },
+        {
+          action: ACTION_TYPES.close,
+          icon: "close"
+        }
+      ];
+    }
   }
 
   /**
@@ -83,12 +94,12 @@ export class MediaStreamingComponent implements OnInit, OnChanges {
       console.log('firstChange:', changes[property].firstChange);
 
       switch (property) {
-        case 'pubStream':
+        case 'initTrans':
           if (changes[property].currentValue && changes[property].currentValue == ACTION_TYPES.pubStream) {
             this.sendCameraAction(null, this.cameraActions.init_transmision);
           }
           break;
-        case 'openStream':
+        case 'startCamera':
           if (changes[property].currentValue == true) {
             this.sendCameraAction(null, this.cameraActions.start_camera);
           }
@@ -105,6 +116,9 @@ export class MediaStreamingComponent implements OnInit, OnChanges {
    */
   public getButtonAction(actionEvent: number) {
     switch (actionEvent) {
+      case ACTION_TYPES.viewComments:
+        this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_comments, contentData: { pubId: this.pubId, halfModal: true } });
+        break;
       case ACTION_TYPES.close:
         this.sendCameraAction(event, this.cameraActions.stop_stream);
         this.closeModal.emit(true);

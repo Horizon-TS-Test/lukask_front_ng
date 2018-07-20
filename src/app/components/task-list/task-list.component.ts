@@ -76,7 +76,7 @@ export class TaskListComponent implements OnInit {
    */
   viewTransmission(event: any) {
     event.preventDefault();
-    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_transmission, contentData: this.queja.user.id });
+    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_transmission, contentData: { userOwner: this.queja.user.id, pubId: this.queja.id_publication } });
   }
 
 }

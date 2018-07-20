@@ -21,7 +21,6 @@ export class ImgViewerComponent implements OnInit {
   constructor() {
     this.materialBtn = [
       {
-        parentContentType: 1,
         action: this._CLOSE,
         icon: "close",
       }

@@ -57,7 +57,7 @@ export class PanelOpcionesComponent implements OnInit, OnChanges, OnDestroy {
     if (contType === this.contentTypes.view_notifs) {
       this.seenEntries.emit(true);
     }
-    this._notifierService.notifyNewContent({ contentType: contType, contentData: null });
+    this._notifierService.notifyNewContent({ contentType: contType, contentData: "" });
   }
 
   /**

@@ -1,5 +1,5 @@
 <div class="relative-background personal-content personal-over-unset min-height-full-modal col-12 p-0">
-  <app-webrtc-camera [startCamera]="openStream" [streamOwnerId]="streamOwnerId"></app-webrtc-camera>
+  <app-webrtc-camera [startCamera]="startCamera" [streamOwnerId]="streamOwnerId"></app-webrtc-camera>
 
   <owl-carousel *ngIf="!streamOwnerId" id="corousel-live-op" class="personal-owl-nav" [options]="carouselOptions" [carouselClasses]="['owl-theme']">
     <div class="d-flex justify-content-center align-items-center min-height-full-modal">

@@ -27,7 +27,6 @@ export class NewMediaComponent implements OnInit {
     this.closeModal = new EventEmitter<boolean>();
     this.matButtons = [
       {
-        parentContentType: 1,
         action: this._CLOSE,
         icon: "close"
       }

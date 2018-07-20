@@ -190,11 +190,11 @@ p, label, div {
 
 //LOADING CONTENT:
 #loading-content {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
+    height: 100vh;
     background: url("/assets/images/forms/preloader.gif") center center no-repeat;
     opacity: 0;
     z-index: -1;
@@ -202,7 +202,7 @@ p, label, div {
 }
 #loading-content.active {
     opacity: .8;
-    z-index: 1;
+    z-index: 10;
     transition: opacity .5s ease, z-index .2s ease;
 }
 
@@ -909,6 +909,28 @@ p, label, div {
 .p-no-border-rad-card {
     border-radius: 0 !important;
 }
+.p-transparent-card {
+    background-color: rgba(0,0,0, .4) !important;
+    border-color: $secondary-text !important;
+
+    div {
+        background-color: transparent !important;
+        border-color: $secondary-text !important;
+        color: $secondary-text !important;
+    }
+
+    ul {
+        li {
+            background-color: transparent !important;
+            border-color: $secondary-text !important;
+            color: $secondary-text !important;
+        }
+    }
+
+    a, span {
+        color: $secondary-text !important;
+    }
+}
 
 .personal-icon-btn {
     border-color: $primary !important;
@@ -1233,6 +1255,10 @@ p, label, div {
 .opacity-light.on {
     opacity: .7;
 }
+.opacity-almost-null.on {
+    opacity: .2;
+}
+
 .personal-over-unset {
     overflow: unset;
 }

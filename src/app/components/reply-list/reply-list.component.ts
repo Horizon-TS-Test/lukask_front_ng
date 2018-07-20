@@ -43,7 +43,6 @@ export class ReplyListComponent implements OnInit, OnDestroy {
     this.activeClass = this.LOADER_HIDE;
     this.matButtons = [
       {
-        parentContentType: 0,
         action: this._CLOSE,
         icon: "close"
       }

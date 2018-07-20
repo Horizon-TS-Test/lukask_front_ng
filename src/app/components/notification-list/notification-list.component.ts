@@ -32,7 +32,6 @@ export class NotificationListComponent implements OnInit, OnDestroy {
 
     this.matButtons = [
       {
-        parentContentType: 0,
         action: this._CLOSE,
         icon: "close"
       }
