@@ -34,19 +34,19 @@ export class NewPubComponent implements OnInit, AfterViewInit {
       {
         action: ACTION_TYPES.submitPub,
         icon: 'check',
-        class: 'animated-btn animate-in'
+        class: 'animated-btn-h animate-in'
       },
       {
         action: ACTION_TYPES.pubStream,
         icon: 'f',
         customIcon: true,
-        class: 'animated-btn'
+        class: 'animated-btn-h'
       },
       {
         action: ACTION_TYPES.viewComments,
         icon: 'v',
         customIcon: true,
-        class: 'animated-btn'
+        class: 'animated-btn-h'
       },
       {
         action: ACTION_TYPES.close,

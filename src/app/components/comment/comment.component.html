@@ -9,22 +9,24 @@
   }">
     <div class="col-12 p-0 d-flex justify-content-between align-items-center">
       <strong>{{commentModel.user.person.name}}</strong>
-      <small>2 personas apoyan esto</small>
+      <a href="#">
+        <small class="p-dark-text-color">2 personas apoyan esto</small>
+      </a>
     </div>
     <div>
       {{ commentModel.description }}
     </div>
     <div class="col-12 p-0 mt-2 d-flex justify-content-between align-items-end">
-      <div>
-        <a href="#" class="mr-1 btn btn-sm btn-outline-info personal-icon-btn" title="Apoyo">
+      <div class="d-flex justify-content-start">
+        <a href="#" class="no-border-button secondary small" title="Apoyo">
           <fa name="star"></fa>
         </a>
-        <a *ngIf="!isReply && !noReplyBtn && hideBtn === false" href="#" (click)="viewReplies($event)" class="mr-1 btn btn-sm btn-outline-info personal-icon-btn"
+        <a *ngIf="!isReply && !noReplyBtn && hideBtn === false" href="#" (click)="viewReplies($event)" class="no-border-button secondary small"
           title="Ver respuestas">
-          <fa name="reply"></fa>
+          <span class="personal-site-icon">v</span>
         </a>
       </div>
-      <small>Hace 2 minutos</small>
+      <small>{{ commentModel.coolDate }}</small>
     </div>
   </span>
 </div>

@@ -1,15 +1,14 @@
 <div class="col-12 py-0 px-1">
   <div class="personal-queja p-shadow-card p-no-border-rad-card card mb-3 pb-0">
-    <div class="card-header d-flex justify-content-between align-items-center">
-      <div class="d-flex justify-content-center align-items-center">
-        <task-list [queja]="queja" (actionType)="optionButtonAction($event)"></task-list>
-      </div>
-      <div>
-        <small>{{queja.date_pub}}</small>
-      </div>
+    <div class="px-2 card-header d-flex justify-content-center align-items-center">
+      <task-list class="col-12 p-0" [queja]="queja" (actionType)="optionButtonAction($event)"></task-list>
     </div>
+
     <div class="personal-usr-queja py-0 card-block d-flex justify-content-end align-items-center">
-      {{queja.user.person.name}} {{queja.user.person.last_name}}
+      <div class="p-secondary-text-color d-flex flex-column justify-content-center align-items-end">
+        {{queja.user.person.name}} {{queja.user.person.last_name}}
+        <small>{{queja.coolDate}}</small>
+      </div>
       <div class="ml-2 my-0 personal-profile-img" [style.background-image]="_domSanitizer.bypassSecurityTrustStyle('url(' + queja.user.profileImg + ')')">
       </div>
     </div>

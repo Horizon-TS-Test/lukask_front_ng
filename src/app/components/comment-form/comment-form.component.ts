@@ -41,7 +41,7 @@ export class CommentFormComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.commentModel.active = true;
-    this.commentModel.date = DateManager.getFormattedDate();
+    this.commentModel.dateRegister = DateManager.getFormattedDate();
     this.setUser();
   }
 
@@ -57,7 +57,9 @@ export class CommentFormComponent implements OnInit, OnDestroy {
    * @param event EVENTO DE KEYPRESS
    */
   validateLettersNumber(event: KeyboardEvent) {
-    this.restChars = PatternManager.limitWords(this.maxChars, this.commentModel.description.length);
+    setTimeout(() => {
+      this.restChars = PatternManager.limitWords(this.maxChars, this.commentModel.description.length);
+    })
   }
 
   /**

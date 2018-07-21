@@ -222,7 +222,7 @@ export class ActionService {
       description: comment.description,
       id_publication: comment.publicationId,
       action_parent: (comment.commentParentId) ? comment.commentParentId : "",
-      date: comment.date,
+      date: comment.dateRegister,
       active: true,
       userName: this._userService.getUserProfile().person.name,
       userImage: this._userService.getUserProfile().profileImg
@@ -268,7 +268,8 @@ export class ActionService {
       description: comment.description,
       id_publication: comment.publicationId,
       action_parent: (comment.commentParentId) ? comment.commentParentId : "",
-      active: comment.active,
+      date: comment.dateRegister,
+      active: true,
       userName: this._userService.getUserProfile().person.name,
       userImage: this._userService.getUserProfile().profileImg
     }
@@ -325,6 +326,6 @@ export class ActionService {
   public extractCommentJson(jsonComment: any) {
     let usr = this._userService.extractUserJson(jsonComment.user_register);
 
-    return new Comment(jsonComment.id_action, jsonComment.description, jsonComment.publication, usr, jsonComment.action_parent);
+    return new Comment(jsonComment.id_action, jsonComment.description, jsonComment.publication, usr, jsonComment.action_parent, jsonComment.active, jsonComment.date_register);
   }
 }

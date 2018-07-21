@@ -52,9 +52,6 @@ export class QuejaListComponent implements OnInit, OnDestroy {
   getPubList() {
     this._quejaService.getPubList().then((pubs: Publication[]) => {
       this.pubList = pubs;
-      console.log("this.pubList", this.pubList)
-      DateManager.setFormatDate(this.pubList);
-      //setInterval(DateManager.setFormatDate(this.pubList), 60000);
     }).catch(err => {
       console.log(err);
     });
@@ -64,7 +61,7 @@ export class QuejaListComponent implements OnInit, OnDestroy {
    * FUNCIÓN PARA OBTENER PUBLICACIONES BAJO DEMANDA A TRAVÉS DE UN PATTERN DE PAGINACIÓN:
    */
   getMorePubs() {
-    if (this.activeClass != this.LOADER_ON) {
+    if (this.pubList && this.activeClass != this.LOADER_ON) {
       this.activeClass = this.LOADER_ON;
       this._quejaService.getMorePubs().then((morePubs: Publication[]) => {
         setTimeout(() => {

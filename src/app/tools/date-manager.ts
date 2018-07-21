@@ -1,15 +1,15 @@
-import * as moment from 'node_modules/moment'; 
-import { formatDate } from '../../../node_modules/@angular/common';
-import { IfStmt } from '../../../node_modules/@angular/compiler';
+import * as moment from 'node_modules/moment';
 
-const _MAXMONTH:number = 12;
-const _MAXWEEK:number = 4;
-const _MAXDAYMONTH:number = 31;
-const _MAXDAYFORWEEK:number = 7;
-const _MAXHOURS:number = 24
-const _MAXMINUTES:number = 60; 
-const _MAXSECONDS:number = 60; 
-const _TEXTFORMAT:string = "hace "
+const _MONTHS_PER_YEAR: number = 12;
+const _WEEKS_PER_MONTH: number = 4;
+const _DAYS_PER_MONTH: number = 31;
+const _DAYS_PER_WEEK: number = 7;
+const _HOURS_PER_DAY: number = 24
+const _MAX_HOURS: number = 6
+
+const _MAX_MINUTES: number = 60;
+const _MAX_SECONDS: number = 60;
+const _TEXT_FORMAT: string = "Hace "
 
 export class DateManager {
 
@@ -25,60 +25,48 @@ export class DateManager {
     }
 
     /**
-     * Proceso para formato de fechas en unidades de tiempo.
-     * @param dataToFormat 
+     * MÉTODO PARA FORMATO DE FECHAS EN LENGUAJE COLOQUIAL
+     * @param date 
      */
-    public static setFormatDate(dataToFormat:any){
-        for(var itemData in dataToFormat){
-            this.formatDate(dataToFormat[itemData]);
-        }
-    }
-
-    /**
-     * Algoritmo para formateo de datos, segun su fecha de creacion o registro
-     * @param itemData 
-     */
-    private static formatDate(itemData:any){
-        
+    public static makeDateCool(date: string) {
         //Eliminamos caracteres de la fecha.
-        let cadena  = itemData.date_pub.replace("T", " ");
-        cadena = cadena.replace("Z", "");
-        
+        date = date.replace("T", " ").replace("Z", " ");
+
         //Inicializamos variables para los calculos
         let currentDate = moment();
-        let localDateData = moment(cadena);
+        let localDateData = moment(date);
 
         //Encontramos la cantidad de segundos transcuridos segun la fecha actual a la fecha registrada
         let diff = currentDate.diff(localDateData, 'seconds');
-        let textTime:string;
+        let textTime: string;
 
-        if(diff < _MAXSECONDS){
-            textTime = "segundos"
-            itemData.date_pub = "Hace pocos segundos"
-        }else{
-            
-            //Encontramos la cantidad de minutos transcuridos segun la fecha actual a la fecha registrada
-            diff = currentDate.diff(localDateData, 'minutes');
-            textTime = diff > 1 ? " minutos" : " minuto";
-            if(diff < _MAXMINUTES){
-                itemData.date_pub = _TEXTFORMAT + diff + textTime;
-            }else{
-                
-                //Encontramos la hours de minutos transcuridos segun la fecha actual a la fecha registrada
-                diff = currentDate.diff(localDateData, 'hours');
-                textTime = diff > 1  ? " horas" : " hora";
-                if(diff < _MAXHOURS){
-                    itemData.date_pub = _TEXTFORMAT + diff + textTime;
-                }else{
-                    
-                    //Encontramos la dias de minutos transcuridos segun la fecha actual a la fecha registrada
-                    diff = currentDate.diff(localDateData, 'days');
-                    textTime = diff > 1  ? " dias" : " dia";
-                    if(diff < _MAXDAYFORWEEK){
-                        itemData.date_pub = _TEXTFORMAT + diff + textTime;
-                    }
-                }
-            }
+        if (diff < _MAX_SECONDS) {
+            return "Hace pocos segundos"
         }
+
+        //Encontramos la cantidad de minutos transcuridos segun la fecha actual a la fecha registrada
+        diff = currentDate.diff(localDateData, 'minutes');
+        textTime = diff > 1 ? " minutos" : " minuto";
+        if (diff < _MAX_MINUTES) {
+            return _TEXT_FORMAT + diff + textTime;
+        }
+
+        //Encontramos la hours de minutos transcuridos segun la fecha actual a la fecha registrada
+        diff = currentDate.diff(localDateData, 'hours');
+        textTime = diff > 1 ? " horas" : " hora";
+        if (diff <= _MAX_HOURS) {
+            return _TEXT_FORMAT + diff + textTime;
+        }
+
+        diff = currentDate.diff(localDateData, 'days');
+        if (diff < _DAYS_PER_WEEK) {
+            //REF: https://stackoverflow.com/questions/17493309/how-do-i-change-the-language-of-moment-js
+            date = moment(date).locale("es").calendar();
+            date = date.substring(0, 1).toUpperCase() + date.substring(1);
+            return date;
+        }
+
+        //REF: https://stackoverflow.com/questions/17493309/how-do-i-change-the-language-of-moment-js
+        return moment(date).locale("es").format('DD, MMMM. YYYY- H:mm:ss').replace(",", " de").replace(".", " de").replace("-", " a las");
     }
 }

@@ -217,6 +217,9 @@ p, label, div {
     .p-owl-img {
         width: 60px !important;
     }
+    .p-owl-img-sm {
+        width: 50px !important;
+    }
 }
 .bottom-loader.hide {
     z-index: -1;
@@ -968,7 +971,7 @@ p, label, div {
         }
     }
 
-    a, span {
+    a, fa, span, small {
         color: $secondary-text !important;
     }
 }
@@ -1515,6 +1518,15 @@ p, label, div {
         transition: all .5s ease;
     }
 }
+.no-border-button.small {
+    width: 24px;
+    height: 24px;
+
+    fa, span {
+        font-size: 1rem;
+        transition: all .5s ease;
+    }
+}
 .no-border-button.dark {
 
     fa, span {
@@ -1649,11 +1661,17 @@ p, label, div {
 ////
 
 //TEXT CUSTOME STYLES:
+.p-noraml-text-color {
+    color: $primary;
+}
 .p-dark-text-color {
     color: $primary-dark;
 }
 .p-primary-text-color {
     color: $primary-text !important;
+}
+.p-secondary-text-color {
+    color: $secondary-text !important;
 }
 ////
 

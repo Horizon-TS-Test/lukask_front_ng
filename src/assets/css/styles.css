@@ -194,6 +194,8 @@ p, label, div {
   transition: opacity 0s 0.4s, transform 1s ease; }
   .bottom-loader .p-owl-img {
     width: 60px !important; }
+  .bottom-loader .p-owl-img-sm {
+    width: 50px !important; }
 
 .bottom-loader.hide {
   z-index: -1; }
@@ -735,7 +737,7 @@ p, label, div {
     background-color: transparent !important;
     border-color: #fff !important;
     color: #fff !important; }
-  .p-transparent-card a, .p-transparent-card span {
+  .p-transparent-card a, .p-transparent-card fa, .p-transparent-card span, .p-transparent-card small {
     color: #fff !important; }
 
 .personal-icon-btn {
@@ -1138,6 +1140,13 @@ p, label, div {
     color: #5dbeb6;
     transition: all .5s ease; }
 
+.no-border-button.small {
+  width: 24px;
+  height: 24px; }
+  .no-border-button.small fa, .no-border-button.small span {
+    font-size: 1rem;
+    transition: all .5s ease; }
+
 .no-border-button.dark fa, .no-border-button.dark span {
   color: #004360; }
 
@@ -1248,11 +1257,17 @@ p, label, div {
 .p-border-none {
   border: none !important; }
 
+.p-noraml-text-color {
+  color: #5dbeb6; }
+
 .p-dark-text-color {
   color: #004360; }
 
 .p-primary-text-color {
   color: #848b76 !important; }
+
+.p-secondary-text-color {
+  color: #fff !important; }
 
 input[type=text], input[type=password], input[type=email], textarea {
   border-top: none;

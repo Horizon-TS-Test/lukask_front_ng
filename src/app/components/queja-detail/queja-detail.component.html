@@ -1,7 +1,7 @@
 <div class="col-12 pt-1 px-1">
   <div *ngIf="quejaDetail" class="personal-queja p-shadow-card p-no-border-rad-card card mb-3 pb-0">
-    <div class="card-header d-flex justify-content-between align-items-center">
-      <task-list [queja]="quejaDetail" [isModal]="isModal"></task-list>
+    <div class="px-2 card-header d-flex justify-content-center align-items-center">
+      <task-list class="col-12 p-0" [queja]="quejaDetail" [isModal]="isModal"></task-list>
     </div>
     <div class="personal-usr-queja py-0 card-block d-flex justify-content-end align-items-center">
       {{ quejaDetail.user.person.name }} {{ quejaDetail.user.person.last_name }}
@@ -26,7 +26,7 @@
     <ul class="list-group list-group-flush pb-0">
       <li class="list-group-item">
         <fa name="calendar" class="mr-1"></fa>
-        <div class="ml-1">{{ quejaDetail.date_pub }}</div>
+        <div class="ml-1">{{ quejaDetail.coolDate }}</div>
       </li>
       <li class="list-group-item">
         <fa name="bullhorn" class="mr-1"></fa>
