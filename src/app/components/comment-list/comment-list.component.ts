@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, EventEmitter, Output, OnDestroy, OnChanges, SimpleChange, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output, OnDestroy, OnChanges, SimpleChange, SimpleChanges, AfterViewInit } from '@angular/core';
 import { ActionService } from '../../services/action.service';
 import { Comment } from '../../models/comment';
 import { ArrayManager } from '../../tools/array-manager';
@@ -7,6 +7,7 @@ import { REST_SERV } from '../../rest-url/rest-servers';
 import { HorizonButton } from '../../interfaces/horizon-button.interface';
 import { NotifierService } from '../../services/notifier.service';
 import { Subscription } from 'rxjs';
+import { ACTION_TYPES } from '../../config/action-types';
 
 declare var upgradeTableFieldDataArray: any;
 
@@ -15,16 +16,15 @@ declare var upgradeTableFieldDataArray: any;
   templateUrl: './comment-list.component.html',
   styleUrls: ['./comment-list.component.css'],
 })
-export class CommentListComponent implements OnInit, OnDestroy, OnChanges {
+export class CommentListComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
   @Input() pubId: string;
   @Input() commentId: string;
   @Input() replyId: string;
   @Input() isModal: boolean;
   @Input() hideBtn: boolean;
   @Input() halfModal: boolean;
+  @Input() showClass: string;
   @Output() closeModal = new EventEmitter<boolean>();
-
-  private _CLOSE = 1;
 
   private LOADER_HIDE: string = "hide";
   private LOADER_ON: string = "on";
@@ -48,7 +48,7 @@ export class CommentListComponent implements OnInit, OnDestroy, OnChanges {
     this.activeClass = this.LOADER_HIDE;
     this.matButtons = [
       {
-        action: this._CLOSE,
+        action: ACTION_TYPES.close,
         icon: "close"
       }
     ];
@@ -59,10 +59,12 @@ export class CommentListComponent implements OnInit, OnDestroy, OnChanges {
       this._notifierService.notifyShowHorizonBtn(false);
     }
 
+    this.resetComment();
     this.defineMainComments();
     this.listenToSocket();
+  }
 
-    this.resetComment();
+  ngAfterViewInit() {
     this.getComments();
     this.onCommentResponse();
   }
@@ -180,7 +182,7 @@ export class CommentListComponent implements OnInit, OnDestroy, OnChanges {
    */
   getButtonAction(actionEvent: number) {
     switch (actionEvent) {
-      case this._CLOSE:
+      case ACTION_TYPES.close:
         this.closeModal.emit(true);
         break;
     }
@@ -240,14 +242,17 @@ export class CommentListComponent implements OnInit, OnDestroy, OnChanges {
    */
   ngOnChanges(changes: SimpleChanges) {
     for (let property in changes) {
-      /*console.log('Previous:', changes[property].previousValue);
-      console.log('Current:', changes[property].currentValue);
-      console.log('firstChange:', changes[property].firstChange);*/
-
-      if (property === 'hideBtn') {
-        if (changes[property].currentValue) {
-          this.hideBtn = changes[property].currentValue;
-        }
+      switch (property) {
+        case 'hideBtn':
+          if (changes[property].currentValue) {
+            this.hideBtn = changes[property].currentValue;
+          }
+          break;
+        case 'showClass':
+          if (changes[property].currentValue !== undefined) {
+            this.showClass = changes[property].currentValue;
+          }
+          break;
       }
     }
   }

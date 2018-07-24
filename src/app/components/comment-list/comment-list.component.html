@@ -41,4 +41,4 @@
   </ul>
 </div>
 
-<material-btn-list [materialBtns]="matButtons" (someBtnAction)="getButtonAction($event)"></material-btn-list>
+<material-btn-list *ngIf="!halfModal" [showClass]="showClass" [materialBtns]="matButtons" (someBtnAction)="getButtonAction($event)"></material-btn-list>

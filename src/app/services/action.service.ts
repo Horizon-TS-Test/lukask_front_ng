@@ -281,22 +281,21 @@ export class ActionService {
   /**
    * MÉTODO PARA GUARDAR UN NUEVO REGISTRO DE APOYO A UNA PUBLICACIÓN:
    */
-  public sendRelevance(pubId: string, isRelevance: boolean) {
-    const requestHeaders = new Headers(
-      {
-        'Content-Type': 'application/json',
-        'X-Access-Token': this._userService.getUserKey()
-      }
-    );
+  public sendRelevance(parentId: string, isRelevance: boolean, isComment: boolean) {
+    const requestHeaders = new Headers({
+      'Content-Type': 'application/json',
+      'X-Access-Token': this._userService.getUserKey()
+    });
     const requestBody = JSON.stringify({
-      id_publication: pubId,
-      active: isRelevance
+      parentId: parentId,
+      active: isRelevance,
+      isComment: isComment
     });
 
     return this._http.post(REST_SERV.relevanceUrl, requestBody, { headers: requestHeaders, withCredentials: true })
       .toPromise()
       .then((response: Response) => {
-        this.isPostedRelevance = false;
+        this.isPostedRelevance = true;
         let respJson = response.json().data.active;
 
         return respJson;
@@ -306,10 +305,10 @@ export class ActionService {
   /**
    * MÉTODO PARA GUARDAR UN NUEVO COMENTARIO O RESPUESTA EN EL BACKEND O EN SU DEFECTO PARA BACK SYNC:
    */
-  public saveRelevance(pubId: string, isRelevance: boolean) {
-    return this.sendRelevance(pubId, isRelevance).then((response) => {
+  public saveRelevance(parentId: string, isRelevance: boolean, isComment: boolean = false) {
+    return this.sendRelevance(parentId, isRelevance, isComment).then((response) => {
       if (!this.isPostedRelevance) {
-        return this._backSyncService.storeForBackSync('sync-relevance', 'sync-new-relevance', this.mergeJSONData(new Comment(null, null, pubId, null, null, isRelevance)));
+        return this._backSyncService.storeForBackSync('sync-relevance', 'sync-new-relevance', { id: new Date().toISOString(), parentId: parentId, active: isRelevance, isComment: isComment });
       }
       else {
         this.isPostedRelevance = false;
@@ -326,6 +325,6 @@ export class ActionService {
   public extractCommentJson(jsonComment: any) {
     let usr = this._userService.extractUserJson(jsonComment.user_register);
 
-    return new Comment(jsonComment.id_action, jsonComment.description, jsonComment.publication, usr, jsonComment.action_parent, jsonComment.active, jsonComment.date_register);
+    return new Comment(jsonComment.id_action, jsonComment.description, jsonComment.publication, usr, jsonComment.action_parent, jsonComment.active, jsonComment.date_register, jsonComment.user_relevance ? jsonComment.user_relevance : false, jsonComment.count_relevance);
   }
 }

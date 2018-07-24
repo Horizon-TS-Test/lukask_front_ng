@@ -13,7 +13,9 @@ export class Comment {
         public user?: User,
         public commentParentId?: string,
         public active?: boolean,
-        public dateRegister?: string
+        public dateRegister?: string,
+        public userRelevance?: boolean,
+        public relevance_counter?: number,
     ) {
         if (dateRegister) {
             this.beutifyDate();
@@ -24,9 +26,17 @@ export class Comment {
         let currDate = moment();
         this.coolDate = DateManager.makeDateCool(this.dateRegister);
         if (currDate.diff(this.dateRegister, 'minutes') < 60) {
+            currDate = moment();
             this.dateInterval = setInterval(() => {
-                if (currDate.diff(this.dateRegister, 'hours') >= 60) {
+                if (currDate.diff(this.dateRegister, 'minutes') >= 60) {
                     clearInterval(this.dateInterval);
+                    this.dateInterval = setInterval(() => {
+                        currDate = moment();
+                        if (currDate.diff(this.dateRegister, 'hours') > 24) {
+                            clearInterval(this.dateInterval);
+                        }
+                        this.coolDate = DateManager.makeDateCool(this.dateRegister);
+                    }, 60000 * 60);
                 }
                 this.coolDate = DateManager.makeDateCool(this.dateRegister);
             }, 60000);
@@ -34,6 +44,7 @@ export class Comment {
 
         if (currDate.diff(this.dateRegister, 'hours') <= 24) {
             this.dateInterval = setInterval(() => {
+                currDate = moment();
                 if (currDate.diff(this.dateRegister, 'hours') > 24) {
                     clearInterval(this.dateInterval);
                 }

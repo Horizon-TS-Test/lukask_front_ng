@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Output, AfterViewInit } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output, AfterViewInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { HorizonButton } from '../../interfaces/horizon-button.interface';
 import { ACTION_TYPES } from '../../config/action-types';
 import { OnSubmit } from '../../interfaces/on-submit.interface';
@@ -12,7 +12,8 @@ declare var $: any;
   templateUrl: './new-pub.component.html',
   styleUrls: ['./new-pub.component.css']
 })
-export class NewPubComponent implements OnInit, AfterViewInit {
+export class NewPubComponent implements OnInit, AfterViewInit, OnChanges {
+  @Input() showClass: string;
   @Output() closeModal = new EventEmitter<boolean>();
 
   public startCamera: boolean;
@@ -127,6 +128,22 @@ export class NewPubComponent implements OnInit, AfterViewInit {
   }
 
   /**
+   * MÉTODO PARA ESCUCHAR LOS CAMBIOS QUE SE DEN EN EL ATRIBUTO QUE VIENE DESDE EL COMPONENTE PADRE:
+   * @param changes 
+   */
+  ngOnChanges(changes: SimpleChanges) {
+    for (const property in changes) {
+      switch (property) {
+        case 'showClass':
+          if (changes[property].currentValue !== undefined) {
+            this.showClass = changes[property].currentValue;
+          }
+          break;
+      }
+    }
+  }
+
+  /**
    * MÉTODO PARA ESCUCHAR LA ACCIÓN DEL EVENTO DE CLICK DE UN BOTÓN DINÁMICO:
    */
   public getButtonAction(actionEvent: number) {
@@ -136,7 +153,7 @@ export class NewPubComponent implements OnInit, AfterViewInit {
         this.showLoadingContent(true);
         break;
       case ACTION_TYPES.viewComments:
-        this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_comments, contentData: { pubId: this.newPubId, halfModal: true } });
+        this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_comments, contentData: { pubId: this.newPubId, halfModal: true, hideBtn: true } });
         break;
       case ACTION_TYPES.close:
         this.closeModal.emit(true);

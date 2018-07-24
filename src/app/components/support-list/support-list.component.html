@@ -1,0 +1,23 @@
+<div class="p-no-border-rad-card card">
+  <div class="card-header d-flex justify-content-between">
+    <small>
+      <b>Apoyan {{ pubOwner ? 'a la publicación de' : 'al comentario de' }}  {{ pubOwner ? pubOwner : commentOwner }}</b>
+    </small>
+  </div>
+  <ul class="max-height-half p-overflow-auto list-group list-group-flush pb-0">
+    <ng-container *ngIf="supportList && supportList.length > 0">
+      <li *ngFor="let sup of supportList" class="f-child-full-space p-border-none list-group-item p-1">
+        <profile-owner [suporterProfile]="sup"></profile-owner>
+      </li>
+    </ng-container>
+  </ul>
+  <div *ngIf="pagePattern || firstPattern" class="card-footer text-center">
+    <a href="#" (click)="askForMore($event)" class="p-dark-text-color">
+      <small *ngIf="pagePattern">Ver mas</small>
+      <small *ngIf="!pagePattern && firstPattern">Ver menos</small>
+    </a>
+    <div class="bottom-loader {{ activeClass }} col-12 d-flex justify-content-center align-items-center">
+      <img src="/assets/images/forms/preloader.gif" width="50px">
+    </div>
+  </div>
+</div>

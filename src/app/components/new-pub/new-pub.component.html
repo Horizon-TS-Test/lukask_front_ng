@@ -12,5 +12,5 @@
     <media-streaming [startCamera]="startCamera" [initTrans]="actionType" [pubId]="newPubId" (closeModal)="getButtonAction($event)"></media-streaming>
   </div>
 
-  <material-btn-list [animateNext]="nextButton" [materialBtns]="matButtons" (someBtnAction)="getButtonAction($event)"></material-btn-list>
+  <material-btn-list [showClass]="showClass" [animateNext]="nextButton" [materialBtns]="matButtons" (someBtnAction)="getButtonAction($event)"></material-btn-list>
 </div>

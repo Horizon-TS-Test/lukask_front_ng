@@ -44,31 +44,6 @@ export class ContentService {
   }
 
   /**
-   * MÉTODO PARA DAR UN EFECTO SLIDE DOWN-UP A UN ELEMENTO DEL DOM, 
-   * GENERALMENTE USADO EN LA APERTURA DE UN HORIZON MODAL
-   * @param contentLayer EL ELEMENTO A APLICAR EL EFECTO TRANSITORIO
-   * @param slideUp TRUE PARA MOSTRAR EL ELEMENTO, CON EFECTO TRANSITORIO / FALSE PARA OCULTAR EL ELEMENTO, CON EFECTO TRANSITORIO
-   */
-  slideDownUp(contentLayer, slideUp: boolean = true) {
-    if (slideUp) {
-      if (!contentLayer.hasClass("show-dyna-cont")) {
-        contentLayer.parent().find(".fixed-background").addClass("on");
-        contentLayer.addClass("show-dyna-cont");
-        contentLayer.find(".personal-dyna-down").addClass("show");
-        contentLayer.find(".personal-material-btn").addClass("show");
-      }
-    }
-    else {
-      if (contentLayer.hasClass("show-dyna-cont")) {
-        contentLayer.parent().find(".fixed-background").removeClass("on");
-        contentLayer.removeClass("show-dyna-cont");
-        contentLayer.find(".personal-dyna-down").removeClass("show");
-        contentLayer.find(".personal-material-btn").removeClass("show");
-      }
-    }
-  }
-
-  /**
    * MÉTODO PARA AÑADIR DINÁMICAMENTE UN COMPONENTE E INCRUSTARLO EN EL DOM A TRAVÉS DE CÓDIGO TYPESCRIPT:
    */
   addComponent(ChildComponent: any, cfr: ComponentFactoryResolver, compContainer: ViewContainerRef, dynaContent: DynaContent = null) {

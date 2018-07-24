@@ -19,6 +19,7 @@ export class MediaStreamingComponent implements OnInit, OnChanges, OnDestroy {
   @Input() initTrans: boolean;
   @Input() streamOwnerId: string;
   @Input() pubId: string;
+  @Input() showClass: string;
   @Output() closeModal = new EventEmitter<any>();
 
   private subscriber: Subscription;
@@ -123,12 +124,22 @@ export class MediaStreamingComponent implements OnInit, OnChanges, OnDestroy {
             this.sendCameraAction(null, this.cameraActions.init_transmision);
           }
           break;
+        case 'pubId':
+          if (changes[property].currentValue) {
+            this.pubId = changes[property].currentValue;
+          }
+          break;
         case 'startCamera':
           if (changes[property].currentValue == true) {
             this.sendCameraAction(null, this.cameraActions.start_camera);
           }
           else if (changes[property].currentValue == false) {
             this.sendCameraAction(null, this.cameraActions.stop_stream);
+          }
+          break;
+        case 'showClass':
+          if (changes[property].currentValue) {
+            this.showClass = changes[property].currentValue;
           }
           break;
       }
@@ -141,7 +152,7 @@ export class MediaStreamingComponent implements OnInit, OnChanges, OnDestroy {
   public getButtonAction(actionEvent: number) {
     switch (actionEvent) {
       case ACTION_TYPES.viewComments:
-        this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_comments, contentData: { pubId: this.pubId, halfModal: true } });
+        this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_comments, contentData: { pubId: this.pubId, halfModal: true, hideBtn: true } });
         break;
       case ACTION_TYPES.close:
         this.sendCameraAction(event, this.cameraActions.stop_stream);

@@ -10,22 +10,12 @@ import { HorizonButton } from '../../interfaces/horizon-button.interface';
 })
 export class ImgViewerComponent implements OnInit {
   @Input() media: Media;
-  @Output() closeModal = new EventEmitter<boolean>();
-
-  private _CLOSE: 0;
 
   public _dynaContent: DynaContent;
   public carouselOptions: any;
   public materialBtn: HorizonButton[];
 
-  constructor() {
-    this.materialBtn = [
-      {
-        action: this._CLOSE,
-        icon: "close",
-      }
-    ]
-  }
+  constructor() { }
 
   ngOnInit() {
     this.initCarousel();
@@ -40,16 +30,4 @@ export class ImgViewerComponent implements OnInit {
       nav: false, stagePadding: 0, autoWidth: false,
     }
   }
-
-  /**
-   * MÉTODO PARA ESCUCHAR LA ACCIÓN DEL EVENTO DE CLICK DE UN BOTÓN DINÁMICO:
-   */
-  getButtonAction(actionEvent: number) {
-    switch (actionEvent) {
-      case this._CLOSE:
-        this.closeModal.emit(true);
-        break;
-    }
-  }
-
 }

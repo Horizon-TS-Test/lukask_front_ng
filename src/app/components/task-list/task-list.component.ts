@@ -34,13 +34,15 @@ export class TaskListComponent implements OnInit {
    */
   onRelevance(event: any) {
     event.preventDefault();
-    this._actionService.sendRelevance(this.queja.id_publication, !this.queja.user_relevance)
+    this._actionService.saveRelevance(this.queja.id_publication, !this.queja.user_relevance)
       .then((active: boolean) => {
         if (active) {
           this.queja.user_relevance = active;
+          this.queja.relevance_counter += 1;
         }
         else {
           this.queja.user_relevance = active;
+          this.queja.relevance_counter -= 1;
         }
       })
       .catch((error) => console.log(error));
@@ -76,7 +78,18 @@ export class TaskListComponent implements OnInit {
    */
   viewTransmission(event: any) {
     event.preventDefault();
-    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_transmission, contentData: { userOwner: this.queja.user.id, pubId: this.queja.id_publication } });
+    if (!this.queja.transDone) {
+      this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_transmission, contentData: { userOwner: this.queja.user.id, pubId: this.queja.id_publication } });
+    }
+  }
+
+  /**
+   * MÉTODO PARA ABRIR UN MODAL CON LA LISTA DE PERSONAS QUE APOYAN LA PUBLICACIÓN:
+   * @param event 
+   */
+  viewSupport(event: any) {
+    event.preventDefault();
+    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.support_list, contentData: { pubId: this.queja.id_publication, pubOwner: this.queja.user.person.name } });
   }
 
 }

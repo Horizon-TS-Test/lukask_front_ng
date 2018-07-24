@@ -18,9 +18,7 @@ declare var upgradeTableFieldDataArray: any;
 export class ReplyListComponent implements OnInit, OnDestroy {
   @Input() parentComment: Comment;
   @Input() focusReplyId: string;
-  @Output() closeModal: EventEmitter<boolean>;
 
-  private _CLOSE = 1;
   private LOADER_HIDE: string = "hide";
   private LOADER_ON: string = "on";
   private mainReplies: any;
@@ -39,14 +37,7 @@ export class ReplyListComponent implements OnInit, OnDestroy {
     private _socketService: SocketService,
     private _notifierService: NotifierService
   ) {
-    this.closeModal = new EventEmitter<boolean>();
     this.activeClass = this.LOADER_HIDE;
-    this.matButtons = [
-      {
-        action: this._CLOSE,
-        icon: "close"
-      }
-    ];
 
     this.defineMainComments();
     this.listenToSocket();
@@ -153,17 +144,6 @@ export class ReplyListComponent implements OnInit, OnDestroy {
           }, 800);
         }, 1000)
       }
-    }
-  }
-
-  /**
-   * MÉTODO PARA ESCUCHAR LA ACCIÓN DEL EVENTO DE CLICK DE UN BOTÓN DINÁMICO:
-   */
-  getButtonAction(actionEvent: number) {
-    switch (actionEvent) {
-      case this._CLOSE:
-        this.closeModal.emit(true);
-        break;
     }
   }
 

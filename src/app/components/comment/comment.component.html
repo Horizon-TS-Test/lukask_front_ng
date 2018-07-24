@@ -9,8 +9,10 @@
   }">
     <div class="col-12 p-0 d-flex justify-content-between align-items-center">
       <strong>{{commentModel.user.person.name}}</strong>
-      <a href="#">
-        <small class="p-dark-text-color">2 personas apoyan esto</small>
+      <a *ngIf="!isReply && commentModel.relevance_counter > 0" href="#" (click)="openSupportList($event)" class="p-normal-text-color">
+        <small>{{ commentModel.relevance_counter }} {{ commentModel.relevance_counter > 1 ? 'personas apoyan esto' : 'persona apoya
+          esto'}}
+        </small>
       </a>
     </div>
     <div>
@@ -18,10 +20,11 @@
     </div>
     <div class="col-12 p-0 mt-2 d-flex justify-content-between align-items-end">
       <div class="d-flex justify-content-start">
-        <a href="#" class="no-border-button secondary small" title="Apoyo">
+        <a *ngIf="!isReply" href="#" (click)="onRelevance($event)" class="no-border-button small" [ngClass]="{'secondary': !commentModel.userRelevance}"
+          title="Apoyo">
           <fa name="star"></fa>
         </a>
-        <a *ngIf="!isReply && !noReplyBtn && hideBtn === false" href="#" (click)="viewReplies($event)" class="no-border-button secondary small"
+        <a *ngIf="!isReply && !noReplyBtn && !hideBtn" href="#" (click)="viewReplies($event)" class="no-border-button secondary small"
           title="Ver respuestas">
           <span class="personal-site-icon">v</span>
         </a>

@@ -10,6 +10,7 @@ export class MaterialBtnListComponent implements OnInit, OnChanges {
   @Input() materialBtns: HorizonButton[];
   @Input() isModal: boolean;
   @Input() animateNext: any;
+  @Input() showClass: string;
   @Output() someBtnAction: EventEmitter<number>;
 
   constructor() {
@@ -52,7 +53,7 @@ export class MaterialBtnListComponent implements OnInit, OnChanges {
             });
           }
         }
-        else if(next == true) {
+        else if (next == true) {
           if (this.materialBtns[i + 1] && this.materialBtns[i + 1].class && this.materialBtns[i + 1].class.indexOf("animated-btn") !== -1 && this.materialBtns[i + 1].class.indexOf("animate-in") === -1) {
             this.materialBtns[i].class = this.materialBtns[i].class.replace("animate-in", "");
             animatePromise = new Promise((resolve, reject) => {
@@ -86,6 +87,11 @@ export class MaterialBtnListComponent implements OnInit, OnChanges {
         case 'animateNext':
           if (changes[property].currentValue !== undefined) {
             this.aplyBtnAnimation(changes[property].currentValue);
+          }
+          break;
+        case 'showClass':
+          if (changes[property].currentValue) {
+            this.showClass = changes[property].currentValue;
           }
           break;
       }

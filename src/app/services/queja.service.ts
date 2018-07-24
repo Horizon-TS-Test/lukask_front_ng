@@ -30,6 +30,7 @@ export class QuejaService {
   private mainMediaJson: any;
   private pagePattern: string;
   private isPostedPub: boolean;
+  private isUpdatedTrans: boolean;
 
   public DEFAULT_LIMIT: number = 5;
   public ALL: string = "all";
@@ -48,6 +49,7 @@ export class QuejaService {
     this.isFetchedQtype = false;
     this.isFetchedPubs = false;
     this.isFetchedPub = false;
+    this.isUpdatedTrans = false;
 
     this.defineMainMediaArray();
     this.listenToSocket();
@@ -290,7 +292,8 @@ export class QuejaService {
       location: queja.location,
       address: queja.address,
       is_trans: queja.isTrans,
-      media_files: []
+      trans_done: queja.transDone,
+      media_files: [],
     }
 
     for (let med of queja.media) {
@@ -317,7 +320,11 @@ export class QuejaService {
     });
   }
 
-  sendQueja(queja: Publication) {
+  /**
+   * MÉTODO PARA ENVIAR UN FORM DATA HACIA EL MIDDLEWARE EN UN POST REQUEST:
+   * @param queja 
+   */
+  private sendQueja(queja: Publication) {
     let quejaFormData: FormData = this.mergeFormData(queja);
     return this.postQuejaClient(quejaFormData)
       .then(
@@ -507,6 +514,46 @@ export class QuejaService {
       }
       return throwError(error.json());
     });
+  }
+
+  /**
+   * MÉTODO PARA GUARDAR UN NUEVO COMENTARIO O RESPUESTA EN EL BACKEND O EN SU DEFECTO PARA BACK SYNC:
+   */
+  public updateTransmission(pubId: string, transDone: boolean) {
+    return this.stopTransmission(pubId, transDone).then((response: any) => {
+      if (!this.isUpdatedTrans) {
+        return this._backSyncService.storeForBackSync('sync-trans', 'sync-stop-trans', { pubId: pubId, transDone: transDone });
+      }
+      else {
+        this.isUpdatedTrans = false;
+      }
+
+      return response;
+    });
+  }
+
+  /**
+   * MÉTODO PARA ENVIAR UN FORM DATA HACIA EL MIDDLEWARE EN UN POST REQUEST:
+   * @param queja 
+   */
+  private stopTransmission(pubId: string, transDone: boolean = true) {
+    const requestHeaders = new Headers({
+      'Content-Type': 'application/json',
+      'X-Access-Token': this._userService.getUserKey()
+    });
+    const requestBody = JSON.stringify({ pubId: pubId, stopTrans: transDone });
+
+    return this._http.post(REST_SERV.pubsUrl + "/transmission/" + pubId, requestBody, { headers: requestHeaders, withCredentials: true }).toPromise()
+      .then((response: Response) => {
+        let respJson = response.json().data;
+        console.log("respJson.trans_done: " + respJson.trans_done);
+        if (response.status === 200) {
+          return true;
+        }
+        this.isUpdatedTrans = true;
+
+        return false;
+      });
   }
 
   /**

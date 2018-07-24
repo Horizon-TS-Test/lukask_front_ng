@@ -40,7 +40,12 @@ export class LoginService {
         if (response.status === 200) {
           this._socketService.connectSocket();
           this._userService.storeUserCredentials(respJson.data);
+          this._userService.getRestUserProfile()
+            .then((resp) => {
+              return respJson;
+            });
         }
+
         return respJson;
       });
   }

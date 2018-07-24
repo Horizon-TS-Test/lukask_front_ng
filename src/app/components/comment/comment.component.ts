@@ -6,6 +6,7 @@ import { CONTENT_TYPES } from '../../config/content-type';
 import { Subscription } from 'rxjs';
 import { UserService } from '../../services/user.service';
 import { User } from '../../models/user';
+import { ActionService } from '../../services/action.service';
 
 @Component({
   selector: 'comment',
@@ -26,6 +27,7 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
   constructor(
     public _domSanitizer: DomSanitizer,
     private _notifierService: NotifierService,
+    private _actionService: ActionService,
     private _userService: UserService
   ) {
     this.subscription = this._userService._userUpdate.subscribe((update: boolean) => {
@@ -66,6 +68,35 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   /**
+   * MÉTODO PARA ABRIR EL POP OVER DE LA LISTA DE APOYOS:
+   * @param event 
+   */
+  public openSupportList(event: any) {
+    event.preventDefault();
+    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.support_list, contentData: { commentId: this.commentModel.commentId, commentOwner: this.commentModel.user.person.name } });
+  }
+
+  /**
+   * MÉTODO PARA DAR RELEVANCIA A UNA PUBLICACIÓN Y ENVIARLA AL BACKEND:
+   * @param event 
+   */
+  onRelevance(event: any) {
+    event.preventDefault();
+    this._actionService.saveRelevance(this.commentModel.commentId, !this.commentModel.userRelevance, true)
+      .then((active: boolean) => {
+        if (active) {
+          this.commentModel.userRelevance = active;
+          this.commentModel.relevance_counter += 1;
+        }
+        else {
+          this.commentModel.userRelevance = active;
+          this.commentModel.relevance_counter -= 1;
+        }
+      })
+      .catch((error) => console.log(error));
+  }
+
+  /**
    * MÉTODO PARA DETECTAR LOS CAMBIOS DE UNA PROPIEDAD INYECTADA DESDE EL COMPONENTE PADRE DE ESTE COMPONENTE:
    * @param changes LOS CAMBIOS GENERADOS
    */
@@ -82,7 +113,7 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
       }
     }
   }
-  
+
   ngOnDestroy() {
     this.subscription.unsubscribe();
   }

@@ -13,12 +13,14 @@ declare var $: any;
   styleUrls: ['./horizon-modal.component.css']
 })
 export class HorizonModalComponent implements OnInit, OnDestroy {
-  private self: any;
   private subscriber: Subscription;
 
   public _ref: any;
   public _dynaContent: DynaContent;
   public contentTypes: any;
+
+  public backgroundClass: string;
+  public showClass: string;
 
   constructor(
     private _contentService: ContentService,
@@ -31,14 +33,12 @@ export class HorizonModalComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnInit() {
-    this.self = $(".horizon-modal").last();
-    this._contentService.manageBodyOverflow();
-  }
+  ngOnInit() { }
 
   ngAfterViewInit() {
     setTimeout(() => {
-      this._contentService.slideDownUp(this.self);
+      this.backgroundClass = "on";
+      this.showClass = "show";
     }, 100);
   }
 
@@ -46,7 +46,8 @@ export class HorizonModalComponent implements OnInit, OnDestroy {
    * MÉTODO PARA DAR EL EFECTO DE DESVANECIMIENTO DEL MODAL PARA LUEGO CERRARLO:
    */
   closeModal() {
-    this._contentService.slideDownUp(this.self, false);
+    this.backgroundClass = "";
+    this.showClass = "";
 
     setTimeout(() => {
       this.removeObject();

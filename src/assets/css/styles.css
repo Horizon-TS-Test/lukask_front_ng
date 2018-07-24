@@ -695,7 +695,7 @@ p, label, div {
     transition: all .5s ease; }
 
 .bot-panel {
-  bottom: 0px;
+  bottom: -1px;
   -webkit-box-shadow: 2px -1px 3px rgba(0, 0, 0, 0.2) !important;
   -moz-box-shadow: 2px -1px 3px rgba(0, 0, 0, 0.2) !important;
   box-shadow: 2px -1px 3px rgba(0, 0, 0, 0.2) !important;
@@ -942,7 +942,7 @@ p, label, div {
   z-index: 10000000000000000;
   transition: all .3s ease; }
 
-.show-dyna-cont {
+.personal-dyna-cont.show {
   top: 0px;
   transition: all .5s ease; }
 
@@ -954,6 +954,16 @@ p, label, div {
 
 .personal-dyna-down.show {
   bottom: 0px;
+  transition: all .5s ease; }
+
+.personal-dyna-up {
+  position: fixed !important;
+  left: 0;
+  top: -100%;
+  transition: all .3s ease; }
+
+.personal-dyna-up.show {
+  top: 0px;
   transition: all .5s ease; }
 
 .fixed-background {
@@ -1079,7 +1089,8 @@ p, label, div {
   transition: all .3s ease; }
 
 .personal-material-btn.no-modal {
-  z-index: 4; }
+  z-index: 4;
+  bottom: 3px; }
 
 .personal-material-btn.show {
   bottom: 3px;
@@ -1257,16 +1268,16 @@ p, label, div {
 .p-border-none {
   border: none !important; }
 
-.p-noraml-text-color {
+.p-normal-text-color, .p-normal-text-color:hover {
   color: #5dbeb6; }
 
-.p-dark-text-color {
+.p-dark-text-color, .p-dark-text-color:hover {
   color: #004360; }
 
-.p-primary-text-color {
+.p-primary-text-color, .p-primary-text-color:hover {
   color: #848b76 !important; }
 
-.p-secondary-text-color {
+.p-secondary-text-color, .p-secondary-text-color:hover {
   color: #fff !important; }
 
 input[type=text], input[type=password], input[type=email], textarea {
@@ -1335,5 +1346,19 @@ input[type=text], input[type=password], input[type=email], textarea {
 .personal-carousel.next {
   position: absolute;
   transform: translateX(100%); }
+
+.personal-pop-over {
+  overflow: hidden;
+  /* Force Hardware Acceleration in WebKit */
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transform: scale(0);
+  transform-origin: top left;
+  transition: transform 0.3s, visibility 0s 0.3s; }
+
+.personal-pop-over.is-visible {
+  visibility: visible;
+  transform: scale(1);
+  transition: transform 0.3s, visibility 0s 0s; }
 
 /*# sourceMappingURL=styles.css.map */

@@ -48,4 +48,4 @@
   </div>
 </div>
 
-<material-btn-list *ngIf="isModal" [materialBtns]="matButtons" (someBtnAction)="getButtonAction($event)"></material-btn-list>
+<material-btn-list *ngIf="isModal" [showClass]="showClass" [materialBtns]="matButtons" (someBtnAction)="getButtonAction($event)"></material-btn-list>

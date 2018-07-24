@@ -58,6 +58,10 @@ import { RouterService } from './services/router.service';
 import { HomePanelComponent } from './components/home-panel/home-panel.component';
 import { NewPubComponent } from './components/new-pub/new-pub.component';
 import { PubFormComponent } from './components/pub-form/pub-form.component';
+import { SupportListComponent } from './components/support-list/support-list.component';
+import { ProfileLinkComponent } from './components/profile-link/profile-link.component';
+import { ProfileOwnerComponent } from './components/profile-owner/profile-owner.component';
+import { HorizonPopOverComponent } from './components/horizon-pop-over/horizon-pop-over.component';
 
 @NgModule({
   declarations: [
@@ -95,7 +99,11 @@ import { PubFormComponent } from './components/pub-form/pub-form.component';
     ActivityComponent,
     HomePanelComponent,
     NewPubComponent,
-    PubFormComponent
+    PubFormComponent,
+    SupportListComponent,
+    ProfileLinkComponent,
+    ProfileOwnerComponent,
+    HorizonPopOverComponent,
   ],
   imports: [
     HttpModule,
@@ -109,6 +117,6 @@ import { PubFormComponent } from './components/pub-form/pub-form.component';
   ],
   providers: [appRoutingProviders, ContentService, UserService, AuthGuardService, LoginGuardService, NotifierService, CameraService, SocketService, BrowserNotifierService, QuejaService, NotificationService, RouterService],
   bootstrap: [AppComponent],
-  entryComponents: [AlertComponent, HorizonModalComponent, SingleMapComponent, HorizonNotificationComponent]
+  entryComponents: [AlertComponent, HorizonModalComponent, SingleMapComponent, HorizonNotificationComponent, HorizonPopOverComponent]
 })
 export class AppModule { }

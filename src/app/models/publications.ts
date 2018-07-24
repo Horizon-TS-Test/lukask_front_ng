@@ -26,7 +26,7 @@ export class Publication {
         public isTrans?: boolean,
         public transDone?: boolean
     ) {
-        if ((this.date_pub)) {
+        if (this.date_pub) {
             this.beutifyDate();
         }
         this.media = [];
@@ -38,8 +38,15 @@ export class Publication {
         this.coolDate = DateManager.makeDateCool(this.date_pub);
         if (currDate.diff(this.date_pub, 'minutes') < 60) {
             this.dateInterval = setInterval(() => {
-                if (currDate.diff(this.date_pub, 'hours') >= 60) {
+                currDate = moment();
+                if (currDate.diff(this.date_pub, 'minutes') >= 60) {
                     clearInterval(this.dateInterval);
+                    this.dateInterval = setInterval(() => {
+                        if (currDate.diff(this.date_pub, 'hours') > 24) {
+                            clearInterval(this.dateInterval);
+                        }
+                        this.coolDate = DateManager.makeDateCool(this.date_pub);
+                    }, 60000 * 60);
                 }
                 this.coolDate = DateManager.makeDateCool(this.date_pub);
             }, 60000);
@@ -47,6 +54,7 @@ export class Publication {
 
         if (currDate.diff(this.date_pub, 'hours') <= 24) {
             this.dateInterval = setInterval(() => {
+                currDate = moment();
                 if (currDate.diff(this.date_pub, 'hours') > 24) {
                     clearInterval(this.dateInterval);
                 }
