@@ -1735,7 +1735,7 @@ input[type=text], input[type=password], input[type=email], textarea{
     width: 17px;
     height: 17px;
     border-radius: 50%;
-    color: $secondary-text;
+    color: $secondary-text !important;
     font-size: .6rem;
     display: flex;
     justify-content: center;
