@@ -6,6 +6,7 @@ import { throwError } from 'rxjs';
 import { UserService } from './user.service';
 import * as lodash from 'lodash';
 import { BackSyncService } from './back-sync.service';
+import { DateManager } from '../tools/date-manager';
 
 declare var readAllData: any;
 declare var upgradeTableFieldData: any;
@@ -291,8 +292,11 @@ export class ActionService {
     const requestBody = JSON.stringify({
       parentId: parentId,
       active: isRelevance,
+      date: DateManager.getFormattedDate(),
       isComment: isComment,
-      userId: this._userService.getUserProfile().id
+      userId: this._userService.getUserProfile().id,
+      userName: this._userService.getUserProfile().person.name,
+      userImage: this._userService.getUserProfile().profileImg
     });
 
     return this._http.post(REST_SERV.relevanceUrl, requestBody, { headers: requestHeaders, withCredentials: true })
