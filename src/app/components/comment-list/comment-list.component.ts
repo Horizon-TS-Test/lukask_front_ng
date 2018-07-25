@@ -9,6 +9,9 @@ import { NotifierService } from '../../services/notifier.service';
 import { Subscription } from 'rxjs';
 import { ACTION_TYPES } from '../../config/action-types';
 
+declare var readAllData: any;
+declare var writeData: any;
+declare var deleteItemData: any;
 declare var upgradeTableFieldDataArray: any;
 
 @Component({
@@ -198,9 +201,59 @@ export class CommentListComponent implements OnInit, AfterViewInit, OnDestroy, O
       (socketPub: any) => {
         let action = socketPub.payload.action.toUpperCase();
 
-        this.updateCommentList(socketPub.payload.data, action);
+        if (socketPub.payload.data.description != null) {
+          this.updateCommentList(socketPub.payload.data, action);
+        }
+        else {
+          this.updateRelevanceCounter(socketPub.payload.data);
+        }
       }
     );
+  }
+
+  /**
+   * MÉTODO PARA ACTUALIZAR EL REGISTRO EN INDEXED-DB
+   */
+  updateRelNumberIndexDb(comId: string, add: boolean) {
+    readAllData("comment")
+      .then(function (tableData) {
+        let dataToSave;
+        for (var t = 0; t < tableData.length; t++) {
+          if (tableData[t].id_action === comId) {
+            dataToSave = tableData[t];
+            if (add) {
+              dataToSave.count_relevance += 1;
+            }
+            else {
+              dataToSave.count_relevance -= 1;
+            }
+            deleteItemData("comment", tableData[t].id_action)
+              .then(function () {
+                writeData("comment", dataToSave);
+              });
+            t = tableData.length;
+          }
+        }
+      });
+  }
+
+  /**
+   * MÉTODO PARA ACTUALIZAR EL NUMERO DE RELEVANCIAS DE UN COMENTARIO:
+   */
+  updateRelevanceCounter(actionData) {
+    if (actionData.action_parent) {
+      let updatedComment = this.commentList.find(com => com.commentId == actionData.action_parent);
+      if (updatedComment) {
+        if (actionData.active) {
+          updatedComment.relevance_counter += 1;
+        }
+        else {
+          updatedComment.relevance_counter -= 1;
+        }
+      }
+
+      this.updateRelNumberIndexDb(actionData.id_action, actionData.active);
+    }
   }
 
   /**
@@ -209,7 +262,7 @@ export class CommentListComponent implements OnInit, AfterViewInit, OnDestroy, O
    * @param action THIS CAN BE CREATE, UPDATE OR DELETE:
    */
   updateCommentList(commentJson: any, action: string) {
-    if (commentJson.description != null && commentJson.publication == this.pubId && !commentJson.action_parent) {
+    if (commentJson.publication == this.pubId && !commentJson.action_parent) {
       let lastComment: Comment, newCom: Comment;
 
       //UPDATING THE BACKEND SERVER IP/DOMAIN:

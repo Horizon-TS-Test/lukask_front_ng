@@ -594,6 +594,10 @@ export class QuejaService {
             }
             this.updatePubMediaList(socketPub.payload.data, action);
             break;
+          case "actions":
+            console.log("Actions");
+            this.updateRelevanceNumber(socketPub.payload.data);
+            break;
         }
       }
     );
@@ -716,5 +720,48 @@ export class QuejaService {
     ////
 
     ArrayManager.backendServerSays(action, ownerPub.media, lastMedia, newMedia);
+  }
+
+  /**
+   * MÉTODO PARA ACTUALIZAR EL REGISTRO EN INDEXED-DB
+   */
+  updateRelNumberIndexDb(pubId: string, add: boolean) {
+    readAllData("publication")
+      .then(function (tableData) {
+        let dataToSave;
+        for (var t = 0; t < tableData.length; t++) {
+          if (tableData[t].id_publication === pubId) {
+            dataToSave = tableData[t];
+            if (add) {
+              dataToSave.count_relevance += 1;
+            }
+            else {
+              dataToSave.count_relevance -= 1;
+            }
+            deleteItemData("publication", tableData[t].id_publication)
+              .then(function () {
+                writeData("publication", dataToSave);
+              });
+            t = tableData.length;
+          }
+        }
+      });
+  }
+
+  /**
+   * MÉTODO PAR ACTUALIZAR EL NÚMERO DE RELEVANCIAS DE UNA PUBLICACIÓN:
+   * @param actionData 
+   */
+  updateRelevanceNumber(actionData: any) {
+    let updatedPub = this.pubList.find(pub => pub.id_publication === actionData.publication);
+
+    if (actionData.active) {
+      updatedPub.relevance_counter += 1;
+    }
+    else {
+      updatedPub.relevance_counter -= 1;
+    }
+
+    this.updateRelNumberIndexDb(actionData.publication, actionData.active);
   }
 }
