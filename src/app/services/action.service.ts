@@ -224,6 +224,7 @@ export class ActionService {
       action_parent: (comment.commentParentId) ? comment.commentParentId : "",
       date: comment.dateRegister,
       active: true,
+      userId: this._userService.getUserProfile().id,
       userName: this._userService.getUserProfile().person.name,
       userImage: this._userService.getUserProfile().profileImg
     });
@@ -270,6 +271,7 @@ export class ActionService {
       action_parent: (comment.commentParentId) ? comment.commentParentId : "",
       date: comment.dateRegister,
       active: true,
+      userId: this._userService.getUserProfile().id,
       userName: this._userService.getUserProfile().person.name,
       userImage: this._userService.getUserProfile().profileImg
     }
@@ -289,7 +291,8 @@ export class ActionService {
     const requestBody = JSON.stringify({
       parentId: parentId,
       active: isRelevance,
-      isComment: isComment
+      isComment: isComment,
+      userId: this._userService.getUserProfile().id
     });
 
     return this._http.post(REST_SERV.relevanceUrl, requestBody, { headers: requestHeaders, withCredentials: true })
@@ -308,7 +311,7 @@ export class ActionService {
   public saveRelevance(parentId: string, isRelevance: boolean, isComment: boolean = false) {
     return this.sendRelevance(parentId, isRelevance, isComment).then((response) => {
       if (!this.isPostedRelevance) {
-        return this._backSyncService.storeForBackSync('sync-relevance', 'sync-new-relevance', { id: new Date().toISOString(), parentId: parentId, active: isRelevance, isComment: isComment });
+        return this._backSyncService.storeForBackSync('sync-relevance', 'sync-new-relevance', { id: new Date().toISOString(), parentId: parentId, active: isRelevance, isComment: isComment, userId: this._userService.getUserProfile().id });
       }
       else {
         this.isPostedRelevance = false;
