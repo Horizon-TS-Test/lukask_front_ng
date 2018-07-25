@@ -7,7 +7,7 @@
   <ul class="max-height-half p-overflow-auto list-group list-group-flush pb-0">
     <ng-container *ngIf="supportList && supportList.length > 0">
       <li *ngFor="let sup of supportList" class="f-child-full-space list-group-item p-1">
-        <profile-owner [suporterProfile]="sup"></profile-owner>
+        <profile-owner [suporterProfile]="sup" [isCommentProfile]="true"></profile-owner>
       </li>
     </ng-container>
   </ul>
