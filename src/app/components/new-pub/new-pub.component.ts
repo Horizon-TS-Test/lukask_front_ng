@@ -95,7 +95,7 @@ export class NewPubComponent implements OnInit, AfterViewInit, OnChanges {
    */
   private showLoadingContent(show: boolean) {
     if (show == true) {
-      $("#loading-content").parent().css("opacity", ".6");
+      $("#loading-content").parent().css("opacity", ".4");
       $("#loading-content").addClass("active");
     }
     else {

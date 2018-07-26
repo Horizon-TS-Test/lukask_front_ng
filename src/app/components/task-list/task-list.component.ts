@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output, SimpleChanges, OnChanges } from '@angular/core';
 import { ActionService } from '../../services/action.service';
 import { Publication } from '../../models/publications';
 import { Router } from '@angular/router';
@@ -14,7 +14,7 @@ declare var $: any;
   templateUrl: './task-list.component.html',
   styleUrls: ['./task-list.component.css']
 })
-export class TaskListComponent implements OnInit {
+export class TaskListComponent implements OnInit, OnChanges {
   @Input() queja: Publication;
   @Input() isModal: boolean;
   @Output() actionType = new EventEmitter<number>();
@@ -85,4 +85,19 @@ export class TaskListComponent implements OnInit {
     this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.support_list, contentData: { pubId: this.queja.id_publication, pubOwner: this.queja.user.person.name } });
   }
 
+  /**
+   * MÉTODO PARA ESCUCHAR LOS CAMBIOS QUE SE DEN EN EL ATRIBUTO QUE VIENE DESDE EL COMPONENTE PADRE:
+   * @param changes 
+   */
+  ngOnChanges(changes: SimpleChanges) {
+    for (const property in changes) {
+      switch (property) {
+        case 'queja':
+          if (changes[property].currentValue) {
+            this.queja = changes[property].currentValue;
+          }
+          break;
+      }
+    }
+  }
 }

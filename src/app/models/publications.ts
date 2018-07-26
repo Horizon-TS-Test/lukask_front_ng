@@ -32,17 +32,18 @@ export class Publication {
         this.media = [];
     }
 
-    private beutifyDate() {
+    public beutifyDate() {
         let currDate = moment();
+        let localDate = this.date_pub.replace("Z", " ").replace("T", " ");
 
         this.coolDate = DateManager.makeDateCool(this.date_pub);
-        if (currDate.diff(this.date_pub, 'minutes') < 60) {
+        if (currDate.diff(localDate, 'minutes') < 60) {
             this.dateInterval = setInterval(() => {
                 currDate = moment();
-                if (currDate.diff(this.date_pub, 'minutes') >= 60) {
+                if (currDate.diff(localDate, 'minutes') >= 60) {
                     clearInterval(this.dateInterval);
                     this.dateInterval = setInterval(() => {
-                        if (currDate.diff(this.date_pub, 'hours') > 24) {
+                        if (currDate.diff(localDate, 'hours') > 24) {
                             clearInterval(this.dateInterval);
                         }
                         this.coolDate = DateManager.makeDateCool(this.date_pub);
@@ -52,10 +53,10 @@ export class Publication {
             }, 60000);
         }
 
-        if (currDate.diff(this.date_pub, 'hours') <= 24) {
+        if (currDate.diff(localDate, 'hours') <= 24) {
             this.dateInterval = setInterval(() => {
                 currDate = moment();
-                if (currDate.diff(this.date_pub, 'hours') > 24) {
+                if (currDate.diff(localDate, 'hours') > 24) {
                     clearInterval(this.dateInterval);
                 }
                 this.coolDate = DateManager.makeDateCool(this.date_pub);

@@ -12,22 +12,24 @@ export class HorizonNotification {
         public url: string,
         public user: User
     ) {
-        if (this.date) {
+        if (date) {
             this.beutifyDate();
         }
     }
 
-    private beutifyDate() {
+    public beutifyDate() {
         let currDate = moment();
+        let localDate = this.date.replace("Z", " ").replace("T", " ");
+
         this.coolDate = DateManager.makeDateCool(this.date);
-        if (currDate.diff(this.date, 'minutes') < 60) {
-            currDate = moment();
+        if (currDate.diff(localDate, 'minutes') < 60) {
             this.dateInterval = setInterval(() => {
-                if (currDate.diff(this.date, 'minutes') >= 60) {
+                currDate = moment();
+                if (currDate.diff(localDate, 'minutes') >= 60) {
                     clearInterval(this.dateInterval);
                     this.dateInterval = setInterval(() => {
                         currDate = moment();
-                        if (currDate.diff(this.date, 'hours') > 24) {
+                        if (currDate.diff(localDate, 'hours') > 24) {
                             clearInterval(this.dateInterval);
                         }
                         this.coolDate = DateManager.makeDateCool(this.date);
@@ -37,10 +39,10 @@ export class HorizonNotification {
             }, 60000);
         }
 
-        if (currDate.diff(this.date, 'hours') <= 24) {
+        if (currDate.diff(localDate, 'hours') <= 24) {
             this.dateInterval = setInterval(() => {
                 currDate = moment();
-                if (currDate.diff(this.date, 'hours') > 24) {
+                if (currDate.diff(localDate, 'hours') > 24) {
                     clearInterval(this.dateInterval);
                 }
                 this.coolDate = DateManager.makeDateCool(this.date);
