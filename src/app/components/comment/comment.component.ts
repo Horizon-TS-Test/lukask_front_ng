@@ -82,14 +82,9 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
    */
   onRelevance(event: any) {
     event.preventDefault();
-    this._actionService.saveRelevance(this.commentModel.commentId, !this.commentModel.userRelevance, true)
+    this._actionService.saveRelevance(this.commentModel.publicationId, this.commentModel.commentId, !this.commentModel.userRelevance)
       .then((active: boolean) => {
-        if (active) {
-          this.commentModel.userRelevance = active;
-        }
-        else {
-          this.commentModel.userRelevance = active;
-        }
+        this.commentModel.userRelevance = active;
       }).catch((error) => console.log(error));
   }
 

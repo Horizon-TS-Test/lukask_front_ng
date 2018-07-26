@@ -34,16 +34,9 @@ export class TaskListComponent implements OnInit {
    */
   onRelevance(event: any) {
     event.preventDefault();
-    this._actionService.saveRelevance(this.queja.id_publication, !this.queja.user_relevance)
+    this._actionService.saveRelevance(this.queja.id_publication, null, !this.queja.user_relevance)
       .then((active: boolean) => {
-        if (active) {
-          this.queja.user_relevance = active;
-          this.queja.relevance_counter += 1;
-        }
-        else {
-          this.queja.user_relevance = active;
-          this.queja.relevance_counter -= 1;
-        }
+        this.queja.user_relevance = active;
       })
       .catch((error) => console.log(error));
   }

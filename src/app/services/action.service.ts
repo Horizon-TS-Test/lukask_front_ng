@@ -284,16 +284,16 @@ export class ActionService {
   /**
    * MÉTODO PARA GUARDAR UN NUEVO REGISTRO DE APOYO A UNA PUBLICACIÓN:
    */
-  public sendRelevance(parentId: string, isRelevance: boolean, isComment: boolean) {
+  public sendRelevance(pubId: string, parentCommentId: string, isRelevance: boolean) {
     const requestHeaders = new Headers({
       'Content-Type': 'application/json',
       'X-Access-Token': this._userService.getUserKey()
     });
     const requestBody = JSON.stringify({
-      parentId: parentId,
+      id_publication: pubId,
+      action_parent: parentCommentId,
       active: isRelevance,
       date: DateManager.getFormattedDate(),
-      isComment: isComment,
       userId: this._userService.getUserProfile().id,
       userName: this._userService.getUserProfile().person.name,
       userImage: this._userService.getUserProfile().profileImg
@@ -312,10 +312,10 @@ export class ActionService {
   /**
    * MÉTODO PARA GUARDAR UN NUEVO COMENTARIO O RESPUESTA EN EL BACKEND O EN SU DEFECTO PARA BACK SYNC:
    */
-  public saveRelevance(parentId: string, isRelevance: boolean, isComment: boolean = false) {
-    return this.sendRelevance(parentId, isRelevance, isComment).then((response) => {
+  public saveRelevance(pubId: string, parentCommentId: string, isRelevance: boolean) {
+    return this.sendRelevance(pubId, parentCommentId, isRelevance).then((response) => {
       if (!this.isPostedRelevance) {
-        return this._backSyncService.storeForBackSync('sync-relevance', 'sync-new-relevance', { id: new Date().toISOString(), parentId: parentId, active: isRelevance, isComment: isComment, userId: this._userService.getUserProfile().id });
+        return this._backSyncService.storeForBackSync('sync-relevance', 'sync-new-relevance', { id: new Date().toISOString(), id_publication: pubId, action_parent: parentCommentId, active: isRelevance, userId: this._userService.getUserProfile().id, userName: this._userService.getUserProfile().person.name, userImage: this._userService.getUserProfile().profileImg });
       }
       else {
         this.isPostedRelevance = false;

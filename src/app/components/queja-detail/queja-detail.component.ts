@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Output, Input, ViewChild, ViewContainerRef, ComponentFactoryResolver, SimpleChanges, OnChanges } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output, Input, ViewChild, ViewContainerRef, ComponentFactoryResolver, SimpleChanges, OnChanges, OnDestroy } from '@angular/core';
 import { Publication } from '../../models/publications';
 import { QuejaService } from '../../services/queja.service';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -8,13 +8,14 @@ import { SingleMapComponent } from '../single-map/single-map.component';
 import { CONTENT_TYPES } from '../../config/content-type';
 import { NotifierService } from '../../services/notifier.service';
 import { ACTION_TYPES } from '../../config/action-types';
+import { Subscription } from '../../../../node_modules/rxjs';
 
 @Component({
   selector: 'queja-detail',
   templateUrl: './queja-detail.component.html',
   styleUrls: ['./queja-detail.component.css']
 })
-export class QuejaDetailComponent implements OnInit, OnChanges {
+export class QuejaDetailComponent implements OnInit, OnChanges, OnDestroy {
   @ViewChild("mapRef", { read: ViewContainerRef }) mapRef: ViewContainerRef;
   @Input() showClass: string;
   @Input() idQueja: string;
@@ -22,6 +23,8 @@ export class QuejaDetailComponent implements OnInit, OnChanges {
   @Input() replyId: string;
   @Input() isModal: boolean;
   @Output() closeModal: EventEmitter<boolean>;
+
+  private subscriptor: Subscription;
 
   public quejaDetail: Publication;
   public matButtons: HorizonButton[];
@@ -59,6 +62,10 @@ export class QuejaDetailComponent implements OnInit, OnChanges {
           this.renderMap();
         }
       }).catch(error => console.log(error));
+
+    this.subscriptor = this._quejaService._pubDetailEmitter.subscribe((newRelevanceNumber: number) => {
+      this.quejaDetail.relevance_counter = newRelevanceNumber;
+    });
   }
 
   /**
@@ -126,5 +133,9 @@ export class QuejaDetailComponent implements OnInit, OnChanges {
           break;
       }
     }
+  }
+
+  ngOnDestroy() {
+    this.subscriptor.unsubscribe();
   }
 }

@@ -23,7 +23,6 @@ declare var verifyStoredData: any;
 })
 export class QuejaService {
 
-  private quejTypeList: QuejaType[];
   private isFetchedQtype: boolean;
   private isFetchedPubs: boolean;
   private isFetchedPub: boolean;
@@ -37,7 +36,8 @@ export class QuejaService {
 
   public pubList: Publication[];
   public pubFilterList: Publication[];
-  public _mapEmitter = new EventEmitter<string>();
+  public _mapEmitter: EventEmitter<string>;
+  public _pubDetailEmitter: EventEmitter<number>;
 
   constructor(
     private _http: Http,
@@ -50,6 +50,9 @@ export class QuejaService {
     this.isFetchedPubs = false;
     this.isFetchedPub = false;
     this.isUpdatedTrans = false;
+
+    this._mapEmitter = new EventEmitter<string>();
+    this._pubDetailEmitter = new EventEmitter<number>();
 
     this.defineMainMediaArray();
     this.listenToSocket();
@@ -109,11 +112,9 @@ export class QuejaService {
      * IMPLEMENTING NETWORK FIRST STRATEGY
     */
     return this.getQuejTypeWeb().then((webQtype: QuejaType[]) => {
-      this.quejTypeList = webQtype;
 
       if (!this.isFetchedQtype) {
         return this.getQuejTypeCache().then((cacheQtype: QuejaType[]) => {
-          this.quejTypeList = cacheQtype;
           return cacheQtype;
         });
       }
@@ -762,6 +763,7 @@ export class QuejaService {
       updatedPub.relevance_counter -= 1;
     }
 
+    this._pubDetailEmitter.emit(updatedPub.relevance_counter);
     this.updateRelNumberIndexDb(actionData.publication, actionData.active);
   }
 }
