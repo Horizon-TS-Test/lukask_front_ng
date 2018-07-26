@@ -53,15 +53,17 @@ export class PaymentsCardComponent implements OnInit {
   }
 
   envioPagosTarjeta(pagos: any) {
-    console.log("Entrara al error");
-    this._payments.postPagosCards(pagos, this.card).then((data) => {
+    console.log("[DATOS PAGOS]",pagos);
+    console.log("[DATOS TARJETA]",this.card);
+     this._payments.postPagosCards(pagos, this.card).then((data) => {
+      console.log("[DATOS DE RESPUESTA DE PAYPAL A PAGAR]",data);
       const mensaje = "CONSUMIDOR:" + data.data.data.email;
-      console.log("Dataaa", mensaje);
-      this.alertData = new Alert({ title: "SU PAGO SE FUE EXITOSO", message: mensaje, type: ALERT_TYPES.success });
+       this.alertData = new Alert({ title: "SU PAGO SE FUE EXITOSO", message: mensaje, type: ALERT_TYPES.success });
       this.setAlert();
       this.closeModal.emit(true);
       this.card = null;
     }, (err) => {
+      console.log("[ERROR DE LA RESPUESTA A PAGAR]",err);
       this.alertData = new Alert({ title: "DATOS ERRONEOS DE LA TARJETA", message: "VERIFIQUE SUS DATOS", type: ALERT_TYPES.danger});
       this.setAlert();
       this.closeModal.emit(true);

@@ -4,7 +4,6 @@ import { NotifierService } from '../../services/notifier.service';
 import { CONTENT_TYPES } from '../../config/content-type';
 import { Payment } from '../../models/payments';
 
-
 @Component({
   selector: 'app-pagos-datos',
   templateUrl: './pagos-datos.component.html',
@@ -25,12 +24,14 @@ export class PagosDatosComponent implements OnInit {
   }
   /**
    * MÉTODO PARA SOLICITAR LA APERTURA DE UN HORIZON MODAL 
-   * PARA VER EL DETALLE DE UNA QUEJA:
+   * PARA VER EL DETALLE DE LA PLANILLA A PAGAR
    * @param event EVENTO DE CLICK DEL ELEMENTO <a href="#">
+   * @param event IDENTIFICADOR DEL MODAL A LLAMAR
+   * @param contType DATOS A PAGAR DEL SERVICIO
    */
   viewPagosDetail (event: any, contType: number, pagos: any) {
     event.preventDefault();
-     console.log(pagos);
+    console.log("[DATOS DE LA PLANILLA A PAGAR]",pagos);
     this._notifierService.notifyNewContent({ contentType: contType, contentData: pagos });
   }
 }
