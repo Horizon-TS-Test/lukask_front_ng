@@ -65,6 +65,7 @@ import { PagosListComponent } from './components/pagos-list/pagos-list.component
 import { PagosDatosComponent } from './components/pagos-datos/pagos-datos.component';
 import { PaymentsComponent } from './components/payments/payments.component';
 import { PaymentsCardComponent } from './components/payments-card/payments-card.component';
+import { PaypalComponent } from './components/paypal/paypal.component';
 
 @NgModule({
   declarations: [
@@ -109,7 +110,8 @@ import { PaymentsCardComponent } from './components/payments-card/payments-card.
     PagosListComponent,
     PagosDatosComponent,
     PaymentsComponent,
-    PaymentsCardComponent
+    PaymentsCardComponent,
+    PaypalComponent
   ],
   imports: [
     HttpModule,

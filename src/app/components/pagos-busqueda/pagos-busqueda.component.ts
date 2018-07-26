@@ -30,8 +30,6 @@ export class PagosBusquedaComponent implements OnInit {
   ) {
     this.closeModal = new EventEmitter<boolean>();
     this.pagos = planillasData;
-    
-    //let list: number[] = [1, 2, 3];
     this.pagos1 = [];
 
     this.matButtons = [
@@ -60,25 +58,43 @@ export class PagosBusquedaComponent implements OnInit {
     }
   }
 
-  /** MÉTODO PARA SOLICITAR QUE SE INCRUSTE DINÁMICAMENTE UN HORIZON MODAL CON CIERTO CONTENIDO EN SU INTERIOR
-  * @param event EVENTO CLICK DEL ELEMENTO <a href="#">
-  * @param contType TIPO DE CONTENIDO A MOSTRAR DENTRO DEL HORIZON MODAL
+  /** MÉTODO PARA AGREGAR ANIME CARGANDO
   */
+  activeLoadingContent(remove: boolean = false) {
+    if (remove) {
+      $("#loading-content").removeClass("active");
+    }
+    else {
+      $("#loading-content").addClass("active");
+    }
+  }
+
+  /**
+    * MÉTODO PARA SOLICITAR LA APERTURA DE UN HORIZON MODAL
+    * PARA LA PAGINA DE BUSQUEDA DE LAS PLANILLAS DE PAGOS
+    * AND PARA PODER OBSERVAR EL DIV DE LAS PLANILLAS ENCONTRADAS
+    * @param event EVENTO CLICK DEL ELEMENTO <a href="#">
+    * @param contType TIPO DE CONTENIDO A MOSTRAR DENTRO DEL HORIZON MODAL
+    **/
+
   openLayer(event: any) {
-    //Poner el Array y poner visible el div
-    console.log("ingresooo a openlayer");
-    console.log(this.pagos.ci);
+    console.log("CEDULA DEL USUARIO: ", this.pagos.ci);
+    /**
+     * METODO PARA RECORRER EL ARRAY DE LAS PLANILLAS (PATRICIA ALLAUCA)
+     */
     let c = this.pagos.ci;
     let i = 0;
-    this.pagos1 =[];
+    this.pagos1 = [];
     for (var item in this.pagos) {
       if (c == this.pagos[item].ci) {
         i = i + 1;
         this.pagos1.push(this.pagos[item]);
-        
+
       }
     }
+    /*this.activeLoadingContent();
+    this.activeLoadingContent(true);*/
+    /*LINEA PARA HACERLE VISIBLE AL DIV DE LAS PLANILLAS */
     document.getElementById("divpagos").style.display = "block";
-
   }
 }

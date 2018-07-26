@@ -44,6 +44,7 @@ export class PaymentsService {
       });
   }
 
+
   /* Envio de los datos para realizar el Post del Pago en Pay Pal con tarjeta*/
 
   public postPagosCards(pagos: Payment, card: Card) {
@@ -64,16 +65,37 @@ export class PaymentsService {
       total: pagos.total,
       icon: pagos.icon,
       email: card.email,
-      numerocard: card.numerocard,
-      fechames: card.fechames,
-      fechaanio: card.fechaanio,
-      cvv2: card.cvv2
+      numero: card.numero,
+      mes: card.mes,
+      anio: card.anio,
+      cvv: card.cvv
     });
-    
     return this._http.post(REST_SERV.paymentCard, requestBody, { headers: requestHeaders, withCredentials: true }).toPromise()
       .then((response: Response) => {
         const respJson = response.json();
+        console.log("lllego al servico con error", respJson);
         return respJson;
       });
   }
+
+  public getExitoso() {
+    const requestHeaders = new Headers({
+      'Content-Type': 'application/json',
+      'X-Access-Token': this._userServices.getUserKey()
+    });
+
+    this._http.get(REST_SERV.exitoso, { headers: requestHeaders, withCredentials: true }).toPromise()
+      .then((response: Response) => {
+        const userJson = response.json().data;
+        console.log("FROM WEB", userJson);
+      })
+      .catch((error: Response) => {
+        if (error.json().code == 401) {
+          localStorage.clear();
+        }
+        console.log(error);
+      });
+  }
+ 
+
 }

@@ -1,9 +1,9 @@
 export default [
     {
         email: '',
-        numerocard: '',
-        fechames: '',
-        fechaanio: '',
-        cvv2: 0
+        numero: '',
+        mes: '',
+        anio: '',
+        cvv: 0
     }
 ]

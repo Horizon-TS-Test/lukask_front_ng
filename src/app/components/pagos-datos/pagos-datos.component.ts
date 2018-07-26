@@ -24,14 +24,13 @@ export class PagosDatosComponent implements OnInit {
   ngOnInit() {
   }
   /**
-   * MÉTODO PARA SOLICITAR LA APERTURA DE UN HORIZON MODAL PARA VER EL DETALLE DE UNA QUEJA:
+   * MÉTODO PARA SOLICITAR LA APERTURA DE UN HORIZON MODAL 
+   * PARA VER EL DETALLE DE UNA QUEJA:
    * @param event EVENTO DE CLICK DEL ELEMENTO <a href="#">
    */
   viewPagosDetail (event: any, contType: number, pagos: any) {
     event.preventDefault();
-    console.log("ciiiiiiiii");
-    //console.log(pagos.ci);
-    console.log(pagos);
+     console.log(pagos);
     this._notifierService.notifyNewContent({ contentType: contType, contentData: pagos });
   }
 }

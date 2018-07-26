@@ -1,8 +1,7 @@
 <div class="personal-content personal-over-unset min-height-full max-height-full col-12 p-0" id="personal-edit-q">
   <div class="personal-content min-height-full max-height-full p-overflow-auto">
     <form>
-      <div id="loading-content"></div>
-
+        <div id="loading-content"></div>
       <div class="card-header d-flex justify-content-between align-items-center">
         Pagos Servicios
       </div>
@@ -26,6 +25,7 @@
    
     <div id="divpagos" class="col-12 py-0 px-1" style="display: none;">
       <app-pagos-datos *ngFor="let pagos of pagos1" [pagos]="pagos">
+          
       </app-pagos-datos>
     </div>
 

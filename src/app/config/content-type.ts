@@ -15,5 +15,6 @@ export const CONTENT_TYPES = {
     view_transmission: 12,
     pagos_busq: 14,
     payments:15,
-    card:16
+    card:16,
+    paypal:17
 }

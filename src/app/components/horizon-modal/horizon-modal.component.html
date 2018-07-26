@@ -42,7 +42,8 @@
       (closeModal)="close($event)"></media-streaming>
     <app-pagos-busqueda *ngSwitchCase="contentTypes.pagos_busq" (closeModal)="close($event)"></app-pagos-busqueda>
     <app-payments *ngSwitchCase="contentTypes.payments" [pagos]="_dynaContent.contentData" (closeModal)="close($event)"></app-payments>
-    <app-payments-card *ngSwitchCase="contentTypes.card"  (closeModal)="close($event)"></app-payments-card>
+    <app-payments-card *ngSwitchCase="contentTypes.card"  [pagos]="_dynaContent.contentData" (closeModal)="close($event)"></app-payments-card>
+    <app-paypal *ngSwitchCase="contentTypes.paypal" [paypalUrl]='_dynaContent.contentData' ></app-paypal>
 
   </ng-container>
 </div>

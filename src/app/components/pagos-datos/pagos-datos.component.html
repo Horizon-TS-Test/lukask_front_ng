@@ -3,7 +3,7 @@
     <div class="card-header d-flex justify-content-center align-items-center">
       <a href="#" (click)="viewPagosDetail($event, contentTypes.payments, pagos)">
         <div class="card-img-top d-flex flex-wrap justify-content-center align-items-center">
-         N° Identificador: {{pagos.medidor}}
+         N° : {{pagos.medidor}}
           <div class="ml-2 my-0 personal-profile-img" [style.background-image]="_domSanitizer.bypassSecurityTrustStyle('url(' + pagos.icon + ')')">
           </div>
         </div>

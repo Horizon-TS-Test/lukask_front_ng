@@ -2,7 +2,7 @@ export const REST_SERV = {
     /*socketServerUrl: 'http://127.0.0.1:8070',
     publicationsUrl: 'http://127.0.0.1:8070/publication',
     qTypeUrl: 'http://127.0.0.1:8070/qtype',
-    loginUrl: 'http://127.0.0.1:8070/login',*/
+    loginUrl: 'http://127.0.0.1:8070/login',*/ 
     loginUrl: 'http://192.168.1.42:3001/login',
     pubsUrl: 'http://192.168.1.42:3001/publication',
     pubFilterUrl: 'http://192.168.1.42:3001/publication/filter',

@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, Input} from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { HorizonButton } from '../../interfaces/horizon-button.interface';
 import { FormBuilder } from '@angular/forms';
 import { PaymentsService } from '../../services/payments.service';
@@ -8,7 +8,10 @@ import { NotifierService } from '../../services/notifier.service';
 import { ALERT_TYPES } from '../../config/alert-types';
 import { CONTENT_TYPES } from '../../config/content-type';
 
+
+
 declare var $: any;
+
 
 @Component({
   selector: 'app-payments',
@@ -22,15 +25,15 @@ export class PaymentsComponent implements OnInit {
   private self: any;
   public matButtons: HorizonButton[];
   private alertData: Alert;
-  
 
   constructor(
     private _payments: PaymentsService,
-    private _notifierService: NotifierService,
-  ) { 
+    private _notifierService: NotifierService
+
+  ) {
     this.closeModal = new EventEmitter<boolean>();
     this.matButtons = [
-       {
+      {
         parentContentType: 0,
         action: this._CLOSE,
         icon: "close"
@@ -45,19 +48,24 @@ export class PaymentsComponent implements OnInit {
 
   //Envio para los Pagos PayPal
   envioPagos() {
-    console.log(this.pagos);
     this._payments.postPagosClient(this.pagos).then((data) => {
-      document.location.href = data.data.data;
-      /*LLamar al get con alert
-      this.alertData = new Alert({ title: 'Proceso Correcto', message: data.data, type: ALERT_TYPES.success });
-      this.setAlert();*/
+       this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.paypal, contentData: data.data.data });
+    }, (err) => {
+      this.alertData = new Alert({ title: "DISCULPAS LOS ERRORES", message: "ESTAMOS TRABAJANDO EN ELLOS", type: ALERT_TYPES.danger });
+      this.setAlert();
+      this.closeModal.emit(true);
     });
-  }
-   //Envio para los Pagos
 
-   envioPagosCard (event: any) {
-     console.log("Cin", CONTENT_TYPES.card);
-    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.card, contentData: null });
+
+  }
+  setAlert() {
+    this._notifierService.sendAlert(this.alertData);
+  }
+
+  //Envio para los Pagos
+
+  envioPagosCard(event: any, pagos: any) {
+    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.card, contentData: pagos });
   }
   getButtonAction(actionEvent: number) {
     switch (actionEvent) {

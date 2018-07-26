@@ -5,6 +5,9 @@ import { Subscription } from 'rxjs';
 import { MENU_OPTIONS } from '../../config/menu-option';
 import { ACTION_TYPES } from '../../config/action-types';
 import { DynaContent } from '../../interfaces/dyna-content.interface';
+import { Alert } from '../../models/alert';
+import { SocketService } from '../../services/socket.service';
+import { ALERT_TYPES } from '../../config/alert-types';
 
 declare var $: any;
 
@@ -18,14 +21,17 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   private customCarousel: any;
   private subscriptor: Subscription;
 
+
   public enableSecondOp: boolean;
   public enableThirdOp: boolean;
   public carouselOptions: any;
   public focusedPubId: string;
+  private alertData: Alert;
 
   constructor(
     private _contentService: ContentService,
-    private _notifierService: NotifierService
+    private _notifierService: NotifierService,
+    private _socket: SocketService
   ) { }
 
   ngOnInit() {
@@ -45,7 +51,26 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
 
+
     this.initCarousel();
+    this.socket();
+
+  }
+
+  socket() {
+    this._socket._responsepayment.subscribe(
+      (socketPago: any) => {
+        const data = JSON.parse(socketPago);
+        console.log("CORREO DEL USUARIO QUE PAGA EL SERVICO: ", data.data.email);
+        if (data) {
+          this.alertData = new Alert({ title: "SU PAGO FUE EXITOSO", message: data.data.email, type: ALERT_TYPES.success });
+          this.setAlert();
+        }
+      });
+  }
+
+  setAlert() {
+    this._notifierService.sendAlert(this.alertData);
   }
 
   /**
