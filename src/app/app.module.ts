@@ -60,7 +60,7 @@ import { NewPubComponent } from './components/new-pub/new-pub.component';
 import { PubFormComponent } from './components/pub-form/pub-form.component';
 import { PagosComponent } from './components/pagos/pagos.component';
 import { PagosInicioComponent } from './components/pagos-inicio/pagos-inicio.component';
-import { PagosBusquedaComponent } from './components/pagos-busqueda/pagos-busqueda.component';
+import { FindAccountsComponent } from './components/find-accounts/find-accounts.component';
 import { PagosListComponent } from './components/pagos-list/pagos-list.component';
 import { PagosDatosComponent } from './components/pagos-datos/pagos-datos.component';
 import { PaymentsComponent } from './components/payments/payments.component';
@@ -110,7 +110,7 @@ import { HorizonPopOverComponent } from './components/horizon-pop-over/horizon-p
     PubFormComponent,
     PagosComponent,
     PagosInicioComponent,
-    PagosBusquedaComponent,
+    FindAccountsComponent,
     PagosListComponent,
     PagosDatosComponent,
     PaymentsComponent,

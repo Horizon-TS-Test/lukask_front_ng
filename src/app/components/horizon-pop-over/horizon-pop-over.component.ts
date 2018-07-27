@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DynaContent } from '../../interfaces/dyna-content.interface';
+import { CONTENT_TYPES } from '../../config/content-type';
 
 @Component({
   selector: 'app-horizon-pop-over',
@@ -12,7 +13,11 @@ export class HorizonPopOverComponent implements OnInit {
   public visibleClass: string;
   public backgroundClass: string;
 
-  constructor() { }
+  public contentTypes: any;
+
+  constructor() {
+    this.contentTypes = CONTENT_TYPES;
+  }
 
   ngOnInit() {
     setTimeout(() => {

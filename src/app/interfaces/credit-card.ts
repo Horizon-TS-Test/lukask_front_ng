@@ -1,4 +1,4 @@
-export interface Pagos {
+export interface CreditCard {
         email: string;
         numero: string;
         mes: string;

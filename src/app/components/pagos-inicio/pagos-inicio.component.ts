@@ -19,13 +19,13 @@ export class PagosInicioComponent implements OnInit {
 
     /**
    * MÉTODO PARA SOLICITAR LA APERTURA DE UN HORIZON MODAL
-   * PARA LA PAGINA DE INICICO DE PAGOS
+   * PARA LA PAGINA DE INICIO DE PAGOS
    * @param event EVENTO CLICK DEL ELEMENTO <a href="#">
    * @param contType TIPO DE CONTENIDO A MOSTRAR DENTRO DEL HORIZON MODAL
    **/
   openLayer(event: any) {
     event.preventDefault();
-    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.pagos_busq, contentData: "" });
+    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.find_accounts, contentData: "" });
   }
 
 }

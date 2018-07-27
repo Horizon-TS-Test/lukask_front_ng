@@ -1,0 +1,40 @@
+<div class="p-find-accounts p-border-none card">
+  <div class="card-header">
+    Busque su planilla
+  </div>
+  <div class="card-block p-1">
+    <img class="card-img-top" class="p-img-pop mb-1" width="100%">
+
+    <form [formGroup]="formAcc" id="frmA" (ngSubmit)="findAccounts()">
+      <ul class="list-group list-group-flush pb-0">
+
+        <li class="list-group-item d-flex justify-content-center">
+          Ingrese su número de cédula
+        </li>
+
+        <li class="list-group-item px-0">
+
+          <div class="d-flex justify-content-center align-items-center">
+            <span class="personal-site-icon mr-2">y</span>
+
+            <div class="col-7 p-0">
+              <input type="number" name="cedula" formControlName="fcnCedula" class="form-control" required>
+            </div>
+
+            <button type="submit" class="primary-font btn btn-outline-info ml-3" [disabled]="!formAcc.valid">
+              <fa name="search"></fa>
+            </button>
+          </div>
+        </li>
+
+      </ul>
+    </form>
+
+  </div>
+
+  <!--div id="divpagos" class="col-12 py-0 px-1" style="display: none;">
+    <app-pagos-datos *ngFor="let pagos of pagos1" [pagos]="pagos">
+
+    </app-pagos-datos>
+  </div-->
+</div>

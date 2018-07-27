@@ -1,5 +1,4 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Card } from '../../models/card';
 import { NotifierService } from '../../services/notifier.service';
 import { CONTENT_TYPES } from '../../config/content-type';
 import cardData from '../../data/card-data';
@@ -9,8 +8,7 @@ import { PaymentsService } from '../../services/payments.service';
 import { Payment } from '../../models/payments';
 import { Router } from '@angular/router';
 import { ALERT_TYPES } from '../../config/alert-types';
-import { User } from '../../models/user';
-
+import { CreditCard } from '../../interfaces/credit-card';
 
 @Component({
   selector: 'app-payments-card',
@@ -19,12 +17,13 @@ import { User } from '../../models/user';
 })
 export class PaymentsCardComponent implements OnInit {
   @Output() closeModal: EventEmitter<boolean>;
-  @Input() card: Card;
+  @Input() card: CreditCard;
   @Input() pagos: Payment;
+
   public contentTypes: any;
   private _SUBMIT = 0;
   private _CLOSE = 1;
-  private self: any;
+
   public matButtons: HorizonButton[];
   private alertData: Alert;
   constructor(
@@ -37,12 +36,10 @@ export class PaymentsCardComponent implements OnInit {
     this.card = cardData;
     this.matButtons = [
       {
-        parentContentType: 0,
         action: this._SUBMIT,
         icon: "check"
       },
       {
-        parentContentType: 0,
         action: this._CLOSE,
         icon: "close"
       }

@@ -21,7 +21,6 @@ export class PaymentsComponent implements OnInit {
   @Output() closeModal: EventEmitter<boolean>;
   @Input() pagos: Payment;
   private _CLOSE = 1;
-  private self: any;
   public matButtons: HorizonButton[];
   private alertData: Alert;
 
@@ -33,17 +32,13 @@ export class PaymentsComponent implements OnInit {
     this.closeModal = new EventEmitter<boolean>();
     this.matButtons = [
       {
-        parentContentType: 0,
         action: this._CLOSE,
         icon: "close"
       }
     ];
   }
 
-  ngOnInit() {
-    this.self = $("#personal-payments-q");
-    $("#hidden-btn").on(("click"), (event) => { }); //NO TOCAR!
-  }
+  ngOnInit() { }
 
   /**
      * MÉTODO PARA SOLICITAR LA APERTURA DE UN HORIZON MODAL 

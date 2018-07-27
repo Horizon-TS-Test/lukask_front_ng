@@ -57,11 +57,10 @@
       <support-list [pubId]="_dynaContent.contentData.pubId" [pubOwner]="_dynaContent.contentData.pubOwner" [commentId]="_dynaContent.contentData.commentId"
         [commentOwner]="_dynaContent.contentData.commentOwner"></support-list>
     </div>
-    
-    <app-pagos-busqueda *ngSwitchCase="contentTypes.pagos_busq" [showClass]="showClass" (closeModal)="close($event)"></app-pagos-busqueda>
-    <app-payments *ngSwitchCase="contentTypes.payments" [showClass]="showClass" [pagos]="_dynaContent.contentData" (closeModal)="close($event)"></app-payments>
+
+    <!--app-payments *ngSwitchCase="contentTypes.payments" [showClass]="showClass" [pagos]="_dynaContent.contentData" (closeModal)="close($event)"></app-payments>
     <app-payments-card *ngSwitchCase="contentTypes.card" [showClass]="showClass" [pagos]="_dynaContent.contentData" (closeModal)="close($event)"></app-payments-card>
-    <app-paypal *ngSwitchCase="contentTypes.paypal" [showClass]="showClass" [paypalUrl]='_dynaContent.contentData' ></app-paypal>
+    <app-paypal *ngSwitchCase="contentTypes.paypal" [showClass]="showClass" [paypalUrl]='_dynaContent.contentData'></app-paypal-->
 
   </ng-container>
 </div>

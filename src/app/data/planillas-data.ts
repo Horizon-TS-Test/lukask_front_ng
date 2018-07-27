@@ -37,7 +37,8 @@ export default [
         subtotal: 56.94,
         total: 569.94,
         icon: '/assets/images/payments/cnt.jpg'
-    }, {
+    },
+    {
         factura: '001-639-019293070',
         empresa: 'CONSEJO PROVINCIAL DE CHIMBORAZO',
         nombre: 'MOYON SATAN LUIS GERARDO',
@@ -49,7 +50,8 @@ export default [
         subtotal: 5.16,
         total: 1589.16,
         icon: '/assets/images/payments/cpc.jpg'
-    }, {
+    },
+    {
         factura: '001-639-019293070',
         empresa: 'SERVICO DE RENTAS INTERNAS',
         nombre: 'MOYON SATAN LUIS GERARDO',

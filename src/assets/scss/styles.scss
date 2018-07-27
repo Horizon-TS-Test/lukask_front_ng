@@ -403,27 +403,6 @@ p, label, div {
 }
 ////
 
-//ICONS:
-.personal-site-icon {
-    font-family: "riotelecomec" !important;
-    font-size: 4.5rem;
-    color: $primary;
-    transition: color .3s ease, transform .4s ease;
-
-    @include MQ(S) {
-        font-size: 4.8rem;
-    }
-    @include MQ(M) {
-        font-size: 5.3rem;
-    }
-    @include MQ(L) {
-        font-size: 5.6rem;
-    }
-}
-.personal-site-icon.selected {
-    color: $primary !important;
-}
-
 .icon-size-5 {
     font-size: 5rem;
 
@@ -1785,3 +1764,24 @@ input[type=text], input[type=password], input[type=email], textarea{
     transition: transform 0.3s, visibility 0s 0s;
   }
 /////////////////////////////////////////////
+
+///////////////////////IMAGE INSIDE POP OVER STYLES///////////////////////////////
+.p-img-pop {
+    border-radius: 3px;
+    height: 180px;
+    object-fit: cover;
+}
+
+.p-find-accounts {
+    .p-img-pop {
+        //REF: https://stackoverflow.com/questions/2182716/is-it-possible-to-set-the-equivalent-of-a-src-attribute-of-an-img-tag-in-css
+        content: url("/assets/images/payments/security-card-sm.jpg");
+    }
+
+    .personal-site-icon {
+        color: $primary-text;
+        font-size: 2rem;
+        line-height: 2rem;
+    }
+}
+//////////////////////////////////////////////////////////////////////////////////

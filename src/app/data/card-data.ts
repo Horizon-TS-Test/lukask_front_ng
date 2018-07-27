@@ -1,9 +1,7 @@
-export default [
-    {
-        email: '',
-        numero: '',
-        mes: '',
-        anio: '',
-        cvv: 0
-    }
-]
+export default {
+    email: '',
+    numero: '',
+    mes: '',
+    anio: '',
+    cvv: ''
+}

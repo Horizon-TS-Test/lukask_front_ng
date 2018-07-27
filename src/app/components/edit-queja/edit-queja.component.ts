@@ -32,7 +32,7 @@ export class EditQuejaComponent implements OnInit, OnDestroy, OnChanges {
 
     this.filesToUpload = [
       {
-        mediaFileUrl: "/assets/images/edit-queja/window.jpg",
+        mediaFileUrl: "/assets/images/edit-queja/window-sm.jpg",
         mediaFile: null
       }
     ];

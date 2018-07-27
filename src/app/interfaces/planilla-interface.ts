@@ -1,4 +1,4 @@
-export interface Pagos {
+export interface Planilla {
       factura: string ;
       empresa: string ;
       nombre: string ;
