@@ -25,7 +25,7 @@ export class PagosInicioComponent implements OnInit {
    **/
   openLayer(event: any) {
     event.preventDefault();
-    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.pagos_busq, contentData: null });
+    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.pagos_busq, contentData: "" });
   }
 
 }
