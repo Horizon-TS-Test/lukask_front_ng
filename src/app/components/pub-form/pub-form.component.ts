@@ -1,4 +1,4 @@
-import { Component, OnInit, SimpleChanges, OnChanges, ViewChild, Input, AfterViewInit } from '@angular/core';
+import { Component, OnInit, SimpleChanges, OnChanges, ViewChild, Input, AfterViewInit, Output, EventEmitter } from '@angular/core';
 import { QuejaService } from '../../services/queja.service';
 import { FormBuilder, FormGroup, Validators } from '../../../../node_modules/@angular/forms';
 import { QuejaType } from '../../models/queja-type';
@@ -12,6 +12,7 @@ import { Alert } from '../../models/alert';
 import { NotifierService } from '../../services/notifier.service';
 import { ALERT_TYPES } from '../../config/alert-types';
 import { MediaFile } from '../../interfaces/media-file.interface';
+import { OnSubmit } from '../../interfaces/on-submit.interface';
 
 declare var google: any;
 declare var $: any;
@@ -25,6 +26,7 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() mediaFiles: MediaFile[];
   @Input() submit: number;
   @Input() isStreamPub: boolean;
+  @Output() afterSubmit = new EventEmitter<OnSubmit>();
   @ViewChild('gmap') gmapElement: any;
 
   private quejaType: string;
@@ -135,11 +137,9 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges {
   * TOMANDO LA LISTA DE PUBLICACIONES CON FILTRO DESDE EL BACKEND:
   */
   callPubs() {
-    console.log(this._locationCity);
     this._quejaService.getPubListFilter(this._locationCity)
       .then((pubsFilter: Publication[]) => {
         this.pubFilterList = pubsFilter;
-        console.log(this.pubFilterList);
       });
   }
 
@@ -170,8 +170,13 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges {
         this.newPub.media.push(new Media("", "", "", null, this.mediaFiles[i].mediaFile, i + "-" + DateManager.getFormattedDate() + ".png"));
       }
     }
-    this._quejaService.savePub(this.newPub);
-    this.formPub.reset();
+    this._quejaService.savePub(this.newPub).then((response: any) => {
+      this.afterSubmit.emit({ finished: true, dataAfterSubmit: response.id_publication });
+      this.formPub.reset();
+    }).catch((error) => {
+      this.afterSubmit.emit({ finished: true, dataAfterSubmit: null, hasError: true });
+      this.formPub.reset();
+    });
   }
 
   /**

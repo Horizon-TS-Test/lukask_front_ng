@@ -1,0 +1,9 @@
+<div class="py-1 px-3 d-flex flex-row justify-content-between align-items-center">
+  <profile-link [suporterProfile]="suporterProfile" [isCommentProfile]="isCommentProfile"></profile-link>
+
+  <span class="f-child-no-auto pl-3 text-justify d-flex justify-content-center align-items-center">
+    <div class="col-12 p-0 d-flex justify-content-between align-items-center">
+      <strong>{{ suporterProfile.person.name }} {{ suporterProfile.person.last_name }}</strong>
+    </div>
+  </span>
+</div>

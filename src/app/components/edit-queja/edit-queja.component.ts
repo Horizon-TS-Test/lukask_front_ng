@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input, SimpleChanges, OnChanges } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, SimpleChanges, OnChanges, Output, EventEmitter } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { NotifierService } from '../../services/notifier.service';
 import { CONTENT_TYPES } from '../../config/content-type';
@@ -6,6 +6,7 @@ import { CameraService } from '../../services/camera.service';
 import { MediaFile } from '../../interfaces/media-file.interface';
 import { DomSanitizer } from '../../../../node_modules/@angular/platform-browser';
 import { ACTION_TYPES } from '../../config/action-types';
+import { OnSubmit } from '../../interfaces/on-submit.interface';
 
 declare var $: any;
 
@@ -17,6 +18,7 @@ declare var $: any;
 export class EditQuejaComponent implements OnInit, OnDestroy, OnChanges {
   @Input() submit: number;
   @Input() isStreamPub: number;
+  @Output() afterSubmit = new EventEmitter<OnSubmit>();
 
   private subscription: Subscription;
   public carouselOptions: any;
@@ -38,7 +40,6 @@ export class EditQuejaComponent implements OnInit, OnDestroy, OnChanges {
     //LISTEN TO NEW SNAPSHOT SENT BY NEW MEDIA CONTENT:
     this.subscription = this._cameraService._snapShot.subscribe(
       (snapShot: MediaFile) => {
-        console.log("new snapshot received!!");
         this.addQuejaSnapShot(snapShot);
       }
     );
@@ -90,7 +91,7 @@ export class EditQuejaComponent implements OnInit, OnDestroy, OnChanges {
       switch (property) {
         case 'submit':
           if (changes[property].currentValue && changes[property].currentValue == ACTION_TYPES.submitPub) {
-            this.submit = changes[property].currentValue
+            this.submit = changes[property].currentValue;
           }
           break;
         case 'isStreamPub':
@@ -100,6 +101,14 @@ export class EditQuejaComponent implements OnInit, OnDestroy, OnChanges {
           break;
       }
     }
+  }
+
+  /**
+   * MÉTODO PARA REALIZAR UN PROCESO EN LA INTERFAZ DESPUÉS DE RECIBIR LA RESPUESTA DEL POST DE UNA PUBLICACIÓN:
+   * @param event VALOR INDICATIVO DE QUE EL SUBMIT HA SIDO PROCESADO. OBJETO EVENT EMITTER
+   */
+  processAfterSubmit(event: OnSubmit) {
+    this.afterSubmit.emit(event);
   }
 
   ngOnDestroy() {

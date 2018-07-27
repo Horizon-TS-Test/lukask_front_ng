@@ -7,16 +7,29 @@
     'pl-3': !isReply,
     'pl-4': isReply
   }">
-    <small>
+    <div class="col-12 p-0 d-flex justify-content-between align-items-center">
+      <strong>{{commentModel.user.person.name}}</strong>
+      <a *ngIf="!isReply && commentModel.relevance_counter > 0" href="#" (click)="openSupportList($event)" class="p-normal-text-color">
+        <small>{{ commentModel.relevance_counter }} {{ commentModel.relevance_counter > 1 ? 'personas apoyan esto' : 'persona apoya
+          esto'}}
+        </small>
+      </a>
+    </div>
+    <div>
       {{ commentModel.description }}
-    </small>
-    <div class="mt-2 d-flex">
-      <a href="#" class="mr-1 btn btn-sm btn-outline-info personal-icon-btn" title="Apoyo">
-        <fa name="star"></fa>
-      </a>
-      <a *ngIf="!isReply && !noReplyBtn && hideBtn === false" href="#" (click)="viewReplies($event)" class="mr-1 btn btn-sm btn-outline-info personal-icon-btn" title="Ver respuestas">
-        <fa name="reply"></fa>
-      </a>
+    </div>
+    <div class="col-12 p-0 mt-2 d-flex justify-content-between align-items-end">
+      <div class="d-flex justify-content-start">
+        <a *ngIf="!isReply" href="#" (click)="onRelevance($event)" class="no-border-button small" [ngClass]="{'secondary': !commentModel.userRelevance}"
+          title="Apoyo">
+          <fa name="star"></fa>
+        </a>
+        <a *ngIf="!isReply && !noReplyBtn && !hideBtn" href="#" (click)="viewReplies($event)" class="no-border-button secondary small"
+          title="Ver respuestas">
+          <span class="personal-site-icon">v</span>
+        </a>
+      </div>
+      <small>{{ commentModel.coolDate }}</small>
     </div>
   </span>
 </div>

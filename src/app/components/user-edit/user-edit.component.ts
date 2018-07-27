@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Output, OnDestroy } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output, OnDestroy, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { HorizonButton } from '../../interfaces/horizon-button.interface';
 import { User } from '../../models/user';
 import { UserService } from '../../services/user.service';
@@ -7,6 +7,7 @@ import { CONTENT_TYPES } from '../../config/content-type';
 import { Subscription } from 'rxjs';
 import { CameraService } from '../../services/camera.service';
 import { MediaFile } from '../../interfaces/media-file.interface';
+import { DateManager } from '../../tools/date-manager';
 
 declare var $: any;
 
@@ -15,7 +16,8 @@ declare var $: any;
   templateUrl: './user-edit.component.html',
   styleUrls: ['./user-edit.component.css']
 })
-export class UserEditComponent implements OnInit, OnDestroy {
+export class UserEditComponent implements OnInit, OnDestroy, OnChanges {
+  @Input() showClass: string;
   @Output() closeModal = new EventEmitter<boolean>();
 
   private SUBMIT = 0;
@@ -36,12 +38,10 @@ export class UserEditComponent implements OnInit, OnDestroy {
 
     this.materialButtons = [
       {
-        parentContentType: 1,
         action: this.SUBMIT,
         icon: "check"
       },
       {
-        parentContentType: 1,
         action: this.CLOSE,
         icon: "close"
       }
@@ -65,7 +65,7 @@ export class UserEditComponent implements OnInit, OnDestroy {
   editProfile() {
     if (this.filesToUpload) {
       this.userObj.file = this.filesToUpload;
-      this.userObj.fileName = this.getFormattedDate() + ".png";
+      this.userObj.fileName = DateManager.getFormattedDate() + ".png";
     }
     this._userService.saveUser(this.userObj);
   }
@@ -109,12 +109,19 @@ export class UserEditComponent implements OnInit, OnDestroy {
   }
 
   /**
-  * METODO PARA OBTENER LA FECHA
-  */
-  getFormattedDate() {
-    var date = new Date();
-    var str = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-    return str;
+   * MÉTODO PARA DETECTAR LOS CAMBIOS DE UNA PROPIEDAD INYECTADA DESDE EL COMPONENTE PADRE DE ESTE COMPONENTE:
+   * @param changes LOS CAMBIOS GENERADOS
+   */
+  ngOnChanges(changes: SimpleChanges) {
+    for (let property in changes) {
+      switch (property) {
+        case 'showClass':
+          if (changes[property].currentValue !== undefined) {
+            this.showClass = changes[property].currentValue;
+          }
+          break;
+      }
+    }
   }
 
   ngOnDestroy() {

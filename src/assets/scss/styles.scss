@@ -190,11 +190,11 @@ p, label, div {
 
 //LOADING CONTENT:
 #loading-content {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
+    height: 100vh;
     background: url("/assets/images/forms/preloader.gif") center center no-repeat;
     opacity: 0;
     z-index: -1;
@@ -202,7 +202,7 @@ p, label, div {
 }
 #loading-content.active {
     opacity: .8;
-    z-index: 1;
+    z-index: 10;
     transition: opacity .5s ease, z-index .2s ease;
 }
 
@@ -216,6 +216,9 @@ p, label, div {
     
     .p-owl-img {
         width: 60px !important;
+    }
+    .p-owl-img-sm {
+        width: 50px !important;
     }
 }
 .bottom-loader.hide {
@@ -276,6 +279,47 @@ p, label, div {
   
     100% {
       transform: scale(1);
+    }
+}
+
+
+@-webkit-keyframes cd-bounce-out {
+    0% {
+      -webkit-transform: scale(1);
+    }
+  
+    60% {
+      -webkit-transform: scale(.5);
+    }
+  
+    100% {
+      -webkit-transform: scale(0);
+    }
+}
+@-moz-keyframes cd-bounce-out {
+    0% {
+      -moz-transform: scale(1);
+    }
+  
+    60% {
+      -moz-transform: scale(.5);
+    }
+  
+    100% {
+      -moz-transform: scale(0);
+    }
+}
+@keyframes cd-bounce-out {
+    0% {
+      transform: scale(1);
+    }
+  
+    60% {
+      transform: scale(.5);
+    }
+  
+    100% {
+      transform: scale(0);
     }
 }
 
@@ -872,7 +916,7 @@ p, label, div {
     }
 }
 .bot-panel {
-    bottom: 0px;
+    bottom: -1px;
     -webkit-box-shadow: 2px -1px 3px rgba(0,0,0,0.2) !important;
     -moz-box-shadow: 2px -1px 3px rgba(0,0,0,0.2) !important;
     box-shadow: 2px -1px 3px rgba(0,0,0,0.2) !important;
@@ -908,6 +952,28 @@ p, label, div {
 }
 .p-no-border-rad-card {
     border-radius: 0 !important;
+}
+.p-transparent-card {
+    background-color: rgba(0,0,0, .4) !important;
+    border-color: $secondary-text !important;
+
+    div {
+        background-color: transparent !important;
+        border-color: $secondary-text !important;
+        color: $secondary-text !important;
+    }
+
+    ul {
+        li {
+            background-color: transparent !important;
+            border-color: $secondary-text !important;
+            color: $secondary-text !important;
+        }
+    }
+
+    a, fa, span, small {
+        color: $secondary-text !important;
+    }
 }
 
 .personal-icon-btn {
@@ -1199,7 +1265,7 @@ p, label, div {
     z-index: 10000000000000000;
     transition: all .3s ease;
 }
-.show-dyna-cont {
+.personal-dyna-cont.show {
     top: 0px;
     transition: all .5s ease;
 }
@@ -1212,6 +1278,17 @@ p, label, div {
 }
 .personal-dyna-down.show {
     bottom: 0px;
+    transition: all .5s ease;
+}
+
+.personal-dyna-up {
+    position: fixed !important;
+    left: 0;
+    top: -100%;
+    transition: all .3s ease;
+}
+.personal-dyna-up.show {
+    top: 0px;
     transition: all .5s ease;
 }
 
@@ -1233,6 +1310,10 @@ p, label, div {
 .opacity-light.on {
     opacity: .7;
 }
+.opacity-almost-null.on {
+    opacity: .2;
+}
+
 .personal-over-unset {
     overflow: unset;
 }
@@ -1376,6 +1457,7 @@ p, label, div {
 }
 .personal-material-btn.no-modal {
     z-index: 4;
+    bottom: 3px;
 }
 .personal-material-btn.show {
     bottom: 3px;
@@ -1448,6 +1530,15 @@ p, label, div {
         transition: all .5s ease;
     }
 }
+.no-border-button.small {
+    width: 24px;
+    height: 24px;
+
+    fa, span {
+        font-size: 1rem;
+        transition: all .5s ease;
+    }
+}
 .no-border-button.dark {
 
     fa, span {
@@ -1484,7 +1575,7 @@ p, label, div {
     animation: unset;
 }
 
-.animated-btn {
+.animated-btn-h {
     position: absolute;
     z-index: -1;
     top: -100%;
@@ -1499,7 +1590,7 @@ p, label, div {
     -moz-transition: -moz-transform 0.3s, visibility 0s 0.3s;
     transition: transform 0.3s, visibility 0s 0.3s;
 }
-.animated-btn.animate-in {
+.animated-btn-h.animate-in {
     z-index: 1;
     visibility: visible;
     -webkit-transition: all 0s;
@@ -1513,6 +1604,36 @@ p, label, div {
     -webkit-animation: cd-bounce-in 0.3s linear;
     -moz-animation: cd-bounce-in 0.3s linear;
     animation: cd-bounce-in 0.3s linear;
+}
+
+.animated-btn-v {
+    position: absolute;
+    z-index: 1;
+    top: -100%;
+    left: 0px;
+    visibility: visible;
+    -webkit-transform: scale(1);
+    -moz-transform: scale(1);
+    -ms-transform: scale(1);
+    -o-transform: scale(1);
+    transform: scale(1);
+    -webkit-transition: -webkit-transform 0.3s, visibility 0s 0.3s;
+    -moz-transition: -moz-transform 0.3s, visibility 0s 0.3s;
+    transition: transform 0.3s, visibility 0s 0.3s;
+}
+.animated-btn-v.animate-out {
+    z-index: -1;
+    -webkit-transition: all 0s;
+    -moz-transition: all 0s;
+    transition: all 0s;
+    -webkit-transform: scale(0);
+    -moz-transform: scale(0);
+    -ms-transform: scale(0);
+    -o-transform: scale(0);
+    transform: scale(0);
+    -webkit-animation: cd-bounce-out 0.3s linear;
+    -moz-animation: cd-bounce-out 0.3s linear;
+    animation: cd-bounce-out 0.3s linear;
 }
 /////////////////////
 
@@ -1552,11 +1673,18 @@ p, label, div {
 ////
 
 //TEXT CUSTOME STYLES:
-.p-dark-text-color {
+.p-normal-text-color, .p-normal-text-color:hover {
+    color: $primary;
+}
+
+.p-dark-text-color, .p-dark-text-color:hover {
     color: $primary-dark;
 }
-.p-primary-text-color {
+.p-primary-text-color, .p-primary-text-color:hover {
     color: $primary-text !important;
+}
+.p-secondary-text-color, .p-secondary-text-color:hover {
+    color: $secondary-text !important;
 }
 ////
 
@@ -1607,7 +1735,7 @@ input[type=text], input[type=password], input[type=email], textarea{
     width: 17px;
     height: 17px;
     border-radius: 50%;
-    color: $secondary-text;
+    color: $secondary-text !important;
     font-size: .6rem;
     display: flex;
     justify-content: center;
@@ -1641,3 +1769,19 @@ input[type=text], input[type=password], input[type=email], textarea{
     transform: translateX(100%);
 }
 ////
+///////STYLES FOR HORIZON POP OVER COMPONENT:
+.personal-pop-over {
+    overflow: hidden;
+    /* Force Hardware Acceleration in WebKit */
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    transform: scale(0);
+    transform-origin: top left;
+    transition: transform 0.3s, visibility 0s 0.3s;
+}
+.personal-pop-over.is-visible {
+    visibility: visible;
+    transform: scale(1);
+    transition: transform 0.3s, visibility 0s 0s;
+  }
+/////////////////////////////////////////////

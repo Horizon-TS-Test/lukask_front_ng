@@ -14,13 +14,18 @@ declare var deleteItemData: any;
   providedIn: 'root'
 })
 export class UserService {
+  private isFetchedUserProfile: boolean;
+
   public userProfile: User;
   public _userUpdate = new EventEmitter<boolean>();
+  public pageLimit: number;
 
   constructor(
     private _http: Http,
     private _backSyncService: BackSyncService,
-  ) { }
+  ) {
+    this.pageLimit = 5;
+  }
 
   /**
    * MÉTODO PARA ALMACENAR EN EL LOCAL STORAGE DEL NAVEGADOR LAS CREDENCIALES PUBLICAS DEL USUARIO:
@@ -28,7 +33,6 @@ export class UserService {
   public storeUserCredentials(jsonUser: any) {
     localStorage.setItem('user_key', jsonUser.user_key);
     localStorage.setItem('user_id', jsonUser.user_id);
-    this.getRestUserProfile();
   }
 
   /**
@@ -39,12 +43,13 @@ export class UserService {
     const reqHeaders = new Headers({ 'Content-Type': 'application/json', 'X-Access-Token': this.getUserKey() });
     let userId = CrytoGen.decrypt(localStorage.getItem("user_id"));
 
-    this._http.get(REST_SERV.userUrl + "/" + userId, { headers: reqHeaders, withCredentials: true }).toPromise()
+    return this._http.get(REST_SERV.userUrl + "/" + userId, { headers: reqHeaders, withCredentials: true }).toPromise()
       .then((response: Response) => {
         const userJson = response.json().data;
         this.updateUserData(userJson);
 
         console.log("[LUKASK USER SERVICE] - USER PROFILE FROM WEB", this.getUserProfile());
+        return true;
       })
       .catch((error: Response) => {
         if (error.json().code == 401) {
@@ -55,11 +60,55 @@ export class UserService {
   }
 
   /**
+   * MÉTODO PARA OBTENER LA LISTA DE USUARIOS QUE HAN APOYADO PUBLICACIONES O COMENTARIOS:
+   * @param relevanceType ID-PUBLICACIÓN O ID-COMMENTARIO
+   * @param comRelevance PARA INDICAR QUE SE NECESITA UNA LISTA DE RELEVANCIAS DE UN COMENTARIO
+   * @param pagePattern PATTERN PARA LA SIGUIENTE PÁGINA
+   * @param moreSupps PARA CARGAR MAS REGISTROS BAJO DEMANDA
+   */
+  public getUserSupporters(relevanceType: string, comRelevance: boolean, pagePattern: string = null, moreSupps: boolean = false) {
+    const reqHeaders = new Headers({
+      'Content-Type': 'application/json',
+      'X-Access-Token': this.getUserKey()
+    });
+
+    let flag = true;
+
+    if (moreSupps == true && !pagePattern) {
+      flag = false;
+    }
+
+    if (flag) {
+      let filter = ((!comRelevance) ? "/?pub_id=" + relevanceType : "/?com_id=" + relevanceType) + ((pagePattern && moreSupps == true) ? pagePattern : "&limit=" + this.pageLimit) + ((comRelevance) ? "&com_relevance=true" : "");
+
+      return this._http.get(REST_SERV.userUrl + filter, { headers: reqHeaders, withCredentials: true }).toPromise()
+        .then((response: Response) => {
+          const respJson = response.json().supporters;
+          const pattern = respJson.next;
+          const supps = respJson.results;
+          let transformedSupps: User[] = [];
+          for (let sup of supps) {
+            transformedSupps.push(this.extractUserJson(sup));
+          }
+
+          console.log("[LUKASK USER SERVICE] - SUPPORTER USERS FROM WEB", transformedSupps);
+          return { supporters: transformedSupps, pagePattern: pattern };
+        })
+        .catch((error: Response) => {
+          if (error.json().code == 401) {
+            localStorage.clear();
+          }
+          console.log(error);
+        });
+    }
+  }
+
+  /**
    * MÉTODO PARA ALMACENAR EN INDEXED DB EL ID DE USUARIO LOGEADO:
    * @param userId 
    */
   private storeUserIndexedTable(userKey: any, userData: any) {
-    if ('serviceWorker' in navigator && 'SyncManager' in window && 'indexedDB' in window) {
+    if ('serviceWorker' in window && 'indexedDB' in window) {
       readAllData('ownuser')
         .then((tableData) => {
           if (tableData.length == 0) {
@@ -217,6 +266,9 @@ export class UserService {
    * MÉTODO PARA OBTENER EL OBJETO USER PROFILE QUE CONTIENE LOS DATOS DEL USUARIO DESENCRIPTADOS:
    */
   public getUserProfile() {
+    if (!this.userProfile) {
+      this.userProfile = this.getStoredUserData();
+    }
     return this.userProfile;
   }
 }

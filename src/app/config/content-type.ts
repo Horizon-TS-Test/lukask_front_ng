@@ -12,9 +12,10 @@ export const CONTENT_TYPES = {
     view_comments: 10,
     new_notification: 11,
     view_notifs: 12,
-    view_transmission: 12,
-    pagos_busq: 14,
-    payments:15,
-    card:16,
-    paypal:17
+    view_transmission: 13,
+    support_list: 14,
+    pagos_busq: 15,
+    payments:16,
+    card:17,
+    paypal:18
 }

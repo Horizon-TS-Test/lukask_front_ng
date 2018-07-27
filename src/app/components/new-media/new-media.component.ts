@@ -1,7 +1,8 @@
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input, SimpleChanges, OnChanges } from '@angular/core';
 import { NotifierService } from '../../services/notifier.service';
 import { CAMERA_ACTIONS } from '../../config/camera-actions';
 import { HorizonButton } from '../../interfaces/horizon-button.interface';
+import { ACTION_TYPES } from '../../config/action-types';
 
 @Component({
   selector: 'new-media',
@@ -9,10 +10,9 @@ import { HorizonButton } from '../../interfaces/horizon-button.interface';
   styleUrls: ['./new-media.component.css'],
   providers: [NotifierService]
 })
-export class NewMediaComponent implements OnInit {
+export class NewMediaComponent implements OnInit, OnChanges {
+  @Input() showClass: string;
   @Output() closeModal: EventEmitter<boolean>;
-
-  private _CLOSE = 1;
 
   public cameraActions: any;
   public _ref: any;
@@ -27,8 +27,7 @@ export class NewMediaComponent implements OnInit {
     this.closeModal = new EventEmitter<boolean>();
     this.matButtons = [
       {
-        parentContentType: 1,
-        action: this._CLOSE,
+        action: ACTION_TYPES.close,
         icon: "close"
       }
     ];
@@ -64,11 +63,27 @@ export class NewMediaComponent implements OnInit {
   }
 
   /**
+   * MÉTODO PARA ESCUCHAR LOS CAMBIOS QUE SE DEN EN EL ATRIBUTO QUE VIENE DESDE EL COMPONENTE PADRE:
+   * @param changes 
+   */
+  ngOnChanges(changes: SimpleChanges) {
+    for (const property in changes) {
+      switch (property) {
+        case 'showClass':
+          if (changes[property].currentValue !== undefined) {
+            this.showClass = changes[property].currentValue;
+          }
+          break;
+      }
+    }
+  }
+  
+  /**
    * MÉTODO PARA ESCUCHAR LA ACCIÓN DEL EVENTO DE CLICK DE UN BOTÓN DINÁMICO:
    */
   getButtonAction(actionEvent: number) {
     switch (actionEvent) {
-      case this._CLOSE:
+      case ACTION_TYPES.close:
         this.sendCameraAction(event, this.cameraActions.stop_stream);
         this.closeModal.emit(true);
         break;

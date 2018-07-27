@@ -15,6 +15,7 @@ export const REST_SERV = {
     webRtcSocketServerUrl: 'ws://192.168.1.62:8080/lukaskstreaming',
     userUrl: 'http://192.168.1.42:3001/user/',
 	notifUrl:'http://192.168.1.62:3000/notification',
+	pushSub: 'http://192.168.1.6:3200/subscribe',
     paymentPay: 'http://192.168.1.42:3001/payment/pay',
     paymentCard: 'http://192.168.1.42:3001/payment/card',
     cancelado:'http://192.168.1.42:3001/payment/cancelado',

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, Input, Output, EventEmitter, SimpleChanges, OnChanges } from '@angular/core';
 import { Device } from '../../interfaces/device.interface';
 import { NotifierService } from '../../services/notifier.service';
 import { CAMERA_ACTIONS } from '../../config/camera-actions';
@@ -17,9 +17,10 @@ import { UserService } from '../../services/user.service';
   providers: [WebrtcSocketService]
 
 })
-export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
+export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
   @Input() startCamera: boolean;
   @Input() streamOwnerId: string;
+  @Input() pubId: string;
   @Output() fileEmitter = new EventEmitter<MediaFile>();
 
   private _frontCamera: Device;
@@ -33,6 +34,7 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
   private mediaStreamTrack: any;
   private imageCapture: any;
   private subscription: Subscription;
+  private transmissionOn: boolean;
 
   constructor(
     private _notifierService: NotifierService,
@@ -44,6 +46,7 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
     this._backCamera = { id: "", description: "" };
     this.swapCamera = false;
     this.backCamera = false;
+    this.transmissionOn = false;
 
     //LISTEN FOR ANY CAMERA EVENT:
     this.subscription = this._notifierService._cameraAction.subscribe(
@@ -223,18 +226,22 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
    * MÉTODO PARA INCIAR LA CONEXIÓN AL SOCKET DE KURENTO CLIENT:
    */
   connectToStreamingClient() {
-    return this._webrtcSocketService.connecToKurento(this._userService.userProfile.id, this._video);
+    console.log("this.pubId: " + this.pubId);
+    return this._webrtcSocketService.connecToKurento(this._userService.userProfile.id, this.pubId, this._video);
   }
 
   startTransmission() {
-    this.connectToStreamingClient()
-      .then((response: boolean) => {
-        if (response) {
-          this._webrtcSocketService.presenter(this._backCamera, this._frontCamera);
-        }
-      }).catch((response: boolean) => {
-        console.log("[WERTC-CAMERA COMPONENT]: NO SE HA PODIDO INICIAR LA TRANSMISIÓN, FALLO EN LA CONEXIÓN");
-      })
+    if (this.pubId && !this.transmissionOn) {
+      this.connectToStreamingClient()
+        .then((response: boolean) => {
+          if (response) {
+            this.transmissionOn = true;
+            this._webrtcSocketService.presenter(this._backCamera, this._frontCamera);
+          }
+        }).catch((response: boolean) => {
+          console.log("[WERTC-CAMERA COMPONENT]: NO SE HA PODIDO INICIAR LA TRANSMISIÓN, FALLO EN LA CONEXIÓN");
+        });
+    }
   }
 
   /**
@@ -252,10 +259,27 @@ export class WebrtcCameraComponent implements OnInit, OnDestroy, AfterViewInit {
       });
   }
 
+  /**
+   * MÉTODO PARA DETECTAR LOS CAMBIOS DE UNA PROPIEDAD INYECTADA DESDE EL COMPONENTE PADRE DE ESTE COMPONENTE:
+   * @param changes LOS CAMBIOS GENERADOS
+   */
+  ngOnChanges(changes: SimpleChanges) {
+    for (let property in changes) {
+      switch (property) {
+        case 'pubId':
+          if (changes[property].currentValue) {
+            console.log("pubId" + this.pubId);
+            this.pubId = changes[property].currentValue;
+            this.startTransmission();
+          }
+          break;
+      }
+    }
+  }
+
   ngOnDestroy() {
     this.subscription.unsubscribe();
     if (this._webrtcSocketService.kurentoWs) {
-      console.log("Cerrando webrtc socket");
       this._webrtcSocketService.closeTransmissionCnn();
     }
     else {

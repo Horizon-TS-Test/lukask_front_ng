@@ -1,19 +1,25 @@
 import { Injectable } from '@angular/core';
 import * as kurentoUtils from 'kurento-utils';
 import { REST_SERV } from '../rest-url/rest-servers';
+import { QuejaService } from './queja.service';
 
 @Injectable({
   providedIn: 'root'
 })
+
+//HREF ABOUT WEBSOCKET: https://developer.mozilla.org/es/docs/Web/API/WebSocket
 export class WebrtcSocketService {
   private webRtcPeer: any;
   private _videoData: any;
   private userId: any;
+  private pubId: any;
 
   public kurentoWs: any;
   public video: any;
-  
-  constructor() {
+
+  constructor(
+    private _quejaService: QuejaService
+  ) {
   }
 
   /**
@@ -21,13 +27,15 @@ export class WebrtcSocketService {
    * @param idUser 
    * @param _video 
    */
-  connecToKurento(idUser: any, _video: any) {
+  connecToKurento(idUser: string, pubId: string, _video: any) {
     let websocketPromise = new Promise((resolve, reject) => {
       this.kurentoWs = new WebSocket(REST_SERV.webRtcSocketServerUrl);
 
       this.kurentoWs.onopen = (open) => {
-        console.log("idUser", idUser)
+        console.log("idUser", idUser);
+        console.log("pubId", pubId);
         this.userId = idUser;
+        this.pubId = pubId;
         this._videoData = _video;
         this.messageFromKurento();
         console.log("[WEBRTC-SOCKET SERVICE]: CONEXIÓN EXITOSA AL WEBSOCKET DE KURENTO CLIENT", open);
@@ -37,6 +45,12 @@ export class WebrtcSocketService {
         this.kurentoWs = null;
         console.log("[WEBRTC-SOCKET SERVICE]: CONEXIÓN FALLIDA AL WEBSOCKET DE KURENTO CLIENT", error);
         reject(false);
+      }
+      this.kurentoWs.onclose = (close) => {
+        this.kurentoWs = null;
+        console.log("[WEBRTC-SOCKET SERVICE]: CONEXIÓN CERRADA AL WEBSOCKET DE KURENTO CLIENT", close);
+        this._quejaService.updateTransmission(this.pubId, true);
+
       }
     });
 
@@ -238,6 +252,11 @@ export class WebrtcSocketService {
     if (this.webRtcPeer) {
       this.webRtcPeer.dispose();
       this.webRtcPeer = null;
+      this.closeWebSocketConn();
     }
+  }
+
+  private closeWebSocketConn() {
+    this.kurentoWs.close();
   }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output, SimpleChanges, OnChanges } from '@angular/core';
 import { ActionService } from '../../services/action.service';
 import { Publication } from '../../models/publications';
 import { Router } from '@angular/router';
@@ -14,7 +14,7 @@ declare var $: any;
   templateUrl: './task-list.component.html',
   styleUrls: ['./task-list.component.css']
 })
-export class TaskListComponent implements OnInit {
+export class TaskListComponent implements OnInit, OnChanges {
   @Input() queja: Publication;
   @Input() isModal: boolean;
   @Output() actionType = new EventEmitter<number>();
@@ -34,14 +34,9 @@ export class TaskListComponent implements OnInit {
    */
   onRelevance(event: any) {
     event.preventDefault();
-    this._actionService.sendRelevance(this.queja.id_publication, !this.queja.user_relevance)
+    this._actionService.saveRelevance(this.queja.id_publication, null, !this.queja.user_relevance)
       .then((active: boolean) => {
-        if (active) {
-          this.queja.user_relevance = active;
-        }
-        else {
-          this.queja.user_relevance = active;
-        }
+        this.queja.user_relevance = active;
       })
       .catch((error) => console.log(error));
   }
@@ -76,7 +71,33 @@ export class TaskListComponent implements OnInit {
    */
   viewTransmission(event: any) {
     event.preventDefault();
-    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_transmission, contentData: this.queja.user.id });
+    if (!this.queja.transDone) {
+      this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_transmission, contentData: { userOwner: this.queja.user.id, pubId: this.queja.id_publication } });
+    }
   }
 
+  /**
+   * MÉTODO PARA ABRIR UN MODAL CON LA LISTA DE PERSONAS QUE APOYAN LA PUBLICACIÓN:
+   * @param event 
+   */
+  viewSupport(event: any) {
+    event.preventDefault();
+    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.support_list, contentData: { pubId: this.queja.id_publication, pubOwner: this.queja.user.person.name } });
+  }
+
+  /**
+   * MÉTODO PARA ESCUCHAR LOS CAMBIOS QUE SE DEN EN EL ATRIBUTO QUE VIENE DESDE EL COMPONENTE PADRE:
+   * @param changes 
+   */
+  ngOnChanges(changes: SimpleChanges) {
+    for (const property in changes) {
+      switch (property) {
+        case 'queja':
+          if (changes[property].currentValue) {
+            this.queja = changes[property].currentValue;
+          }
+          break;
+      }
+    }
+  }
 }

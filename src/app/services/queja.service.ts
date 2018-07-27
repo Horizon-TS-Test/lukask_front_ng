@@ -23,20 +23,21 @@ declare var verifyStoredData: any;
 })
 export class QuejaService {
 
-  private quejTypeList: QuejaType[];
   private isFetchedQtype: boolean;
   private isFetchedPubs: boolean;
   private isFetchedPub: boolean;
   private mainMediaJson: any;
   private pagePattern: string;
   private isPostedPub: boolean;
+  private isUpdatedTrans: boolean;
 
   public DEFAULT_LIMIT: number = 5;
   public ALL: string = "all";
 
   public pubList: Publication[];
   public pubFilterList: Publication[];
-  public _mapEmitter = new EventEmitter<string>();
+  public _mapEmitter: EventEmitter<string>;
+  public _pubDetailEmitter: EventEmitter<number>;
 
   constructor(
     private _http: Http,
@@ -48,6 +49,10 @@ export class QuejaService {
     this.isFetchedQtype = false;
     this.isFetchedPubs = false;
     this.isFetchedPub = false;
+    this.isUpdatedTrans = false;
+
+    this._mapEmitter = new EventEmitter<string>();
+    this._pubDetailEmitter = new EventEmitter<number>();
 
     this.defineMainMediaArray();
     this.listenToSocket();
@@ -107,11 +112,9 @@ export class QuejaService {
      * IMPLEMENTING NETWORK FIRST STRATEGY
     */
     return this.getQuejTypeWeb().then((webQtype: QuejaType[]) => {
-      this.quejTypeList = webQtype;
 
       if (!this.isFetchedQtype) {
         return this.getQuejTypeCache().then((cacheQtype: QuejaType[]) => {
-          this.quejTypeList = cacheQtype;
           return cacheQtype;
         });
       }
@@ -290,7 +293,8 @@ export class QuejaService {
       location: queja.location,
       address: queja.address,
       is_trans: queja.isTrans,
-      media_files: []
+      trans_done: queja.transDone,
+      media_files: [],
     }
 
     for (let med of queja.media) {
@@ -317,7 +321,11 @@ export class QuejaService {
     });
   }
 
-  sendQueja(queja: Publication) {
+  /**
+   * MÉTODO PARA ENVIAR UN FORM DATA HACIA EL MIDDLEWARE EN UN POST REQUEST:
+   * @param queja 
+   */
+  private sendQueja(queja: Publication) {
     let quejaFormData: FormData = this.mergeFormData(queja);
     return this.postQuejaClient(quejaFormData)
       .then(
@@ -510,6 +518,46 @@ export class QuejaService {
   }
 
   /**
+   * MÉTODO PARA GUARDAR UN NUEVO COMENTARIO O RESPUESTA EN EL BACKEND O EN SU DEFECTO PARA BACK SYNC:
+   */
+  public updateTransmission(pubId: string, transDone: boolean) {
+    return this.stopTransmission(pubId, transDone).then((response: any) => {
+      if (!this.isUpdatedTrans) {
+        return this._backSyncService.storeForBackSync('sync-trans', 'sync-stop-trans', { pubId: pubId, transDone: transDone });
+      }
+      else {
+        this.isUpdatedTrans = false;
+      }
+
+      return response;
+    });
+  }
+
+  /**
+   * MÉTODO PARA ENVIAR UN FORM DATA HACIA EL MIDDLEWARE EN UN POST REQUEST:
+   * @param queja 
+   */
+  private stopTransmission(pubId: string, transDone: boolean = true) {
+    const requestHeaders = new Headers({
+      'Content-Type': 'application/json',
+      'X-Access-Token': this._userService.getUserKey()
+    });
+    const requestBody = JSON.stringify({ pubId: pubId, stopTrans: transDone });
+
+    return this._http.post(REST_SERV.pubsUrl + "/transmission/" + pubId, requestBody, { headers: requestHeaders, withCredentials: true }).toPromise()
+      .then((response: Response) => {
+        let respJson = response.json().data;
+        console.log("respJson.trans_done: " + respJson.trans_done);
+        if (response.status === 200) {
+          return true;
+        }
+        this.isUpdatedTrans = true;
+
+        return false;
+      });
+  }
+
+  /**
    * MÉTODO PARA ESCUCHAR LAS ACTUALIZACIONES DEL CLIENTE SOCKET.IO
    * QUE TRAE CAMBIOS DESDE EL BACKEND (CREATE/UPDATE/DELETE)
    * Y ACTUALIZAR LA LISTA GLOBAL DE PUBLICACIONES CON LOS NUEVOS CAMBIOS
@@ -546,6 +594,10 @@ export class QuejaService {
               }
             }
             this.updatePubMediaList(socketPub.payload.data, action);
+            break;
+          case "actions":
+            console.log("Actions");
+            this.updateRelevanceNumber(socketPub.payload.data);
             break;
         }
       }
@@ -669,5 +721,49 @@ export class QuejaService {
     ////
 
     ArrayManager.backendServerSays(action, ownerPub.media, lastMedia, newMedia);
+  }
+
+  /**
+   * MÉTODO PARA ACTUALIZAR EL REGISTRO EN INDEXED-DB
+   */
+  updateRelNumberIndexDb(pubId: string, add: boolean) {
+    readAllData("publication")
+      .then(function (tableData) {
+        let dataToSave;
+        for (var t = 0; t < tableData.length; t++) {
+          if (tableData[t].id_publication === pubId) {
+            dataToSave = tableData[t];
+            if (add) {
+              dataToSave.count_relevance += 1;
+            }
+            else {
+              dataToSave.count_relevance -= 1;
+            }
+            deleteItemData("publication", tableData[t].id_publication)
+              .then(function () {
+                writeData("publication", dataToSave);
+              });
+            t = tableData.length;
+          }
+        }
+      });
+  }
+
+  /**
+   * MÉTODO PAR ACTUALIZAR EL NÚMERO DE RELEVANCIAS DE UNA PUBLICACIÓN:
+   * @param actionData 
+   */
+  updateRelevanceNumber(actionData: any) {
+    let updatedPub = this.pubList.find(pub => pub.id_publication === actionData.publication);
+
+    if (actionData.active) {
+      updatedPub.relevance_counter += 1;
+    }
+    else {
+      updatedPub.relevance_counter -= 1;
+    }
+
+    this._pubDetailEmitter.emit(updatedPub.relevance_counter);
+    this.updateRelNumberIndexDb(actionData.publication, actionData.active);
   }
 }

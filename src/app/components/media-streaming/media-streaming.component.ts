@@ -1,9 +1,11 @@
-import { Component, OnInit, Output, EventEmitter, OnChanges, SimpleChanges, SimpleChange, Input } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, OnChanges, SimpleChanges, SimpleChange, Input, OnDestroy } from '@angular/core';
 import { HorizonButton } from '../../interfaces/horizon-button.interface';
 import { NotifierService } from '../../services/notifier.service';
 import { CAMERA_ACTIONS } from '../../config/camera-actions';
 import { MediaFile } from '../../interfaces/media-file.interface';
 import { ACTION_TYPES } from '../../config/action-types';
+import { CONTENT_TYPES } from '../../config/content-type';
+import { Subscription } from '../../../../node_modules/rxjs';
 
 declare var $: any;
 
@@ -12,11 +14,20 @@ declare var $: any;
   templateUrl: './media-streaming.component.html',
   styleUrls: ['./media-streaming.component.css']
 })
-export class MediaStreamingComponent implements OnInit, OnChanges {
-  @Input() openStream: boolean;
-  @Input() pubStream: boolean;
+export class MediaStreamingComponent implements OnInit, OnChanges, OnDestroy {
+  @Input() startCamera: boolean;
+  @Input() initTrans: boolean;
   @Input() streamOwnerId: string;
+  @Input() pubId: string;
+  @Input() showClass: string;
   @Output() closeModal = new EventEmitter<any>();
+
+  private subscriber: Subscription;
+  private ANIMATE_BTN_H: string = "animated-btn-h";
+  private ANIMATE_IN: string = "animate-in";
+  private ANIMATE_BTN_V: string = "animated-btn-v";
+  private ANIMATE_OUT: string = "animate-out";
+  private animatedClass: string;
 
   public cameraActions: any;
   public _ref: any;
@@ -28,21 +39,32 @@ export class MediaStreamingComponent implements OnInit, OnChanges {
     private _notifierService: NotifierService
   ) {
     this.cameraActions = CAMERA_ACTIONS;
-    this.matButtons = [
-      {
-        parentContentType: 0,
-        action: ACTION_TYPES.close,
-        icon: "close"
-      }
-    ];
+    this.animatedClass = this.ANIMATE_BTN_H + " " + this.ANIMATE_IN;
   }
 
   ngOnInit() {
     this.initCarousel();
+    this.initButtons();
+    this.subscribeBtnEmitter();
   }
 
-  ngAfterViewInit() {
-    $(window).resize();
+  ngAfterViewInit() { }
+
+  initButtons() {
+    if (this.streamOwnerId) {
+      this.matButtons = [
+        {
+          action: ACTION_TYPES.viewComments,
+          icon: 'v',
+          customIcon: true,
+          class: this.animatedClass
+        },
+        {
+          action: ACTION_TYPES.close,
+          icon: "close"
+        }
+      ];
+    }
   }
 
   /**
@@ -53,6 +75,20 @@ export class MediaStreamingComponent implements OnInit, OnChanges {
       items: 1, dots: false, loop: false, margin: 5,
       nav: false, stagePadding: 0, autoWidth: false
     };
+  }
+
+  private subscribeBtnEmitter() {
+    this._notifierService.initShowBtnEmitter();
+    this.subscriber = this._notifierService._showHorizonMaterialBtn
+      .subscribe((showBtn: boolean) => {
+        if (showBtn == true) {
+          this.animatedClass = this.ANIMATE_BTN_H + " " + this.ANIMATE_IN;
+        }
+        else {
+          this.animatedClass = this.ANIMATE_BTN_V + " " + this.ANIMATE_OUT;
+        }
+        this.initButtons();
+      });
   }
 
   /**
@@ -83,17 +119,27 @@ export class MediaStreamingComponent implements OnInit, OnChanges {
       console.log('firstChange:', changes[property].firstChange);
 
       switch (property) {
-        case 'pubStream':
+        case 'initTrans':
           if (changes[property].currentValue && changes[property].currentValue == ACTION_TYPES.pubStream) {
             this.sendCameraAction(null, this.cameraActions.init_transmision);
           }
           break;
-        case 'openStream':
+        case 'pubId':
+          if (changes[property].currentValue) {
+            this.pubId = changes[property].currentValue;
+          }
+          break;
+        case 'startCamera':
           if (changes[property].currentValue == true) {
             this.sendCameraAction(null, this.cameraActions.start_camera);
           }
           else if (changes[property].currentValue == false) {
             this.sendCameraAction(null, this.cameraActions.stop_stream);
+          }
+          break;
+        case 'showClass':
+          if (changes[property].currentValue) {
+            this.showClass = changes[property].currentValue;
           }
           break;
       }
@@ -105,6 +151,9 @@ export class MediaStreamingComponent implements OnInit, OnChanges {
    */
   public getButtonAction(actionEvent: number) {
     switch (actionEvent) {
+      case ACTION_TYPES.viewComments:
+        this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_comments, contentData: { pubId: this.pubId, halfModal: true, hideBtn: true } });
+        break;
       case ACTION_TYPES.close:
         this.sendCameraAction(event, this.cameraActions.stop_stream);
         this.closeModal.emit(true);
@@ -112,4 +161,8 @@ export class MediaStreamingComponent implements OnInit, OnChanges {
     }
   }
 
+  ngOnDestroy() {
+    this.subscriber.unsubscribe();
+    this._notifierService.closeShowBtnEmitter();
+  }
 }

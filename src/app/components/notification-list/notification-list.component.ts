@@ -10,9 +10,6 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./notification-list.component.css']
 })
 export class NotificationListComponent implements OnInit, OnDestroy {
-  @Output() closeModal = new EventEmitter<boolean>();
-  
-  private _CLOSE = 1;
   private LOADER_HIDE: string = "hide";
   private LOADER_ON: string = "on";
   private subscription: Subscription;
@@ -22,21 +19,12 @@ export class NotificationListComponent implements OnInit, OnDestroy {
   public activeClass: string;
 
   public notificationList: HorizonNotification[];
-  public matButtons: HorizonButton[];
 
   constructor(
     private _notificationService: NotificationService
   ) {
     this.activeClass = this.LOADER_HIDE;
     this.getNotifs();
-
-    this.matButtons = [
-      {
-        parentContentType: 0,
-        action: this._CLOSE,
-        icon: "close"
-      }
-    ];
 
     this.subscription = this._notificationService._newNotif.subscribe((newNotif: HorizonNotification) => {
       this.notificationList.splice(0, 0, newNotif);
@@ -114,17 +102,6 @@ export class NotificationListComponent implements OnInit, OnDestroy {
           }, 800);
         }, 1000)
       }
-    }
-  }
-
-  /**
-   * MÉTODO PARA ESCUCHAR LA ACCIÓN DEL EVENTO DE CLICK DE UN BOTÓN DINÁMICO:
-   */
-  getButtonAction(actionEvent: number) {
-    switch (actionEvent) {
-      case this._CLOSE:
-        this.closeModal.emit(true);
-        break;
     }
   }
 

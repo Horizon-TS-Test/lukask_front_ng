@@ -93,7 +93,7 @@ export class SubscribeService {
     return this._http.post(REST_SERV.pushSub, subBody, { headers: subHeaders }).toPromise()
       .then((response) => {
         if (response.ok) {
-          console.log("Successfully subscribed");
+          console.log("[LUKASK SUBSCRIBE SERVICE] - SUCCESSFULLY SUBSCRIBED");
           this._browserNotifierService.displayConfirmNotification();
         }
       }).catch(function (err) {

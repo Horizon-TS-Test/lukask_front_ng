@@ -66,6 +66,10 @@ import { PagosDatosComponent } from './components/pagos-datos/pagos-datos.compon
 import { PaymentsComponent } from './components/payments/payments.component';
 import { PaymentsCardComponent } from './components/payments-card/payments-card.component';
 import { PaypalComponent } from './components/paypal/paypal.component';
+import { SupportListComponent } from './components/support-list/support-list.component';
+import { ProfileLinkComponent } from './components/profile-link/profile-link.component';
+import { ProfileOwnerComponent } from './components/profile-owner/profile-owner.component';
+import { HorizonPopOverComponent } from './components/horizon-pop-over/horizon-pop-over.component';
 
 @NgModule({
   declarations: [
@@ -111,7 +115,11 @@ import { PaypalComponent } from './components/paypal/paypal.component';
     PagosDatosComponent,
     PaymentsComponent,
     PaymentsCardComponent,
-    PaypalComponent
+    PaypalComponent,
+    SupportListComponent,
+    ProfileLinkComponent,
+    ProfileOwnerComponent,
+    HorizonPopOverComponent,
   ],
   imports: [
     HttpModule,
@@ -125,6 +133,6 @@ import { PaypalComponent } from './components/paypal/paypal.component';
   ],
   providers: [appRoutingProviders, ContentService, UserService, AuthGuardService, LoginGuardService, NotifierService, CameraService, SocketService, BrowserNotifierService, QuejaService, NotificationService, RouterService],
   bootstrap: [AppComponent],
-  entryComponents: [AlertComponent, HorizonModalComponent, SingleMapComponent, HorizonNotificationComponent]
+  entryComponents: [AlertComponent, HorizonModalComponent, SingleMapComponent, HorizonNotificationComponent, HorizonPopOverComponent]
 })
 export class AppModule { }

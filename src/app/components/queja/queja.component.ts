@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnDestroy, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Publication } from '../../models/publications';
 import { NotifierService } from '../../services/notifier.service';
@@ -15,7 +15,7 @@ import { ACTION_TYPES } from '../../config/action-types';
   styleUrls: ['./queja.component.css'],
   providers: [ActionService]
 })
-export class QuejaComponent implements OnInit, OnDestroy {
+export class QuejaComponent implements OnInit, OnDestroy, OnChanges {
   @Input() queja: Publication;
   @Output() actionType = new EventEmitter<number>();
 
@@ -34,8 +34,7 @@ export class QuejaComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnInit() {
-  }
+  ngOnInit() { }
 
   /**
    * MÉTODO QUE ESCUCHA LA ACTUALIZACIÓN DE LOS DATOS DE PERFIL DEL USUARIO LOGEADO 
@@ -62,8 +61,24 @@ export class QuejaComponent implements OnInit, OnDestroy {
    * @param $event VALOR DEL TIPO DE ACCIÓN QUE VIENE EN UN EVENT-EMITTER
    */
   optionButtonAction(event: number) {
-    if(event === ACTION_TYPES.mapFocus) {
+    if (event === ACTION_TYPES.mapFocus) {
       this.actionType.emit(event);
+    }
+  }
+
+  /**
+   * MÉTODO PARA ESCUCHAR LOS CAMBIOS QUE SE DEN EN EL ATRIBUTO QUE VIENE DESDE EL COMPONENTE PADRE:
+   * @param changes 
+   */
+  ngOnChanges(changes: SimpleChanges) {
+    for (const property in changes) {
+      switch (property) {
+        case 'queja':
+          if (changes[property].currentValue) {
+            this.queja = changes[property].currentValue;
+          }
+          break;
+      }
     }
   }
 

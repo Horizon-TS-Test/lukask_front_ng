@@ -6,6 +6,7 @@ import { NotifierService } from '../../services/notifier.service';
 import { HorizonModalComponent } from '../horizon-modal/horizon-modal.component';
 import { DynaContent } from '../../interfaces/dyna-content.interface';
 import { HorizonNotificationComponent } from '../horizon-notification/horizon-notification.component';
+import { HorizonPopOverComponent } from '../horizon-pop-over/horizon-pop-over.component';
 
 @Component({
   selector: 'app-content-layer',

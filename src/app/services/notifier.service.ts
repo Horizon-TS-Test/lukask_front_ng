@@ -17,6 +17,7 @@ export class NotifierService {
   public _closeModal = new EventEmitter<boolean>();
   public _changeMenuOption = new EventEmitter<number>();
   public _changeMenuContent = new EventEmitter<number>();
+  public _showHorizonMaterialBtn: EventEmitter<boolean>;
 
   constructor() { }
 
@@ -57,9 +58,33 @@ export class NotifierService {
   notifyChangeMenuOption(option: number) {
     this._changeMenuOption.emit(option);
   }
-  
+
   notifyChangeMenuContent(option: number) {
     this._changeMenuContent.emit(option);
   }
 
+  /**
+   * USED IN MEDIA STREAMING COMPONENT AND HORIZON MODAL OF COMMENTS:
+   */
+  /**
+   * MÉTODO PARA INICIALIZAR EL EVENT EMITTER PARA MOSTRAR U OCULTAR BOTONES PRINCIPALES DE UN MODAL HORIZON:
+   */
+  public initShowBtnEmitter() {
+    this._showHorizonMaterialBtn = new EventEmitter<boolean>();
+  }
+
+  /**
+   * MÉTODO PARA ANULAR EL EVENT EMITTER PARA MOSTRAR U OCULTAR BOTONES PRINCIPALES DE UN MODAL HORIZON:
+   */
+  public closeShowBtnEmitter() {
+    this._showHorizonMaterialBtn = null;
+  }
+
+  /**
+   * MÉTODO PARA NOTIFICAR AL COMPONENTE MEDIA STREAMING DESDE COMMENT LIST PARA OCULTAR UN BOTÓN:
+   */
+  public notifyShowHorizonBtn(show: boolean = true) {
+    this._showHorizonMaterialBtn.emit(show);
+  }
+  /*********************************************************************************************************/
 }

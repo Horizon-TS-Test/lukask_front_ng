@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Output, Input, ViewChild, ViewContainerRef, ComponentFactoryResolver } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output, Input, ViewChild, ViewContainerRef, ComponentFactoryResolver, SimpleChanges, OnChanges, OnDestroy } from '@angular/core';
 import { Publication } from '../../models/publications';
 import { QuejaService } from '../../services/queja.service';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -7,21 +7,24 @@ import { ContentService } from '../../services/content.service';
 import { SingleMapComponent } from '../single-map/single-map.component';
 import { CONTENT_TYPES } from '../../config/content-type';
 import { NotifierService } from '../../services/notifier.service';
+import { ACTION_TYPES } from '../../config/action-types';
+import { Subscription } from '../../../../node_modules/rxjs';
 
 @Component({
   selector: 'queja-detail',
   templateUrl: './queja-detail.component.html',
   styleUrls: ['./queja-detail.component.css']
 })
-export class QuejaDetailComponent implements OnInit {
+export class QuejaDetailComponent implements OnInit, OnChanges, OnDestroy {
   @ViewChild("mapRef", { read: ViewContainerRef }) mapRef: ViewContainerRef;
+  @Input() showClass: string;
   @Input() idQueja: string;
   @Input() commentId: string;
   @Input() replyId: string;
   @Input() isModal: boolean;
   @Output() closeModal: EventEmitter<boolean>;
 
-  private _CLOSE = 1;
+  private subscriptor: Subscription;
 
   public quejaDetail: Publication;
   public matButtons: HorizonButton[];
@@ -37,8 +40,7 @@ export class QuejaDetailComponent implements OnInit {
     this.closeModal = new EventEmitter<boolean>();
     this.matButtons = [
       {
-        parentContentType: 1,
-        action: this._CLOSE,
+        action: ACTION_TYPES.close,
         icon: "close"
       }
     ];
@@ -60,6 +62,10 @@ export class QuejaDetailComponent implements OnInit {
           this.renderMap();
         }
       }).catch(error => console.log(error));
+
+    this.subscriptor = this._quejaService._pubDetailEmitter.subscribe((newRelevanceNumber: number) => {
+      this.quejaDetail.relevance_counter = newRelevanceNumber;
+    });
   }
 
   /**
@@ -99,7 +105,7 @@ export class QuejaDetailComponent implements OnInit {
     if (event) {
       event.preventDefault();
     }
-    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_comments, contentData: { pubId: this.quejaDetail.id_publication, comId: this.commentId, replyId: this.replyId } });
+    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_comments, contentData: { pubId: this.quejaDetail.id_publication, comId: this.commentId, replyId: this.replyId, hideBtn: (this.quejaDetail.isTrans == true && this.quejaDetail.transDone == false) } });
   }
 
   /**
@@ -107,10 +113,29 @@ export class QuejaDetailComponent implements OnInit {
    */
   getButtonAction(actionEvent: number) {
     switch (actionEvent) {
-      case this._CLOSE:
+      case ACTION_TYPES.close:
         this.closeModal.emit(true);
         break;
     }
   }
 
+  /**
+   * MÉTODO PARA ESCUCHAR LOS CAMBIOS QUE SE DEN EN EL ATRIBUTO QUE VIENE DESDE EL COMPONENTE PADRE:
+   * @param changes 
+   */
+  ngOnChanges(changes: SimpleChanges) {
+    for (const property in changes) {
+      switch (property) {
+        case 'showClass':
+          if (changes[property].currentValue) {
+            this.showClass = changes[property].currentValue;
+          }
+          break;
+      }
+    }
+  }
+
+  ngOnDestroy() {
+    this.subscriptor.unsubscribe();
+  }
 }

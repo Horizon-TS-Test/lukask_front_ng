@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, EventEmitter, Output, OnDestroy, OnChanges, SimpleChange, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output, OnDestroy, OnChanges, SimpleChange, SimpleChanges, AfterViewInit } from '@angular/core';
 import { ActionService } from '../../services/action.service';
 import { Comment } from '../../models/comment';
 import { ArrayManager } from '../../tools/array-manager';
@@ -7,23 +7,27 @@ import { REST_SERV } from '../../rest-url/rest-servers';
 import { HorizonButton } from '../../interfaces/horizon-button.interface';
 import { NotifierService } from '../../services/notifier.service';
 import { Subscription } from 'rxjs';
+import { ACTION_TYPES } from '../../config/action-types';
 
+declare var readAllData: any;
+declare var writeData: any;
+declare var deleteItemData: any;
 declare var upgradeTableFieldDataArray: any;
 
 @Component({
   selector: 'comment-list',
   templateUrl: './comment-list.component.html',
-  styleUrls: ['./comment-list.component.css']
+  styleUrls: ['./comment-list.component.css'],
 })
-export class CommentListComponent implements OnInit, OnDestroy, OnChanges {
+export class CommentListComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
   @Input() pubId: string;
   @Input() commentId: string;
   @Input() replyId: string;
   @Input() isModal: boolean;
   @Input() hideBtn: boolean;
+  @Input() halfModal: boolean;
+  @Input() showClass: string;
   @Output() closeModal = new EventEmitter<boolean>();
-
-  private _CLOSE = 1;
 
   private LOADER_HIDE: string = "hide";
   private LOADER_ON: string = "on";
@@ -42,23 +46,28 @@ export class CommentListComponent implements OnInit, OnDestroy, OnChanges {
   constructor(
     private _actionService: ActionService,
     private _socketService: SocketService,
-    private _notifierService: NotifierService
+    private _notifierService: NotifierService,
   ) {
     this.activeClass = this.LOADER_HIDE;
     this.matButtons = [
       {
-        parentContentType: 1,
-        action: this._CLOSE,
+        action: ACTION_TYPES.close,
         icon: "close"
       }
     ];
+  }
 
+  ngOnInit() {
+    if (this.halfModal) {
+      this._notifierService.notifyShowHorizonBtn(false);
+    }
+
+    this.resetComment();
     this.defineMainComments();
     this.listenToSocket();
   }
 
-  ngOnInit() {
-    this.resetComment();
+  ngAfterViewInit() {
     this.getComments();
     this.onCommentResponse();
   }
@@ -176,7 +185,7 @@ export class CommentListComponent implements OnInit, OnDestroy, OnChanges {
    */
   getButtonAction(actionEvent: number) {
     switch (actionEvent) {
-      case this._CLOSE:
+      case ACTION_TYPES.close:
         this.closeModal.emit(true);
         break;
     }
@@ -192,9 +201,59 @@ export class CommentListComponent implements OnInit, OnDestroy, OnChanges {
       (socketPub: any) => {
         let action = socketPub.payload.action.toUpperCase();
 
-        this.updateCommentList(socketPub.payload.data, action);
+        if (socketPub.payload.data.description != null) {
+          this.updateCommentList(socketPub.payload.data, action);
+        }
+        else {
+          this.updateRelevanceCounter(socketPub.payload.data);
+        }
       }
     );
+  }
+
+  /**
+   * MÉTODO PARA ACTUALIZAR EL REGISTRO EN INDEXED-DB
+   */
+  updateRelNumberIndexDb(comId: string, add: boolean) {
+    readAllData("comment")
+      .then(function (tableData) {
+        let dataToSave;
+        for (var t = 0; t < tableData.length; t++) {
+          if (tableData[t].id_action === comId) {
+            dataToSave = tableData[t];
+            if (add) {
+              dataToSave.count_relevance += 1;
+            }
+            else {
+              dataToSave.count_relevance -= 1;
+            }
+            deleteItemData("comment", tableData[t].id_action)
+              .then(function () {
+                writeData("comment", dataToSave);
+              });
+            t = tableData.length;
+          }
+        }
+      });
+  }
+
+  /**
+   * MÉTODO PARA ACTUALIZAR EL NUMERO DE RELEVANCIAS DE UN COMENTARIO:
+   */
+  updateRelevanceCounter(actionData) {
+    if (actionData.action_parent) {
+      let updatedComment = this.commentList.find(com => com.commentId == actionData.action_parent);
+      if (updatedComment) {
+        if (actionData.active) {
+          updatedComment.relevance_counter += 1;
+        }
+        else {
+          updatedComment.relevance_counter -= 1;
+        }
+      }
+
+      this.updateRelNumberIndexDb(actionData.id_action, actionData.active);
+    }
   }
 
   /**
@@ -203,7 +262,7 @@ export class CommentListComponent implements OnInit, OnDestroy, OnChanges {
    * @param action THIS CAN BE CREATE, UPDATE OR DELETE:
    */
   updateCommentList(commentJson: any, action: string) {
-    if (commentJson.description != null && commentJson.publication == this.pubId && !commentJson.action_parent) {
+    if (commentJson.publication == this.pubId && !commentJson.action_parent) {
       let lastComment: Comment, newCom: Comment;
 
       //UPDATING THE BACKEND SERVER IP/DOMAIN:
@@ -236,19 +295,25 @@ export class CommentListComponent implements OnInit, OnDestroy, OnChanges {
    */
   ngOnChanges(changes: SimpleChanges) {
     for (let property in changes) {
-      /*console.log('Previous:', changes[property].previousValue);
-      console.log('Current:', changes[property].currentValue);
-      console.log('firstChange:', changes[property].firstChange);*/
-
-      if (property === 'hideBtn') {
-        if (changes[property].currentValue) {
-          this.hideBtn = changes[property].currentValue;
-        }
+      switch (property) {
+        case 'hideBtn':
+          if (changes[property].currentValue) {
+            this.hideBtn = changes[property].currentValue;
+          }
+          break;
+        case 'showClass':
+          if (changes[property].currentValue !== undefined) {
+            this.showClass = changes[property].currentValue;
+          }
+          break;
       }
     }
   }
 
   ngOnDestroy() {
     this.subscriptor.unsubscribe();
+    if (this.halfModal) {
+      this._notifierService.notifyShowHorizonBtn();
+    }
   }
 }

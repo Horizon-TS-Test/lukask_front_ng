@@ -25,7 +25,6 @@ export class ActivityComponent implements OnInit {
   ) {
     this.matButtons = [
       {
-        parentContentType: 1,
         action: this._BACK,
         icon: "chevron-left"
       }

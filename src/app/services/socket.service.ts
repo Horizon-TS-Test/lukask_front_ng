@@ -30,11 +30,20 @@ export class SocketService {
         case "multimedia":
           this._publicationUpdate.emit(backendData);
           break;
-        case "comments":
-          this._commentUpdate.emit(backendData);
+        case "actions":
+          if (backendData.payload.data.description) {
+            this._commentUpdate.emit(backendData);
+          }
+          else {
+            if (backendData.payload.data.action_parent) {
+              this._commentUpdate.emit(backendData);
+            }
+            else {
+              this._publicationUpdate.emit(backendData);
+            }
+          }
           break;
         case "notification_received":
-          console.log("NOtificación!!!");
           this._notificationUpdate.emit(backendData);
           break;
       }

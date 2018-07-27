@@ -33,6 +33,7 @@ export class HorizonNotificationComponent implements OnInit {
   ngOnInit() {
     this._self = $(".p-notification").last();
     this.notification = (this._dynaContent) ? <HorizonNotification>this._dynaContent.contentData : this.inputNotification;
+    this.notification.beutifyDate();
   }
 
   ngAfterViewInit() {
