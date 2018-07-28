@@ -13,6 +13,7 @@ export class WebrtcSocketService {
   private _videoData: any;
   private userId: any;
   private pubId: any;
+  private isPresenter: any;
 
   public kurentoWs: any;
   public video: any;
@@ -20,6 +21,7 @@ export class WebrtcSocketService {
   constructor(
     private _quejaService: QuejaService
   ) {
+    this.isPresenter = false;
   }
 
   /**
@@ -49,8 +51,9 @@ export class WebrtcSocketService {
       this.kurentoWs.onclose = (close) => {
         this.kurentoWs = null;
         console.log("[WEBRTC-SOCKET SERVICE]: CONEXIÓN CERRADA AL WEBSOCKET DE KURENTO CLIENT", close);
-        this._quejaService.updateTransmission(this.pubId, true);
-
+        if (this.isPresenter) {
+          this._quejaService.updateTransmission(this.pubId, true);
+        }
       }
     });
 
@@ -112,6 +115,8 @@ export class WebrtcSocketService {
           console.log(error);
         }
         this.webRtcPeer.generateOffer((error, offerSdp) => { this.onOfferPresenter(error, offerSdp) });
+
+        this.isPresenter = true;
       });
     }
   }

@@ -7,8 +7,6 @@ import { ACTION_TYPES } from '../../config/action-types';
 import { CONTENT_TYPES } from '../../config/content-type';
 import { Subscription } from '../../../../node_modules/rxjs';
 
-declare var $: any;
-
 @Component({
   selector: 'media-streaming',
   templateUrl: './media-streaming.component.html',

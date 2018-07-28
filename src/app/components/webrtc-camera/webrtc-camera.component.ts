@@ -51,6 +51,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
     //LISTEN FOR ANY CAMERA EVENT:
     this.subscription = this._notifierService._cameraAction.subscribe(
       (cameraAction: number) => {
+        console.log("cameraAction", cameraAction);
         switch (cameraAction) {
           case CAMERA_ACTIONS.start_camera:
             this.startCamera = true;
@@ -231,7 +232,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
   }
 
   startTransmission() {
-    if (this.pubId && !this.transmissionOn) {
+    if (this.pubId && !this.streamOwnerId && !this.transmissionOn) {
       this.connectToStreamingClient()
         .then((response: boolean) => {
           if (response) {
