@@ -1,0 +1,64 @@
+<div class="personal-content relative-background min-height-full-modal max-height-full-modal p-overflow-hidden relative-background {{ loadingClass }} col-12 p-0">
+  <div id="loading-content-pop" class="{{ activeClass }}"></div>
+
+  <div class="card pb-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      Datos de consumo del Servicio
+    </div>
+
+    <div class="card-img-top d-flex justify-content-center align-items-center">
+      <img class="mb-1" id="icon" src="{{planilla.icon}}" width="100%">
+    </div>
+
+    <ul class="list-group list-group-flush pb-0">
+      <li class="list-group-item d-flex justify-content-between align-items-start">
+        <span class="p-primary-text-color personal-site-icon mr-1">w</span>
+        <div class="ml-2 f-child-no-auto">{{ planilla.factura }}</div>
+      </li>
+
+      <li class="list-group-item d-flex justify-content-between align-items-start">
+        <span class="p-primary-text-color personal-site-icon mr-1">y</span>
+        <div class="ml-2 f-child-no-auto">{{ planilla.ci }}</div>
+      </li>
+
+      <li class="list-group-item d-flex justify-content-between align-items-start">
+        <fa name="user" class="mr-1"></fa>
+        <div class="ml-2 f-child-no-auto">{{ planilla.nombre }}</div>
+      </li>
+
+      <li class="list-group-item d-flex justify-content-between align-items-start">
+        <fa name="calendar" class="mr-1"></fa>
+        <div class="ml-2 f-child-no-auto">{{ planilla.fechaEmision }}</div>
+      </li>
+
+      <li class="list-group-item d-flex justify-content-between align-items-start">
+        <fa name="location-arrow" class="mr-1"></fa>
+        <div class="ml-2 f-child-no-auto">{{ planilla.direccion }}</div>
+      </li>
+
+      <li class="list-group-item d-flex justify-content-between align-items-start">
+        <span class="p-primary-text-color personal-site-icon mr-1">z</span>
+        <div class="ml-2 f-child-no-auto">{{ planilla.total }}</div>
+      </li>
+
+      <li class="list-group-item d-flex justify-content-center align-items-center">
+        <div class="btn-group mr-2" role="group" aria-label="First group">
+          <button (click)="envioPagos($event)" class="btn btn-success">
+            <img width="100px" src="https://www.paypalobjects.com/webstatic/es_MX/mktg/logos-buttons/redesign/btn_10.png" alt="PayPal"
+            />
+          </button>
+        </div>
+
+        <div class="btn-group mr-2" role="group" aria-label="Second group">
+          <button (click)="envioPagosCard($event)" class="btn btn-success">
+            <img width="100px" height="80%" src="https://www.paypalobjects.com/webstatic/es_MX/mktg/logos-buttons/redesign/CI_btn_2.png"
+              alt="Tarjeta PayPal" />
+          </button>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+</div>
+
+<material-btn-list [showClass]="showClass" [materialBtns]="matButtons" (someBtnAction)="getButtonAction($event)"></material-btn-list>

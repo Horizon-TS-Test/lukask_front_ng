@@ -1,7 +1,8 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Output, EventEmitter } from '@angular/core';
 import planillasData from '../../data/planillas-data';
 import { Planilla } from '../../interfaces/planilla-interface';
 import { FormBuilder, FormGroup, Validators } from '../../../../node_modules/@angular/forms';
+import { ContentService } from '../../services/content.service';
 
 declare var $: any;
 
@@ -11,23 +12,25 @@ declare var $: any;
   styleUrls: ['./find-accounts.component.css']
 })
 export class FindAccountsComponent implements OnInit, AfterViewInit {
+  @Output() closePop = new EventEmitter<boolean>();
 
   public planillas: Planilla[];
-  public pagos1: Planilla[];
   public formAcc: FormGroup;
+  public accounts: boolean;
+  public loadingClass: string;
+  public activeClass: string;
 
   constructor(
-    private formBuilder: FormBuilder
-  ) {
-    this.pagos1 = [];
-  }
+    private formBuilder: FormBuilder,
+    private _contentService: ContentService
+  ) { }
 
   ngOnInit() {
     this.formAcc = this.setFormGroup();
   }
 
   ngAfterViewInit() {
-    this.planillas = planillasData;
+    this.planillas = planillasData.slice();
   }
 
   /**
@@ -40,50 +43,44 @@ export class FindAccountsComponent implements OnInit, AfterViewInit {
     return formGroup;
   }
 
-  /** MÉTODO PARA AGREGAR ANIME CARGANDO
-  */
-  /*activeLoadingContent(remove: boolean = false) {
-    if (remove) {
-      $("#loading-content").removeClass("active");
-    }
-    else {
-      $("#loading-content").addClass("active");
-    }
-  }*/
-
   /**
-    * MÉTODO PARA SOLICITAR LA APERTURA DE UN HORIZON MODAL
-    * PARA LA PAGINA DE BUSQUEDA DE LAS PLANILLAS DE PAGOS
-    * AND PARA PODER OBSERVAR EL DIV DE LAS PLANILLAS ENCONTRADAS
-    * @param event EVENTO CLICK DEL ELEMENTO <a href="#">
-    * @param contType TIPO DE CONTENIDO A MOSTRAR DENTRO DEL HORIZON MODAL
-    **/
-  openLayer(event: any) {
-    //console.log("CEDULA DEL USUARIO: ", this.planillas.ci);
-    /**
-     * METODO PARA RECORRER EL ARRAY DE LAS PLANILLAS (PATRICIA ALLAUCA)
-     */
-    /*let c = this.planillas.ci;
-    let i = 0;
-    this.pagos1 = [];
-    for (var item in this.planillas) {
-      if (c == this.planillas[item].ci) {
-        i = i + 1;
-        this.pagos1.push(this.planillas[item]);
+   * MÉTODO PARA ACTIVAR EL EECTO DE CARGANDO:
+   */
+  private loadingAnimation() {
+    this.loadingClass = "on";
+    this.activeClass = "active";
 
-      }
-    }*/
-    /*this.activeLoadingContent();
-    this.activeLoadingContent(true);*/
-    /*LINEA PARA HACERLE VISIBLE AL DIV DE LAS PLANILLAS */
-    //document.getElementById("divpagos").style.display = "block";
+    setTimeout(() => {
+      this.accounts = true;
+      
+      this.loadingClass = "";
+      this.activeClass = "";
+
+      this._contentService.elementScrollInside($("#findPlanilla"), $("#frmA").offset().top - 10);
+    }, 1000);
   }
-
 
   /**
    * MÉTODO PARA PROCESAR EL SUBMIT DEL FORMULARIO PARA BUSCAR LAS CUENTAS DE SERVICIOS BÁSICOS:
    */
-  findAccounts() {
-    console.log("SUBMITEANDO!! :D");
+  public findAccounts() {
+    let userCi = this.formAcc.value.fcnCedula;
+
+    for (let i = 0; i < this.planillas.length; i++) {
+      if (userCi !== parseInt(this.planillas[i].ci)) {
+        this.planillas.splice(i, 1);
+        i--;
+      }
+    }
+    
+    this.loadingAnimation();
+  }
+
+  /**
+   * MÉTODO PARA CAPTAR EL VALOR DEL EVENT EMITTER DEL COMPONENTE HIJO PARA CERRAR EL POP OVER:
+   * @param event VALOR DEL EVENT EMITTER
+   */
+  getChildAction(event: boolean) {
+    this.closePop.emit(true);
   }
 }

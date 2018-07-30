@@ -33,6 +33,9 @@ export class ContentLayerComponent implements OnDestroy {
           case CONTENT_TYPES.find_accounts:
             this._contentService.addComponent(HorizonPopOverComponent, this._cfr, this.secondaryLayer, dynaContent);
             break;
+          case CONTENT_TYPES.payment_card:
+            this._contentService.addComponent(HorizonPopOverComponent, this._cfr, this.secondaryLayer, dynaContent);
+            break;
           default:
             this._contentService.addComponent(HorizonModalComponent, this._cfr, this.secondaryLayer, dynaContent);
             break;

@@ -5,7 +5,8 @@
 
   <div class="personal-pop-over {{ visibleClass }} card">
     <ng-container [ngSwitch]="_dynaContent.contentType">
-      <find-accounts *ngSwitchCase="contentTypes.find_accounts"></find-accounts>
+      <find-accounts *ngSwitchCase="contentTypes.find_accounts" (closePop)="closePopFromChild($event)"></find-accounts>
+      <payments-card *ngSwitchCase="contentTypes.payment_card" [planilla]="_dynaContent.contentData" (closePop)="closePopFromChild($event)"></payments-card>
     </ng-container>
   </div>
 </div>

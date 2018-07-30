@@ -1,55 +1,59 @@
-<div class="personal-content personal-over-unset min-height-full max-height-full col-12 p-0" id="personal-payments-q">
-  <div class="personal-content min-height-full max-height-full p-overflow-auto">
+<div class="p-purchase-card relative-background p-border-none card">
+  <div id="loading-content-pop" class="{{ activeClass }}"></div>
 
-      <form #formPagosCard class="min-height-full card pb-3" id="frmP" (ngSubmit)="envioPagosTarjeta(pagos)">
-      <div id="loading-content"></div>
+  <div class="card-header">
+    Pago con Tarjeta
+  </div>
+  <div class="max-height-60 p-overflow-auto light-background {{ loadingClass }}">
 
-      <div class="card-header d-flex justify-content-between align-items-center">
-        PAGO CON TARJETA
-      </div>
-      <div class="card-img-top d-flex flex-wrap justify-content-center align-items-center">
-          <img class="mb-1" id="icon" src="/assets/images/payments/tarjetapaypal.jpg" width="100%">
-        </div>
-       <ul class="list-group list-group-flush pb-0">
-        <li class="list-group-item pb-0">
-          <div class="col-12 pb-0">Email: 
-            <input type="text" name="email" #name="ngModel" [(ngModel)]="card.email" class="form-control pb-0" required/>
-          </div>
-        </li>
-        
-        <li class="list-group-item pb-0">
-          <div class="col-12 pb-0">Número :
-            <input type="text" name="numero" #name="ngModel" [(ngModel)]="card.numero" class="form-control pb-0 " required/>
-          </div>
-        </li>
+    <div class="card-block p-1">
+      <img class="p-img-pop mb-1 card-img-top" width="100%">
 
-        <li class="list-group-item pb-0">
-          <div class="col-12 pb-0">Mes de Expiración :</div>
-          <div class="col-12 pb-0">
-            <input type="text" name="mes" #name="ngModel" [(ngModel)]="card.mes" class="form-control pb-0 " required />
-          </div>
+      <form #formPagosCard="ngForm" id="frmP" (ngSubmit)="envioPagosTarjeta(pagos)">
+        <ul class="list-group list-group-flush">
+          <li class="p-border-trans list-group-item d-flex justify-content-center align-items-center pb-0">
+            Ingrese los datos de su tarjeta
+          </li>
 
-        </li>
+          <li class="p-border-trans list-group-item d-flex justify-content-between align-items-center">
+            <fa name="envelope" class="mr-1"></fa>
+            <input type="email" name="email" #name="ngModel" [(ngModel)]="paymentCard.email" class="ml-2 f-child-no-auto form-control"
+              placeholder="Email" required/>
+          </li>
 
-        <li class="list-group-item pb-0">
-          <div class="col-12 pb-0">Año de Expiración:
-            <input type="text" name="anio" #name="ngModel" [(ngModel)]="card.anio" class="form-control pb-0 " required/>
-          </div>
-        </li>
+          <li class="p-border-trans list-group-item d-flex justify-content-between align-items-center">
+            <span class="p-primary-text-color personal-site-icon mr-1">x</span>
+            <input type="text" name="numero" #name="ngModel" [(ngModel)]="paymentCard.numero" class="ml-2 f-child-no-auto form-control"
+              placeholder="N° Tarjeta" required/>
+          </li>
 
-        <li class="list-group-item pb-0">
-          <div class="col-12 pb-0">CVV2:
-            <input type="text" name="cvv2" #name="ngModel" [(ngModel)]="card.cvv" class="form-control pb-0" required/>
-          </div>
-        </li>
-        
-      </ul>
+          <li class="p-border-trans list-group-item d-flex justify-content-between align-items-center">
+            <fa name="calendar" class="mr-1"></fa>
+            <input type="text" name="mes" #name="ngModel" [(ngModel)]="paymentCard.mes" class="ml-2 f-child-no-auto form-control" placeholder="Mes Expiración"
+              required/>
+          </li>
 
-    </form>
+          <li class="p-border-trans list-group-item d-flex justify-content-between align-items-center">
+            <fa name="calendar" class="mr-1"></fa>
+            <input type="text" name="anio" #name="ngModel" [(ngModel)]="paymentCard.anio" class="ml-2 f-child-no-auto form-control"
+              placeholder="Año Expiración" required/>
+          </li>
 
+          <li class="p-border-trans list-group-item d-flex justify-content-between align-items-center">
+            <span class="p-primary-text-color personal-site-icon icon-sm mr-1">B</span>
+            <input type="text" name="cvv2" #name="ngModel" [(ngModel)]="paymentCard.cvv" class="ml-2 f-child-no-auto form-control"
+              placeholder="CVV2" required/>
+          </li>
+        </ul>
+      </form>
+    </div>
+  </div>
+
+  <div class="card-footer">
+    <a href="#" class="relative-background custom-panel-btn" [ngClass]="{
+      'p-disabled': !formPagosCard.form.valid
+    }" (click)="payWithCard($event, formPagosCard.form.valid)">
+      <fa name="check"></fa>
+    </a>
   </div>
 </div>
-
-
-
-<material-btn-list [materialBtns]="matButtons" (someBtnAction)="getButtonAction($event)"></material-btn-list>

@@ -1,0 +1,10 @@
+<div class="col-12 p-0">
+  <div class="p-shadow-card p-no-border-rad-card card mb-2 p-0">
+    <div class="card-block d-flex justify-content-center align-items-center p-0">
+      <a href="#" (click)="viewPlanillaDetail($event)" class="col-12 p-0 d-flex justify-content-center align-items-center">
+        <div class="personal-square-img" [style.background-image]="_domSanitizer.bypassSecurityTrustStyle('url(' + userPlanilla.icon + ')')"></div>
+        <strong class="p-primary-text-color f-child-full-space ml-2">N°: {{ userPlanilla.medidor }}</strong>
+      </a>
+    </div>
+  </div>
+</div>

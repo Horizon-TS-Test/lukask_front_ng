@@ -1,28 +1,28 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { HorizonButton } from '../../interfaces/horizon-button.interface';
 import { PaymentsService } from '../../services/payments.service';
-import { Payment } from '../../models/payments';
 import { Alert } from '../../models/alert';
 import { NotifierService } from '../../services/notifier.service';
 import { ALERT_TYPES } from '../../config/alert-types';
 import { CONTENT_TYPES } from '../../config/content-type';
-
-
-
-declare var $: any;
-
+import { Planilla } from '../../interfaces/planilla-interface';
+import { ACTION_TYPES } from '../../config/action-types';
 
 @Component({
-  selector: 'app-payments',
-  templateUrl: './payments.component.html',
-  styleUrls: ['./payments.component.css']
+  selector: 'planilla-detail',
+  templateUrl: './planilla-detail.component.html',
+  styleUrls: ['./planilla-detail.component.css']
 })
-export class PaymentsComponent implements OnInit {
+export class PlanillaDetailComponent implements OnInit {
+  @Input() planilla: Planilla;
+  @Input() showClass: string;
   @Output() closeModal: EventEmitter<boolean>;
-  @Input() pagos: Payment;
-  private _CLOSE = 1;
-  public matButtons: HorizonButton[];
+
   private alertData: Alert;
+
+  public matButtons: HorizonButton[];
+  public loadingClass: string;
+  public activeClass: string;
 
   constructor(
     private _payments: PaymentsService,
@@ -32,7 +32,7 @@ export class PaymentsComponent implements OnInit {
     this.closeModal = new EventEmitter<boolean>();
     this.matButtons = [
       {
-        action: this._CLOSE,
+        action: ACTION_TYPES.close,
         icon: "close"
       }
     ];
@@ -46,11 +46,17 @@ export class PaymentsComponent implements OnInit {
      * @param err CUANDO EL SERVIDOR NO RESPONDE O DAMOS MAL LOS DATOS
      */
   envioPagos() {
-    this._payments.postPagosClient(this.pagos).then((data) => {
+    this.loadingClass = "on";
+    this.activeClass = "active";
+    this._payments.postPagosClient(this.planilla).then((data) => {
       console.log("[LA URL QUE ENVIA PAYPAL PARA CANCELAR]", data);
+      this.closeModal.emit(true);
       this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.paypal, contentData: data.data.data });
     }, (err) => {
       console.log("[CUANDO NOS DA UN ERROR DEL SERVIDOR]", err);
+      this.loadingClass = "";
+      this.activeClass = "";
+
       this.alertData = new Alert({ title: "DISCULPAS LOS ERRORES", message: "ESTAMOS TRABAJANDO EN ELLOS", type: ALERT_TYPES.danger });
       this.setAlert();
       this.closeModal.emit(true);
@@ -66,23 +72,21 @@ export class PaymentsComponent implements OnInit {
   }
 
   /**
-     * MÉTODO PARA SOLICITAR LA APERTURA DE UN HORIZON MODAL 
-     * PARA VER LA PAGINA DE PAYPAL PARA CONSUMIR POR TARJETA DE CREDITO
-     * 
-     * @param err CUANDO EL SERVIDOR NO RESPONDE O DAMOS MAL LOS DATOS
-     */
-
-  envioPagosCard(event: any, pagos: any) {
-    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.card, contentData: pagos });
+   * MÉTODO PARA SOLICITAR LA APERTURA DE UN HORIZON MODAL 
+   * PARA VER LA PAGINA DE PAYPAL PARA CONSUMIR POR TARJETA DE CREDITO
+   * @param err CUANDO EL SERVIDOR NO RESPONDE O DAMOS MAL LOS DATOS
+  */
+  envioPagosCard(event: any) {
+    event.preventDefault();
+    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.payment_card, contentData: this.planilla });
   }
 
   getButtonAction(actionEvent: number) {
     switch (actionEvent) {
-      case this._CLOSE:
+      case ACTION_TYPES.close:
         this.closeModal.emit(true);
         break;
     }
   }
-
 
 }

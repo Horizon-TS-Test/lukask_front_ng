@@ -15,7 +15,7 @@ export const CONTENT_TYPES = {
     view_transmission: 13,
     support_list: 14,
     find_accounts: 15,
-    payments:16,
-    card:17,
-    paypal:18
+    planilla_detail: 16,
+    payment_card: 17,
+    paypal: 18
 }

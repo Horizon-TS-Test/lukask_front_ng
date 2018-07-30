@@ -53,4 +53,14 @@ export class HorizonPopOverComponent implements OnInit {
     event.preventDefault();
     this.closePopOver();
   }
+
+  /**
+   * MÉTODO PARA CERRAR EL POP OVER DESDE EL COMPONENTE HIJO USANDO EVENT EMITTER
+   * @param $event VALOR DEL EVENT EMITTER
+   */
+  closePopFromChild(event: boolean) {
+    if(event) {
+      this.closePopOver();
+    }
+  }
 }

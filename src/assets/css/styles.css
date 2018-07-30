@@ -185,6 +185,30 @@ p, label, div {
   z-index: 10;
   transition: opacity .5s ease, z-index .2s ease; }
 
+#loading-content-pop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url("/assets/images/forms/preloader.gif") center center no-repeat;
+  opacity: 0;
+  z-index: -1;
+  transition: opacity .8s ease, z-index .6s ease; }
+
+#loading-content-pop.active {
+  opacity: .8;
+  z-index: 10;
+  transition: opacity .5s ease, z-index .2s ease; }
+
+.light-background {
+  opacity: 1;
+  transition: opacity 0.8s ease; }
+
+.light-background.on {
+  opacity: .4;
+  transition: opacity 0.5s ease; }
+
 .bottom-loader {
   position: absolute !important;
   left: 0;
@@ -294,6 +318,12 @@ p, label, div {
 
 .max-height-full-modal {
   max-height: 100vh !important; }
+
+.max-height-75 {
+  max-height: 75vh !important; }
+
+.max-height-60 {
+  max-height: 60vh !important; }
 
 .max-height-half {
   max-height: 50vh !important; }
@@ -762,6 +792,16 @@ p, label, div {
   background-repeat: no-repeat !important;
   flex: 0 0 auto !important; }
 
+.personal-square-img {
+  width: 120px;
+  height: 60px;
+  overflow: hidden;
+  background-color: #aaa;
+  background-size: cover !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  flex: 0 0 auto !important; }
+
 .profile-img-notif {
   width: 60px;
   height: 60px; }
@@ -1011,6 +1051,9 @@ p, label, div {
   color: #fff;
   font-size: 1.1rem; }
 
+.personal-site-icon.icon-sm {
+  font-size: 1.3rem; }
+
 .select2-container {
   z-index: 99999999999;
   width: 100% !important; }
@@ -1111,6 +1154,15 @@ p, label, div {
   box-shadow: 1px 2px 4px 2px rgba(0, 0, 0, 0.2) !important; }
   .custom-panel-btn fa, .custom-panel-btn span {
     margin-left: 1px;
+    color: #5dbeb6; }
+
+.custom-panel-btn.p-disabled {
+  opacity: .5 !important; }
+
+.custom-panel-btn.p-disabled:hover {
+  border: solid 1px #fff;
+  background: #fff; }
+  .custom-panel-btn.p-disabled:hover fa, .custom-panel-btn.p-disabled:hover span {
     color: #5dbeb6; }
 
 .custom-panel-btn:hover {
@@ -1250,6 +1302,9 @@ p, label, div {
 .p-border-none {
   border: none !important; }
 
+.p-border-trans {
+  border-color: transparent !important; }
+
 .p-normal-text-color, .p-normal-text-color:hover {
   color: #5dbeb6; }
 
@@ -1262,7 +1317,7 @@ p, label, div {
 .p-secondary-text-color, .p-secondary-text-color:hover {
   color: #fff !important; }
 
-input[type=text], input[type=password], input[type=email], textarea {
+input[type=text], input[type=password], input[type=email], input[type=number], input[type=date], textarea {
   border-top: none;
   border-left: none;
   border-right: none;
@@ -1354,5 +1409,9 @@ input[type=text], input[type=password], input[type=email], textarea {
   color: #848b76;
   font-size: 2rem;
   line-height: 2rem; }
+
+.p-purchase-card .p-img-pop {
+  content: url("/assets/images/payments/card-hands-sm.jpg");
+  height: 160px; }
 
 /*# sourceMappingURL=styles.css.map */
