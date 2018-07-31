@@ -3,7 +3,8 @@
   'opacity-almost-null': _dynaContent.contentType == contentTypes.view_comments && _dynaContent.contentData.halfModal
 }"></div>
 
-<div class="min-height-full-modal max-height-full-modal p-overflow-auto personal-dyna-cont {{ showClass }} col-12 p-0" [ngClass]="{
+<div class="min-height-full-modal max-height-full-modal p-overflow-auto personal-dyna-cont horizon-modal {{ showClass }} col-12 p-0"
+  [ngClass]="{
   'personal-content': _dynaContent.contentType != contentTypes.view_replies && 
   _dynaContent.contentType != contentTypes.view_notifs && 
   _dynaContent.contentType != contentTypes.view_img && 
@@ -57,5 +58,11 @@
       <support-list [pubId]="_dynaContent.contentData.pubId" [pubOwner]="_dynaContent.contentData.pubOwner" [commentId]="_dynaContent.contentData.commentId"
         [commentOwner]="_dynaContent.contentData.commentOwner"></support-list>
     </div>
+
+    <planilla-detail *ngSwitchCase="contentTypes.planilla_detail" [showClass]="showClass" [planilla]="_dynaContent.contentData"
+      (closeModal)="close($event)"></planilla-detail>
+
+    <app-paypal *ngSwitchCase="contentTypes.paypal" [showClass]="showClass" [paypalUrl]='_dynaContent.contentData'></app-paypal>
+
   </ng-container>
 </div>

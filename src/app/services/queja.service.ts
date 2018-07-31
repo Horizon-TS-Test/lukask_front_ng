@@ -128,7 +128,7 @@ export class QuejaService {
         localStorage.clear();
       }
       return throwError(error.json());
-    });;
+    });
   }
 
   /**

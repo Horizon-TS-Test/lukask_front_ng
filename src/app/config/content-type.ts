@@ -13,5 +13,9 @@ export const CONTENT_TYPES = {
     new_notification: 11,
     view_notifs: 12,
     view_transmission: 13,
-    support_list: 14
+    support_list: 14,
+    find_accounts: 15,
+    planilla_detail: 16,
+    payment_card: 17,
+    paypal: 18
 }

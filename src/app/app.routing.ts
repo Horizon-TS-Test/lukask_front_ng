@@ -13,9 +13,7 @@ const routes: Routes = [
     { pathMatch: 'full', path: '', component: InicioComponent, canActivate: [AuthGuardService] },
     { pathMatch: 'full', path: 'login', component: LoginComponent, canActivate: [LoginGuardService] },
     { pathMatch: 'full', path: 'inicio', component: InicioComponent, canActivate: [AuthGuardService] },
-    { pathMatch: 'full', path: 'activity', component: ActivityComponent, canActivate: [AuthGuardService] },
-    //{ pathMatch: 'full', path: 'mapview', component: MapViewComponent, canActivate: [AuthGuardService] },
-    { pathMatch: 'full', path: '**', component: ErrorComponent },
+    { pathMatch: 'full', path: 'activity', component: ActivityComponent, canActivate: [AuthGuardService] }
 ];
 
 export const appRoutingProviders: any[] = [];

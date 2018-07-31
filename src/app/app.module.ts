@@ -58,6 +58,12 @@ import { RouterService } from './services/router.service';
 import { HomePanelComponent } from './components/home-panel/home-panel.component';
 import { NewPubComponent } from './components/new-pub/new-pub.component';
 import { PubFormComponent } from './components/pub-form/pub-form.component';
+import { PagosInicioComponent } from './components/pagos-inicio/pagos-inicio.component';
+import { FindAccountsComponent } from './components/find-accounts/find-accounts.component';
+import { PlanillaComponent } from './components/planilla/planilla.component';
+import { PlanillaDetailComponent } from './components/planilla-detail/planilla-detail.component';
+import { PaymentsCardComponent } from './components/payments-card/payments-card.component';
+import { PaypalComponent } from './components/paypal/paypal.component';
 import { SupportListComponent } from './components/support-list/support-list.component';
 import { ProfileLinkComponent } from './components/profile-link/profile-link.component';
 import { ProfileOwnerComponent } from './components/profile-owner/profile-owner.component';
@@ -100,6 +106,12 @@ import { HorizonPopOverComponent } from './components/horizon-pop-over/horizon-p
     HomePanelComponent,
     NewPubComponent,
     PubFormComponent,
+    PagosInicioComponent,
+    FindAccountsComponent,
+    PlanillaComponent,
+    PlanillaDetailComponent,
+    PaymentsCardComponent,
+    PaypalComponent,
     SupportListComponent,
     ProfileLinkComponent,
     ProfileOwnerComponent,

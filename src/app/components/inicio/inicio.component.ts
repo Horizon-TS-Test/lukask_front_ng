@@ -5,6 +5,9 @@ import { Subscription } from 'rxjs';
 import { MENU_OPTIONS } from '../../config/menu-option';
 import { ACTION_TYPES } from '../../config/action-types';
 import { DynaContent } from '../../interfaces/dyna-content.interface';
+import { Alert } from '../../models/alert';
+import { SocketService } from '../../services/socket.service';
+import { ALERT_TYPES } from '../../config/alert-types';
 
 declare var $: any;
 
@@ -18,23 +21,27 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   private customCarousel: any;
   private subscriptor: Subscription;
 
+
   public enableSecondOp: boolean;
   public enableThirdOp: boolean;
   public carouselOptions: any;
   public focusedPubId: string;
+  private alertData: Alert;
 
   constructor(
     private _contentService: ContentService,
-    private _notifierService: NotifierService
+    private _notifierService: NotifierService,
+    private _socket: SocketService
   ) { }
 
   ngOnInit() {
     this.pubContainer = $('#pub-container');
     this._contentService.fadeInComponent($("#homeContainer"));
-    
+
     this._notifierService.notifyChangeMenuContent(MENU_OPTIONS.home);
     this.subscriptor = this._notifierService._changeMenuOption.subscribe(
       (menuOption: number) => {
+        console.log(menuOption);
         this.changeOwlContent(menuOption);
       });
 
@@ -44,7 +51,27 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
 
+
     this.initCarousel();
+    this.socket();
+
+  }
+
+  socket() {
+    this._socket._responsepayment.subscribe(
+      (socketPago: any) => {
+        const data = JSON.parse(socketPago);
+        console.log("CORREO DEL USUARIO QUE PAGA EL SERVICO: ", data.data.email);
+        if (data) {
+          this.alertData = new Alert({ title: "SU PAGO FUE EXITOSO", message: data.data.email, type: ALERT_TYPES.success });
+          this.setAlert();
+          this._socket.confimPayResp();
+        }
+      });
+  }
+
+  setAlert() {
+    this._notifierService.sendAlert(this.alertData);
   }
 
   /**
@@ -75,6 +102,7 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
           this.enableSecondOp = true;
           break;
         case MENU_OPTIONS.payment:
+          this.enableThirdOp = true;
           break;
       }
       this._notifierService.notifyChangeMenuContent(menuIndex);
@@ -89,6 +117,7 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
           this.enableSecondOp = true;
           break;
         case MENU_OPTIONS.payment:
+          this.enableThirdOp = true;
           break;
       }
       this._notifierService.notifyChangeMenuContent(menuIndex);
@@ -108,7 +137,7 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
    * @param $event VALOR DEL TIPO DE ACCIÓN QUE VIENE EN UN EVENT-EMITTER
    */
   optionButtonAction(event: DynaContent) {
-    if(event.contentType === ACTION_TYPES.mapFocus) {
+    if (event.contentType === ACTION_TYPES.mapFocus) {
       this.focusedPubId = event.contentData;
       this.changeOwlContent(MENU_OPTIONS.mapview);
     }

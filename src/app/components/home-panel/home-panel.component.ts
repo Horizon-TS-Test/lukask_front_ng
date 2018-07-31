@@ -8,10 +8,13 @@ import { SubscribeService } from '../../services/subscribe.service';
 })
 export class HomePanelComponent implements OnInit {
   public isAble: boolean;
+  public subsStyle: string;
 
   constructor(
     private _subscribeService: SubscribeService
-  ) { }
+  ) {
+    this.subsStyle = "secondary";
+  }
 
   ngOnInit() {
     this.isAbleToSubscribe();
@@ -37,6 +40,7 @@ export class HomePanelComponent implements OnInit {
    */
   subscribe(event: any) {
     event.preventDefault();
+    this.subsStyle = "";
     this._subscribeService.askForSubscription();
   }
 }

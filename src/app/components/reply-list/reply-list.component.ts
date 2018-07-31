@@ -156,7 +156,6 @@ export class ReplyListComponent implements OnInit, OnDestroy {
     this._socketService._commentUpdate.subscribe(
       (socketPub: any) => {
         let action = socketPub.payload.action.toUpperCase();
-
         this.updateCommentList(socketPub.payload.data, action);
       }
     );

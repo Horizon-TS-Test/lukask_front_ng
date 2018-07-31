@@ -31,6 +31,7 @@ export class NewPubComponent implements OnInit, AfterViewInit, OnChanges {
     this.initStream = false;
     this.startCamera = false;
     this.hideActionBtns = false;
+    this.transmitStyle = "secondary";
     this.matButtons = [
       {
         action: ACTION_TYPES.submitPub,
@@ -70,12 +71,12 @@ export class NewPubComponent implements OnInit, AfterViewInit, OnChanges {
     if (this.initStream === false) {
       this.initStream = true;
       this.nextButton = true;
-      this.transmitStyle = "selected";
+      this.transmitStyle = "";
     }
     else {
       this.initStream = false;
       this.nextButton = false;
-      this.transmitStyle = null;
+      this.transmitStyle = "secondary";
     }
   }
 

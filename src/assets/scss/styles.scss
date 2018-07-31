@@ -206,6 +206,32 @@ p, label, div {
     transition: opacity .5s ease, z-index .2s ease;
 }
 
+#loading-content-pop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url("/assets/images/forms/preloader.gif") center center no-repeat;
+    opacity: 0;
+    z-index: -1;
+    transition: opacity .8s ease, z-index .6s ease;
+}
+#loading-content-pop.active {
+    opacity: .8;
+    z-index: 10;
+    transition: opacity .5s ease, z-index .2s ease;
+}
+
+.light-background {
+    opacity: 1;
+    transition: opacity .8s ease
+}
+.light-background.on {
+    opacity: .4;
+    transition: opacity .5s ease
+}
+
 .bottom-loader {
     position: absolute !important;
     left: 0;
@@ -363,7 +389,7 @@ p, label, div {
 .p-home-full-height {
     overflow-y: auto;
     width: 100%;
-    height: calc(100vh - 55px);
+    height: calc(100vh - 55px) !important;
 }
 ////
 
@@ -385,6 +411,12 @@ p, label, div {
 .max-height-full-modal {
     max-height: 100vh !important;
 }
+.max-height-75 {
+    max-height: 75vh !important;
+}
+.max-height-60 {
+    max-height: 60vh !important;
+}
 .max-height-half {
     max-height: 50vh !important;
 }
@@ -402,27 +434,6 @@ p, label, div {
     overflow: hidden;
 }
 ////
-
-//ICONS:
-.personal-site-icon {
-    font-family: "riotelecomec" !important;
-    font-size: 4.5rem;
-    color: $primary;
-    transition: color .3s ease, transform .4s ease;
-
-    @include MQ(S) {
-        font-size: 4.8rem;
-    }
-    @include MQ(M) {
-        font-size: 5.3rem;
-    }
-    @include MQ(L) {
-        font-size: 5.6rem;
-    }
-}
-.personal-site-icon.selected {
-    color: $primary !important;
-}
 
 .icon-size-5 {
     font-size: 5rem;
@@ -1033,6 +1044,16 @@ p, label, div {
     background-repeat: no-repeat !important;
     flex: 0 0 auto !important;
 }
+.personal-square-img {
+    width: 120px;
+    height: 60px;
+    overflow: hidden;
+    background-color: #aaa;
+    background-size: cover !important;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
+    flex: 0 0 auto !important;
+}
 .profile-img-notif {
     width: 60px;
     height: 60px;
@@ -1381,6 +1402,9 @@ p, label, div {
     color: $secondary-text;
     font-size: 1.1rem;
 }
+.personal-site-icon.icon-sm {
+    font-size: 1.3rem;
+}
 //////////////////////////////////
 
 ////JQUERY SELECT2 WITH BOOTSTRAP
@@ -1394,6 +1418,15 @@ p, label, div {
 /////////////////
 
 ///PERSONAL BUTTONS:
+.p-trans-btn-generic {
+    background: rgba(0, 0, 0, .3) !important;
+    border-color: rgba(255, 255, 255, .8) !important;
+    color: rgba(255, 255, 255, .8) !important
+
+    fa, span {
+        color: rgba(255, 255, 255, .8) !important
+    }
+}
 .p-transparent-btn {
     border-radius: 50% !important;
     width: 80px;
@@ -1504,6 +1537,17 @@ p, label, div {
         color: $primary;
     }
 }
+.custom-panel-btn.p-disabled {
+    opacity: .5 !important;
+}
+.custom-panel-btn.p-disabled:hover {
+    border: solid 1px $secondary-text;
+    background: $secondary-text;
+
+    fa, span {
+        color: $primary;
+    }
+}
 .custom-panel-btn:hover {
     border: solid 1px $primary;
     background: $primary;
@@ -1561,7 +1605,7 @@ p, label, div {
 }
 
 .focused-btn {
-    background: $primary !important;
+    background: $primary-dark !important;
     border-radius: 50%;
     position: absolute;
     animation: cd-bounce-infinit 1.2s infinite;
@@ -1670,6 +1714,9 @@ p, label, div {
 .p-border-none {
     border: none !important;
 }
+.p-border-trans {
+    border-color: transparent !important;
+}
 ////
 
 //TEXT CUSTOME STYLES:
@@ -1688,9 +1735,8 @@ p, label, div {
 }
 ////
 
-////ETILOS PARA FORMULARIO
-////ESTILO INPUT USER EDIT
-input[type=text], input[type=password], input[type=email], textarea{
+////ETILOS PARA FORMULARIOS
+input[type=text], input[type=password], input[type=email], input[type=number], input[type=date], textarea {
     border-top: none;
     border-left: none;
     border-right: none;
@@ -1785,3 +1831,257 @@ input[type=text], input[type=password], input[type=email], textarea{
     transition: transform 0.3s, visibility 0s 0s;
   }
 /////////////////////////////////////////////
+
+///////////////////////IMAGE INSIDE POP OVER STYLES///////////////////////////////
+.p-img-pop {
+    border-radius: 3px;
+    height: 180px;
+    object-fit: cover;
+}
+
+.p-find-accounts {
+    .p-img-pop {
+        //REF: https://stackoverflow.com/questions/2182716/is-it-possible-to-set-the-equivalent-of-a-src-attribute-of-an-img-tag-in-css
+        content: url("/assets/images/payments/security-card-sm.jpg");
+    }
+
+    .personal-site-icon {
+        color: $primary-text;
+        font-size: 2rem;
+        line-height: 2rem;
+    }
+}
+
+.p-purchase-card {
+    .p-img-pop {
+        //REF: https://stackoverflow.com/questions/2182716/is-it-possible-to-set-the-equivalent-of-a-src-attribute-of-an-img-tag-in-css
+        content: url("/assets/images/payments/card-hands-sm.jpg");
+        height: 160px;
+    }
+}
+//////////////////////////////////////////////////////////////////////////////////
+
+///////INTRO SLIDER:////////
+.personal-intro-slider {
+    position: relative;
+    height: 100vh;
+    background: $primary;
+    
+    ul {
+        padding: 0;
+        margin: 0;
+        position: relative;
+        overflow: hidden;
+        height: 100%;
+
+        li {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-position: center center !important;
+            background-size: cover !important;
+            background-repeat: no-repeat !important;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transform: translateX(-100%);
+            transition: transform .7s;
+
+            .personal-slider-cont {
+                position: relative;
+                z-index: 1;
+                width: 100%;
+                height: 100%;
+                padding: 0 1.2rem;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: flex-start;
+                backface-visibility: hidden;
+                background-color: rgba(0, 0, 0, .125);
+                transform: translateZ(0);
+
+                h2 {
+                    color: $secondary-text;
+                    font-size: 1.5rem;
+                    font-weight: 250;
+                    text-transform: uppercase;
+
+                    @include MQ(S) {
+                        font-size: 1.8rem;
+                    }
+                    @include MQ(M) {
+                        font-size: 2.3rem;
+                        font-weight: 300;
+                    }
+                    @include MQ(L) {
+                        font-size: 2.5rem;
+                    }
+                    @include MQ(XL) {
+                        font-size: 3rem;
+                    }
+                }
+                h2, p, .p-slider-options {
+                    text-align: left;
+                    opacity: 0;
+                    transform: translateX(100px);
+                }
+
+                .p-slider-options {
+                    position: relative;
+                    z-index: 2;
+
+                    .btn {
+                        cursor: pointer;
+                    }
+                }
+
+                @include MQ(S) {
+                    padding: 0 2.2rem;
+                }
+                @include MQ(M) {
+                    padding: 0 3.5rem;
+                }
+                @include MQ(L) {
+                    padding: 0 4.5rem;
+                }
+                @include MQ(XL) {
+                    padding: 0 5rem;
+                }
+            }
+        }
+
+        li.selected {
+            position: relative;
+            transform: translateX(0);
+
+            .personal-slider-cont {
+                h2, p, .p-slider-options {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+
+                h2 {
+                    transition: opacity .5s .3s, transform .6s .3s;
+                }
+                p {
+                    transition: opacity .5s .4s, transform .6s .4s;
+                }
+                .p-slider-options {
+                    transition: opacity .5s .5s, transform .6s .5s;
+                }
+            }
+        }
+        li.move-to-hide {
+            transform: translateX(100%);
+
+            .personal-slider-cont {
+
+                h2, p, .p-slider-options {
+                    opacity: 0;
+                    transform: translateX(-100px);
+                }
+            }
+        }
+
+        li.is-moving {
+            .personal-slider-cont {
+                h2, p, .p-slider-options {
+                    transition: opacity 0s 0.3s, transform 0s 0.3s;
+                }
+            }
+        }
+    }
+
+    .p-absolute-options {
+        position: absolute;
+        top: 55%;
+    }
+}
+
+.img-opacity {
+    background: rgba(0, 0, 0, .125);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+////////////////////////////////////////////////////////////////////////////////////
+
+//SLIDER NAVIGATION PLAY, PAUSE, NEXT AND PREV:
+.p-slide-nav-gen {
+    display: inherit;
+}
+
+.personal-nav-prev, .personal-nav-next, .personal-play, .personal-pause {
+    position: absolute;
+    z-index: 1;
+    width: 70px;
+    height: 70px;
+    bottom: 50px;
+
+    @include MQ(M) {
+        bottom: 70px;
+    }
+    @include MQ(L) {
+        background: transparent !important;
+        top: 0;
+        width: calc(100% / 3);
+        height: 100%;
+        bottom: auto;
+    }
+}
+.personal-nav-prev {
+    background: url('/assets/images/slider-nav/prev.png') center center no-repeat;
+    right: calc(50% + 35px);
+
+    @include MQ(L) {
+        cursor: url('/assets/images/slider-nav/prev.png');
+        cursor: url('/assets/images/slider-nav/prev.png'), auto;
+        cursor: url('/assets/images/slider-nav/cur/prev.cur');
+        left: 0;
+        right: auto;
+    }
+}
+.personal-play {
+    display: none;
+    background: url('/assets/images/slider-nav/play.png') center center no-repeat;
+    left: calc(50% - 35px);
+
+    @include MQ(L) {
+        cursor: url('/assets/images/slider-nav/play.png');
+        cursor: url('/assets/images/slider-nav/play.png'), auto;
+        cursor: url('/assets/images/slider-nav/cur/play.cur');
+        left: calc(100% / 3);
+    }
+}
+.personal-pause {
+    background: url('/assets/images/slider-nav/pause.png') center center no-repeat;
+    left: calc(50% - 35px);
+
+    @include MQ(L) {
+        cursor: url('/assets/images/slider-nav/pause.png');
+        cursor: url('/assets/images/slider-nav/pause.png'), auto;
+        cursor: url('/assets/images/slider-nav/cur/pause.cur');
+        left: calc(100% / 3);
+    }
+}
+.personal-nav-next {
+    background: url('/assets/images/slider-nav/next.png') center center no-repeat;
+    left: calc(50% + 35px);
+
+    @include MQ(L) {
+        cursor: url('/assets/images/slider-nav/next.png');
+        cursor: url('/assets/images/slider-nav/next.png'), auto;
+        cursor: url('/assets/images/slider-nav/cur/next.cur');
+        right: 0;
+        left: auto;
+    }
+}
+////

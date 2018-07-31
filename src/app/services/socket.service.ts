@@ -14,6 +14,7 @@ export class SocketService {
   public _publicationUpdate = new EventEmitter<any>();
   public _commentUpdate = new EventEmitter<any>();
   public _notificationUpdate = new EventEmitter<any>();
+  public _responsepayment = new EventEmitter<any>();
 
   constructor() { }
 
@@ -47,9 +48,18 @@ export class SocketService {
           break;
       }
     });
+
+    this.socket.on('response-payment', (paymentData) => {
+      console.log("response-payment: ", paymentData);
+      this._responsepayment.emit(paymentData);
+    });
   }
 
   getSocket() {
     return this.socket;
+  }
+
+  public confimPayResp() {
+    this.socket.emit('confirm-pay', true);
   }
 }
