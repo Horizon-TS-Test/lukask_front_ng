@@ -8,15 +8,12 @@ import { AuthGuardService } from './services/auth-guard.service';
 import { LoginGuardService } from './services/login-guard.service';
 //import { MapViewComponent } from './components/map-view/map-view.component';
 import { ActivityComponent } from './components/activity/activity.component';
-import { PagosComponent } from './components/pagos/pagos.component';
 
 const routes: Routes = [
     { pathMatch: 'full', path: '', component: InicioComponent, canActivate: [AuthGuardService] },
     { pathMatch: 'full', path: 'login', component: LoginComponent, canActivate: [LoginGuardService] },
     { pathMatch: 'full', path: 'inicio', component: InicioComponent, canActivate: [AuthGuardService] },
-    { pathMatch: 'full', path: 'activity', component: ActivityComponent, canActivate: [AuthGuardService] },
-    //{ pathMatch: 'full', path: 'mapview', component: MapViewComponent, canActivate: [AuthGuardService] },
-    { pathMatch: 'full', path: 'pagos', component: PagosComponent, canActivate: [AuthGuardService] }
+    { pathMatch: 'full', path: 'activity', component: ActivityComponent, canActivate: [AuthGuardService] }
 ];
 
 export const appRoutingProviders: any[] = [];

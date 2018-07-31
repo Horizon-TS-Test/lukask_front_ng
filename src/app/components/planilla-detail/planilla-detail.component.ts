@@ -48,6 +48,7 @@ export class PlanillaDetailComponent implements OnInit {
   envioPagos() {
     this.loadingClass = "on";
     this.activeClass = "active";
+    this.showClass = "";
     this._payments.postPagosClient(this.planilla).then((data) => {
       console.log("[LA URL QUE ENVIA PAYPAL PARA CANCELAR]", data);
       this.closeModal.emit(true);
@@ -57,7 +58,7 @@ export class PlanillaDetailComponent implements OnInit {
       this.loadingClass = "";
       this.activeClass = "";
 
-      this.alertData = new Alert({ title: "DISCULPAS LOS ERRORES", message: "ESTAMOS TRABAJANDO EN ELLOS", type: ALERT_TYPES.danger });
+      this.alertData = new Alert({ title: "Error de Conexión", message: "Sentimos los inconvenientes, estamos trabajando para mejorar tu experiencia de usuario.", type: ALERT_TYPES.danger });
       this.setAlert();
       this.closeModal.emit(true);
     });
