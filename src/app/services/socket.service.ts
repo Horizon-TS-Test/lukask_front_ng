@@ -58,4 +58,8 @@ export class SocketService {
   getSocket() {
     return this.socket;
   }
+
+  public confimPayResp() {
+    this.socket.emit('confirm-pay', true);
+  }
 }
