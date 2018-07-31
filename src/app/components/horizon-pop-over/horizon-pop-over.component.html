@@ -1,7 +1,7 @@
 <div class="fixed-background opacity-light {{ backgroundClass }}"></div>
 
 <div class="min-height-full-modal personal-dyna-cont show col-12 p-3">
-  <a href="#" (click)="onClickClose($event)" class="absolute-background"></a>
+  <a *ngIf="_dynaContent.contentType !== contentTypes.payment_card" href="#" (click)="onClickClose($event)" class="absolute-background"></a>
 
   <div class="personal-pop-over {{ visibleClass }} card">
     <ng-container [ngSwitch]="_dynaContent.contentType">

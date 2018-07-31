@@ -30,7 +30,7 @@ export class PaymentsCardComponent implements OnInit {
     private _notifierService: NotifierService
   ) {
     this.closePop = new EventEmitter<boolean>();
-    this.paymentCard = new PaymentCard('', '', '', '', '');
+    this.initPayObj();
 
     this.matButtons = [
       {
@@ -45,6 +45,10 @@ export class PaymentsCardComponent implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  initPayObj() {
+    this.paymentCard = new PaymentCard('', '', '', '', '');
   }
 
   /**
@@ -72,7 +76,6 @@ export class PaymentsCardComponent implements OnInit {
         this.alertData = new Alert({ title: "SU PAGO SE FUE EXITOSO", message: mensaje, type: ALERT_TYPES.success });
         this.setAlert();
         this.closePop.emit(true);
-        this.paymentCard = null;
       }, (err) => {
         console.log("[ERROR DE LA RESPUESTA A PAGAR]", err);
         this.alertData = new Alert({ title: "DATOS ERRONEOS DE LA TARJETA", message: "VERIFIQUE SUS DATOS", type: ALERT_TYPES.danger });

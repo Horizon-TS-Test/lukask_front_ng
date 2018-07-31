@@ -67,7 +67,7 @@ export class FindAccountsComponent implements OnInit, AfterViewInit {
     let userCi = this.formAcc.value.fcnCedula;
 
     for (let i = 0; i < this.planillas.length; i++) {
-      if (userCi !== parseInt(this.planillas[i].ci)) {
+      if (userCi !== this.planillas[i].ci) {
         this.planillas.splice(i, 1);
         i--;
       }
