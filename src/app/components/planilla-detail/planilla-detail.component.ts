@@ -57,7 +57,6 @@ export class PlanillaDetailComponent implements OnInit {
       console.log("[CUANDO NOS DA UN ERROR DEL SERVIDOR]", err);
       this.loadingClass = "";
       this.activeClass = "";
-
       this.alertData = new Alert({ title: "Error de Conexión", message: "Sentimos los inconvenientes, estamos trabajando para mejorar tu experiencia de usuario.", type: ALERT_TYPES.danger });
       this.setAlert();
       this.closeModal.emit(true);

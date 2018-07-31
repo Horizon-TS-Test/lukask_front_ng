@@ -65,6 +65,7 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
         if (data) {
           this.alertData = new Alert({ title: "SU PAGO FUE EXITOSO", message: data.data.email, type: ALERT_TYPES.success });
           this.setAlert();
+          this._socket.confimPayResp();
         }
       });
   }
