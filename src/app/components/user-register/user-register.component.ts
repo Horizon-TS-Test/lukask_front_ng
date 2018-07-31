@@ -46,7 +46,7 @@ export class UserRegisterComponent implements OnInit {
     private _notifierService: NotifierService
 
   ) {
-    this.userObj = new User("", "", "", true, "", "");
+    this.userObj = new User("", "", "", true, "", "", "", new Parroquia);
 
     this.materialButtons = [
       {
@@ -86,6 +86,7 @@ export class UserRegisterComponent implements OnInit {
 
   ngOnInit() {
     this.getProvince();
+
   }
 
   /**
@@ -172,12 +173,6 @@ export class UserRegisterComponent implements OnInit {
       this.userObj.fileName = this.getFormattedDate() + ".png";
     }
 
-    /*this.userObj.objParroquia.id_parroquia = this.parroquia;
-    this.userObj.objParroquia.canton.id_canton = this.canton;
-    this.userObj.objParroquia.canton.province.id_province = this.province;*/
-
-    console.log("Objetooooooosssssss.........");
-    console.log(this.userObj);
     this.formmatSendDate();
     this._userService.registerUser(this.userObj);
     this.restartDate();
@@ -199,6 +194,19 @@ export class UserRegisterComponent implements OnInit {
     this._userService.getProvinceList().then((qProvinces) => {
       this.provinceList = qProvinces;
       this.provinceSelect = [];
+      this.provinceSelect.push({ value: "", data: "", seletedItem: "" });
+      for (let type of this.provinceList) {
+        if (!this.province) {
+          this.province = type.id_province;
+        }
+        this.provinceSelect.push({ value: type.id_province, data: type.name, seletedItem: "" });
+      }
+    });
+  }
+  /*getProvince() {
+    this._userService.getProvinceList().then((qProvinces) => {
+      this.provinceList = qProvinces;
+      this.provinceSelect = [];
       this.provinceSelect.push({ value: "", data: "", seletedItem:" " });
       for (let type of this.provinceList) {
         if (!this.province) {
@@ -207,7 +215,7 @@ export class UserRegisterComponent implements OnInit {
         this.provinceSelect.push({ value: type.id_province, data: type.name,seletedItem:" " });
       }
     });
-  }
+  }*/
 
   /**
    * METODO QUE CAPTURA LA PROVINCIA DESDE EL SELECT
@@ -216,6 +224,10 @@ export class UserRegisterComponent implements OnInit {
   getProvinciaSelect(event: string) {
     this.province = event;
     this.userObj.person.parroquia.canton.province.id_province = this.province;
+    this.cantonSelect = [];
+    this.parroquiaSelect = [];
+    this.canton = "";
+    this.parroquia = "";
     this.getCanton(this.province);
   }
 
@@ -226,23 +238,35 @@ export class UserRegisterComponent implements OnInit {
     this._userService.getCantonList(id_provincia).then((qCantones) => {
       this.cantonList = qCantones;
       this.cantonSelect = [];
-      this.cantonSelect.push({ value: "", data: "",seletedItem:" " });
-
+      this.cantonSelect.push({ value: "", data: "", seletedItem: "" });
       for (let type of this.cantonList) {
         if (!this.canton) {
           this.canton = type.id_canton;
         }
-        this.cantonSelect.push({ value: type.id_canton, data: type.name, seletedItem:" " });
+        this.cantonSelect.push({ value: type.id_canton, data: type.name, seletedItem: "" });
       }
     });
   }
+  /*getCanton(id_provincia: any) {
+   this._userService.getCantonList(id_provincia).then((qCantones) => {
+     this.cantonList = qCantones;
+     this.cantonSelect = [];
+     this.cantonSelect.push({ value: "", data: "", seletedItem: " " });
+
+     for (let type of this.cantonList) {
+       if (!this.canton) {
+         this.canton = type.id_canton;
+       }
+       this.cantonSelect.push({ value: type.id_canton, data: type.name, seletedItem: " " });
+     }
+   });
+ }*/
 
   /**
  * METODO QUE CAPTURA LA PROVINCIA DESDE EL SELECT
  * @param event 
  */
   getCantonSelect(event: string) {
-    console.log("Canton seleccionado");
     this.canton = event;
     this.userObj.person.parroquia.canton.id_canton = this.canton;
     this.getParroquia(this.canton);
@@ -255,25 +279,39 @@ export class UserRegisterComponent implements OnInit {
   getParroquia(id_canton: any) {
     this._userService.getParroquiaList(id_canton).then((qParroquia) => {
 
-      this.parroquiaSelect = [];
       var parroquiaList = qParroquia;
-      this.parroquiaSelect.push({ value: " ", data: " ", seletedItem:" " });
+      this.parroquiaSelect = [];
+      this.parroquiaSelect.push({ value: "", data: "", seletedItem: "" });
 
       for (let id in parroquiaList) {
         if (!this.parroquia) {
           this.parroquia = parroquiaList[id].id_parroquia;
         }
-        this.parroquiaSelect.push({ value: parroquiaList[id].id_parroquia, data: parroquiaList[id].name,seletedItem:" " });
+        this.parroquiaSelect.push({ value: parroquiaList[id].id_parroquia, data: parroquiaList[id].name, seletedItem: "" });
       }
     });
   }
+  /*getParroquia(id_canton: any) {
+   this._userService.getParroquiaList(id_canton).then((qParroquia) => {
+
+     this.parroquiaSelect = [];
+     var parroquiaList = qParroquia;
+     this.parroquiaSelect.push({ value: " ", data: " ", seletedItem: " " });
+
+     for (let id in parroquiaList) {
+       if (!this.parroquia) {
+         this.parroquia = parroquiaList[id].id_parroquia;
+       }
+       this.parroquiaSelect.push({ value: parroquiaList[id].id_parroquia, data: parroquiaList[id].name, seletedItem: " " });
+     }
+   });
+ }*/
 
   /**
    * METODO QUE CAPTURA LA PROVINCIA DESDE EL SELECT
    * @param event 
    */
   getParroquiaSelect(event: string) {
-    console.log("Parroquia seleccionado");
     this.parroquia = event;
     this.userObj.person.parroquia.id_parroquia = this.parroquia;
   }
