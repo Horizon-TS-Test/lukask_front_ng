@@ -9,7 +9,7 @@ export var REST_SERV = {
     qTypeUrl: 'http://127.0.0.1:8070/qtype',
     commentUrl: 'http://127.0.0.1:8070/comment',
     relevanceUrl: 'http://127.0.0.1:8070/relevance',
-    mediaBack: 'http://192.168.1.57:8080',
+    mediaBack: 'http://192.168.1.56:8081',
     pushSub: 'http://192.168.1.19:3200/subscribe',
     socketServerUrl: 'http://127.0.0.1:8070',
     userUrl: 'http://127.0.0.1:8070/user/',

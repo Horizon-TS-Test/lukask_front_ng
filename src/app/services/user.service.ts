@@ -208,6 +208,9 @@ export class UserService {
     formData.append('cell_phone', user.person.cell_phone);
     formData.append('birthdate', user.person.birthdate);
     formData.append('user_file', user.file, user.fileName);
+    formData.append('province', user.person.parroquia.canton.province.id_province);
+    formData.append('canton', user.person.parroquia.canton.id_canton);
+    formData.append('parroquia', user.person.parroquia.id_parroquia);
     formData.append('is_active', "true");
 
     return formData;
@@ -249,10 +252,10 @@ export class UserService {
    */
   extractUserJson(jsonUser: any) {
     let user: User;
-
     jsonUser.media_profile = (jsonUser.media_profile.indexOf("http") == -1) ? REST_SERV.mediaBack + jsonUser.media_profile : jsonUser.media_profile;
     user = new User(jsonUser.email, '', jsonUser.media_profile, true, null, null, jsonUser.id);
-    user.person = new Person(jsonUser.person.id_person, jsonUser.person.age, jsonUser.person.identification_card, jsonUser.person.name, jsonUser.person.last_name, jsonUser.person.telephone, jsonUser.person.address, jsonUser.person.birthdate, jsonUser.person.cell_phone);
+    user.person = new Person(jsonUser.person.id_person, jsonUser.person.age, jsonUser.person.identification_card, jsonUser.person.name, jsonUser.person.last_name, jsonUser.person.telephone, jsonUser.person.address, jsonUser.person.birthdate, jsonUser.person.cell_phone, jsonUser.person.location);
+    user.person.location=jsonUser.person.location;
     return user;
   }
 

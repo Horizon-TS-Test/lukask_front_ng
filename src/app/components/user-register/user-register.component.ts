@@ -175,6 +175,7 @@ export class UserRegisterComponent implements OnInit {
     /*this.userObj.objParroquia.id_parroquia = this.parroquia;
     this.userObj.objParroquia.canton.id_canton = this.canton;
     this.userObj.objParroquia.canton.province.id_province = this.province;*/
+
     console.log("Objetooooooosssssss.........");
     console.log(this.userObj);
     this.formmatSendDate();
@@ -198,12 +199,12 @@ export class UserRegisterComponent implements OnInit {
     this._userService.getProvinceList().then((qProvinces) => {
       this.provinceList = qProvinces;
       this.provinceSelect = [];
-      this.provinceSelect.push({ value: "", data: "" });
+      this.provinceSelect.push({ value: "", data: "", seletedItem:" " });
       for (let type of this.provinceList) {
         if (!this.province) {
           this.province = type.id_province;
         }
-        this.provinceSelect.push({ value: type.id_province, data: type.name });
+        this.provinceSelect.push({ value: type.id_province, data: type.name,seletedItem:" " });
       }
     });
   }
@@ -225,11 +226,13 @@ export class UserRegisterComponent implements OnInit {
     this._userService.getCantonList(id_provincia).then((qCantones) => {
       this.cantonList = qCantones;
       this.cantonSelect = [];
+      this.cantonSelect.push({ value: "", data: "",seletedItem:" " });
+
       for (let type of this.cantonList) {
         if (!this.canton) {
           this.canton = type.id_canton;
         }
-        this.cantonSelect.push({ value: type.id_canton, data: type.name });
+        this.cantonSelect.push({ value: type.id_canton, data: type.name, seletedItem:" " });
       }
     });
   }
@@ -239,6 +242,7 @@ export class UserRegisterComponent implements OnInit {
  * @param event 
  */
   getCantonSelect(event: string) {
+    console.log("Canton seleccionado");
     this.canton = event;
     this.userObj.person.parroquia.canton.id_canton = this.canton;
     this.getParroquia(this.canton);
@@ -253,12 +257,13 @@ export class UserRegisterComponent implements OnInit {
 
       this.parroquiaSelect = [];
       var parroquiaList = qParroquia;
+      this.parroquiaSelect.push({ value: " ", data: " ", seletedItem:" " });
 
       for (let id in parroquiaList) {
         if (!this.parroquia) {
           this.parroquia = parroquiaList[id].id_parroquia;
         }
-        this.parroquiaSelect.push({ value: parroquiaList[id].id_parroquia, data: parroquiaList[id].name });
+        this.parroquiaSelect.push({ value: parroquiaList[id].id_parroquia, data: parroquiaList[id].name,seletedItem:" " });
       }
     });
   }
@@ -268,6 +273,7 @@ export class UserRegisterComponent implements OnInit {
    * @param event 
    */
   getParroquiaSelect(event: string) {
+    console.log("Parroquia seleccionado");
     this.parroquia = event;
     this.userObj.person.parroquia.id_parroquia = this.parroquia;
   }

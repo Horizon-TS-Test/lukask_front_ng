@@ -23,6 +23,7 @@ export class Select2BootstrapComponent implements OnInit, AfterViewInit {
     $(".js-example-basic-single").select2({
       theme: "bootstrap"
     });
+    
   }
 
   ngAfterViewInit() {

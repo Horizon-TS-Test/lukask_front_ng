@@ -12,6 +12,7 @@ export class Person {
         public birthdate?: string,
         public cell_phone?: string,
         public parroquia?: Parroquia,
+        public location?: any
     ) {
         this.parroquia = new Parroquia();
     }

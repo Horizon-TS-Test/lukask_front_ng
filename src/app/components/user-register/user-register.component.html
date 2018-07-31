@@ -7,7 +7,7 @@
       </div>
 
       <div class="card-img-top d-flex flex-wrap justify-content-center align-items-center">
-        <img class="mb-1" id="defaultQuejaImg" src="/assets/images/edit-queja/window.jpg" width="100%">
+        <img class="mb-1" id="defaultQuejaImg" src="/assets/images/profile/default_profile.jpg" width="50%">
         <a href="#" (click)="newMedia($event)" class="personal-center-btn btn btn-lg btn-outline-info p-0 d-flex justify-content-center align-items-center">
           <fa name="camera"></fa>
         </a>
@@ -106,7 +106,8 @@
         <li class="list-group-item pb-0">
           <div class="col-12 pb-0">Clave :</div>
           <div class="col-12 pb-0">
-            <input type="password" name="password" #password="ngModel" [(ngModel)]="userObj.password" class="form-control pb-0 " required/>
+            <input id="inputPassword3" type="password" name="password" #password="ngModel" [(ngModel)]="userObj.password" class="form-control pb-0 "
+              required/>
             <span *ngIf="password.touched && !password.valid" class="p-validate-input">
               El password es incorrecto!
             </span>
@@ -116,7 +117,7 @@
         <li class="list-group-item pb-0">
           <div class="col-4 pb-0">Provincia :</div>
           <div class="col-8 pb-0">
-            <app-select2-bootstrap class="col-11" [fcName]="'province'" [select2Data]="provinceSelect" (select2Change)="getProvinciaSelect($event)"></app-select2-bootstrap>
+            <app-select2-bootstrap class="col-11" [fcName]="'province'" [select2Data]="provinceSelect" (select2Change)="getProvinciaSelect($event)" ></app-select2-bootstrap>
           </div>
         </li>
         <li class="list-group-item pb-0">

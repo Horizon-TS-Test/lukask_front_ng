@@ -53,8 +53,9 @@ export class UserEditComponent implements OnInit, OnDestroy {
   ) {
 
     this.userObj = this._userService.getStoredUserData();
-    console.log("Datos ****************************");
-    console.log(this.userObj);
+    this.province = this.userObj.person.location[0].province.id;
+    this.canton = this.userObj.person.location[1].canton.id
+    this.parroquia = this.userObj.person.location[2].parish.id;
 
     this.materialButtons = [
       {
@@ -82,7 +83,12 @@ export class UserEditComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.userObj.person.birthdate = this.convertDateFormat(this.userObj.person.birthdate);
     this.tempBirthdate = this.userObj.person.birthdate;
+    //Cargamos la lista de los datos
+    this.getProvince();
+    this.getCanton(this.province);
+    this.getParroquia(this.canton);
   }
+
 
 
   /**
@@ -93,12 +99,10 @@ export class UserEditComponent implements OnInit, OnDestroy {
       this.userObj.file = this.filesToUpload;
       this.userObj.fileName = this.getFormattedDate() + ".png";
     }
-    console.log("this.userObj................................");
-    console.log(this.userObj);
     this.formmatSendDate();
-    //this._userService.sendUser(this.userObj);
+    this._userService.sendUser(this.userObj);
     this.restartDate();
-    //this.closeModal.emit(true);
+    this.closeModal.emit(true);
   }
 
   /**
@@ -206,14 +210,23 @@ export class UserEditComponent implements OnInit, OnDestroy {
     this._userService.getProvinceList().then((qProvinces) => {
       this.provinceList = qProvinces;
       this.provinceSelect = [];
-      this.provinceSelect.push({ value: "", data: "" });
+      this.provinceSelect.push({ value: "", data: "", seletedItem: "" });
       for (let type of this.provinceList) {
         if (!this.province) {
           this.province = type.id_province;
         }
-        this.provinceSelect.push({ value: type.id_province, data: type.name });
+        if (this.userObj.person.location[0].province.id === type.id_province) {
+          this.provinceSelect.push({ value: type.id_province, data: type.name, seletedItem: type.id_province });
+          this.userObj.person.parroquia.canton.province.id_province = this.province;
+        } else {
+          this.provinceSelect.push({ value: type.id_province, data: type.name, seletedItem: "" });
+        }
       }
     });
+
+    //this.province = this.userObj.person.location[0].province.id_province;
+    this.getCanton(this.province);
+    this.getParroquia(this.canton);
   }
 
   /**
@@ -223,6 +236,10 @@ export class UserEditComponent implements OnInit, OnDestroy {
   getProvinciaSelect(event: string) {
     this.province = event;
     this.userObj.person.parroquia.canton.province.id_province = this.province;
+    this.parroquiaSelect = [];
+    this.cantonSelect = [];
+    this.parroquia=" ";
+    this.canton=" ";
     this.getCanton(this.province);
   }
 
@@ -233,11 +250,19 @@ export class UserEditComponent implements OnInit, OnDestroy {
     this._userService.getCantonList(id_provincia).then((qCantones) => {
       this.cantonList = qCantones;
       this.cantonSelect = [];
+      this.cantonSelect.push({ value: "", data: "", seletedItem: "" });
       for (let type of this.cantonList) {
         if (!this.canton) {
           this.canton = type.id_canton;
         }
-        this.cantonSelect.push({ value: type.id_canton, data: type.name });
+        //this.cantonSelect.push({ value: type.id_canton, data: type.name, seletedItem: "" });
+        if (this.canton === type.id_canton) {
+          this.cantonSelect.push({ value: type.id_canton, data: type.name, seletedItem: type.id_canton });
+          this.userObj.person.parroquia.canton.id_canton = this.canton;
+        } else {
+          this.cantonSelect.push({ value: type.id_canton, data: type.name, seletedItem: "" });
+        }
+
       }
     });
   }
@@ -259,14 +284,21 @@ export class UserEditComponent implements OnInit, OnDestroy {
   getParroquia(id_canton: any) {
     this._userService.getParroquiaList(id_canton).then((qParroquia) => {
 
-      this.parroquiaSelect = [];
       var parroquiaList = qParroquia;
-
+      this.parroquiaSelect = [];
+      this.parroquiaSelect.push({ value: "", data: "", seletedItem: "" });
+      
       for (let id in parroquiaList) {
         if (!this.parroquia) {
           this.parroquia = parroquiaList[id].id_parroquia;
         }
-        this.parroquiaSelect.push({ value: parroquiaList[id].id_parroquia, data: parroquiaList[id].name });
+        //this.parroquiaSelect.push({ value: parroquiaList[id].id_parroquia, data: parroquiaList[id].name, seletedItem: "" });
+        if (this.parroquia === parroquiaList[id].id_parroquia) {
+          this.parroquiaSelect.push({ value: parroquiaList[id].id_parroquia, data: parroquiaList[id].name, seletedItem: parroquiaList[id].id_parroquia });
+          this.userObj.person.parroquia.id_parroquia = this.parroquia;
+        } else {
+          this.parroquiaSelect.push({ value: parroquiaList[id].id_parroquia, data: parroquiaList[id].name, seletedItem: "" });
+        }
       }
     });
   }
