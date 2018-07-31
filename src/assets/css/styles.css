@@ -1211,7 +1211,7 @@ p, label, div {
   font-size: 1.3rem; }
 
 .focused-btn {
-  background: #5dbeb6 !important;
+  background: #004360 !important;
   border-radius: 50%;
   position: absolute;
   animation: cd-bounce-infinit 1.2s infinite; }

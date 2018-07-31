@@ -14,18 +14,18 @@ var SYNC_TYPE = {
 
 var REST_URLS_PATTERN = {
     medios: /http:\/\/192.168.1.56:8081\/repositorio_lukask\/.*/,
-    firstPubs: /http:\/\/192.168.1.62:3000\/publication\/\?limit=[0-9]+$/,
-    morePubs: /http:\/\/192.168.1.62:3000\/publication\/\?limit=[0-9]+&offset=[0-9]+$/,
-    qtype: 'http://192.168.1.62:3000/qtype',
-    comments: /http:\/\/192.168.1.62:3000\/comment\/\?pub_id=[0-9|a-f|-]+\&(?:limit=[0-9]+|limit=[0-9]+\&offset=[0-9]+)$/,
-    replies: /http:\/\/192.168.1.62:3000\/comment\/\?com_id=[0-9|a-f|-]+\&(?:limit=[0-9]+|limit=[0-9]+\&offset=[0-9]+)\&replies=true$/,
+    firstPubs: /http:\/\/192.168.1.62:3001\/publication\/\?limit=[0-9]+$/,
+    morePubs: /http:\/\/192.168.1.62:3001\/publication\/\?limit=[0-9]+&offset=[0-9]+$/,
+    qtype: 'http://192.168.1.62:3001/qtype',
+    comments: /http:\/\/192.168.1.62:3001\/comment\/\?pub_id=[0-9|a-f|-]+\&(?:limit=[0-9]+|limit=[0-9]+\&offset=[0-9]+)$/,
+    replies: /http:\/\/192.168.1.62:3001\/comment\/\?com_id=[0-9|a-f|-]+\&(?:limit=[0-9]+|limit=[0-9]+\&offset=[0-9]+)\&replies=true$/,
 };
 
 var REST_URLS = {
-    pub: 'http://192.168.1.62:3000/publication',
-    comment: 'http://192.168.1.62:3000/comment',
-    relevance: 'http://192.168.1.62:3000/relevance',
-    user: 'http://192.168.1.62:3000/user',
+    pub: 'http://192.168.1.62:3001/publication',
+    comment: 'http://192.168.1.62:3001/comment',
+    relevance: 'http://192.168.1.62:3001/relevance',
+    user: 'http://192.168.1.62:3001/user',
 };
 
 workbox.precaching.suppressWarnings();
