@@ -85,6 +85,14 @@ export class PaymentsCardComponent implements OnInit {
     }
   }
 
+  /**
+   * MÉTODO PARA 
+   */
+  requestClosePop(event: any) {
+    event.preventDefault();
+    this.closePop.emit(true);
+  }
+
   setAlert() {
     this._notifierService.sendAlert(this.alertData);
   }

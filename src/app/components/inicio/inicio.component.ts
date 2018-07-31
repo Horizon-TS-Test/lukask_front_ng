@@ -20,13 +20,12 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   private pubContainer: any;
   private customCarousel: any;
   private subscriptor: Subscription;
-
+  private alertData: Alert;
 
   public enableSecondOp: boolean;
   public enableThirdOp: boolean;
   public carouselOptions: any;
   public focusedPubId: string;
-  private alertData: Alert;
 
   constructor(
     private _contentService: ContentService,
@@ -51,25 +50,29 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
 
-
     this.initCarousel();
-    this.socket();
-
+    this.paymentSocketUpdate();
   }
 
-  socket() {
-    this._socket._responsepayment.subscribe(
+  /**
+   * MÉTODO PARA ESCUCHAR LA RESPUESTA DEL PAGO DE SERVICIOS BÁSICOS:
+   */
+  paymentSocketUpdate() {
+    this._socket._paymentResponse.subscribe(
       (socketPago: any) => {
         const data = JSON.parse(socketPago);
         console.log("CORREO DEL USUARIO QUE PAGA EL SERVICO: ", data.data.email);
         if (data) {
-          this.alertData = new Alert({ title: "SU PAGO FUE EXITOSO", message: data.data.email, type: ALERT_TYPES.success });
+          this.alertData = new Alert({ title: "Proceso Correcto", message: "Pago exitoso de servicios básicos de la cuenta de usuario: " + data.data.email, type: ALERT_TYPES.success });
           this.setAlert();
           this._socket.confimPayResp();
         }
       });
   }
 
+  /**
+   * MÉTODO PARA MOSTRAR UN MENSAJE DE ALERTA EN EL DOM
+   */
   setAlert() {
     this._notifierService.sendAlert(this.alertData);
   }

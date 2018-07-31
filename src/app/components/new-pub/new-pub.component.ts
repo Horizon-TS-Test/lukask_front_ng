@@ -4,6 +4,8 @@ import { ACTION_TYPES } from '../../config/action-types';
 import { OnSubmit } from '../../interfaces/on-submit.interface';
 import { NotifierService } from '../../services/notifier.service';
 import { CONTENT_TYPES } from '../../config/content-type';
+import { Alert } from '../../models/alert';
+import { ALERT_TYPES } from '../../config/alert-types';
 
 declare var $: any;
 
@@ -15,6 +17,8 @@ declare var $: any;
 export class NewPubComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() showClass: string;
   @Output() closeModal = new EventEmitter<boolean>();
+
+  private alertData: Alert;
 
   public startCamera: boolean;
   public initStream: boolean;
@@ -106,12 +110,18 @@ export class NewPubComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   /**
+   * MÉTODO PARA MOSTRAR UN ALERTA EN EL DOM:
+   */
+  setAlert() {
+    this._notifierService.sendAlert(this.alertData);
+  }
+
+  /**
    * MÉTODO PARA PROCESAR EL FORMULARIO DESPUÉS DEL SUBMIT:
    * @param event OBJETO DE TIPO INTERFACE ON-SUBMIT QUE LLEGA DESDE EL EVENT EMITTER
    */
   public onSubmitForm(event: OnSubmit) {
-    this.showLoadingContent(!event.finished);
-    if (event.finished == true && !event.hasError) {
+    if (event.finished == true && event.hasError == false) {
       switch (this.actionType) {
         case ACTION_TYPES.submitPub:
           this.closeModal.emit(true);
@@ -125,7 +135,16 @@ export class NewPubComponent implements OnInit, AfterViewInit, OnChanges {
           this.enableStream();
           break;
       }
+
+      this.alertData = new Alert({ title: 'Proceso Correcto', message: event.message, type: ALERT_TYPES.success });
     }
+    else {
+      this.alertData = new Alert({ title: 'Proceso Fallido', message: event.message, type: ALERT_TYPES.danger });
+    }
+    setTimeout(() => {
+      this.showLoadingContent(!event.finished);
+      this.setAlert();
+    }, 200)
   }
 
   /**
@@ -150,7 +169,10 @@ export class NewPubComponent implements OnInit, AfterViewInit, OnChanges {
   public getButtonAction(actionEvent: number) {
     switch (actionEvent) {
       default:
-        this.actionType = actionEvent;
+        this.actionType = null;
+        setTimeout(() => {
+          this.actionType = actionEvent;
+        });
         this.showLoadingContent(true);
         break;
       case ACTION_TYPES.viewComments:

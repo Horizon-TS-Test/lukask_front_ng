@@ -164,6 +164,17 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges {
    * MÉTODO PARA ENVIAR UNA QUEJA HACIA EL SERVIDOR PARA ALMACENARLO EN LA BASE DE DATOS:
    */
   public sendPub() {
+    if (!this.formPub.value.fcnDetail || !this.quejaType) {
+      this.afterSubmit.emit({ finished: true, dataAfterSubmit: null, hasError: true, message: "No se admiten campos vacíos" });
+
+      return;
+    }
+    if (this.formPub.value.fcnDetail.replace(" ", "").length == 0) {
+      this.afterSubmit.emit({ finished: true, dataAfterSubmit: null, hasError: true, message: "No se admiten campos vacíos" });
+
+      return;
+    }
+
     this.newPub = new Publication("", this._gps.latitude, this._gps.longitude, this.formPub.value.fcnDetail, DateManager.getFormattedDate(), null, null, new QuejaType(this.quejaType, null), null, this._locationCity, null, null, this._locationAdress, this.isStreamPub);
     if (this.mediaFiles.length > 0) {
       for (let i = 0; i < this.mediaFiles.length; i++) {
@@ -171,10 +182,10 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges {
       }
     }
     this._quejaService.savePub(this.newPub).then((response: any) => {
-      this.afterSubmit.emit({ finished: true, dataAfterSubmit: response.id_publication });
+      this.afterSubmit.emit({ finished: true, dataAfterSubmit: response.id_publication, hasError: false, message: 'Su queja ha sido publicada exitosamente' });
       this.formPub.reset();
     }).catch((error) => {
-      this.afterSubmit.emit({ finished: true, dataAfterSubmit: null, hasError: true });
+      this.afterSubmit.emit({ finished: true, dataAfterSubmit: null, hasError: true, message: 'No se ha podido procesar la petición' });
       this.formPub.reset();
     });
   }
