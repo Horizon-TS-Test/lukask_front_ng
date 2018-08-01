@@ -1592,4 +1592,13 @@ input[type=text], input[type=password], input[type=email], input[type=number], i
       right: 0;
       left: auto; } }
 
+/*Toltip validacion - Darìo*/
+.p-validate-input {
+  color: #FAC9D9;
+  background-color: #E91E63;
+  border-radius: 5px;
+  font-size: 11px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1; }
 /*# sourceMappingURL=styles.css.map */
