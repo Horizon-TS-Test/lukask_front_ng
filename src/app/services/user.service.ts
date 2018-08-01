@@ -152,13 +152,13 @@ export class UserService {
   /**
    * MÉTODO PARA ACTUALIZAR UN PERFIL DE USUARIO EN EL BACKEND O EN SU DEFECTO PARA BACK SYNC:
    */
-/*  public saveUser(user: User) {
+  public saveUser(user: User) {
     this.sendUser(user).then((response: any) => {
       if (!(response == true)) {
         this._backSyncService.storeForBackSync('sync-user-profile', 'sync-update-user', user);
       }
     });
-  }*/
+  }
 
   /**
    * MÉTODO PARA EDITAR LOS DATOS DEL PERFIL

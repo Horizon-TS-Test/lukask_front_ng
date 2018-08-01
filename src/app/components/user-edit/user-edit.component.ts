@@ -221,6 +221,7 @@ export class UserEditComponent implements OnInit, OnDestroy, OnChanges {
         } else {
           this.provinceSelect.push({ value: type.id_province, data: type.name, selectedItem: "" });
         }
+        console.log(this.provinceSelect);
       }
     });
 
