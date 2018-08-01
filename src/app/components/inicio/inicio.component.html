@@ -1,4 +1,20 @@
-<section class="personal-content personal-fadeout min-height-full max-height-full p-overflow-auto w-100 py-0 d-flex flex-column justify-content-start align-items-center"
-    id="local-content-1">
-    <app-quejas-list></app-quejas-list>
+<section class="personal-content min-height-full personal-over-unset personal-fadeout py-0 d-flex flex-column justify-content-start align-items-center"
+  id="homeContainer">
+  <home-panel class="w-100"></home-panel>
+
+  <div id="carousel-home" class="p-top-margin-home w-100">
+    <owl-carousel class="personal-owl-nav owl-carousel" [options]="carouselOptions" [carouselClasses]="['owl-theme']">
+      <div class="p-home-full-height" id="pub-container">
+        <app-quejas-list (actionType)="optionButtonAction($event)"></app-quejas-list>
+      </div>
+      <div class="p-home-full-height">
+        <app-map-view *ngIf="enableSecondOp" [focusPubId]="focusedPubId"></app-map-view>
+        <div *ngIf="!enableSecondOp" class="personal-content min-height-full"></div>
+      </div>
+      <div class="p-home-full-height">
+        <app-pagos-inicio *ngIf="enableThirdOp"></app-pagos-inicio>
+        <div *ngIf="!enableThirdOp" class="personal-content min-height-full"></div>
+      </div>
+    </owl-carousel>
+  </div>
 </section>

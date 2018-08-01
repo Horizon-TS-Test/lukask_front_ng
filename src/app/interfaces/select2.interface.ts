@@ -1,5 +1,5 @@
 export interface Select2 {
     data: string;
     value: string;
-    seletedItem: string;
+    selectedItem?: string;
 }

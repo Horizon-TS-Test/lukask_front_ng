@@ -6,6 +6,7 @@ import { throwError } from 'rxjs';
 import { UserService } from './user.service';
 import * as lodash from 'lodash';
 import { BackSyncService } from './back-sync.service';
+import { DateManager } from '../tools/date-manager';
 
 declare var readAllData: any;
 declare var upgradeTableFieldData: any;
@@ -47,12 +48,12 @@ export class ActionService {
     });
     let flag = true;
 
-    if (moreComments && !pagePattern) {
+    if (moreComments == true && !pagePattern) {
       flag = false;
     }
 
     if (flag) {
-      let filter = ((!isReplies) ? "/?pub_id=" + parentId : "/?com_id=" + parentId) + ((pagePattern) ? pagePattern : "&limit=" + this.pageLimit) + ((isReplies) ? "&replies=true" : "");
+      let filter = ((!isReplies) ? "/?pub_id=" + parentId : "/?com_id=" + parentId) + ((pagePattern && moreComments == true) ? pagePattern : "&limit=" + this.pageLimit) + ((isReplies) ? "&replies=true" : "");
 
       return this._http.get(REST_SERV.commentUrl + filter, {
         headers: requestHeaders,
@@ -78,12 +79,10 @@ export class ActionService {
           }
         })
         .catch((error: Response) => {
-          /*if (error.json().code == 401) {
+          if (error.json().code == 401) {
             localStorage.clear();
-          }*/
-          //return throwError(error.json());
-          console.log(error);
-          return throwError(error);
+          }
+          return throwError(error.json());
         });
     }
     return new Promise((resolve, reject) => {
@@ -209,6 +208,8 @@ export class ActionService {
     });
   }
 
+  
+
   /**
    * MÉTODO PARA GUARDAR UN COMENTARIO O UNA RESPUESTA A UN COMENTARIO:
    * @param comment EL COMENTARIO O RESPUESTA A ENVIAR
@@ -224,7 +225,11 @@ export class ActionService {
       description: comment.description,
       id_publication: comment.publicationId,
       action_parent: (comment.commentParentId) ? comment.commentParentId : "",
-      active: true
+      date: comment.dateRegister,
+      active: true,
+      userId: this._userService.getUserProfile().id,
+      userName: this._userService.getUserProfile().person.name,
+      userImage: this._userService.getUserProfile().profileImg
     });
 
     return this._http.post(REST_SERV.commentUrl, requestBody, { headers: requestHeaders, withCredentials: true })
@@ -267,7 +272,11 @@ export class ActionService {
       description: comment.description,
       id_publication: comment.publicationId,
       action_parent: (comment.commentParentId) ? comment.commentParentId : "",
-      active: comment.active
+      date: comment.dateRegister,
+      active: true,
+      userId: this._userService.getUserProfile().id,
+      userName: this._userService.getUserProfile().person.name,
+      userImage: this._userService.getUserProfile().profileImg
     }
     /////
 
@@ -277,22 +286,25 @@ export class ActionService {
   /**
    * MÉTODO PARA GUARDAR UN NUEVO REGISTRO DE APOYO A UNA PUBLICACIÓN:
    */
-  public sendRelevance(pubId: string, isRelevance: boolean) {
-    const requestHeaders = new Headers(
-      {
-        'Content-Type': 'application/json',
-        'X-Access-Token': this._userService.getUserKey()
-      }
-    );
+  public sendRelevance(pubId: string, parentCommentId: string, isRelevance: boolean) {
+    const requestHeaders = new Headers({
+      'Content-Type': 'application/json',
+      'X-Access-Token': this._userService.getUserKey()
+    });
     const requestBody = JSON.stringify({
       id_publication: pubId,
-      active: isRelevance
+      action_parent: parentCommentId,
+      active: isRelevance,
+      date: DateManager.getFormattedDate(),
+      userId: this._userService.getUserProfile().id,
+      userName: this._userService.getUserProfile().person.name,
+      userImage: this._userService.getUserProfile().profileImg
     });
 
     return this._http.post(REST_SERV.relevanceUrl, requestBody, { headers: requestHeaders, withCredentials: true })
       .toPromise()
       .then((response: Response) => {
-        this.isPostedRelevance = false;
+        this.isPostedRelevance = true;
         let respJson = response.json().data.active;
 
         return respJson;
@@ -302,10 +314,10 @@ export class ActionService {
   /**
    * MÉTODO PARA GUARDAR UN NUEVO COMENTARIO O RESPUESTA EN EL BACKEND O EN SU DEFECTO PARA BACK SYNC:
    */
-  public saveRelevance(pubId: string, isRelevance: boolean) {
-    return this.sendRelevance(pubId, isRelevance).then((response) => {
+  public saveRelevance(pubId: string, parentCommentId: string, isRelevance: boolean) {
+    return this.sendRelevance(pubId, parentCommentId, isRelevance).then((response) => {
       if (!this.isPostedRelevance) {
-        return this._backSyncService.storeForBackSync('sync-relevance', 'sync-new-relevance', this.mergeJSONData(new Comment(null, null, pubId, null, null, isRelevance)));
+        return this._backSyncService.storeForBackSync('sync-relevance', 'sync-new-relevance', { id: new Date().toISOString(), id_publication: pubId, action_parent: parentCommentId, active: isRelevance, userId: this._userService.getUserProfile().id, userName: this._userService.getUserProfile().person.name, userImage: this._userService.getUserProfile().profileImg });
       }
       else {
         this.isPostedRelevance = false;
@@ -322,6 +334,6 @@ export class ActionService {
   public extractCommentJson(jsonComment: any) {
     let usr = this._userService.extractUserJson(jsonComment.user_register);
 
-    return new Comment(jsonComment.id_action, jsonComment.description, jsonComment.publication, usr, jsonComment.action_parent);
+    return new Comment(jsonComment.id_action, jsonComment.description, jsonComment.publication, usr, jsonComment.action_parent, jsonComment.active, jsonComment.date_register, jsonComment.user_relevance ? jsonComment.user_relevance : false, jsonComment.count_relevance);
   }
 }

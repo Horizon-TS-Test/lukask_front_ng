@@ -1,0 +1,7 @@
+<a href="#" (click)="viewProfile($event)">
+  <div [ngClass]="{
+    'personal-profile-img': !isCommentProfile,
+    'pers-profile-img-comen': isCommentProfile 
+  }" [style.background-image]="secProfileImg">
+  </div>
+</a>

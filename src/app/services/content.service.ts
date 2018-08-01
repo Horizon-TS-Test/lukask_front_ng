@@ -35,39 +35,12 @@ export class ContentService {
   /**
    * MÉTODO PARA DAR UN EFECTO FADE-IN A UN COMPONENTE AL ABRIRSE POR PRIMERA VEZ:
    */
-  fadeInComponent() {
-    let component = $(".personal-fadeout");
-
+  fadeInComponent(component: any) {
     setTimeout(() => {
       if (!component.hasClass("personal-fadein")) {
         component.addClass("personal-fadein");
       }
-    }, /*2000*/0);
-  }
-
-  /**
-   * MÉTODO PARA DAR UN EFECTO SLIDE DOWN-UP A UN ELEMENTO DEL DOM, 
-   * GENERALMENTE USADO EN LA APERTURA DE UN HORIZON MODAL
-   * @param contentLayer EL ELEMENTO A APLICAR EL EFECTO TRANSITORIO
-   * @param slideUp TRUE PARA MOSTRAR EL ELEMENTO, CON EFECTO TRANSITORIO / FALSE PARA OCULTAR EL ELEMENTO, CON EFECTO TRANSITORIO
-   */
-  slideDownUp(contentLayer, slideUp: boolean = true) {
-    if (slideUp) {
-      if (!contentLayer.hasClass("show-dyna-cont")) {
-        contentLayer.parent().find(".fixed-background").addClass("on");
-        contentLayer.addClass("show-dyna-cont");
-        contentLayer.find(".personal-dyna-down").addClass("show");
-        contentLayer.find(".personal-material-btn").addClass("show");
-      }
-    }
-    else {
-      if (contentLayer.hasClass("show-dyna-cont")) {
-        contentLayer.parent().find(".fixed-background").removeClass("on");
-        contentLayer.removeClass("show-dyna-cont");
-        contentLayer.find(".personal-dyna-down").removeClass("show");
-        contentLayer.find(".personal-material-btn").removeClass("show");
-      }
-    }
+    }, 0);
   }
 
   /**
@@ -114,7 +87,12 @@ export class ContentService {
   isBottomScroll(domElement: any) {
     let elementScroll = domElement.scrollTop();
     let elementHeight = domElement.height();
-    let docHeight = domElement.children().first().height();
+    let docHeight = 0;
+
+    domElement.children().first().children().each((index, element) => {
+      docHeight = docHeight + $(element).height();
+    });
+
     if (elementScroll + elementHeight >= docHeight - 10) {
       return true;
     }
@@ -180,6 +158,8 @@ export class ContentService {
 
     navContainer.find("a").each((index, element) => {
       if ($(element).attr("id") === idContent) {
+        $(element).addClass("focused");
+        $(element).siblings().removeClass("focused");
         menuFocus.css({
           left: optionLeft,
           width: $(element).width()
@@ -191,6 +171,23 @@ export class ContentService {
         optionLeft += $(element).width();
       }
     });
+  }
+
+  /**
+   * MÉTODO PARA OCULTAR O MOSTRAR EL SCROLL DEL BODY PRINCIPAL AL ABRIR O CERRAR UN HORIZON-MODAL
+   * @param hide 
+   */
+  public manageBodyOverflow(hide: boolean = false) {
+    if (!hide) {
+      if (!$("body").hasClass("p-body-overflow")) {
+        $("body").addClass("p-body-overflow");
+      }
+    }
+    else {
+      if ($("body").hasClass("p-body-overflow")) {
+        $("body").removeClass("p-body-overflow");
+      }
+    }
   }
 
 }

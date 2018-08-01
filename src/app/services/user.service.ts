@@ -4,11 +4,10 @@ import { Person } from '../models/person';
 import { REST_SERV } from '../rest-url/rest-servers';
 import { CrytoGen } from '../tools/crypto-gen';
 import { Http, Headers, Response } from '@angular/http';
+import { BackSyncService } from './back-sync.service';
 import { Province } from '../models/province';
 import { Canton } from '../models/canton';
 import { Parroquia } from '../models/parroquia';
-import { throwError } from 'rxjs';
-
 
 declare var writeData: any;
 declare var readAllData: any;
@@ -18,6 +17,7 @@ declare var deleteItemData: any;
   providedIn: 'root'
 })
 export class UserService {
+  private isFetchedUserProfile: boolean;
   private provinceList: Province[];
   private cantonList: Canton[];
   private parroquiaList: Parroquia[];
@@ -28,10 +28,13 @@ export class UserService {
 
   public userProfile: User;
   public _userUpdate = new EventEmitter<boolean>();
+  public pageLimit: number;
 
   constructor(
-    private _http: Http
+    private _http: Http,
+    private _backSyncService: BackSyncService,
   ) {
+    this.pageLimit = 5;
     this.isFetchedProvince = false;
   }
 
@@ -41,7 +44,6 @@ export class UserService {
   public storeUserCredentials(jsonUser: any) {
     localStorage.setItem('user_key', jsonUser.user_key);
     localStorage.setItem('user_id', jsonUser.user_id);
-    this.getRestUserProfile();
   }
 
   /**
@@ -52,13 +54,13 @@ export class UserService {
     const reqHeaders = new Headers({ 'Content-Type': 'application/json', 'X-Access-Token': this.getUserKey() });
     let userId = CrytoGen.decrypt(localStorage.getItem("user_id"));
 
-    this._http.get(REST_SERV.userUrl + userId + "/", { headers: reqHeaders, withCredentials: true }).toPromise()
+    return this._http.get(REST_SERV.userUrl + "/" + userId, { headers: reqHeaders, withCredentials: true }).toPromise()
       .then((response: Response) => {
         const userJson = response.json().data;
         this.updateUserData(userJson);
-        console.log("Datos en user service");
-        console.log(userJson);
+
         console.log("[LUKASK USER SERVICE] - USER PROFILE FROM WEB", this.getUserProfile());
+        return true;
       })
       .catch((error: Response) => {
         if (error.json().code == 401) {
@@ -69,11 +71,55 @@ export class UserService {
   }
 
   /**
+   * MÉTODO PARA OBTENER LA LISTA DE USUARIOS QUE HAN APOYADO PUBLICACIONES O COMENTARIOS:
+   * @param relevanceType ID-PUBLICACIÓN O ID-COMMENTARIO
+   * @param comRelevance PARA INDICAR QUE SE NECESITA UNA LISTA DE RELEVANCIAS DE UN COMENTARIO
+   * @param pagePattern PATTERN PARA LA SIGUIENTE PÁGINA
+   * @param moreSupps PARA CARGAR MAS REGISTROS BAJO DEMANDA
+   */
+  public getUserSupporters(relevanceType: string, comRelevance: boolean, pagePattern: string = null, moreSupps: boolean = false) {
+    const reqHeaders = new Headers({
+      'Content-Type': 'application/json',
+      'X-Access-Token': this.getUserKey()
+    });
+
+    let flag = true;
+
+    if (moreSupps == true && !pagePattern) {
+      flag = false;
+    }
+
+    if (flag) {
+      let filter = ((!comRelevance) ? "/?pub_id=" + relevanceType : "/?com_id=" + relevanceType) + ((pagePattern && moreSupps == true) ? pagePattern : "&limit=" + this.pageLimit) + ((comRelevance) ? "&com_relevance=true" : "");
+
+      return this._http.get(REST_SERV.userUrl + filter, { headers: reqHeaders, withCredentials: true }).toPromise()
+        .then((response: Response) => {
+          const respJson = response.json().supporters;
+          const pattern = respJson.next;
+          const supps = respJson.results;
+          let transformedSupps: User[] = [];
+          for (let sup of supps) {
+            transformedSupps.push(this.extractUserJson(sup));
+          }
+
+          console.log("[LUKASK USER SERVICE] - SUPPORTER USERS FROM WEB", transformedSupps);
+          return { supporters: transformedSupps, pagePattern: pattern };
+        })
+        .catch((error: Response) => {
+          if (error.json().code == 401) {
+            localStorage.clear();
+          }
+          console.log(error);
+        });
+    }
+  }
+
+  /**
    * MÉTODO PARA ALMACENAR EN INDEXED DB EL ID DE USUARIO LOGEADO:
    * @param userId 
    */
   private storeUserIndexedTable(userKey: any, userData: any) {
-    if ('serviceWorker' in navigator && 'SyncManager' in window && 'indexedDB' in window) {
+    if ('serviceWorker' in window && 'indexedDB' in window) {
       readAllData('ownuser')
         .then((tableData) => {
           if (tableData.length == 0) {
@@ -104,15 +150,26 @@ export class UserService {
   }
 
   /**
-   * MÉTODO PARA REGISTRAR LOS DATOS DEL PERFIL
+   * MÉTODO PARA ACTUALIZAR UN PERFIL DE USUARIO EN EL BACKEND O EN SU DEFECTO PARA BACK SYNC:
    */
-  public registerUser(user: User) {
-    let userFormData: FormData = this.mergeFormDataPost(user);
-    this.postUserClient(userFormData)
+/*  public saveUser(user: User) {
+    this.sendUser(user).then((response: any) => {
+      if (!(response == true)) {
+        this._backSyncService.storeForBackSync('sync-user-profile', 'sync-update-user', user);
+      }
+    });
+  }*/
+
+  /**
+   * MÉTODO PARA EDITAR LOS DATOS DEL PERFIL
+   */
+  public sendUser(user: User) {
+    let userFormData: FormData = this.mergeFormData(user);
+    return this.patchUserClient(userFormData)
       .then(
         (response: any) => {
-          console.log(response);
-          //this.updateUserData(response);
+          this.updateUserData(response);
+          return true;
         },
         (err) => {
           console.log(err);
@@ -121,36 +178,9 @@ export class UserService {
   }
 
   /**
-   * MÉTODO PARA ENVIAR MEDIANTE POST LOS DATOS DEL PERFIL
-   * @param userFormData 
-  */
-  postUserClient(userFormData: FormData) {
-    return new Promise((resolve, reject) => {
-      let xhr = new XMLHttpRequest();
-      xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4) {
-          if (xhr.status === 201) {
-            let resp = JSON.parse(xhr.response).data;
-            resolve(resp);
-          } else {
-            if (xhr.status == 401) {
-              localStorage.clear();
-            }
-            reject(xhr.response);
-          }
-        }
-      };
-      xhr.open("post", REST_SERV.signUrl, true);
-      xhr.setRequestHeader('X-Access-Token', this.getUserKey());
-      xhr.withCredentials = true;
-      xhr.send(userFormData);
-    });
-  }
-
-  /**
     * MÉTODO PARA TOMAR LOS DATOS QUE BIENEN POR POST PARA REGISTRO
     */
-  mergeFormDataPost(user: User) {
+  mergeFormData(user: User) {
     let formData = new FormData();
 
     formData.append('id', user.id);
@@ -175,60 +205,17 @@ export class UserService {
   }
 
   /**
-   * MÉTODO PARA EDITAR LOS DATOS DEL PERFIL
-   */
-  public sendUser(user: User) {
-    let userFormData: FormData = this.mergeFormData(user);
-    this.patchUserClient(userFormData)
-      .then(
-        (response: any) => {
-          this.updateUserData(response);
-        },
-        (err) => {
-          console.log(err);
-        }
-      );
-  }
-
-  /**
-   * MÉTODO PARA TOMAR LOS DATOS QUE BIENEN POR POST 
-   */
-  mergeFormData(user: User) {
-    let formData = new FormData();
-
-    formData.append('id', user.id);
-    formData.append('email', user.username);
-    formData.append('person_id', user.person.id_person);
-    formData.append('age', user.person.age + "");
-    formData.append('identification_card', user.person.identification_card);
-    formData.append('name', user.person.name);
-    formData.append('last_name', user.person.last_name);
-    formData.append('telephone', user.person.telephone);
-    formData.append('address', user.person.address);
-    formData.append('cell_phone', user.person.cell_phone);
-    formData.append('birthdate', user.person.birthdate);
-    formData.append('user_file', user.file, user.fileName);
-    formData.append('province', user.person.parroquia.canton.province.id_province);
-    formData.append('canton', user.person.parroquia.canton.id_canton);
-    formData.append('parroquia', user.person.parroquia.id_parroquia);
-    formData.append('is_active', "true");
-
-    return formData;
-  }
-
-
-
-  /**
    * MÉTODO PARA ENVIAR MEDIANTE POST LOS DATOS DEL PERFIL
    * @param userFormData 
    */
-  patchUserClient(userFormData: FormData) {
+  postUserClient(userFormData: FormData) {
     return new Promise((resolve, reject) => {
       let xhr = new XMLHttpRequest();
       xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
           if (xhr.status === 200) {
             let resp = JSON.parse(xhr.response).data;
+            console.log(JSON.parse(xhr.response));
             resolve(resp);
           }
           else {
@@ -239,12 +226,14 @@ export class UserService {
           }
         }
       };
-      xhr.open("post", REST_SERV.userUrl + userFormData.get("id"), true);
+      xhr.open("post", REST_SERV.signUrl + userFormData.get("id"), true);
       xhr.setRequestHeader('X-Access-Token', this.getUserKey());
       xhr.withCredentials = true;
       xhr.send(userFormData);
     });
   }
+
+  
 
   /**
    * MÉTODO PARA EXTRAER LOS DATOS DE USUARIO DE UN JSON STRING Y GUARDARLO EN UN OBJETO DE TIPO MODELO USER
@@ -252,10 +241,12 @@ export class UserService {
    */
   extractUserJson(jsonUser: any) {
     let user: User;
+
     jsonUser.media_profile = (jsonUser.media_profile.indexOf("http") == -1) ? REST_SERV.mediaBack + jsonUser.media_profile : jsonUser.media_profile;
-    user = new User(jsonUser.email, '', jsonUser.media_profile, true, null, null, jsonUser.id);
-    user.person = new Person(jsonUser.person.id_person, jsonUser.person.age, jsonUser.person.identification_card, jsonUser.person.name, jsonUser.person.last_name, jsonUser.person.telephone, jsonUser.person.address, jsonUser.person.birthdate, jsonUser.person.cell_phone, jsonUser.person.location);
-    user.person.location=jsonUser.person.location;
+    user = new User(jsonUser.email, '', jsonUser.media_profile, jsonUser.is_active, null, null, jsonUser.id);
+    user.person = new Person(jsonUser.person.id_person, jsonUser.person.age, jsonUser.person.identification_card, jsonUser.person.name, jsonUser.person.last_name, jsonUser.person.telephone, jsonUser.person.address, jsonUser.person.active, jsonUser.person.birthdate, jsonUser.person.cell_phone);
+	user.person.location = jsonUser.person.location;
+	
     return user;
   }
 
@@ -265,6 +256,7 @@ export class UserService {
   getStoredUserData() {
     let storedData = localStorage.getItem('user_data');
     let userData = CrytoGen.decrypt(storedData);
+
     return this.extractUserJson(JSON.parse(userData));
   }
 
@@ -283,7 +275,6 @@ export class UserService {
     return user_key;
   }
 
-
   /**
    * MÉTODO PARA TOMAR LOS DATOS DEL USUARIO EN UNA VARIABLE GLOBAL DISPONIBLE PARA TODA LA APLICACIÓN:
    */
@@ -295,8 +286,12 @@ export class UserService {
    * MÉTODO PARA OBTENER EL OBJETO USER PROFILE QUE CONTIENE LOS DATOS DEL USUARIO DESENCRIPTADOS:
    */
   public getUserProfile() {
+    if (!this.userProfile) {
+      this.userProfile = this.getStoredUserData();
+    }
     return this.userProfile;
   }
+
 
   /**
    * MÉTODO PARA OBTENER LAS PROVINCIAS
@@ -319,15 +314,18 @@ export class UserService {
       if (error.json().code == 401) {
         localStorage.clear();
       }
-      return throwError(error.json());
+      console.log(error.json());
     });
   }
 
   getProvinceWeb() {
+       
     const qTheaders = new Headers({ 'Content-Type': 'application/json' });
 
     return this._http.get(REST_SERV.provinceUrl, { headers: qTheaders, withCredentials: true }).toPromise()
       .then((response: Response) => {
+        console.log("response///////////////////////////////////");
+        console.log(response);
         const qtypes = response.json().data.results;
         let transformedProvinces: Province[] = [];
         for (let type of qtypes) {
@@ -341,7 +339,7 @@ export class UserService {
         if (error.json().code == 401) {
           localStorage.clear();
         }
-        return throwError(error.json());
+        console.log(error.json());
       });
   }
 
@@ -384,13 +382,13 @@ export class UserService {
       if (error.json().code == 401) {
         localStorage.clear();
       }
-      return throwError(error.json());
+      console.log(error.json());
     });
   }
 
   getCantonWeb(id_provincia: any) {
     const qTheaders = new Headers({ 'Content-Type': 'application/json' });
-    return this._http.get(REST_SERV.cantonUrl + id_provincia, { headers: qTheaders, withCredentials: true }).toPromise()
+    return this._http.get(REST_SERV.cantonUrl +"/"+ id_provincia, { headers: qTheaders, withCredentials: true }).toPromise()
       .then((response: Response) => {
         const qtypes = response.json().data;
         let transformedCantones: Canton[] = [];
@@ -404,7 +402,7 @@ export class UserService {
         if (error.json().code == 401) {
           localStorage.clear();
         }
-        return throwError(error.json());
+        console.log(error.json());
       });
   }
 
@@ -437,13 +435,13 @@ export class UserService {
       if (error.json().code == 401) {
         localStorage.clear();
       }
-      return throwError(error.json());
+      console.log(error.json());
     });
   }
 
   getParroquiaWeb(canton_id: any) {
     const qTheaders = new Headers({ 'Content-Type': 'application/json' });
-    return this._http.get(REST_SERV.parroquiaUrl + canton_id, { headers: qTheaders, withCredentials: true }).toPromise()
+    return this._http.get(REST_SERV.parroquiaUrl +"/"+ canton_id, { headers: qTheaders, withCredentials: true }).toPromise()
       .then((response: Response) => {
         const qtypes = response.json().data.parishs;
         let transformedParroquias: Parroquia[] = [];
@@ -458,7 +456,7 @@ export class UserService {
         if (error.json().code == 401) {
           localStorage.clear();
         }
-        return throwError(error.json());
+        console.log(error.json());
       });
   }
 
@@ -479,4 +477,48 @@ export class UserService {
     });
   }
 
+  /**
+   * MÉTODO PARA ENVIAR MEDIANTE POST LOS DATOS DEL PERFIL
+   * @param userFormData 
+   */
+  patchUserClient(userFormData: FormData) {
+    return new Promise((resolve, reject) => {
+      let xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            let resp = JSON.parse(xhr.response).data;
+            resolve(resp);
+          }
+          else {
+            if (xhr.status == 401) {
+              localStorage.clear();
+            }
+            reject(xhr.response);
+          }
+        }
+      };
+      xhr.open("post", REST_SERV.userUrl + userFormData.get("id"), true);
+      xhr.setRequestHeader('X-Access-Token', this.getUserKey());
+      xhr.withCredentials = true;
+      xhr.send(userFormData);
+    });
+  }
+
+  /**
+   * MÉTODO PARA REGISTRAR LOS DATOS DEL PERFIL
+   */
+  public registerUser(user: User) {
+    let userFormData: FormData = this.mergeFormData(user);
+    this.postUserClient(userFormData)
+      .then(
+        (response: any) => {
+          console.log(response);
+          //this.updateUserData(response);
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+  }
 }

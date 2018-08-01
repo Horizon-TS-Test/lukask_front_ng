@@ -9,21 +9,23 @@ var SYNC_TYPE = {
     pubSyn: 'sync-new-pub',
     comSyn: 'sync-new-comment',
     relSyn: 'sync-new-relevance',
+    userSyn: 'sync-update-user',
 };
 
 var REST_URLS_PATTERN = {
-    medios: /http:\/\/192.168.1.58:8081\/repositorio_lukask\/.*/,
-    firstPubs: /http:\/\/192.168.1.37:3000\/publication\/\?limit=[0-9]+$/,
-    morePubs: /http:\/\/192.168.1.37:3000\/publication\/\?limit=[0-9]+&offset=[0-9]+$/,
-    qtype: 'http://192.168.1.37:3000/qtype',
-    comments: /http:\/\/192.168.1.37:3000\/comment\/\?pub_id=[0-9|a-f|-]+\&(?:limit=[0-9]+|limit=[0-9]+\&offset=[0-9]+)$/,
-    replies: /http:\/\/192.168.1.37:3000\/comment\/\?com_id=[0-9|a-f|-]+\&(?:limit=[0-9]+|limit=[0-9]+\&offset=[0-9]+)\&replies=true$/,
+    medios: /http:\/\/192.168.1.56:8081\/repositorio_lukask\/.*/,
+    firstPubs: /http:\/\/192.168.1.62:3001\/publication\/\?limit=[0-9]+$/,
+    morePubs: /http:\/\/192.168.1.62:3001\/publication\/\?limit=[0-9]+&offset=[0-9]+$/,
+    qtype: 'http://192.168.1.62:3001/qtype',
+    comments: /http:\/\/192.168.1.62:3001\/comment\/\?pub_id=[0-9|a-f|-]+\&(?:limit=[0-9]+|limit=[0-9]+\&offset=[0-9]+)$/,
+    replies: /http:\/\/192.168.1.62:3001\/comment\/\?com_id=[0-9|a-f|-]+\&(?:limit=[0-9]+|limit=[0-9]+\&offset=[0-9]+)\&replies=true$/,
 };
 
 var REST_URLS = {
-    pub: 'http://192.168.1.37:3000/publication',
-    comment: 'http://192.168.1.37:3000/comment',
-    relevance: 'http://192.168.1.37:3000/relevance',
+    pub: 'http://192.168.1.62:3001/publication',
+    comment: 'http://192.168.1.62:3001/comment',
+    relevance: 'http://192.168.1.62:3001/relevance',
+    user: 'http://192.168.1.62:3001/user',
 };
 
 workbox.precaching.suppressWarnings();
@@ -206,10 +208,10 @@ workbox.routing.registerRoute(function (routeData) {
  * MÉTODO PARA OBTENER EL ID DEL USUARIO DESDE EL STORAGE PARA ENVIAR UN FETCH REQUEST:
  */
 function getUserId() {
-    return readAllData('user')
+    return readAllData('ownuser')
         .then((tableData) => {
             for (let user of tableData) {
-                return user.user_id;
+                return user.user_key;
             }
         });
 }
@@ -223,13 +225,13 @@ function getUserId() {
  */
 function sendData(restUrl, formData, indexedTable, syncTable) {
     getUserId()
-        .then(function (userId) {
+        .then(function (userKey) {
             fetch(restUrl, {
                 method: 'POST',
                 body: formData,
                 credentials: 'include',
                 headers: {
-                    "Pass-Key": userId
+                    "Pass-Key": userKey
                 }
             }).then(function (res) {
                 console.log('[LUKASK SERVICE WORKER] Fetch response', res);
@@ -240,8 +242,9 @@ function sendData(restUrl, formData, indexedTable, syncTable) {
                                 case 'publication':
                                     verifyStoredData(indexedTable, restData.data, false);
                                     break;
+                                case '':
+                                    break;
                                 default:
-                                    console.log("indexedTable", restData.data);
                                     upgradeTableFieldData(indexedTable, restData.data);
                                     break;
                             }
@@ -281,6 +284,7 @@ self.addEventListener('sync', function (event) {
                             formData.append('date_publication', pub.date_publication);
                             formData.append('location', pub.location);
                             formData.append('address', pub.address);
+                            formData.append('is_trans', pub.is_trans);
                             for (var media of pub.media_files) {
                                 formData.append('media_files[]', media.file, media.fileName);
                             }
@@ -306,6 +310,8 @@ self.addEventListener('sync', function (event) {
                             formData.append('id_publication', com.id_publication);
                             formData.append('action_parent', com.action_parent);
                             formData.append('active', com.active);
+                            formData.append('userName', com.userName);
+                            formData.append('userImage', com.userImage);
 
                             sendData(REST_URLS.comment, formData, (com.action_parent == "") ? 'comment' : 'reply', 'sync-comment');
                         }
@@ -317,17 +323,48 @@ self.addEventListener('sync', function (event) {
             event.waitUntil(
                 readAllData('sync-relevance')
                     .then(function (data) {
-                        for (var com of data) {
-                            console.log("relevance: ", com);
-                            //SENDING COMMENT TO THE BACKEND SERVER:
+                        for (var rel of data) {
+                            console.log("relevance: ", rel);
+                            //SENDING RELEVANCE TO THE BACKEND SERVER:
                             var formData = new FormData();
                             //ALWAYS IT MUST BE "id" FOR GENERIC PURPOSES:
-                            formData.append('id', com.id);
+                            formData.append('id', rel.id);
                             //
-                            formData.append('id_publication', com.id_publication);
-                            formData.append('active', com.active);
+                            formData.append('parentId', rel.parentId);
+                            formData.append('active', rel.active);
+                            formData.append('isComment', rel.isComment);
 
                             sendData(REST_URLS.relevance, formData, 'publication', 'sync-relevance');
+                        }
+                    })
+            );
+            break;
+        case SYNC_TYPE.userSyn:
+            console.log('[LUKASK SERVICE WORKER] Syncing user to update');
+            event.waitUntil(
+                readAllData('sync-user-profile')
+                    .then(function (data) {
+                        for (var prof of data) {
+                            console.log("userProfile: ", prof);
+                            //SENDING USER PROFILE TO THE BACKEND SERVER FOR UPDATE:
+                            var formData = new FormData();
+                            //ALWAYS IT MUST BE "id" FOR GENERIC PURPOSES:
+                            formData.append('id', prof.id);
+                            //
+                            formData.append('email', prof.username);
+                            formData.append('identification_card', prof.person.identification_card);
+                            formData.append('name', prof.person.name);
+                            formData.append('last_name', prof.person.last_name);
+                            formData.append('age', prof.person.age);
+                            formData.append('birthdate', prof.person.birthdate);
+                            formData.append('cell_phone', prof.person.cell_phone);
+                            formData.append('telephone', prof.person.telephone);
+                            formData.append('address', prof.person.address);
+                            formData.append('user_file', prof.file, prof.fileName);
+                            formData.append('is_active', prof.isActive);
+
+
+                            sendData(REST_URLS.user + "/" + prof.id, formData, '', 'sync-user-profile');
                         }
                     })
             );
@@ -350,33 +387,35 @@ self.addEventListener('notificationclick', function (event) {
     var action = event.action;
 
     console.log(notification);
-    if (action == 'confirm') {
-        console.log("confirm was chosen");
-        //notification.close();
-    }
-    else {
-        console.log(action);
-        //TO MAKE THE SERVICE WORKER WAIT UNTIL THE EVENT HAS BEEN COMPLETED:
-        event.waitUntil(
-            //TO HANDLE THE TABS OF THE WEB BROWSER:
-            clients.matchAll()
-                .then(function (clientsArray) {
-                    var client = clientsArray.find(function (cli) {
-                        return cli.visibilityState === 'visible';
-                    });
+    console.log("la acción es: " + action);
+    //TO MAKE THE SERVICE WORKER WAIT UNTIL THE EVENT HAS BEEN COMPLETED:
+    event.waitUntil(
+        //TO HANDLE THE TABS OF THE WEB BROWSER:
+        clients.matchAll()
+            .then(function (clientsArray) {
+                var client = clientsArray.find(function (cli) {
+                    return cli.visibilityState === 'visible';
+                });
 
-                    //IF THE WEB BROWSER IS OPEN:
-                    if (client !== undefined) {
-                        client.navigate(notification.data.url);
+                //IF THE WEB BROWSER IS OPEN:
+                if (client !== undefined) {
+                    //NEXT IS USED TO OPEN A NEW TAB AND NAVIGATE TO THE REQUESTED URL:
+                    //client.navigate(notification.data.url);
+                    if (action.indexOf("/") !== -1) {
+                        client.navigate(action);
                         client.focus();
                     }
-                    //IF ITS CLOSED:
-                    else {
-                        clients.openWindow(notification.data.url);
+                }
+                //IF ITS CLOSED:
+                else {
+                    //clients.openWindow(notification.data.url);
+                    if (action.indexOf("/") == -1) {
+                        action = notification.data.url;
                     }
-                })
-        );
-    }
+                    clients.openWindow(action);
+                }
+            })
+    );
     notification.close();
 });
 /////
@@ -397,17 +436,63 @@ self.addEventListener('push', function (event) {
         defaultNotifData = JSON.parse(event.data.text());
     }
 
+    console.log(defaultNotifData);
+
     var options = {
+        "//": "Visual Options",
+        title: defaultNotifData.title,
         body: defaultNotifData.content,
-        icon: '/assets/images/logo/logo-1.svg',
-        badge: '/assets/images/logo/logo-1.svg',
+        dir: 'rtl',
+        icon: defaultNotifData.icon_image,
+        badge: '/assets/icons/badged-icon.png',
+        vibrate: [500, 200, 200, 100], //THIS IS FOR SOME DEVICES NOT FOR ALL
+
+        "//": "Behavioural Options",
+        tag: 'confirm-notification', //TO ALLOW NOTIFICATIONS WILL STACK AND SHOW ONE GROUP OF NOTIFICATIONS
+        //lang: 'es-US', //BCP 47
         data: {
             url: defaultNotifData.open_url
-        }
+        },
+        actions: [ //THESE ARE THE OPTIONS DISPLAYED ON THE NOTIFICATION
+            /*{
+                action: '/',
+                title: "Mural",
+                //icon: '/assets/icons/lukask-96x96.png'
+            },
+            {
+                action: '/mapview',
+                title: "Mapa",
+                //icon: '/assets/icons/lukask-96x96.png'
+            }*/
+        ]
     };
 
+    if (defaultNotifData.actions) {
+        for (var action of defaultNotifData.actions) {
+            options.actions[options.actions.length] = action;
+        }
+    }
+
     event.waitUntil(
-        self.registration.showNotification(defaultNotifData.title, options)
+        clients.matchAll()
+            .then(function (clientsArray) {
+                var client = clientsArray.find(function (cli) {
+                    return cli.visibilityState === 'visible';
+                });
+
+                //IF THE WEB BROWSER IS OPEN:
+                if (client == undefined) {
+                    self.registration.showNotification(defaultNotifData.title, options);
+                }
+                /*if (client !== undefined) {
+                    client.navigate(notification.data.url);
+                    client.focus();
+                }
+                //IF ITS CLOSED:
+                else {
+                    clients.openWindow(notification.data.url);
+                }*/
+            })
     );
 });
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////

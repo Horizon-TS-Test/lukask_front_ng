@@ -1,11 +1,8 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { ContentService } from '../../services/content.service';
+import { Component, OnInit, Output, EventEmitter, Input, SimpleChanges, OnChanges } from '@angular/core';
 import { NotifierService } from '../../services/notifier.service';
 import { CAMERA_ACTIONS } from '../../config/camera-actions';
-import { DynaContent } from '../../interfaces/dyna-content.interface';
 import { HorizonButton } from '../../interfaces/horizon-button.interface';
-
-declare var $: any;
+import { ACTION_TYPES } from '../../config/action-types';
 
 @Component({
   selector: 'new-media',
@@ -13,18 +10,16 @@ declare var $: any;
   styleUrls: ['./new-media.component.css'],
   providers: [NotifierService]
 })
-export class NewMediaComponent implements OnInit {
+export class NewMediaComponent implements OnInit, OnChanges {
+  @Input() showClass: string;
   @Output() closeModal: EventEmitter<boolean>;
-
-  private _CLOSE = 1;
-  private self: any;
 
   public cameraActions: any;
   public _ref: any;
   public matButtons: HorizonButton[];
+  public carouselOptions: any;
 
   constructor(
-    private _contentService: ContentService,
     private _notifierService: NotifierService
   ) {
     this.cameraActions = CAMERA_ACTIONS;
@@ -32,19 +27,34 @@ export class NewMediaComponent implements OnInit {
     this.closeModal = new EventEmitter<boolean>();
     this.matButtons = [
       {
-        parentContentType: 1,
-        action: this._CLOSE,
+        action: ACTION_TYPES.close,
         icon: "close"
       }
     ];
   }
 
   ngOnInit() {
-    this.self = $("#personal-media");
+    this.initCarousel();
   }
 
   ngAfterViewInit() { }
 
+  /**
+   * MÉTODO PARA DEFINIR LAS PROPIEDADES DEL CAROUSEL DE SECCIONES:
+   */
+  initCarousel() {
+    this.carouselOptions = {
+      items: 1, dots: false, loop: false, margin: 5,
+      nav: false, stagePadding: 0, autoWidth: false
+    };
+  }
+
+  /**
+   * MÉTODO PARA ENVIAR LAS DISTINTAS ACCIONES A EJECUTAR EN EL 
+   * COMPONENTE QUE ABRE LA CÁMARA PARA TOMAR FOTOGRAFÍAS:
+   * @param event 
+   * @param action EL TIPO DE ACCIÓN A REALIZAR. VER EL ARCHIVO ../../config/camera-actions.ts
+   */
   sendCameraAction(event: any, action: number) {
     if (event) {
       event.preventDefault();
@@ -53,11 +63,27 @@ export class NewMediaComponent implements OnInit {
   }
 
   /**
+   * MÉTODO PARA ESCUCHAR LOS CAMBIOS QUE SE DEN EN EL ATRIBUTO QUE VIENE DESDE EL COMPONENTE PADRE:
+   * @param changes 
+   */
+  ngOnChanges(changes: SimpleChanges) {
+    for (const property in changes) {
+      switch (property) {
+        case 'showClass':
+          if (changes[property].currentValue !== undefined) {
+            this.showClass = changes[property].currentValue;
+          }
+          break;
+      }
+    }
+  }
+  
+  /**
    * MÉTODO PARA ESCUCHAR LA ACCIÓN DEL EVENTO DE CLICK DE UN BOTÓN DINÁMICO:
    */
   getButtonAction(actionEvent: number) {
     switch (actionEvent) {
-      case this._CLOSE:
+      case ACTION_TYPES.close:
         this.sendCameraAction(event, this.cameraActions.stop_stream);
         this.closeModal.emit(true);
         break;

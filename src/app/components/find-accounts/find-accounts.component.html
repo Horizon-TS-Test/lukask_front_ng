@@ -1,0 +1,43 @@
+<div class="p-find-accounts p-border-none card">
+  <div class="card-header">
+    Busque su planilla
+  </div>
+  <div class="max-height-60 p-overflow-auto relative-background light-background {{ loadingClass }}" id="findPlanilla">
+    <div id="loading-content-pop" class="{{ activeClass }}"></div>
+    <div class="card-block p-1">
+      <img class="p-img-pop mb-1 card-img-top" width="100%">
+
+      <form [formGroup]="formAcc" id="frmA" (ngSubmit)="findAccounts()">
+        <ul class="list-group list-group-flush pb-0">
+
+          <li class="list-group-item d-flex justify-content-center">
+            Ingrese su número de cédula
+          </li>
+
+          <li class="list-group-item px-0">
+            <div class="col-12 d-flex justify-content-center align-items-center">
+              <span class="personal-site-icon mr-2">y</span>
+
+              <div class="col-7 p-0">
+                <input type="text" name="cedula" formControlName="fcnCedula" class="form-control" required>
+              </div>
+
+              <button type="submit" class="relative-background ml-4 custom-panel-btn" [ngClass]="{
+                'p-disabled': !formAcc.valid
+              }" [disabled]="!formAcc.valid">
+                <fa name="search"></fa>
+              </button>
+            </div>
+          </li>
+
+        </ul>
+      </form>
+    </div>
+
+    <div *ngIf="accounts" class="card-block py-2">
+      <ng-container *ngFor="let planilla of planillas">
+        <planilla [userPlanilla]="planilla" (closePop)="getChildAction($event)"></planilla>
+      </ng-container>
+    </div>
+  </div>
+</div>

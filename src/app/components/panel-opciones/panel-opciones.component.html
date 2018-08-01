@@ -1,29 +1,29 @@
 <div class="top-panel d-flex justify-content-end align-items-center" id="id-top-panel">
-  <div class="menu-focus">
-    <span></span>
-  </div>
-  <a [routerLink]="['/']" class="opcion f-child-full-space py-3 text-center" id="top-option-0" (click)="focusOption('top-option-0')">
-    Home
+  <div class="menu-focus"></div>
+
+  <a href="#" class="opcion f-child-full-space text-center" id="top-option-0" (click)="focusOption($event, 'top-option-0', menuOptions.home)">
+    <span class="personal-site-icon">p</span>
   </a>
 
-  <a [routerLink]="['/mapview']" class="opcion f-child-full-space py-3 text-center" id="top-option-1" (click)="focusOption('top-option-1')">
-    Mapa
+  <a href="#" class="opcion f-child-full-space text-center" id="top-option-1" (click)="focusOption($event, 'top-option-1', menuOptions.mapview)">
+    <fa name="map-marker"></fa>
   </a>
 
-  <a [routerLink]="['/']" class="opcion f-child-full-space py-3 text-center" id="top-option-2" (click)="focusOption('top-option-2')">
-    Actividad
+  <a href="#" class="opcion f-child-full-space text-center" id="top-option-2" (click)="focusOption($event, 'top-option-2', menuOptions.payment)">
+    <span class="personal-site-icon">m</span>
   </a>
 </div>
 
-<div class="bot-panel d-flex justify-content-end align-items-center">
-  <div class="p-3 w-100">
-    <a href="#" (click)="openLayer($event, contentTypes.new_queja)" class="ml-1 btn btn-outline-info">
+<div class="bot-panel d-flex justify-content-start align-items-center">
+  <div class="px-3 d-flex">
+    <a href="#" (click)="openLayer($event, contentTypes.new_pub)" class="ml-2 custom-panel-btn">
       <fa name="plus"></fa>
     </a>
-    <a href="#" *ngIf="isAble" (click)="subscribe($event)" class="ml-1 btn btn-outline-info">
-      <fa name="bell"></fa>
+    <a href="#" (click)="openLayer($event, contentTypes.view_notifs)" class="relative-background ml-2 custom-panel-btn">
+      <span *ngIf="entriesNumber > 0" class="news-number">{{ entriesNumber }}</span>
+      <fa name="inbox"></fa>
     </a>
-    <a href="#"  (click)="openLayer($event, contentTypes.edit_profile)" class="ml-1 btn btn-outline-info">
+    <a href="#" (click)="openLayer($event, contentTypes.edit_profile)" class="ml-2 custom-panel-btn">
       <fa name="cog"></fa>
     </a>
     <a href="#"  (click)="logout()" class="ml-1 btn btn-outline-info">

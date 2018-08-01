@@ -1,7 +1,10 @@
-<div id="cd-nav">
-  <a href="#" class="personal-nav-btn cd-nav-trigger" id="menu-nav">
-    <span></span>
-  </a>
-</div>
+<ng-container *ngIf="_enableMainMenu == true">
+  <div id="cd-nav" class="is-fixed">
+    <span *ngIf="newEntries && entriesNumber > 0" class="news-number news-main">{{ entriesNumber }}</span>
+    <a href="#" class="personal-nav-btn cd-nav-trigger" id="menu-nav" (click)="openPanel($event)">
+      <span class="nav-icon"></span>
+    </a>
+  </div>
 
-<app-panel-opciones></app-panel-opciones>
+  <app-panel-opciones [entriesNumber]="entriesNumber" (seenEntries)="initEntries($event)"></app-panel-opciones>
+</ng-container>

@@ -1,6 +1,6 @@
-export var CONTENT_TYPES = {
+export const CONTENT_TYPES = {
     new_media: 0,
-    new_queja: 1,
+    new_pub: 1,
     edit_queja: 2,
     view_queja: 3,
     alert: 4,
@@ -10,5 +10,13 @@ export var CONTENT_TYPES = {
     single_map: 8,
     view_img: 9,
     view_comments: 10,
-    register_profile: 7,
+    new_notification: 11,
+    view_notifs: 12,
+    view_transmission: 13,
+    support_list: 14,
+    find_accounts: 15,
+    planilla_detail: 16,
+    payment_card: 17,
+    paypal: 18,
+    register_profile: 19
 }

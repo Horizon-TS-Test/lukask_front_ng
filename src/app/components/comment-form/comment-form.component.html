@@ -1,4 +1,4 @@
-<div [ngClass]="{ 'personal-float-form p-no-border-rad-card col-12 card p-2': modalForm == true }">
+<div [ngClass]="{ 'p-no-border-rad-card col-12 card p-2': modalForm == true }">
   <form #frmComment="ngForm" class="d-flex justify-content-between w-100 pb-0" (ngSubmit)="publishComment()" [ngClass]="{ 'align-items-center': modalForm == false }">
     <div class="pers-profile-img-comen" [style.background-image]="_domSanitizer.bypassSecurityTrustStyle('url(' + commentModel.user.profileImg + ')')"></div>
 

@@ -1,0 +1,23 @@
+<div [ngClass]="{ 
+  'p-notif-container': _dynaContent,
+  'col-12 px-0': !_dynaContent
+}">
+  <a href="#" (click)="openUrl($event)" class="p-notification p-shadow-card p-no-border-rad-card card py-0" [ngClass]="{ 
+    'm-1': _dynaContent,
+    'on m-0 p-0': !_dynaContent
+  }">
+    <div class="card-block d-flex justify-content-between align-items-center w-100 py-2">
+      <div class="d-flex flex-column justify-content-between pr-1">
+        <div>
+          <b>{{ notification.user.person.name }}</b> {{ notification.description.replace(notification.user.person.name, "")
+          }}
+        </div>
+      </div>
+
+      <span class="personal-profile-img profile-img-notif" [style.background-image]="_domSanitizer.bypassSecurityTrustStyle('url(' + notification.user.profileImg + ')')"></span>
+    </div>
+    <div class="card-footer d-flex justify-content-end py-1">
+      <small>{{ notification.coolDate }}</small>
+    </div>
+  </a>
+</div>

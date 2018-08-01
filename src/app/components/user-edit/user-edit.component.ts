@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Output, OnDestroy } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output, OnDestroy, SimpleChanges, Input, OnChanges } from '@angular/core';
 import { HorizonButton } from '../../interfaces/horizon-button.interface';
 import { User } from '../../models/user';
 import { Person } from '../../models/person';
@@ -12,6 +12,7 @@ import { Province } from '../../models/province';
 import { Canton } from '../../models/canton';
 import { Parroquia } from '../../models/parroquia';
 import { Select2 } from '../../interfaces/select2.interface';
+import { DateManager } from '../../tools/date-manager';
 
 declare var $: any;
 
@@ -20,7 +21,8 @@ declare var $: any;
   templateUrl: './user-edit.component.html',
   styleUrls: ['./user-edit.component.css']
 })
-export class UserEditComponent implements OnInit, OnDestroy {
+export class UserEditComponent implements OnInit, OnDestroy, OnChanges {
+  @Input() showClass: string;
   @Output() closeModal = new EventEmitter<boolean>();
 
   private SUBMIT = 0;
@@ -39,11 +41,9 @@ export class UserEditComponent implements OnInit, OnDestroy {
   public parroquiaList: Parroquia[];
   public parroquiaSelect: Select2[];
 
-
   public materialButtons: HorizonButton[];
   public userObj: User;
   public filesToUpload: any;
-
 
   constructor(
     private _userService: UserService,
@@ -51,7 +51,6 @@ export class UserEditComponent implements OnInit, OnDestroy {
     private _cameraService: CameraService,
 
   ) {
-
     this.userObj = this._userService.getStoredUserData();
     this.province = this.userObj.person.location[0].province.id;
     this.canton = this.userObj.person.location[1].canton.id
@@ -59,12 +58,10 @@ export class UserEditComponent implements OnInit, OnDestroy {
 
     this.materialButtons = [
       {
-        parentContentType: 1,
         action: this.SUBMIT,
         icon: "check"
       },
       {
-        parentContentType: 1,
         action: this.CLOSE,
         icon: "close"
       }
@@ -97,7 +94,7 @@ export class UserEditComponent implements OnInit, OnDestroy {
   editProfile() {
     if (this.filesToUpload) {
       this.userObj.file = this.filesToUpload;
-      this.userObj.fileName = this.getFormattedDate() + ".png";
+      this.userObj.fileName = DateManager.getFormattedDate() + ".png";
     }
     this.formmatSendDate();
     this._userService.sendUser(this.userObj);
@@ -191,16 +188,19 @@ export class UserEditComponent implements OnInit, OnDestroy {
   }
 
   /**
-  * METODO PARA OBTENER LA FECHA
-  */
-  getFormattedDate() {
-    var date = new Date();
-    var str = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-    return str;
-  }
-
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
+   * MÉTODO PARA DETECTAR LOS CAMBIOS DE UNA PROPIEDAD INYECTADA DESDE EL COMPONENTE PADRE DE ESTE COMPONENTE:
+   * @param changes LOS CAMBIOS GENERADOS
+   */
+  ngOnChanges(changes: SimpleChanges) {
+    for (let property in changes) {
+      switch (property) {
+        case 'showClass':
+          if (changes[property].currentValue !== undefined) {
+            this.showClass = changes[property].currentValue;
+          }
+          break;
+      }
+    }
   }
 
   /**
@@ -210,16 +210,16 @@ export class UserEditComponent implements OnInit, OnDestroy {
     this._userService.getProvinceList().then((qProvinces) => {
       this.provinceList = qProvinces;
       this.provinceSelect = [];
-      this.provinceSelect.push({ value: "", data: "", seletedItem: "" });
+      this.provinceSelect.push({ value: "", data: "", selectedItem: "" });
       for (let type of this.provinceList) {
         if (!this.province) {
           this.province = type.id_province;
         }
         if (this.userObj.person.location[0].province.id === type.id_province) {
-          this.provinceSelect.push({ value: type.id_province, data: type.name, seletedItem: type.id_province });
+          this.provinceSelect.push({ value: type.id_province, data: type.name, selectedItem: type.id_province });
           this.userObj.person.parroquia.canton.province.id_province = this.province;
         } else {
-          this.provinceSelect.push({ value: type.id_province, data: type.name, seletedItem: "" });
+          this.provinceSelect.push({ value: type.id_province, data: type.name, selectedItem: "" });
         }
       }
     });
@@ -250,17 +250,17 @@ export class UserEditComponent implements OnInit, OnDestroy {
     this._userService.getCantonList(id_provincia).then((qCantones) => {
       this.cantonList = qCantones;
       this.cantonSelect = [];
-      this.cantonSelect.push({ value: "", data: "", seletedItem: "" });
+      this.cantonSelect.push({ value: "", data: "", selectedItem: "" });
       for (let type of this.cantonList) {
         if (!this.canton) {
           this.canton = type.id_canton;
         }
-        //this.cantonSelect.push({ value: type.id_canton, data: type.name, seletedItem: "" });
+        //this.cantonSelect.push({ value: type.id_canton, data: type.name, selectedItem: "" });
         if (this.canton === type.id_canton) {
-          this.cantonSelect.push({ value: type.id_canton, data: type.name, seletedItem: type.id_canton });
+          this.cantonSelect.push({ value: type.id_canton, data: type.name, selectedItem: type.id_canton });
           this.userObj.person.parroquia.canton.id_canton = this.canton;
         } else {
-          this.cantonSelect.push({ value: type.id_canton, data: type.name, seletedItem: "" });
+          this.cantonSelect.push({ value: type.id_canton, data: type.name, selectedItem: "" });
         }
 
       }
@@ -284,20 +284,20 @@ export class UserEditComponent implements OnInit, OnDestroy {
   getParroquia(id_canton: any) {
     this._userService.getParroquiaList(id_canton).then((qParroquia) => {
 
-      var parroquiaList = qParroquia;
+      var parroquiaList: any = qParroquia;
       this.parroquiaSelect = [];
-      this.parroquiaSelect.push({ value: "", data: "", seletedItem: "" });
+      this.parroquiaSelect.push({ value: "", data: "", selectedItem: "" });
       
       for (let id in parroquiaList) {
         if (!this.parroquia) {
           this.parroquia = parroquiaList[id].id_parroquia;
         }
-        //this.parroquiaSelect.push({ value: parroquiaList[id].id_parroquia, data: parroquiaList[id].name, seletedItem: "" });
+        //this.parroquiaSelect.push({ value: parroquiaList[id].id_parroquia, data: parroquiaList[id].name, selectedItem: "" });
         if (this.parroquia === parroquiaList[id].id_parroquia) {
-          this.parroquiaSelect.push({ value: parroquiaList[id].id_parroquia, data: parroquiaList[id].name, seletedItem: parroquiaList[id].id_parroquia });
+          this.parroquiaSelect.push({ value: parroquiaList[id].id_parroquia, data: parroquiaList[id].name, selectedItem: parroquiaList[id].id_parroquia });
           this.userObj.person.parroquia.id_parroquia = this.parroquia;
         } else {
-          this.parroquiaSelect.push({ value: parroquiaList[id].id_parroquia, data: parroquiaList[id].name, seletedItem: "" });
+          this.parroquiaSelect.push({ value: parroquiaList[id].id_parroquia, data: parroquiaList[id].name, selectedItem: "" });
         }
       }
     });
@@ -312,4 +312,7 @@ export class UserEditComponent implements OnInit, OnDestroy {
     this.userObj.person.parroquia.id_parroquia = this.parroquia;
   }
 
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
 }

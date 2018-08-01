@@ -17,9 +17,8 @@ declare var upgradeTableFieldDataArray: any;
 })
 export class ReplyListComponent implements OnInit, OnDestroy {
   @Input() parentComment: Comment;
-  @Output() closeModal: EventEmitter<boolean>;
+  @Input() focusReplyId: string;
 
-  private _CLOSE = 1;
   private LOADER_HIDE: string = "hide";
   private LOADER_ON: string = "on";
   private mainReplies: any;
@@ -38,22 +37,14 @@ export class ReplyListComponent implements OnInit, OnDestroy {
     private _socketService: SocketService,
     private _notifierService: NotifierService
   ) {
-    this.closeModal = new EventEmitter<boolean>();
     this.activeClass = this.LOADER_HIDE;
-    this.matButtons = [
-      {
-        parentContentType: 0,
-        action: this._CLOSE,
-        icon: "close"
-      }
-    ];
 
     this.defineMainComments();
     this.listenToSocket();
   }
 
   ngOnInit() {
-    this.commentForm = new Comment("", "", "", null, this.parentComment.commentId);
+    this.commentForm = new Comment("", "", this.parentComment.publicationId, null, this.parentComment.commentId);
     this.getReplies();
     this.onCommentResponse();
   }
@@ -157,17 +148,6 @@ export class ReplyListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LA ACCIÓN DEL EVENTO DE CLICK DE UN BOTÓN DINÁMICO:
-   */
-  getButtonAction(actionEvent: number) {
-    switch (actionEvent) {
-      case this._CLOSE:
-        this.closeModal.emit(true);
-        break;
-    }
-  }
-
-  /**
    * MÉTODO PARA ESCUCHAR LAS ACTUALIZACIONES DEL CLIENTE SOCKET.IO
    * QUE TRAE CAMBIOS DESDE EL BACKEND (CREATE/UPDATE/DELETE)
    * Y ACTUALIZAR LA LISTA GLOBAL DE RESPUESTAS CON LOS NUEVOS CAMBIOS
@@ -175,9 +155,7 @@ export class ReplyListComponent implements OnInit, OnDestroy {
   listenToSocket() {
     this._socketService._commentUpdate.subscribe(
       (socketPub: any) => {
-        let stream = socketPub.stream;
         let action = socketPub.payload.action.toUpperCase();
-
         this.updateCommentList(socketPub.payload.data, action);
       }
     );

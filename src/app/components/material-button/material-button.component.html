@@ -1,3 +1,4 @@
-<a (click)="requestAction($event)" class="custom-btn p-0 my-1 btn btn-outline-info">
-  <fa name="{{buttonMeta.icon}}"></fa>
+<a #btnRef (click)="requestAction($event)" class="custom-btn p-sec-btn p-0 my-1 btn btn-outline-info {{buttonMeta.class}}">
+  <fa *ngIf="!buttonMeta.customIcon" name="{{buttonMeta.icon}}"></fa>
+  <span *ngIf="buttonMeta.customIcon" class="personal-site-icon">{{buttonMeta.icon}}</span>
 </a>

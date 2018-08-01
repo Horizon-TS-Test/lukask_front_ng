@@ -9,11 +9,12 @@ export class Person {
         public last_name?: string,
         public telephone?: string,
         public address?: string,
+        public active?: boolean,
         public birthdate?: string,
         public cell_phone?: string,
         public parroquia?: Parroquia,
         public location?: any
     ) {
-        this.parroquia = new Parroquia();
+    	this.parroquia = new Parroquia();
     }
 }

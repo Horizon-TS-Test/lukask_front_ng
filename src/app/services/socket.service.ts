@@ -13,6 +13,8 @@ export class SocketService {
   private socket;
   public _publicationUpdate = new EventEmitter<any>();
   public _commentUpdate = new EventEmitter<any>();
+  public _notificationUpdate = new EventEmitter<any>();
+  public _paymentResponse = new EventEmitter<any>();
 
   constructor() { }
 
@@ -28,14 +30,36 @@ export class SocketService {
         case "multimedia":
           this._publicationUpdate.emit(backendData);
           break;
-        case "comments":
-          this._commentUpdate.emit(backendData);
+        case "actions":
+          if (backendData.payload.data.description) {
+            this._commentUpdate.emit(backendData);
+          }
+          else {
+            if (backendData.payload.data.action_parent) {
+              this._commentUpdate.emit(backendData);
+            }
+            else {
+              this._publicationUpdate.emit(backendData);
+            }
+          }
+          break;
+        case "notification_received":
+          this._notificationUpdate.emit(backendData);
           break;
       }
+    });
+
+    this.socket.on('response-payment', (paymentData) => {
+      console.log("response-payment: ", paymentData);
+      this._paymentResponse.emit(paymentData);
     });
   }
 
   getSocket() {
     return this.socket;
+  }
+
+  public confimPayResp() {
+    this.socket.emit('confirm-pay', true);
   }
 }

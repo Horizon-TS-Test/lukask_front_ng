@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { User } from '../../models/user';
 import { Subscription } from 'rxjs';
 import { CameraService } from '../../services/camera.service';
@@ -18,7 +18,8 @@ declare var $: any;
   templateUrl: './user-register.component.html',
   styleUrls: ['./user-register.component.css']
 })
-export class UserRegisterComponent implements OnInit {
+export class UserRegisterComponent implements OnInit, OnChanges {
+  @Input() showClass: string;
   @Output() closeModal = new EventEmitter<boolean>();
 
   private SUBMIT = 0;
@@ -50,12 +51,10 @@ export class UserRegisterComponent implements OnInit {
 
     this.materialButtons = [
       {
-        parentContentType: 1,
         action: this.SUBMIT,
         icon: "check"
       },
       {
-        parentContentType: 1,
         action: this.CLOSE,
         icon: "close"
       }
@@ -85,6 +84,7 @@ export class UserRegisterComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log("llamando");
     this.getProvince();
 
   }
@@ -194,12 +194,12 @@ export class UserRegisterComponent implements OnInit {
     this._userService.getProvinceList().then((qProvinces) => {
       this.provinceList = qProvinces;
       this.provinceSelect = [];
-      this.provinceSelect.push({ value: "", data: "", seletedItem: "" });
+      this.provinceSelect.push({ value: "", data: "", selectedItem: "" });
       for (let type of this.provinceList) {
         if (!this.province) {
           this.province = type.id_province;
         }
-        this.provinceSelect.push({ value: type.id_province, data: type.name, seletedItem: "" });
+        this.provinceSelect.push({ value: type.id_province, data: type.name, selectedItem: "" });
       }
     });
   }
@@ -207,12 +207,12 @@ export class UserRegisterComponent implements OnInit {
     this._userService.getProvinceList().then((qProvinces) => {
       this.provinceList = qProvinces;
       this.provinceSelect = [];
-      this.provinceSelect.push({ value: "", data: "", seletedItem:" " });
+      this.provinceSelect.push({ value: "", data: "", selectedItem:" " });
       for (let type of this.provinceList) {
         if (!this.province) {
           this.province = type.id_province;
         }
-        this.provinceSelect.push({ value: type.id_province, data: type.name,seletedItem:" " });
+        this.provinceSelect.push({ value: type.id_province, data: type.name,selectedItem:" " });
       }
     });
   }*/
@@ -238,12 +238,12 @@ export class UserRegisterComponent implements OnInit {
     this._userService.getCantonList(id_provincia).then((qCantones) => {
       this.cantonList = qCantones;
       this.cantonSelect = [];
-      this.cantonSelect.push({ value: "", data: "", seletedItem: "" });
+      this.cantonSelect.push({ value: "", data: "", selectedItem: "" });
       for (let type of this.cantonList) {
         if (!this.canton) {
           this.canton = type.id_canton;
         }
-        this.cantonSelect.push({ value: type.id_canton, data: type.name, seletedItem: "" });
+        this.cantonSelect.push({ value: type.id_canton, data: type.name, selectedItem: "" });
       }
     });
   }
@@ -251,13 +251,13 @@ export class UserRegisterComponent implements OnInit {
    this._userService.getCantonList(id_provincia).then((qCantones) => {
      this.cantonList = qCantones;
      this.cantonSelect = [];
-     this.cantonSelect.push({ value: "", data: "", seletedItem: " " });
+     this.cantonSelect.push({ value: "", data: "", selectedItem: " " });
 
      for (let type of this.cantonList) {
        if (!this.canton) {
          this.canton = type.id_canton;
        }
-       this.cantonSelect.push({ value: type.id_canton, data: type.name, seletedItem: " " });
+       this.cantonSelect.push({ value: type.id_canton, data: type.name, selectedItem: " " });
      }
    });
  }*/
@@ -279,33 +279,34 @@ export class UserRegisterComponent implements OnInit {
   getParroquia(id_canton: any) {
     this._userService.getParroquiaList(id_canton).then((qParroquia) => {
 
-      var parroquiaList = qParroquia;
+      var parroquiaList: any = qParroquia;
       this.parroquiaSelect = [];
-      this.parroquiaSelect.push({ value: "", data: "", seletedItem: "" });
+      this.parroquiaSelect.push({ value: "", data: "", selectedItem: "" });
 
       for (let id in parroquiaList) {
         if (!this.parroquia) {
           this.parroquia = parroquiaList[id].id_parroquia;
         }
-        this.parroquiaSelect.push({ value: parroquiaList[id].id_parroquia, data: parroquiaList[id].name, seletedItem: "" });
+        this.parroquiaSelect.push({ value: parroquiaList[id].id_parroquia, data: parroquiaList[id].name, selectedItem: "" });
       }
     });
   }
-  /*getParroquia(id_canton: any) {
-   this._userService.getParroquiaList(id_canton).then((qParroquia) => {
 
-     this.parroquiaSelect = [];
-     var parroquiaList = qParroquia;
-     this.parroquiaSelect.push({ value: " ", data: " ", seletedItem: " " });
-
-     for (let id in parroquiaList) {
-       if (!this.parroquia) {
-         this.parroquia = parroquiaList[id].id_parroquia;
-       }
-       this.parroquiaSelect.push({ value: parroquiaList[id].id_parroquia, data: parroquiaList[id].name, seletedItem: " " });
-     }
-   });
- }*/
+  /**
+   * MÉTODO PARA ESCUCHAR LOS CAMBIOS QUE SE DEN EN EL ATRIBUTO QUE VIENE DESDE EL COMPONENTE PADRE:
+   * @param changes 
+   */
+  ngOnChanges(changes: SimpleChanges) {
+    for (const property in changes) {
+      switch (property) {
+        case 'showClass':
+          if (changes[property].currentValue !== undefined) {
+            this.showClass = changes[property].currentValue;
+          }
+          break;
+      }
+    }
+  }
 
   /**
    * METODO QUE CAPTURA LA PROVINCIA DESDE EL SELECT

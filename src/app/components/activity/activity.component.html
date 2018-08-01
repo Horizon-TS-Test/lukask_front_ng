@@ -1,0 +1,5 @@
+<section class="personal-content personal-fadeout min-height-full-modal max-height-full-modal p-overflow-auto w-100 py-0 d-flex flex-column justify-content-start align-items-center"
+  id="actContainer">
+  <queja-detail [idQueja]="focusPubId" [commentId]="focusComId" [replyId]="focusRepId" [isModal]="false" class="w-100 pt-2"></queja-detail>
+  <material-btn-list [materialBtns]="matButtons" [isModal]="false" (someBtnAction)="getButtonAction($event)"></material-btn-list>
+</section>

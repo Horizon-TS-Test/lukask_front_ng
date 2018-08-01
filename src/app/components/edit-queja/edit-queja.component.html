@@ -1,58 +1,39 @@
-<div #gmap id="mapa"></div>
-<div class="personal-content personal-over-unset min-height-full max-height-full col-12 p-0" id="personal-edit-q">
-  <div class="personal-content min-height-full max-height-full p-overflow-auto">
+<div class="personal-content min-height-full-modal max-height-full-modal p-overflow-auto">
+  <div class="p-no-border-rad-card card pb-0">
 
-    <form [formGroup]="formQuej" class="pb-0 min-height-full card h-100" id="frmQ" (ngSubmit)="publishQueja()">
-      <div id="loading-content"></div>
+    <div class="card-header d-flex justify-content-between align-items-center">
+      Nueva Queja
+    </div>
+    <div class="relative-background d-flex justify-content-center align-items-center pb-1">
+      <div id="carouselExampleControls" class="p-pub-media carousel slide" data-ride="carousel">
 
-      <div class="card-header d-flex justify-content-between align-items-center">
-        Nueva Queja
-      </div>
-      <div class="card-img-top d-flex flex-wrap justify-content-center align-items-center">
-        <img class="mb-1" id="defaultQuejaImg" src="/assets/images/edit-queja/window.jpg" width="100%">
+        <div class="p-pub-media carousel-inner" role="listbox">
+          <ng-container *ngFor="let file of filesToUpload; let i = index">
+            <div class="p-pub-media carousel-item p-1" [ngClass]="{'active': i === 0}">
+              <img [src]="_domSanitizer.bypassSecurityTrustUrl(file.mediaFileUrl)" width="100%" class="mb-1">
+            </div>
+          </ng-container>
+        </div>
 
-        <a href="#" class="personal-center-btn btn btn-lg btn-outline-info p-0 d-flex justify-content-center align-items-center"
-          (click)="newMedia($event)">
-          <fa name="camera"></fa>
+        <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="sr-only">Next</span>
         </a>
       </div>
 
-      <ul class="list-group list-group-flush pb-0">
+      <a href="#" class="p-transparent-btn p-float-btn" (click)="newMedia($event)">
+        <fa name="camera"></fa>
+      </a>
+    </div>
 
-        <li class="list-group-item">
-          <fa name="calendar" class="mr-1"></fa>
-          <small class="ml-1">2018-04-27 16:25</small>
-        </li>
-
-        <li class="list-group-item">
-          <fa name="map-marker" class="mr-1"></fa>
-          <small class="ml-1">{{ _locationCity }}</small>
-        </li>
-
-        <li class="list-group-item">
-          <fa name="location-arrow" class="mr-1"></fa>
-          <small class="ml-1">{{ _locationAdress }}</small>
-          <button type="button" id="hidden-btn" style="display:none">
-            <fa name="check"></fa>
-          </button>
-        </li>
-
-        <li class="list-group-item">
-          <fa name="bullhorn"></fa>
-          <app-select2-bootstrap class="col-11" [fcName]="'quejaType'" [select2Data]="tipoQuejaSelect" (select2Change)="getSelect2Value($event)"></app-select2-bootstrap>
-        </li>
-
-        <li class="list-group-item pb-0">
-          <div class="form-group row col-12 pb-0">
-            <div class="col-10 pb-0">
-              <textarea name="detail" formControlName="fcnDetail" class="form-control pb-0" cols="30" rows="5"></textarea>
-            </div>
-          </div>
-        </li>
-      </ul>
-    </form>
-
+    <div class="card-block p-0">
+      <pub-form [mediaFiles]="filesToUpload" [isStreamPub]="isStreamPub" [submit]="submit" (afterSubmit)="processAfterSubmit($event)"></pub-form>
+    </div>
   </div>
-</div>
 
-<material-btn-list [materialBtns]="matButtons" (someBtnAction)="getButtonAction($event)"></material-btn-list>
+  <!--material-btn-list [materialBtns]="matButtons" (someBtnAction)="getButtonAction($event)"></material-btn-list-->
+</div>

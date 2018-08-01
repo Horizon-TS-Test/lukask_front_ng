@@ -1,10 +1,9 @@
-import { Component, OnInit, ViewChild, ViewContainerRef, ComponentFactoryResolver } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ContentService } from '../../services/content.service';
 import { DynaContent } from '../../interfaces/dyna-content.interface';
 import { CONTENT_TYPES } from '../../config/content-type';
-import { QuejaDetailComponent } from '../queja-detail/queja-detail.component';
-import { EditQuejaComponent } from '../edit-queja/edit-queja.component';
-import { NewMediaComponent } from '../new-media/new-media.component';
+import { Subscription } from 'rxjs';
+import { NotifierService } from '../../services/notifier.service';
 
 declare var $: any;
 
@@ -13,50 +12,76 @@ declare var $: any;
   templateUrl: './horizon-modal.component.html',
   styleUrls: ['./horizon-modal.component.css']
 })
-export class HorizonModalComponent implements OnInit {
-  private self: any;
+export class HorizonModalComponent implements OnInit, OnDestroy {
+  private subscriber: Subscription;
 
   public _ref: any;
   public _dynaContent: DynaContent;
   public contentTypes: any;
 
+  public backgroundClass: string;
+  public showClass: string;
+
   constructor(
-    private _contentService: ContentService
+    private _contentService: ContentService,
+    private _notifierService: NotifierService
   ) {
     this.contentTypes = CONTENT_TYPES;
+
+    this.subscriber = this._notifierService._closeModal.subscribe((closeIt: boolean) => {
+      this.close(closeIt);
+    });
   }
 
-  ngOnInit() {
-    this.self = $(".horizon-modal").last();
-  }
+  ngOnInit() { }
 
   ngAfterViewInit() {
     setTimeout(() => {
-      this._contentService.slideDownUp(this.self);
+      this.backgroundClass = "on";
+      this.showClass = "show";
     }, 100);
   }
 
+  /**
+   * MÉTODO PARA DAR EL EFECTO DE DESVANECIMIENTO DEL MODAL PARA LUEGO CERRARLO:
+   */
   closeModal() {
-    this._contentService.slideDownUp(this.self, false);
+    this.backgroundClass = "";
+    this.showClass = "";
 
     setTimeout(() => {
       this.removeObject();
     }, 300);
   }
 
+  /**
+   * MÉTODO PARA CERRAR EL MODAL DESDE UN BOTÓN HIJO:
+   * @param closeEvent DATO QUE LLEGA DEL EVENT EMITTER
+   */
   close(closeEvent: Boolean) {
     if (closeEvent) {
       this.closeModal();
     }
   }
 
+  /**
+   * MÉTODO PARA CERRAR EL MODAL AL DAR CLICK FUERA DEL MISMO:
+   * @param event 
+   */
   onClickClose(event: any) {
     event.preventDefault();
     this.closeModal();
   }
 
+  /**
+   * MÉTODO PARA ELIMINAR LA REFERENCIA DE ESTE COMPONENTE DINÁMICO DENTRO DE TODA LA APP
+   */
   removeObject() {
     this._ref.destroy();
   }
 
+  ngOnDestroy() {
+    this.subscriber.unsubscribe();
+    this._contentService.manageBodyOverflow(true);
+  }
 }
