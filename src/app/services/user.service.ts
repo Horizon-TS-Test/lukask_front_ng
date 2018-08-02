@@ -8,6 +8,7 @@ import { BackSyncService } from './back-sync.service';
 import { Province } from '../models/province';
 import { Canton } from '../models/canton';
 import { Parroquia } from '../models/parroquia';
+import { DateManager } from '../tools/date-manager';
 
 declare var writeData: any;
 declare var readAllData: any;
@@ -18,9 +19,6 @@ declare var deleteItemData: any;
 })
 export class UserService {
   private isFetchedUserProfile: boolean;
-  private provinceList: Province[];
-  private cantonList: Canton[];
-  private parroquiaList: Parroquia[];
   private isFetchedProvince: boolean;
   private isFetchedCanton: boolean;
   private isFetchedParroquia: boolean;
@@ -194,7 +192,7 @@ export class UserService {
     formData.append('telephone', user.person.telephone);
     formData.append('address', user.person.address);
     formData.append('cell_phone', user.person.cell_phone);
-    formData.append('birthdate', user.person.birthdate);
+    formData.append('birthdate', user.person.transBirthDate);
     formData.append('user_file', user.file, user.fileName);
     formData.append('province', user.person.parroquia.canton.province.id_province);
     formData.append('canton', user.person.parroquia.canton.id_canton);
@@ -233,7 +231,7 @@ export class UserService {
     });
   }
 
-  
+
 
   /**
    * MÉTODO PARA EXTRAER LOS DATOS DE USUARIO DE UN JSON STRING Y GUARDARLO EN UN OBJETO DE TIPO MODELO USER
@@ -244,9 +242,9 @@ export class UserService {
 
     jsonUser.media_profile = (jsonUser.media_profile.indexOf("http") == -1) ? REST_SERV.mediaBack + jsonUser.media_profile : jsonUser.media_profile;
     user = new User(jsonUser.email, '', jsonUser.media_profile, jsonUser.is_active, null, null, jsonUser.id);
-    user.person = new Person(jsonUser.person.id_person, jsonUser.person.age, jsonUser.person.identification_card, jsonUser.person.name, jsonUser.person.last_name, jsonUser.person.telephone, jsonUser.person.address, jsonUser.person.active, jsonUser.person.birthdate, jsonUser.person.cell_phone);
-	user.person.location = jsonUser.person.location;
-	
+    user.person = new Person(jsonUser.person.id_person, jsonUser.person.age, jsonUser.person.identification_card, jsonUser.person.name, jsonUser.person.last_name, jsonUser.person.telephone, jsonUser.person.address, jsonUser.person.active, jsonUser.person.birthdate, jsonUser.person.cell_phone, null, null, DateManager.convertStringToDate(jsonUser.person.birthdate));
+    user.person.location = jsonUser.person.location;
+
     return user;
   }
 
@@ -255,9 +253,13 @@ export class UserService {
    */
   getStoredUserData() {
     let storedData = localStorage.getItem('user_data');
-    let userData = CrytoGen.decrypt(storedData);
+    let user;
+    if (storedData) {
+      let userData = CrytoGen.decrypt(storedData);
+      user = this.extractUserJson(JSON.parse(userData));
+    }
 
-    return this.extractUserJson(JSON.parse(userData));
+    return user;
   }
 
   /**
@@ -283,6 +285,13 @@ export class UserService {
   }
 
   /**
+   * MÉTODO PARA ELIMINAR EL OBJETO USER PROFILE LUEGO DE DESLOGEARSE:
+   */
+  public delUserProfile() {
+    this.userProfile = null;
+  }
+
+  /**
    * MÉTODO PARA OBTENER EL OBJETO USER PROFILE QUE CONTIENE LOS DATOS DEL USUARIO DESENCRIPTADOS:
    */
   public getUserProfile() {
@@ -298,10 +307,8 @@ export class UserService {
    * */
   getProvinceList() {
     return this.getProvinceWeb().then((webProvince: Province[]) => {
-      this.provinceList = webProvince;
       if (!this.isFetchedProvince) {
         return this.getProvinceCache().then((cacheProvince: Province[]) => {
-          this.provinceList = cacheProvince;
           return cacheProvince;
         });
       }
@@ -319,7 +326,7 @@ export class UserService {
   }
 
   getProvinceWeb() {
-       
+
     const qTheaders = new Headers({ 'Content-Type': 'application/json' });
 
     return this._http.get(REST_SERV.provinceUrl, { headers: qTheaders, withCredentials: true }).toPromise()
@@ -366,10 +373,8 @@ export class UserService {
    * */
   getCantonList(id_provincia: any) {
     return this.getCantonWeb(id_provincia).then((webCanton: Canton[]) => {
-      this.cantonList = webCanton;
       if (!this.isFetchedCanton) {
         return this.getCantonCache().then((cacheCanton: Canton[]) => {
-          this.cantonList = cacheCanton;
           return cacheCanton;
         });
       }
@@ -388,7 +393,7 @@ export class UserService {
 
   getCantonWeb(id_provincia: any) {
     const qTheaders = new Headers({ 'Content-Type': 'application/json' });
-    return this._http.get(REST_SERV.cantonUrl +"/"+ id_provincia, { headers: qTheaders, withCredentials: true }).toPromise()
+    return this._http.get(REST_SERV.cantonUrl + "/" + id_provincia, { headers: qTheaders, withCredentials: true }).toPromise()
       .then((response: Response) => {
         const qtypes = response.json().data;
         let transformedCantones: Canton[] = [];
@@ -429,8 +434,7 @@ export class UserService {
 
   getParroquiaList(canton_id: any) {
     return this.getParroquiaWeb(canton_id).then((webParroquia: Parroquia[]) => {
-      this.parroquiaList = webParroquia;
-      return this.parroquiaList;
+      return webParroquia;
     }).catch((error: Response) => {
       if (error.json().code == 401) {
         localStorage.clear();
@@ -441,7 +445,7 @@ export class UserService {
 
   getParroquiaWeb(canton_id: any) {
     const qTheaders = new Headers({ 'Content-Type': 'application/json' });
-    return this._http.get(REST_SERV.parroquiaUrl +"/"+ canton_id, { headers: qTheaders, withCredentials: true }).toPromise()
+    return this._http.get(REST_SERV.parroquiaUrl + "/" + canton_id, { headers: qTheaders, withCredentials: true }).toPromise()
       .then((response: Response) => {
         const qtypes = response.json().data.parishs;
         let transformedParroquias: Parroquia[] = [];
@@ -510,11 +514,12 @@ export class UserService {
    */
   public registerUser(user: User) {
     let userFormData: FormData = this.mergeFormData(user);
-    this.postUserClient(userFormData)
+    return this.postUserClient(userFormData)
       .then(
         (response: any) => {
           console.log(response);
-          //this.updateUserData(response);
+
+          return true;
         },
         (err) => {
           console.log(err);

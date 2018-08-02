@@ -17,7 +17,7 @@ declare var $: any;
 })
 export class LoginComponent implements OnInit {
   private alertData: Alert;
-  
+
   public user: User;
   public contentTypes: any;
 
@@ -56,7 +56,7 @@ export class LoginComponent implements OnInit {
         this.activeLoadingContent(true);
         this.resetForm();
 
-        this.alertData = new Alert({ title: 'Proceso Correcto', message: response.title, type: ALERT_TYPES.success });
+        this.alertData = new Alert({ title: 'Proceso Correcto', message: "Bienvenido a LUKASK", type: ALERT_TYPES.success });
         this.setAlert();
 
         this._router.navigateByUrl('/inicio');
@@ -69,7 +69,7 @@ export class LoginComponent implements OnInit {
         this.activeLoadingContent(true);
         this.resetForm();
 
-        this.alertData = new Alert({ title: 'Proceso Fallido', message: respJson.title, type: ALERT_TYPES.danger });
+        this.alertData = new Alert({ title: 'Proceso Fallido', message: "Las credenciales ingesadas son incorrectas", type: ALERT_TYPES.danger });
         this.setAlert();
       });
   }

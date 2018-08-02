@@ -1,6 +1,7 @@
 import { Parroquia } from "./parroquia";
 
 export class Person {
+
     constructor(
         public id_person?: string,
         public age?: number,
@@ -13,8 +14,9 @@ export class Person {
         public birthdate?: string,
         public cell_phone?: string,
         public parroquia?: Parroquia,
-        public location?: any
+        public location?: any,
+        public transBirthDate?: string
     ) {
-    	this.parroquia = new Parroquia();
+        this.parroquia = new Parroquia();
     }
 }

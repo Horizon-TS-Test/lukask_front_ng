@@ -48,4 +48,12 @@ export class LoginService {
         return respJson;
       });
   }
+
+  /**
+   * MÉTODO PARA CERRAR SESIÓN
+   */
+  logout() {
+    localStorage.clear();
+    this._userService.delUserProfile();
+  }
 }

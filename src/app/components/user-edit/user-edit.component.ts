@@ -1,20 +1,14 @@
 import { Component, OnInit, EventEmitter, Output, OnDestroy, SimpleChanges, Input, OnChanges } from '@angular/core';
 import { HorizonButton } from '../../interfaces/horizon-button.interface';
 import { User } from '../../models/user';
-import { Person } from '../../models/person';
-import { UserService } from '../../services/user.service';
 import { NotifierService } from '../../services/notifier.service';
 import { CONTENT_TYPES } from '../../config/content-type';
 import { Subscription } from 'rxjs';
 import { CameraService } from '../../services/camera.service';
 import { MediaFile } from '../../interfaces/media-file.interface';
-import { Province } from '../../models/province';
-import { Canton } from '../../models/canton';
-import { Parroquia } from '../../models/parroquia';
-import { Select2 } from '../../interfaces/select2.interface';
-import { DateManager } from '../../tools/date-manager';
-
-declare var $: any;
+import { DomSanitizer } from '../../../../node_modules/@angular/platform-browser';
+import { ACTION_TYPES } from '../../config/action-types';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'user-edit',
@@ -25,44 +19,32 @@ export class UserEditComponent implements OnInit, OnDestroy, OnChanges {
   @Input() showClass: string;
   @Output() closeModal = new EventEmitter<boolean>();
 
-  private SUBMIT = 0;
-  private CLOSE = 1;
   private subscription: Subscription;
-  private tempBirthdate;
-
-  private province: string;
-  private canton: string;
-  private parroquia: string;
-
-  public provinceList: Province[];
-  public provinceSelect: Select2[];
-  public cantonList: Canton[];
-  public cantonSelect: Select2[];
-  public parroquiaList: Parroquia[];
-  public parroquiaSelect: Select2[];
 
   public materialButtons: HorizonButton[];
   public userObj: User;
-  public filesToUpload: any;
+  public fileToUpload: MediaFile;
+  public carouselOptions: any;
+  public actionType: number;
 
   constructor(
-    private _userService: UserService,
     private _notifierService: NotifierService,
     private _cameraService: CameraService,
-
+    private _userService: UserService,
+    public _domSanitizer: DomSanitizer
   ) {
-    this.userObj = this._userService.getStoredUserData();
-    this.province = this.userObj.person.location[0].province.id;
-    this.canton = this.userObj.person.location[1].canton.id
-    this.parroquia = this.userObj.person.location[2].parish.id;
+    this.fileToUpload = {
+      mediaFileUrl: _userService.getUserProfile().profileImg,
+      mediaFile: null
+    };
 
     this.materialButtons = [
       {
-        action: this.SUBMIT,
+        action: ACTION_TYPES.userEdition,
         icon: "check"
       },
       {
-        action: this.CLOSE,
+        action: ACTION_TYPES.close,
         icon: "close"
       }
     ]
@@ -72,82 +54,24 @@ export class UserEditComponent implements OnInit, OnDestroy, OnChanges {
     */
     this.subscription = this._cameraService._snapShot.subscribe(
       (snapShot: MediaFile) => {
-        this.addQuejaSnapShot(snapShot);
+        this.addUserSnapShot(snapShot);
       });
 
   }
 
   ngOnInit() {
-    this.userObj.person.birthdate = this.convertDateFormat(this.userObj.person.birthdate);
-    this.tempBirthdate = this.userObj.person.birthdate;
-    //Cargamos la lista de los datos
-    this.getProvince();
-    this.getCanton(this.province);
-    this.getParroquia(this.canton);
+    this.initCarousel();
   }
 
-
-
   /**
-   * MÉTODO PARA EDITAR UN PERFIL DE USUARIO:
+   * MÉTODO PARA DEFINIR LAS PROPIEDADES DEL CAROUSEL DE SECCIONES:
    */
-  editProfile() {
-    if (this.filesToUpload) {
-      this.userObj.file = this.filesToUpload;
-      this.userObj.fileName = DateManager.getFormattedDate() + ".png";
-    }
-    this.formmatSendDate();
-    this._userService.sendUser(this.userObj);
-    this.restartDate();
-    this.closeModal.emit(true);
+  private initCarousel() {
+    this.carouselOptions = {
+      items: 1, dots: false, loop: false, margin: 5,
+      nav: false, stagePadding: 0, autoWidth: false
+    };
   }
-
-  /**
-   * MÉTODO PARA AGREGAR EL FORMATO MAS HORA EN LA FECHA DE NACIMIENTO:
-  */
-  formmatSendDate() {
-    var date = new Date();
-    this.userObj.person.birthdate = this.userObj.person.birthdate + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-  }
-  /**
-   * MÉTODO QUE RETORNA A LA FECHA CON EL FORMATO SIN HORA
-   */
-  restartDate() {
-    this.userObj.person.birthdate = this.tempBirthdate;
-  }
-
-  /**
-   * MÉTODO QUE TRANSFORMA UN STRING EN FORMATO DE FECHA:
-   */
-  convertDateFormat(string) {
-    var info = string.split('-');
-    return info[0] + '-' + info[1] + '-' + info[2].substr(0, 2);
-  }
-
-  /**
-  * MÉTODO QUE LLAMA A LA FUNCIÓN PARA CALCULAR LA EDAD DADA UNA FECHA DE NACIMIENTO
-  */
-  calculate() {
-    this.age();
-  }
-
-  /**
-   * MÉTODO QUE CALCULA LA EDAD
-  */
-  age() {
-    var hoy = new Date();
-    var cumpleanos = new Date(this.userObj.person.birthdate);
-    var edad = hoy.getFullYear() - cumpleanos.getFullYear();
-    var m = hoy.getMonth() - cumpleanos.getMonth();
-
-    if (m < 0 || (m === 0 && hoy.getDate() < cumpleanos.getDate())) {
-      edad--;
-    }
-    this.userObj.person.age = edad;
-    this.userObj.person.birthdate = this.convertDateFormat(this.userObj.person.birthdate);
-    this.tempBirthdate = this.userObj.person.birthdate;
-  }
-
 
   /**
    * MÉTODO PARA MOSTRAR EL MODAL DE LA CAMARA
@@ -159,32 +83,17 @@ export class UserEditComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   /**
-   * MÉTODO PARA EJECUTAR LA FUNCION SEGUN LA ACCION DEL BOTON
-   * @param event = EVENTO DE LA CAMARA
-   */
-  actionBtn(event: number) {
-    switch (event) {
-      case this.SUBMIT:
-        this.editProfile();
-        break;
-      case this.CLOSE:
-        this.closeModal.emit(true);
-        break;
-    }
-  }
-
-  /**
    * MÉTODO PARA COLOCAR LA IMAGEN TOMADA EN EL MODAL Y ALMACENARLA EN UNA VARIABLE TIPO ARCHIVO
    * @param event = ARCHIVO FOTO
-   */
+  */
+  addUserSnapShot(media: MediaFile) {
+    this.fileToUpload = media;
+  }
 
-  addQuejaSnapShot(media: MediaFile) {
-    let cardImg = $("#frmU").find(".card-img-top");
-    let defaultQuejaImg = $("#frmU").find(".card-img-top > #defaultQuejaImg");
-    defaultQuejaImg.css("display", "none");
-    cardImg.find("img").remove();
-    cardImg.append('<img class="mb-1" src="' + media.mediaFileUrl + '" width="100%">');
-    this.filesToUpload = media.mediaFile;
+  childAfterSubmit(event: any) {
+    if (event) {
+      this.closeModal.emit(true);
+    }
   }
 
   /**
@@ -204,113 +113,21 @@ export class UserEditComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   /**
-   * MÉTODO QUE TRAE LAS PROVINCIAS EXISTENTES EN EL SISTEMA
-   */
-  getProvince() {
-    this._userService.getProvinceList().then((qProvinces) => {
-      this.provinceList = qProvinces;
-      this.provinceSelect = [];
-      this.provinceSelect.push({ value: "", data: "", selectedItem: "" });
-      for (let type of this.provinceList) {
-        if (!this.province) {
-          this.province = type.id_province;
-        }
-        if (this.userObj.person.location[0].province.id === type.id_province) {
-          this.provinceSelect.push({ value: type.id_province, data: type.name, selectedItem: type.id_province });
-          this.userObj.person.parroquia.canton.province.id_province = this.province;
-        } else {
-          this.provinceSelect.push({ value: type.id_province, data: type.name, selectedItem: "" });
-        }
-        console.log(this.provinceSelect);
-      }
-    });
-
-    //this.province = this.userObj.person.location[0].province.id_province;
-    this.getCanton(this.province);
-    this.getParroquia(this.canton);
-  }
-
-  /**
-   * METODO QUE CAPTURA LA PROVINCIA DESDE EL SELECT
-   * @param event 
-   */
-  getProvinciaSelect(event: string) {
-    this.province = event;
-    this.userObj.person.parroquia.canton.province.id_province = this.province;
-    this.parroquiaSelect = [];
-    this.cantonSelect = [];
-    this.parroquia=" ";
-    this.canton=" ";
-    this.getCanton(this.province);
-  }
-
-  /**
-   * MÉTODO QUE TRAE LAS PROVINCIAS EXISTENTES EN EL SISTEMA
-   */
-  getCanton(id_provincia: any) {
-    this._userService.getCantonList(id_provincia).then((qCantones) => {
-      this.cantonList = qCantones;
-      this.cantonSelect = [];
-      this.cantonSelect.push({ value: "", data: "", selectedItem: "" });
-      for (let type of this.cantonList) {
-        if (!this.canton) {
-          this.canton = type.id_canton;
-        }
-        //this.cantonSelect.push({ value: type.id_canton, data: type.name, selectedItem: "" });
-        if (this.canton === type.id_canton) {
-          this.cantonSelect.push({ value: type.id_canton, data: type.name, selectedItem: type.id_canton });
-          this.userObj.person.parroquia.canton.id_canton = this.canton;
-        } else {
-          this.cantonSelect.push({ value: type.id_canton, data: type.name, selectedItem: "" });
-        }
-
-      }
-    });
-  }
-
-  /**
- * METODO QUE CAPTURA LA PROVINCIA DESDE EL SELECT
- * @param event 
- */
-  getCantonSelect(event: string) {
-    this.canton = event;
-    this.userObj.person.parroquia.canton.id_canton = this.canton;
-    this.getParroquia(this.canton);
-  }
-
-
-  /**
-   * MÉTODO QUE TRAE LAS PROVINCIAS EXISTENTES EN EL SISTEMA
-   */
-  getParroquia(id_canton: any) {
-    this._userService.getParroquiaList(id_canton).then((qParroquia) => {
-
-      var parroquiaList: any = qParroquia;
-      this.parroquiaSelect = [];
-      this.parroquiaSelect.push({ value: "", data: "", selectedItem: "" });
-      
-      for (let id in parroquiaList) {
-        if (!this.parroquia) {
-          this.parroquia = parroquiaList[id].id_parroquia;
-        }
-        //this.parroquiaSelect.push({ value: parroquiaList[id].id_parroquia, data: parroquiaList[id].name, selectedItem: "" });
-        if (this.parroquia === parroquiaList[id].id_parroquia) {
-          this.parroquiaSelect.push({ value: parroquiaList[id].id_parroquia, data: parroquiaList[id].name, selectedItem: parroquiaList[id].id_parroquia });
-          this.userObj.person.parroquia.id_parroquia = this.parroquia;
-        } else {
-          this.parroquiaSelect.push({ value: parroquiaList[id].id_parroquia, data: parroquiaList[id].name, selectedItem: "" });
-        }
-      }
-    });
-  }
-
-  /**
-   * METODO QUE CAPTURA LA PROVINCIA DESDE EL SELECT
-   * @param event 
-   */
-  getParroquiaSelect(event: string) {
-    this.parroquia = event;
-    this.userObj.person.parroquia.id_parroquia = this.parroquia;
+  * MÉTODO PARA EJECUTAR LA FUNCION SEGUN LA ACCION DEL BOTON
+  * @param event = EVENTO DE LA CAMARA
+  */
+  actionBtn(event: number) {
+    switch (event) {
+      case ACTION_TYPES.userEdition:
+        this.actionType = null;
+        setTimeout(() => {
+          this.actionType = ACTION_TYPES.userEdition;
+        });
+        break;
+      case ACTION_TYPES.close:
+        this.closeModal.emit(true);
+        break;
+    }
   }
 
   ngOnDestroy() {

@@ -4,6 +4,9 @@ import { CONTENT_TYPES } from '../../config/content-type';
 import { ContentService } from '../../services/content.service';
 import { MENU_OPTIONS } from '../../config/menu-option';
 import { Subscription } from '../../../../node_modules/rxjs';
+import { Router, ActivatedRoute } from '../../../../node_modules/@angular/router';
+import { UserService } from '../../services/user.service';
+import { LoginService } from '../../services/login.service';
 
 declare var $: any;
 
@@ -23,7 +26,9 @@ export class PanelOpcionesComponent implements OnInit, OnChanges, OnDestroy {
 
   constructor(
     private _notifierService: NotifierService,
-    private _contentService: ContentService
+    private _contentService: ContentService,
+    private _router: Router,
+    private _loginService: LoginService,
   ) {
     this.contentTypes = CONTENT_TYPES;
     this.menuOptions = MENU_OPTIONS;
@@ -96,8 +101,10 @@ export class PanelOpcionesComponent implements OnInit, OnChanges, OnDestroy {
   /**
   * MÉTODO PARA SALIR DE LA APP
   **/
-  logout() {
-    localStorage.clear();
+  logout(event: any) {
+    event.preventDefault();
+    this._loginService.logout();
+    this._router.navigate(['/login']);
   }
 
   ngOnDestroy() {

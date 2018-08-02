@@ -144,7 +144,7 @@ export class NewPubComponent implements OnInit, AfterViewInit, OnChanges {
     setTimeout(() => {
       this.showLoadingContent(!event.finished);
       this.setAlert();
-    }, 200)
+    }, 200);
   }
 
   /**

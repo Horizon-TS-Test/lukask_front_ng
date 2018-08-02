@@ -3,5 +3,7 @@ export const ACTION_TYPES = {
     submitPub: 1,
     pubStream: 2,
     mapFocus: 3,
-    viewComments: 4
+    viewComments: 4,
+    userRegister: 5,
+    userEdition: 6,
 }

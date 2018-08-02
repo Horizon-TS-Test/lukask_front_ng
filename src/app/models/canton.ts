@@ -6,6 +6,6 @@ export class Canton {
         public name?: string,
         public province?: Province,
     ) {
-        this.province =  new Province();
+        this.province = new Province();
     }
 }

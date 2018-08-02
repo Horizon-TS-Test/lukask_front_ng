@@ -463,6 +463,11 @@ p, label, div {
 }
 
 /*OWL CAROUSEL WITH NAV BUTTONS CUSTOMIZED*/
+.p-owl-full-height {
+    owl-carousel-child, div {
+        height: 100% !important;
+    }
+}
 .personal-owl-nav {
     display: unset !important;
     
@@ -543,10 +548,10 @@ p, label, div {
 
 //FLEX-CHILDS:
 .f-child-full-space {
-    flex: 1 0 auto;
+    flex: 1 0 auto !important;
 }
 .f-child-no-auto {
-    flex: 1 0;
+    flex: 1 0 !important;
 }
 .f-child-order-0 {
     order: 0;
@@ -1346,6 +1351,9 @@ p, label, div {
     width: 100%;
     height: 100vh;
 }
+.absolute-layer {
+    position: absolute;
+}
 .relative-background {
     position: relative;
 }
@@ -1402,8 +1410,14 @@ p, label, div {
     color: $secondary-text;
     font-size: 1.1rem;
 }
-.personal-site-icon.icon-sm {
+.icon-normal {
+    font-size: 1.1rem;
+}
+.icon-xs {
     font-size: 1.3rem;
+}
+.icon-sm {
+    font-size: 1.5rem;
 }
 //////////////////////////////////
 
@@ -1411,6 +1425,11 @@ p, label, div {
 .select2-container {
     z-index: 99999999999;
     width: 100% !important;
+}
+.p-select2-container {
+    .select2-container {
+        z-index: 1;
+    }
 }
 .select2-container--open {
     width: unset !important;
@@ -1443,6 +1462,14 @@ p, label, div {
         color: rgba(255, 255, 255, .8) !important
     }
 }
+.p-transparent-btn.md {
+    width: 60px;
+    height: 60px;
+
+    fa, span {
+        font-size: 30px;
+    }
+}
 .p-transparent-btn.sm {
     width: 40px;
     height: 40px;
@@ -1464,12 +1491,19 @@ p, label, div {
     position: absolute;
     z-index: 1;
 }
+.p-index-1 {
+    z-index: 2;
+}
 .p-index-2 {
     z-index: 2;
 }
 .top-left-corner {
     top: 5px;
     left: 5px;
+}
+.top-left-outer-corner {
+    top: 0px;
+    left: 0px;
 }
 .top-right-corner {
     top: 5px;
@@ -1736,11 +1770,13 @@ p, label, div {
 ////
 
 ////ETILOS PARA FORMULARIOS
-input[type=text], input[type=password], input[type=email], input[type=number], input[type=date], textarea {
-    border-top: none;
-    border-left: none;
-    border-right: none;
-    border-radius: 0;
+input[type=text], input[type=password], input[type=email], input[type=number], input[type=date], input[type=tel], textarea, .select2-selection {
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: #fff !important;
 }
 
 /////////////////////////////////////////NOTIFICATIONS////////////////////////////////////////////////////////

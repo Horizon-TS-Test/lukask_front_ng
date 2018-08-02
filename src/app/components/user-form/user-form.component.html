@@ -1,0 +1,159 @@
+<form #formUser class="p-no-border-rad-card card">
+  <ul class="list-group list-group-flush pb-0">
+    <li class="p-border-trans list-group-item d-flex justify-content-between align-items-center pb-0">
+      <span class="p-primary-text-color personal-site-icon icon-xs mr-1">y</span>
+
+      <div class="f-child-no-auto ml-2 form-group row pb-0" [ngClass]="{ 'has-danger': !idCard.valid && idCard.touched }">
+        <div class="col-12">
+          <input type="text" name="idCard" #idCard="ngModel" [(ngModel)]="userObj.person.identification_card" class="form-control pb-0"
+            required pattern="[0-9]+" placeholder="Cédula" />
+          <small *ngIf="idCard.touched && !idCard.valid" class="form-control-feedback absolute-layer p-index-1">
+            Por favor ingrese su número de cédula
+          </small>
+        </div>
+      </div>
+    </li>
+
+    <li class="p-border-trans list-group-item d-flex justify-content-between align-items-center pb-0">
+      <fa name="user" class="mr-1"></fa>
+
+      <div class="f-child-no-auto ml-2 form-group row pb-0" [ngClass]="{ 'has-danger': !name.valid && name.touched }">
+        <div class="col-12">
+          <input type="text" name="name" #name="ngModel" [(ngModel)]="userObj.person.name" class="form-control pb-0 " required placeholder="Nombre"
+          />
+          <small *ngIf="name.touched && !name.valid" class="form-control-feedback absolute-layer p-index-1">
+            Por favor ingrese su nommbre
+          </small>
+        </div>
+      </div>
+    </li>
+
+    <li class="p-border-trans list-group-item d-flex justify-content-between align-items-center pb-0">
+      <fa name="user" class="mr-1"></fa>
+
+      <div class="f-child-no-auto ml-2 form-group row pb-1" [ngClass]="{ 'has-danger': !lastName.valid && lastName.touched }">
+        <div class="col-12">
+          <input type="text" name="lastName" #lastName="ngModel" [(ngModel)]="userObj.person.last_name" class="form-control pb-0 "
+            required placeholder="Apellido" />
+          <small *ngIf="lastName.touched && !lastName.valid" class="form-control-feedback absolute-layer p-index-1">
+            Por favor ingrese su apellido
+          </small>
+        </div>
+      </div>
+    </li>
+
+    <li class="p-border-trans list-group-item d-flex justify-content-between align-items-center pb-0">
+      <fa name="home" class="icon-xs mr-1"></fa>
+
+      <div class="f-child-no-auto ml-2 form-group row pb-1" [ngClass]="{ 'has-danger': !address.valid && address.touched }">
+        <div class="col-12">
+          <input type="text" name="address" #address="ngModel" [(ngModel)]="userObj.person.address" class="form-control pb-0" required
+            placeholder="Dirección" />
+          <small *ngIf="address.touched && !address.valid" class="form-control-feedback absolute-layer p-index-1">
+            Por favor ingrese su dirección
+          </small>
+        </div>
+      </div>
+    </li>
+
+    <li class="p-border-trans list-group-item d-flex justify-content-between align-items-center pb-0">
+      <fa name="phone" class="mr-1"></fa>
+
+      <div class="f-child-no-auto ml-2 form-group row pb-1" [ngClass]="{ 'has-danger': (!telephone.valid && telephone.touched) || (!mobile.valid && mobile.touched) }">
+        <div class="col-6">
+          <input type="tel" name="telephone" #telephone="ngModel" [(ngModel)]="userObj.person.telephone" class="form-control pb-0"
+            pattern="[0-9]+" placeholder="Teléfono" />
+          <small *ngIf="telephone.touched && !telephone.valid" class="form-control-feedback absolute-layer p-index-1">
+            Por favor ingrese su teléfono
+          </small>
+        </div>
+
+        <div class="col-6">
+          <input type="tel" name="mobile" #mobile="ngModel" [(ngModel)]="userObj.person.cell_phone" class="form-control pb-0" pattern="[0-9]+"
+            required placeholder="Celular" />
+          <small *ngIf="mobile.touched && !mobile.valid" class="form-control-feedback absolute-layer p-index-1">
+            Por favor ingrese su número de celular
+          </small>
+        </div>
+      </div>
+    </li>
+
+    <li class="p-border-trans list-group-item d-flex justify-content-between align-items-center pb-0">
+      <fa name="calendar" class="mr-1"></fa>
+
+      <div class="f-child-no-auto ml-2 form-group row pb-1" [ngClass]="{ 'has-danger': (!birthdate.valid && birthdate.touched) || (!age.valid && age.touched) }">
+        <div class="col-8">
+          <input type="date" name="birthdate" #birthdate="ngModel" [(ngModel)]="userObj.person.transBirthDate" class="form-control pb-0"
+            max="2000-12-31" min="1940-01-01" class="form-control" required (ngModelChange)="calculateAge()" style="border-top: none;border-left: none;border-right: none;"
+            placeholder="Fecha Nacimiento" />
+          <small *ngIf="birthdate.touched && !birthdate.valid" class="form-control-feedback absolute-layer p-index-1">
+            Por favor ingrese su fecha de nacimiento
+          </small>
+        </div>
+
+        <div class="col-4 d-flex align-items-end">
+          <input type="text" name="age" #age="ngModel" [(ngModel)]="userObj.person.age" class="form-control pb-0" readonly="readonly"
+            required placeholder="Edad" />
+        </div>
+      </div>
+    </li>
+
+    <li class="p-border-trans list-group-item d-flex justify-content-between align-items-center pb-0">
+      <fa name="envelope" class="mr-1"></fa>
+
+      <div class="f-child-no-auto ml-2 form-group row pb-1" [ngClass]="{ 'has-danger': !email.valid && email.touched }">
+        <div class="col-12 pb-0">
+          <input type="email" name="email" #email="ngModel" [(ngModel)]="userObj.username" class="form-control pb-0" required placeholder="Email"
+          />
+          <small *ngIf="email.touched && !email.valid" class="form-control-feedback absolute-layer p-index-1">
+            Por favor ingrese un correo válido
+          </small>
+        </div>
+      </div>
+    </li>
+
+    <li *ngIf="!userObj.id" class="p-border-trans list-group-item d-flex justify-content-between align-items-center pb-0">
+      <fa name="key" class="mr-1"></fa>
+
+      <div class="f-child-no-auto ml-2 form-group row pb-1" [ngClass]="{ 'has-danger': !password.valid && password.touched }">
+        <div class="col-12">
+          <input type="password" name="password" #password="ngModel" [(ngModel)]="userObj.password" class="form-control pb-0" required
+            placeholder="Clave" />
+          <small *ngIf="password.touched && !password.valid" class="form-control-feedback absolute-layer p-index-1">
+            Por favor ingrese una clave válida
+          </small>
+        </div>
+      </div>
+    </li>
+
+    <li class="p-border-trans list-group-item d-flex justify-content-between align-items-center pb-0">
+      <fa name="map-marker" class="mr-1"></fa>
+
+      <div class="f-child-no-auto ml-2 form-group row pb-1">
+        <div class="col-12">
+          <app-select2-bootstrap [fcName]="'province'" [select2Data]="provinceSelect" (select2Change)="getProvinciaSelect($event)"></app-select2-bootstrap>
+        </div>
+      </div>
+    </li>
+
+    <li class="p-border-trans list-group-item d-flex justify-content-between align-items-center pb-0">
+      <fa name="map-marker" class="mr-1"></fa>
+
+      <div class="f-child-no-auto ml-2 form-group row pb-1">
+        <div class="col-12">
+          <app-select2-bootstrap [fcName]="'canton'" [select2Data]="cantonSelect" (select2Change)="getCantonSelect($event)"></app-select2-bootstrap>
+        </div>
+      </div>
+    </li>
+
+    <li class="p-border-trans list-group-item d-flex justify-content-between align-items-center pb-0">
+      <fa name="map-marker" class="mr-1"></fa>
+
+      <div class="f-child-no-auto ml-2 form-group row pb-1">
+        <div class="col-12">
+          <app-select2-bootstrap [fcName]="'parroquia'" [select2Data]="parroquiaSelect" (select2Change)="getParroquiaSelect($event)"></app-select2-bootstrap>
+        </div>
+      </div>
+    </li>
+  </ul>
+</form>

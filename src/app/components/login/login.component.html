@@ -1,8 +1,8 @@
-<div class="personal-content personal-fadeout min-height-full container d-flex justify-content-center align-items-center w-100"
+<div class="personal-content personal-fadeout min-height-full-modal container d-flex flex-column justify-content-center align-items-center w-100"
   id="loginContainer">
 
-  <form #frmLogin="ngForm" class="col-12 col-sm-7 col-md-6 py-2" id="frmL" (ngSubmit)="onLogin()">
-    <div class="row" style="padding-top: 60%"></div>
+  <form #frmLogin="ngForm" class="f-child-full-space col-12 col-sm-7 col-md-6 py-2 d-flex flex-column justify-content-center align-items-center"
+    id="frmL" (ngSubmit)="onLogin()">
     <div id="loading-content"></div>
 
     <div class="form-group row pb-1" [ngClass]="{ 'has-danger': !user_name.valid && user_name.touched }">
@@ -29,14 +29,15 @@
         <button type="reset" id="resetBtn" class="primary-font btn btn-outline-secondary ml-1">Limpiar</button>
       </div>
     </div>
-
-    <div class="row" style="padding-top: 70%">
-      <div class="col-12 offset-sm-3 col-sm-9 d-flex justify-content-center align-items-center d-sm-block" style="font-size: 12px">
-        Aun no formas parte de LUKAS? &nbsp;
-        <a href="#" (click)="openLayer($event, contentTypes.register_user)" style="color:#61C2DF; cursor: pointer">
-          Registrate</a>
-      </div>
-    </div>
-
   </form>
+
+  <div class="row d-flex justify-content-center align-items-center py-4">
+    <small class="col-12">
+      Aún no formas parte de
+      <b>Lukask</b>? &nbsp;
+      <a href="#" (click)="openLayer($event, contentTypes.register_user)" class="p-normal-text-color">
+        Regístrate
+      </a>
+    </small>
+  </div>
 </div>

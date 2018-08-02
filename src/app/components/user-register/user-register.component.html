@@ -1,145 +1,32 @@
-<div class="personal-content personal-over-unset min-height-full max-height-full col-12 p-0" id="personal-edit-p">
-  <div class="personal-content min-height-full max-height-full p-overflow-auto">
-    <form #formUser class="min-height-full card pb-3" id="frmU">
-      <div id="loading-content"></div>
-      <div class="card-header d-flex justify-content-between align-items-center">
-        Registro de Usuario
-      </div>
-
-      <div class="card-img-top d-flex flex-wrap justify-content-center align-items-center">
-        <img class="mb-1" id="defaultQuejaImg" src="/assets/images/profile/default_profile.jpg" width="50%">
-        <a href="#" (click)="newMedia($event)" class="personal-center-btn btn btn-lg btn-outline-info p-0 d-flex justify-content-center align-items-center">
-          <fa name="camera"></fa>
-        </a>
-      </div>
-
-      <ul class="list-group list-group-flush pb-0">
-        <li class="list-group-item pb-0">
-          <div class="col-12 pb-0">Cédula :</div>
-          <div class="col-12 pb-0">
-            <input type="text" name="idCard" #idCard="ngModel" [(ngModel)]="userObj.person.identification_card" class="form-control pb-0"
-              required pattern="[0-9]+" />
-            <span *ngIf="idCard.touched && !idCard.valid" class="p-validate-input">
-              La cédula es incorrecta!
-            </span>
-          </div>
-        </li>
-
-        <li class="list-group-item pb-0">
-          <div class="col-12 pb-0">Nombre :</div>
-          <div class="col-12 pb-0">
-            <input type="text" name="name" #name="ngModel" [(ngModel)]="userObj.person.name" class="form-control pb-0 " required />
-            <span *ngIf="name.touched && !name.valid" class="p-validate-input">
-              El nommbre es incorrecto!
-            </span>
-          </div>
-        </li>
-
-        <li class="list-group-item pb-0">
-          <div class="col-12 pb-0">Apellido :</div>
-          <div class="col-12 pb-0">
-            <input type="text" name="lastName" #lastName="ngModel" [(ngModel)]="userObj.person.last_name" class="form-control pb-0 "
-              required />
-            <span *ngIf="lastName.touched && !lastName.valid" class="p-validate-input">
-              El apellido es incorrecto!
-            </span>
-          </div>
-        </li>
-
-        <li class="list-group-item pb-0">
-          <div class="col-12 pb-0">Dirección:</div>
-          <div class="col-12 pb-0">
-            <input type="text" name="address" #address="ngModel" [(ngModel)]="userObj.person.address" class="form-control pb-0" required/>
-            <span *ngIf="address.touched && !address.valid" class="p-validate-input">
-              La dirección es incorrecta!
-            </span>
-          </div>
-        </li>
-
-        <li class="list-group-item pb-0">
-          <div class="col-6 pb-0">Telefóno:</div>
-          <div class="col-6 pb-0">Célular:</div>
-          <div class="col-6 pb-0">
-            <input type="text" name="telephone" #telephone="ngModel" [(ngModel)]="userObj.person.telephone" class="form-control pb-0"
-              required pattern="[0-9]+" />
-            <span *ngIf="telephone.touched && !telephone.valid" class="p-validate-input">
-              La teléfono es incorrecto!
-            </span>
-          </div>
-          <div class="col-6 pb-0">
-            <input type="text" name="mobile" #mobile="ngModel" [(ngModel)]="userObj.person.cell_phone" class="form-control pb-0" pattern="[0-9]+"
-              required/>
-            <span *ngIf="mobile.touched && !mobile.valid" class="p-validate-input">
-              El número celular es incorrecto!
-            </span>
-          </div>
-        </li>
-
-        <li class="list-group-item pb-0">
-          <div class="col-8 pb-0">Fecha Nacimiento:</div>
-          <div class="col-4 pb-0">Edad:</div>
-          <div class="col-8 pb-0">
-            <input type="date" name="birthdate" #birthdate="ngModel" [(ngModel)]="userObj.person.birthdate" class="form-control pb-0"
-              max="3000-12-31" min="1000-01-01" class="form-control" required (ngModelChange)="calculate()" style="border-top: none;border-left: none;border-right: none;"
-            />
-            <label style="position: absolute;z-index: 1; margin-top: -30px; background-color: white;width: 100px;color: black;overflow: hidden;">{{userObj.person.birthdate}}</label>
-            <span *ngIf="birthdate.touched && !birthdate.valid" class="p-validate-input">
-              La fecha es incorrecta!
-            </span>
-          </div>
-          <div class="col-4 pb-0">
-            <input type="text" name="age" #age="ngModel" [(ngModel)]="userObj.person.age" class="form-control pb-0" readonly="readonly"
-              style="background-color: white" required/>
-          </div>
-        </li>
-
-        <li class="list-group-item pb-0">
-          <div class="col-12 pb-0">Email:</div>
-          <div class="col-12 pb-0">
-            <input type="text" name="email" #email="ngModel" [(ngModel)]="userObj.username" class="form-control pb-0" required/>
-            <span *ngIf="email.touched && !email.valid" class="p-validate-input">
-              El email es incorrecto!
-            </span>
-          </div>
-        </li>
-
-        <li class="list-group-item pb-0">
-          <div class="col-12 pb-0">Clave :</div>
-          <div class="col-12 pb-0">
-            <input id="inputPassword3" type="password" name="password" #password="ngModel" [(ngModel)]="userObj.password" class="form-control pb-0 "
-              required/>
-            <span *ngIf="password.touched && !password.valid" class="p-validate-input">
-              El password es incorrecto!
-            </span>
-          </div>
-        </li>
-
-        <li class="list-group-item pb-0">
-          <div class="col-4 pb-0">Provincia :</div>
-          <div class="col-8 pb-0">
-            <app-select2-bootstrap class="col-11" [fcName]="'province'" [select2Data]="provinceSelect" (select2Change)="getProvinciaSelect($event)" ></app-select2-bootstrap>
-          </div>
-        </li>
-        <li class="list-group-item pb-0">
-          <div class="col-4 pb-0">Cantón :</div>
-          <div class="col-8 pb-0">
-            <app-select2-bootstrap class="col-11" [fcName]="'canton'" [select2Data]="cantonSelect" (select2Change)="getCantonSelect($event)"></app-select2-bootstrap>
-          </div>
-        </li>
-        <li class="list-group-item pb-0">
-          <div class="col-4 pb-0">Parroquia :</div>
-          <div class="col-8 pb-0">
-            <app-select2-bootstrap class="col-11" [fcName]="'parroquia'" [select2Data]="parroquiaSelect" (select2Change)="getParroquiaSelect($event)"></app-select2-bootstrap>
-          </div>
-        </li>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-
-      </ul>
-    </form>
+<div class="card pb-3" class="p-select2-container">
+  <div id="loading-content"></div>
+  <div class="card-header d-flex justify-content-between align-items-center">
+    Registro de Usuario
   </div>
+
+  <div class="relative-background">
+    <div class="card-img-top d-flex justify-content-center align-items-center">
+      <img [src]="_domSanitizer.bypassSecurityTrustUrl(fileToUpload.mediaFileUrl)" width="100%" class="mb-1">
+    </div>
+
+    <div class="p-float-div top-left-outer-corner w-100 h-100">
+      <owl-carousel id="carousel-registro" class="p-owl-full-height" [options]="carouselOptions" [carouselClasses]="['owl-theme']">
+        <div class="d-flex justify-content-center align-items-center h-100">
+          <a href="#" class="p-transparent-btn" (click)="newMedia($event)">
+            <fa name="camera"></fa>
+          </a>
+        </div>
+
+        <div class="d-flex justify-content-center align-items-center">
+          <a href="#" class="p-transparent-btn ml-3" (click)="newMedia($event)">
+            <fa name="file"></fa>
+          </a>
+        </div>
+      </owl-carousel>
+    </div>
+  </div>
+
+  <user-form [actionType]="actionType" [mediaFile]="fileToUpload" (closeModal)="childAfterSubmit($event)"></user-form>
 </div>
 
 <material-btn-list [showClass]='showClass' [materialBtns]="materialButtons" (someBtnAction)="actionBtn($event)"></material-btn-list>

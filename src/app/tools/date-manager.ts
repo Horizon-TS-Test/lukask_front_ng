@@ -69,4 +69,28 @@ export class DateManager {
         //REF: https://stackoverflow.com/questions/17493309/how-do-i-change-the-language-of-moment-js
         return moment(date).locale("es").format('DD, MMMM. YYYY- H:mm:ss').replace(",", " de").replace(".", " de").replace("-", " a las");
     }
+
+    /**
+     * MÉTODO QUE CALCULA LA EDAD
+     */
+    public static calcAge(date: string) {
+        var hoy = new Date();
+        var cumpleanos = new Date(date);
+        var edad = hoy.getFullYear() - cumpleanos.getFullYear();
+        var m = hoy.getMonth() - cumpleanos.getMonth();
+
+        if (m < 0 || (m === 0 && hoy.getDate() < cumpleanos.getDate())) {
+            edad--;
+        }
+
+        return edad;
+    }
+
+    /**
+   * MÉTODO QUE TRANSFORMA UN STRING EN FORMATO DE FECHA:
+   */
+    public static convertStringToDate(string) {
+        var info = string.split('-');
+        return info[0] + '-' + info[1] + '-' + info[2].substr(0, 2);
+    }
 }

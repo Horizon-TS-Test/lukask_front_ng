@@ -69,6 +69,7 @@ import { ProfileLinkComponent } from './components/profile-link/profile-link.com
 import { ProfileOwnerComponent } from './components/profile-owner/profile-owner.component';
 import { HorizonPopOverComponent } from './components/horizon-pop-over/horizon-pop-over.component';
 import { UserRegisterComponent } from './components/user-register/user-register.component';
+import { UserFormComponent } from './components/user-form/user-form.component';
 
 @NgModule({
   declarations: [
@@ -117,7 +118,8 @@ import { UserRegisterComponent } from './components/user-register/user-register.
     ProfileLinkComponent,
     ProfileOwnerComponent,
     HorizonPopOverComponent,
-    UserRegisterComponent
+    UserRegisterComponent,
+    UserFormComponent
   ],
   imports: [
     HttpModule,
