@@ -18,7 +18,7 @@ export class BrowserNotifierService {
         dir: 'rtl',
         lang: 'es-US', //BCP 47
         vibrate: [500, 200, 200, 100], //THIS IS FOR SOME DEVICES NOT FOR ALL
-        badge: '/assets/icons/badged-icon.png',
+        badge: '/assets/icons/badged.png',
         //ADITIONAL OPTIONS:
         tag: 'confirm-notification', //TO ALLOW NOTIFICATIONS WILL STACK AND SHOW ONE GROUP OF NOTIFICATIONS
         renotify: false, //TO SPECIFY JUST ONE VIBRATION OF THE FIRST NOTIFICATION INCOMMING OF A GROUP OF NOTIFICATIONS
