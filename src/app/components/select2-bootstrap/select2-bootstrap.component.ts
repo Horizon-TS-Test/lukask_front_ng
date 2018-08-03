@@ -20,10 +20,14 @@ export class Select2BootstrapComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    $(".js-example-basic-single").select2({
+    $(".personal-select2").select2({
       theme: "bootstrap"
     });
-    
+
+    $('#' + this.fcName).select2({
+      dropdownParent: $('.horizon-modal')
+    });
+
   }
 
   ngAfterViewInit() {
