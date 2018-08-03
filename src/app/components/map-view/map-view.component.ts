@@ -8,9 +8,7 @@ import pubIconsOver from '../../data/pub-icons-over';
 import styleMap from '../../data/map-style';
 import { NotifierService } from '../../services/notifier.service';
 import { CONTENT_TYPES } from '../../config/content-type';
-import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { DateManager } from '../../tools/date-manager';
 
 declare var google: any;
 declare var $: any;
@@ -37,7 +35,6 @@ export class MapViewComponent implements OnInit, OnChanges {
     private _contentService: ContentService,
     private _quejaService: QuejaService,
     private _notifierService: NotifierService,
-    private _activatedRoute: ActivatedRoute,
   ) {
     this.lat = -1.6709800;
     this.lng = -78.6471200;
@@ -61,7 +58,7 @@ export class MapViewComponent implements OnInit, OnChanges {
     this.subscription = this._quejaService._mapEmitter.subscribe((newPubId: string) => {
       this.fetchPub();
       this.focusPubId = newPubId;
-      this.metodFocusPubId();
+      this.focusPubById();
     });
     ////
 
@@ -76,13 +73,6 @@ export class MapViewComponent implements OnInit, OnChanges {
      * MÉTODO QUE EJECUTA LA ACCIÓN DEL MARKER
      */
     $("#idviewPub").on(("click"), (event) => { });
-  }
-
-  /**
-   * MÉTODO PARA DAR FOCUS A LA OPCIÓN ASOCIADA A ESTE CONTENIDO PRINCIPAL DE NAVEGACIÓN:
-   */
-  focusInnerOption() {
-    this._contentService.focusMenuOption($("#id-top-panel"), "top-option-1");
   }
 
   /**
@@ -120,7 +110,6 @@ export class MapViewComponent implements OnInit, OnChanges {
    */
   fetchPub() {
     for (let pub of this.pubList) {
-      console.log(pub);
       this.crearMarker(pub.latitude, pub.longitude, this.defineTypeIcon(pub.type), pub.id_publication, pub.type, pub.type.description);
     }
   }
@@ -173,36 +162,35 @@ export class MapViewComponent implements OnInit, OnChanges {
       this._quejaService.getPubList().then((pubs: Publication[]) => {
         this.pubList = pubs;
         this.fetchPub();
+        if (!this.focusPubId) {
+          this.focusPubId = this.pubList[0].id_publication;
+        }
         //HACIENDO FOCUS UNA PUBLICACIÓN EN EL MAPA      
-        this.metodFocusPubId();
+        this.focusPubById();
       });
     }
     else {
       this.fetchPub();
+      if (!this.focusPubId) {
+        this.focusPubId = this.pubList[0].id_publication;
+      }
       //HACIENDO FOCUS UNA PUBLICACIÓN EN EL MAPA      
-      this.metodFocusPubId();
+      this.focusPubById();
     }
   }
 
   /**
    * METODO QUE VALIDA SI HAY UN ID DE QUEJA PARA UBICARLO EN EL MAPA
    */
-  metodFocusPubId() {
+  focusPubById() {
     if (this.focusPubId) {
-      this.focus();
-    }
-  }
-
-  /**
-   * METODO QUE ENFOCA EL MARKER BUSCADO
-   */
-  focus() {
-    let focusZoom = 25;
-    for (let i = 0; i < this.pubList.length; i++) {
-      if (this.focusPubId == this.pubList[i].id_publication) {
-        this.map.setCenter({ lat: this.pubList[i].latitude, lng: this.pubList[i].longitude });
-        this.map.setZoom(focusZoom);
-        i = this.pubList.length;
+      let focusZoom = 25;
+      for (let i = 0; i < this.pubList.length; i++) {
+        if (this.focusPubId == this.pubList[i].id_publication) {
+          this.map.setCenter({ lat: this.pubList[i].latitude, lng: this.pubList[i].longitude });
+          this.map.setZoom(focusZoom);
+          i = this.pubList.length;
+        }
       }
     }
   }
@@ -240,6 +228,9 @@ export class MapViewComponent implements OnInit, OnChanges {
       if (property === 'focusPubId') {
         if (changes[property].currentValue) {
           this.focusPubId = changes[property].currentValue;
+          if (this.pubList) {
+            this.focusPubById();
+          }
         }
       }
     }

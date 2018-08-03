@@ -141,7 +141,10 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   optionButtonAction(event: DynaContent) {
     if (event.contentType === ACTION_TYPES.mapFocus) {
-      this.focusedPubId = event.contentData;
+      this.focusedPubId = null;
+      setTimeout(() => {
+        this.focusedPubId = event.contentData;
+      });
       this.changeOwlContent(MENU_OPTIONS.mapview);
     }
   }
