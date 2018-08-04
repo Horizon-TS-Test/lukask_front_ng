@@ -1070,6 +1070,11 @@ p, label, div {
   z-index: 99999999999;
   width: 100% !important; }
 
+.p-fixed-select2 {
+  position: fixed !important;
+  top: unset !important;
+  bottom: 0px !important; }
+
 .p-select2-container .select2-container {
   z-index: 1; }
 .p-select2-container .select2-hidden-accessible {
@@ -1077,6 +1082,9 @@ p, label, div {
   -webkit-clip-path: unset !important;
   clip-path: unset !important; }
 
+/*.select2-search {
+    display: none !important;
+}*/
 .select2-container--open {
   width: unset !important; }
 

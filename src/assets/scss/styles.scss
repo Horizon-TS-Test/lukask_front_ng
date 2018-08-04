@@ -1426,6 +1426,11 @@ p, label, div {
     z-index: 99999999999;
     width: 100% !important;
 }
+.p-fixed-select2 {
+    position: fixed !important;
+    top: unset !important;
+    bottom: 0px !important;
+}
 .p-select2-container {
     .select2-container {
         z-index: 1;
@@ -1439,6 +1444,9 @@ p, label, div {
     }
     ////
 }
+/*.select2-search {
+    display: none !important;
+}*/
 .select2-container--open {
     width: unset !important;
 }
