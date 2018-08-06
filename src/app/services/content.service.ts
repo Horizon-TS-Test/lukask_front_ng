@@ -172,22 +172,4 @@ export class ContentService {
       }
     });
   }
-
-  /**
-   * MÉTODO PARA OCULTAR O MOSTRAR EL SCROLL DEL BODY PRINCIPAL AL ABRIR O CERRAR UN HORIZON-MODAL
-   * @param hide 
-   */
-  public manageBodyOverflow(hide: boolean = false) {
-    if (!hide) {
-      if (!$("body").hasClass("p-body-overflow")) {
-        $("body").addClass("p-body-overflow");
-      }
-    }
-    else {
-      if ($("body").hasClass("p-body-overflow")) {
-        $("body").removeClass("p-body-overflow");
-      }
-    }
-  }
-
 }

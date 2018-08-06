@@ -82,6 +82,5 @@ export class HorizonModalComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscriber.unsubscribe();
-    this._contentService.manageBodyOverflow(true);
   }
 }

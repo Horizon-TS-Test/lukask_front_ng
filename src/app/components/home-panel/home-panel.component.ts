@@ -55,4 +55,12 @@ export class HomePanelComponent implements OnInit {
   getSwitchChanges(event: boolean) {
     this.switchChange.emit(event);
   }
+
+  /**
+   * MÉTODO PARA RECARGAR LA APLICACIÓN
+   */
+  public reloadApp(event: any) {
+    event.preventDefault();
+    location.href = '/';
+  }
 }

@@ -73,6 +73,7 @@ export class PanelOpcionesComponent implements OnInit, OnChanges, OnDestroy {
     if (event) {
       event.preventDefault();
     }
+    console.log("focusing!!");
     this._contentService.focusMenuOption($('#id-top-panel'), idContent);
     if (notify === true) {
       this._notifierService.notifyChangeMenuOption(menuOption);

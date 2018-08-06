@@ -20,6 +20,8 @@ export class UserRegisterComponent implements OnInit, OnChanges {
   public userObj: User;
   public carouselOptions: any;
   public actionType: number;
+  public loadingClass: string;
+  public activeClass: string;
 
   constructor(
     private _notifierService: NotifierService,
@@ -52,6 +54,14 @@ export class UserRegisterComponent implements OnInit, OnChanges {
   }
 
   /**
+   * MÉTODO PARA ACTIVAR EL EECTO DE CARGANDO:
+   */
+  private loadingAnimation() {
+    this.loadingClass = "on";
+    this.activeClass = "active";
+  }
+
+  /**
   * MÉTODO PARA MOSTRAR EL MODAL DE LA CAMARA
   * @param event = EVENTO DE LA CAMARA
   */
@@ -60,6 +70,10 @@ export class UserRegisterComponent implements OnInit, OnChanges {
     this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.new_media, contentData: null });
   }
 
+  /**
+   * MÉTODO PARA OBTENER EL EVENTO DEL COMPONENTE HIJO LUEGO DEL SUBMIT
+   * @param event VALOR BOOLEANO DEL EVENT EMITTER
+   */
   childAfterSubmit(event: any) {
     if (event) {
       this.closeModal.emit(true);
@@ -77,6 +91,7 @@ export class UserRegisterComponent implements OnInit, OnChanges {
         setTimeout(() => {
           this.actionType = ACTION_TYPES.userRegister;
         });
+        this.loadingAnimation();
         break;
       case ACTION_TYPES.close:
         this.closeModal.emit(true);
