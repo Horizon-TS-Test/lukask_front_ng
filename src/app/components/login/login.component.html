@@ -1,14 +1,14 @@
-<div class="personal-content personal-fadeout min-height-full-modal container d-flex flex-column justify-content-center align-items-center w-100"
+<div class="personal-content relative-background personal-fadeout min-height-full max-height-full p-overflow-hidden light-background {{ loadingClass }} container d-flex flex-column justify-content-center align-items-center w-100"
   id="loginContainer">
 
   <form #frmLogin="ngForm" class="f-child-full-space col-12 col-sm-7 col-md-6 py-2 d-flex flex-column justify-content-center align-items-center"
     id="frmL" (ngSubmit)="onLogin()">
-    <div id="loading-content"></div>
+    <div class="loading-content {{ activeClass }}"></div>
 
     <div class="form-group row pb-1" [ngClass]="{ 'has-danger': !user_name.valid && user_name.touched }">
       <label for="user_name" class="col-3 col-form-label">Usuario:</label>
       <div class="col-9">
-        <input type="text" id="user_name" name="user_name" #user_name="ngModel" [(ngModel)]="user.username" class="form-control form-control-danger"
+        <input type="email" id="user_name" name="user_name" #user_name="ngModel" [(ngModel)]="user.username" class="form-control form-control-danger"
           required>
         <small *ngIf="!user_name.valid && user_name.touched" class="form-control-feedback">Ingrese su nombre de usuario</small>
       </div>
@@ -24,15 +24,15 @@
     </div>
 
     <div class="row">
-      <div class="col-12 offset-sm-3 col-sm-9 d-flex justify-content-center align-items-center d-sm-block">
+      <div class="col-12 offset-sm-3 col-sm-9 d-flex justify-content-center align-items-center">
         <button type="submit" class="primary-font btn btn-outline-info" [disabled]="!frmLogin.form.valid">Ingresar</button>
         <button type="reset" id="resetBtn" class="primary-font btn btn-outline-secondary ml-1">Limpiar</button>
       </div>
     </div>
   </form>
 
-  <div class="row d-flex justify-content-center align-items-center py-4">
-    <small class="col-12">
+  <div class="fixed-layer p-bottom-layer w-100 d-flex justify-content-center align-items-center py-2">
+    <small class="col-12 text-center">
       Aún no formas parte de
       <b>Lukask</b>? &nbsp;
       <a href="#" (click)="openLayer($event, contentTypes.register_user)" class="p-normal-text-color">

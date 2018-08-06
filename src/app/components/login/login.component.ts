@@ -20,6 +20,8 @@ export class LoginComponent implements OnInit {
 
   public user: User;
   public contentTypes: any;
+  public loadingClass: string;
+  public activeClass: string;
 
   constructor(
     private _loginService: LoginService,
@@ -41,10 +43,12 @@ export class LoginComponent implements OnInit {
 
   activeLoadingContent(remove: boolean = false) {
     if (remove) {
-      $("#loading-content").removeClass("active");
+      this.loadingClass = "";
+      this.activeClass = "";
     }
     else {
-      $("#loading-content").addClass("active");
+      this.loadingClass = "on";
+      this.activeClass = "active";
     }
   }
 

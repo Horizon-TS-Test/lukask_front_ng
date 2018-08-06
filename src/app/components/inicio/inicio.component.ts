@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
 import { ContentService } from '../../services/content.service';
 import { NotifierService } from '../../services/notifier.service';
 import { Subscription } from 'rxjs';
@@ -8,6 +8,7 @@ import { DynaContent } from '../../interfaces/dyna-content.interface';
 import { Alert } from '../../models/alert';
 import { SocketService } from '../../services/socket.service';
 import { ALERT_TYPES } from '../../config/alert-types';
+import { OwlCarousel } from '../../../../node_modules/ngx-owl-carousel';
 
 declare var $: any;
 
@@ -17,10 +18,13 @@ declare var $: any;
   styleUrls: ['./inicio.component.css']
 })
 export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('owlElement') owlElement: OwlCarousel;
+
   private pubContainer: any;
   private customCarousel: any;
   private subscriptor: Subscription;
   private alertData: Alert;
+  private touchDrag: boolean;
 
   public enableSecondOp: boolean;
   public enableThirdOp: boolean;
@@ -31,7 +35,9 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
     private _contentService: ContentService,
     private _notifierService: NotifierService,
     private _socket: SocketService
-  ) { }
+  ) {
+    this.touchDrag = true;
+  }
 
   ngOnInit() {
     this.pubContainer = $('#pub-container');
@@ -83,7 +89,8 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   initCarousel() {
     this.carouselOptions = {
       items: 1, dots: false, loop: false, margin: 5,
-      nav: false, stagePadding: 0, autoWidth: false
+      nav: false, stagePadding: 0, autoWidth: false,
+      touchDrag: this.touchDrag, mouseDrag: false
     };
   }
 
@@ -96,6 +103,7 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   handleMenuCarousel() {
     this.customCarousel = $('#carousel-home');
+
     this.customCarousel.on('dragged.owl.carousel', (event) => {
       const menuIndex = event.item.index;
       switch (menuIndex) {
@@ -103,6 +111,8 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
           break;
         case MENU_OPTIONS.mapview:
           this.enableSecondOp = true;
+          this.touchDrag = false;
+          this.reInitCarousel();
           break;
         case MENU_OPTIONS.payment:
           this.enableThirdOp = true;
@@ -115,15 +125,29 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
     this.customCarousel.on('to.owl.carousel', (event, menuIndex) => {
       switch (menuIndex) {
         case MENU_OPTIONS.home:
+          if (!this.touchDrag) {
+            this.touchDrag = true;
+            this.reInitCarousel();
+          }
           break;
         case MENU_OPTIONS.mapview:
           this.enableSecondOp = true;
+          if (this.touchDrag) {
+            this.touchDrag = false;
+            this.reInitCarousel();
+          }
           break;
         case MENU_OPTIONS.payment:
           this.enableThirdOp = true;
+          if (!this.touchDrag) {
+            this.touchDrag = true;
+            this.reInitCarousel();
+          }
           break;
       }
-      this._notifierService.notifyChangeMenuContent(menuIndex);
+      setTimeout(() => {
+        this._notifierService.notifyChangeMenuContent(menuIndex);
+      }, 800);
       console.log("CAROUSEL 'TO' EVENT: ", menuIndex);
     });
   }
@@ -132,7 +156,15 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
    * MÉTODO PARA NAVEGAR EN CIERTA OPCIÓN DEL CAROUSEL:
    */
   changeOwlContent(option: number) {
-    $('#carousel-home').find('.owl-carousel').trigger('to.owl.carousel', [option, 300, true]);
+    this.owlElement.to([option, 300, true]);
+  }
+
+  /**
+   * MÉTODO PARA RE INICIALIZAR EL ELEMENTO OWL CAROUSEL:
+   */
+  reInitCarousel() {
+    this.initCarousel();
+    this.owlElement.reInit();
   }
 
   /**
@@ -147,6 +179,15 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
       });
       this.changeOwlContent(MENU_OPTIONS.mapview);
     }
+  }
+
+  /**
+   * MÉTODO PARA DETECTAR LOS CAMBIOS DEL SWITCH INPUT COMO COMPONENTE HIJO
+   * @param event VALOR BOOLEANO DEL EVENT EMITTER DEL COMPONENTE HIJO
+   */
+  getSwitchChanges(event: boolean) {
+    this.touchDrag = event;
+    this.reInitCarousel();
   }
 
   ngOnDestroy() {

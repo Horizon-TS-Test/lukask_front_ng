@@ -37,9 +37,10 @@ export class Select2BootstrapComponent implements OnInit, AfterViewInit {
       });
 
       $('.select2-search input').on("focus", function (e) {
-        console.log(e.originalEvent);
-        if(e.originalEvent) {
-          $('.select2-search').parent().addClass('p-fixed-select2');
+        if (e.originalEvent) {
+          setTimeout(() => {
+            $('.select2-search').parent().addClass('p-fixed-select2');
+          }, 1000);
         }
       });
     });

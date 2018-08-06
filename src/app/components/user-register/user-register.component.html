@@ -1,32 +1,14 @@
-<div class="card pb-3">
-  <div id="loading-content"></div>
+<div class="p-signup card pb-3">
+  <div class="loading-content"></div>
   <div class="card-header d-flex justify-content-between align-items-center">
     Registro de Usuario
   </div>
 
-  <div class="relative-background">
-    <div class="card-img-top d-flex justify-content-center align-items-center">
-      <img [src]="_domSanitizer.bypassSecurityTrustUrl(fileToUpload.mediaFileUrl)" width="100%" class="mb-1">
-    </div>
-
-    <div class="p-float-div top-left-outer-corner w-100 h-100">
-      <owl-carousel id="carousel-registro" class="p-owl-full-height" [options]="carouselOptions" [carouselClasses]="['owl-theme']">
-        <div class="d-flex justify-content-center align-items-center h-100">
-          <a href="#" class="p-transparent-btn" (click)="newMedia($event)">
-            <fa name="camera"></fa>
-          </a>
-        </div>
-
-        <div class="d-flex justify-content-center align-items-center">
-          <a href="#" class="p-transparent-btn ml-3" (click)="newMedia($event)">
-            <fa name="file"></fa>
-          </a>
-        </div>
-      </owl-carousel>
-    </div>
+  <div class="card-img-top d-flex justify-content-center align-items-center">
+    <img width="100%" class="p-img-pop mb-1">
   </div>
 
-  <user-form [actionType]="actionType" [mediaFile]="fileToUpload" (closeModal)="childAfterSubmit($event)"></user-form>
+  <user-form [actionType]="actionType" (closeModal)="childAfterSubmit($event)"></user-form>
 </div>
 
 <material-btn-list [showClass]='showClass' [materialBtns]="materialButtons" (someBtnAction)="actionBtn($event)"></material-btn-list>

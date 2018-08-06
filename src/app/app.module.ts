@@ -70,6 +70,7 @@ import { ProfileOwnerComponent } from './components/profile-owner/profile-owner.
 import { HorizonPopOverComponent } from './components/horizon-pop-over/horizon-pop-over.component';
 import { UserRegisterComponent } from './components/user-register/user-register.component';
 import { UserFormComponent } from './components/user-form/user-form.component';
+import { HorizonSwitchInputComponent } from './components/horizon-switch-input/horizon-switch-input.component';
 
 @NgModule({
   declarations: [
@@ -119,7 +120,8 @@ import { UserFormComponent } from './components/user-form/user-form.component';
     ProfileOwnerComponent,
     HorizonPopOverComponent,
     UserRegisterComponent,
-    UserFormComponent
+    UserFormComponent,
+    HorizonSwitchInputComponent
   ],
   imports: [
     HttpModule,

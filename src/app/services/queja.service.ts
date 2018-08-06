@@ -149,6 +149,7 @@ export class QuejaService {
       return this._http.get(REST_SERV.pubsUrl + "/" + ((this.pagePattern && morePubs == true) ? this.pagePattern : "?limit=" + this.DEFAULT_LIMIT), { headers: pubHeaders, withCredentials: true }).toPromise()
         .then((response: Response) => {
           const respJson = response.json().data;
+          console.log(respJson);
           this.pagePattern = respJson.next;
           const pubs = respJson.results;
 

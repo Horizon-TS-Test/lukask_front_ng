@@ -326,12 +326,10 @@ export class UserService {
   }
 
   getProvinceWeb() {
-
     const qTheaders = new Headers({ 'Content-Type': 'application/json' });
 
     return this._http.get(REST_SERV.provinceUrl, { headers: qTheaders, withCredentials: true }).toPromise()
       .then((response: Response) => {
-        console.log("response///////////////////////////////////");
         console.log(response);
         const qtypes = response.json().data.results;
         let transformedProvinces: Province[] = [];

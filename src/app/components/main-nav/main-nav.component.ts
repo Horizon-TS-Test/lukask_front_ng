@@ -3,6 +3,7 @@ import { Nav } from '../../interfaces/nav.interface';
 import { Subscription } from 'rxjs';
 import { RouterService } from '../../services/router.service';
 import { NotificationService } from '../../services/notification.service';
+import { UserService } from '../../services/user.service';
 
 declare var $: any;
 
@@ -21,19 +22,18 @@ export class MainNavComponent implements OnInit {
   public _enableMainMenu: boolean;
 
   constructor(
+    private _userService: UserService,
     private _routerService: RouterService,
     private _notificationService: NotificationService
   ) {
-    this._enableMainMenu = true;
+    this._enableMainMenu = false;
     this.newEntries = true;
     this.initEntries(true);
 
     this.menuSubscription = this._routerService._enableMainMenu.subscribe(
       (enable: boolean) => {
-        this._enableMainMenu = enable;
-        if (enable == true) {
-          this.forceClickMenu();
-        }
+        this._enableMainMenu = enable && this._userService.isLoggedIn();
+        this.forceClickMenu();
       }
     );
 
@@ -45,14 +45,16 @@ export class MainNavComponent implements OnInit {
   ngOnInit() { }
 
   forceClickMenu() {
-    setTimeout(() => {
-      let menu: HTMLElement = document.getElementById('menu-nav') as HTMLElement;
-      if (menu) {
-        if (!menu.classList.contains("menu-is-open")) {
-          menu.click();
+    if (this._enableMainMenu && this._userService.isLoggedIn()) {
+      setTimeout(() => {
+        let menu: HTMLElement = document.getElementById('menu-nav') as HTMLElement;
+        if (menu) {
+          if (!menu.classList.contains("menu-is-open")) {
+            menu.click();
+          }
         }
-      }
-    }, 1000);
+      }, 1000);
+    }
   }
 
   /**

@@ -28,6 +28,8 @@ export class NewPubComponent implements OnInit, AfterViewInit, OnChanges {
   public transmitStyle: string;
   public newPubId: string;
   public nextButton: any;
+  public loadingClass: string;
+  public activeClass: string;
 
   constructor(
     private _notifierService: NotifierService
@@ -100,12 +102,12 @@ export class NewPubComponent implements OnInit, AfterViewInit, OnChanges {
    */
   private showLoadingContent(show: boolean) {
     if (show == true) {
-      $("#loading-content").parent().css("opacity", ".4");
-      $("#loading-content").addClass("active");
+      this.loadingClass = "on";
+      this.activeClass = "active";
     }
     else {
-      $("#loading-content").removeClass("active");
-      $("#loading-content").parent().css("opacity", "1");
+      this.loadingClass = "";
+      this.activeClass = "";
     }
   }
 
