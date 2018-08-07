@@ -311,12 +311,11 @@ export class QuejaService {
    */
   public savePub(pub: Publication) {
     return this.sendQueja(pub).then((response) => {
-      if (!this.isPostedPub) {
+      if (!this.isPostedPub && !navigator.onLine) {
         this._backSyncService.storeForBackSync('sync-pub', 'sync-new-pub', this.mergeJSONData(pub))
         if ('serviceWorker' in navigator && 'SyncManager' in window) {
           return true;
         }
-        return false;
       }
       else {
         this.isPostedPub = false;
@@ -340,7 +339,7 @@ export class QuejaService {
           return response;
         },
         (err) => {
-          console.log(err);
+          console.log("Erro al enviar: ", err);
         }
       );
   }
@@ -575,7 +574,6 @@ export class QuejaService {
 
         switch (stream) {
           case "publication":
-            console.log("new pub!! :D");
             this.updatePubList(socketPub.payload.data, action);
             this._mapEmitter.emit(socketPub.payload.data.id_publication);
             break;
@@ -585,7 +583,6 @@ export class QuejaService {
              * this.updatePubMediaList(?,?), YA QUE PUEDEN LLEGAR VARIOS MEDIOS DE UNA MISMA PUBLICACIÓN
              * AL MISMO TIEMPO.
              */
-            console.log("new multimedia!! :D");
             let pubId = socketPub.payload.data.id_publication;
             let flag = 0;
             for (let mainMedia of this.mainMediaJson) {
@@ -603,7 +600,6 @@ export class QuejaService {
             this.updatePubMediaList(socketPub.payload.data, action);
             break;
           case "actions":
-            console.log("Actions");
             this.updateRelevanceNumber(socketPub.payload.data);
             break;
         }

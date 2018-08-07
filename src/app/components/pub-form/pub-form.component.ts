@@ -183,10 +183,7 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges {
     }
     this._quejaService.savePub(this.newPub).then((response: any) => {
       if (response == true) {
-        this.afterSubmit.emit({ finished: true, dataAfterSubmit: null, hasError: false, message: 'El registro será enviado en la próxima conexión', backSync: true });
-      }
-      else if (response == false) {
-        this.afterSubmit.emit({ finished: true, dataAfterSubmit: null, hasError: true, message: 'No se ha podido procesar la petición' });
+        this.afterSubmit.emit({ finished: true, dataAfterSubmit: null, hasError: false, message: 'Tu publicación se enviará en la próxima conexión', backSync: true });
       }
       else {
         this.afterSubmit.emit({ finished: true, dataAfterSubmit: response.id_publication, hasError: false, message: 'Su queja ha sido publicada exitosamente' });

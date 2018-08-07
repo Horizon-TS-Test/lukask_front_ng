@@ -140,7 +140,7 @@ export class NewPubComponent implements OnInit, AfterViewInit, OnChanges {
       }
 
       if (event.backSync == true) {
-        Snackbar.show({ text: event.message, pos: 'bottom-center' });
+        Snackbar.show({ text: event.message, pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#34b4db' });
       }
       else {
         this.alertData = new Alert({ title: 'Proceso Correcto', message: event.message, type: ALERT_TYPES.success });

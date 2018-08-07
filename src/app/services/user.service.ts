@@ -18,11 +18,9 @@ declare var deleteItemData: any;
   providedIn: 'root'
 })
 export class UserService {
-  private isFetchedUserProfile: boolean;
   private isFetchedProvince: boolean;
   private isFetchedCanton: boolean;
   private isFetchedParroquia: boolean;
-  private _userService: UserService;
 
   public userProfile: User;
   public _userUpdate = new EventEmitter<boolean>();
@@ -34,6 +32,8 @@ export class UserService {
   ) {
     this.pageLimit = 5;
     this.isFetchedProvince = false;
+    this.isFetchedCanton = false;
+    this.isFetchedParroquia = false;
   }
 
   /**
@@ -301,183 +301,6 @@ export class UserService {
     return this.userProfile;
   }
 
-
-  /**
-   * MÉTODO PARA OBTENER LAS PROVINCIAS
-   * */
-  getProvinceList() {
-    return this.getProvinceWeb().then((webProvince: Province[]) => {
-      if (!this.isFetchedProvince) {
-        return this.getProvinceCache().then((cacheProvince: Province[]) => {
-          return cacheProvince;
-        });
-      }
-      else {
-        this.isFetchedProvince = false;
-      }
-
-      return webProvince;
-    }).catch((error: Response) => {
-      if (error.json().code == 401) {
-        localStorage.clear();
-      }
-      console.log(error.json());
-    });
-  }
-
-  getProvinceWeb() {
-    const qTheaders = new Headers({ 'Content-Type': 'application/json' });
-
-    return this._http.get(REST_SERV.provinceUrl, { headers: qTheaders, withCredentials: true }).toPromise()
-      .then((response: Response) => {
-        const qtypes = response.json().data.results;
-        let transformedProvinces: Province[] = [];
-        for (let type of qtypes) {
-          transformedProvinces.push(new Province(type.id_province, type.description_province));
-        }
-        this.isFetchedProvince = true;
-        console.log("[LUKASK QUEJA SERVICE] - QUEJA TYPES FROM WEB", transformedProvinces);
-        return transformedProvinces;
-      })
-      .catch((error: Response) => {
-        if (error.json().code == 401) {
-          localStorage.clear();
-        }
-        console.log(error.json());
-      });
-  }
-
-  getProvinceCache() {
-    if ('indexedDB' in window) {
-      return readAllData('qtype')
-        .then((qtypes) => {
-          let transformedProvinces: Province[] = [];
-          for (let type of qtypes) {
-            transformedProvinces.push(new Province(type.id_type_publication, type.description));
-          }
-
-          console.log("[LUKASK QUEJA SERVICE] - QUEJA TYPES FROM CACHE", transformedProvinces);
-          return transformedProvinces;
-        });
-    }
-    return new Promise((resolve, reject) => {
-      reject(null);
-    });
-  }
-
-  /**
-   * MÉTODO PARA OBTENER LAS PROVINCIAS
-   * */
-  getCantonList(id_provincia: any) {
-    return this.getCantonWeb(id_provincia).then((webCanton: Canton[]) => {
-      if (!this.isFetchedCanton) {
-        return this.getCantonCache().then((cacheCanton: Canton[]) => {
-          return cacheCanton;
-        });
-      }
-      else {
-        this.isFetchedCanton = false;
-      }
-
-      return webCanton;
-    }).catch((error: Response) => {
-      if (error.json().code == 401) {
-        localStorage.clear();
-      }
-      console.log(error.json());
-    });
-  }
-
-  getCantonWeb(id_provincia: any) {
-    const qTheaders = new Headers({ 'Content-Type': 'application/json' });
-    return this._http.get(REST_SERV.cantonUrl + "/" + id_provincia, { headers: qTheaders, withCredentials: true }).toPromise()
-      .then((response: Response) => {
-        const qtypes = response.json().data;
-        let transformedCantones: Canton[] = [];
-        for (let type of qtypes) {
-          transformedCantones.push(new Canton(type.id_canton, type.description_canton));
-        }
-        this.isFetchedCanton = true;
-        return transformedCantones;
-      })
-      .catch((error: Response) => {
-        if (error.json().code == 401) {
-          localStorage.clear();
-        }
-        console.log(error.json());
-      });
-  }
-
-  getCantonCache() {
-    if ('indexedDB' in window) {
-      return readAllData('qtype')
-        .then((qtypes) => {
-          let transformedCantones: Canton[] = [];
-          for (let type of qtypes) {
-            transformedCantones.push(new Canton(type.id_type_publication, type.description));
-          }
-          console.log("[LUKASK QUEJA SERVICE] - QUEJA TYPES FROM CACHE", transformedCantones);
-          return transformedCantones;
-        });
-    }
-    return new Promise((resolve, reject) => {
-      reject(null);
-    });
-  }
-
-  /**
-   * MÉTODO PARA OBTENER LAS PARROQUIAS
-   * */
-
-  getParroquiaList(canton_id: any) {
-    return this.getParroquiaWeb(canton_id).then((webParroquia: Parroquia[]) => {
-      return webParroquia;
-    }).catch((error: Response) => {
-      if (error.json().code == 401) {
-        localStorage.clear();
-      }
-      console.log(error.json());
-    });
-  }
-
-  getParroquiaWeb(canton_id: any) {
-    const qTheaders = new Headers({ 'Content-Type': 'application/json' });
-    return this._http.get(REST_SERV.parroquiaUrl + "/" + canton_id, { headers: qTheaders, withCredentials: true }).toPromise()
-      .then((response: Response) => {
-        const qtypes = response.json().data.parishs;
-        let transformedParroquias: Parroquia[] = [];
-        for (let type of qtypes) {
-          transformedParroquias.push(new Parroquia(type.id_canton, type.description_));
-        }
-        this.isFetchedCanton = true;
-        console.log("[LUKASK CANTON SERVICE] - PARROQUIA TYPES FROM WEB", transformedParroquias);
-        return transformedParroquias;
-      })
-      .catch((error: Response) => {
-        if (error.json().code == 401) {
-          localStorage.clear();
-        }
-        console.log(error.json());
-      });
-  }
-
-  getParroquiaCache() {
-    if ('indexedDB' in window) {
-      return readAllData('qtype')
-        .then((qtypes) => {
-          let transformedParroquias: Parroquia[] = [];
-          for (let type of qtypes) {
-            transformedParroquias.push(new Parroquia(type.id_type_publication, type.description));
-          }
-          console.log("[LUKASK QUEJA SERVICE] - QUEJA TYPES FROM CACHE", transformedParroquias);
-          return transformedParroquias;
-        });
-    }
-    return new Promise((resolve, reject) => {
-      reject(null);
-    });
-  }
-
   /**
    * MÉTODO PARA ENVIAR MEDIANTE POST LOS DATOS DEL PERFIL
    * @param userFormData 
@@ -522,5 +345,219 @@ export class UserService {
           console.log(err);
         }
       );
+  }
+
+  /**
+   * MÉTODO PARA OBTENER LAS PROVINCIAS SEA DE LA WEB O DE LA CACHÉ
+   * */
+  public getProvinceList() {
+    return this.getProvinceWeb().then((webProvince: Province[]) => {
+      if (!this.isFetchedProvince) {
+        return this.getProvinceCache().then((cacheProvince: Province[]) => {
+          return cacheProvince;
+        });
+      }
+      else {
+        this.isFetchedProvince = false;
+      }
+
+      return webProvince;
+    }).catch((error: Response) => {
+      if (error.json().code == 401) {
+        localStorage.clear();
+      }
+      console.log(error.json());
+    });
+  }
+
+  /**
+   * MÉTODO PARA CARGAR LAS PROVINCIAS DESDE LA WEB
+   */
+  private getProvinceWeb() {
+    const qTheaders = new Headers({ 'Content-Type': 'application/json' });
+
+    return this._http.get(REST_SERV.provinceUrl, { headers: qTheaders, withCredentials: true }).toPromise()
+      .then((response: Response) => {
+        const provinces = response.json().data;
+        let transformedProvinces: Province[] = [];
+        for (let prov of provinces) {
+          transformedProvinces.push(new Province(prov.id_province, prov.description_province));
+        }
+        this.isFetchedProvince = true;
+        console.log("[LUKASK USER SERVICE] - PROVINCIAS FROM WEB", transformedProvinces);
+        return transformedProvinces;
+      })
+      .catch((error: Response) => {
+        if (error.json().code == 401) {
+          localStorage.clear();
+        }
+        console.log(error.json());
+      });
+  }
+
+  /**
+   * MÉTODO PARA CARGAR LAS PROVINCIAS DESDE LA WEB
+   */
+  private getProvinceCache() {
+    if ('indexedDB' in window) {
+      return readAllData('province')
+        .then((provinces) => {
+          let transformedProvinces: Province[] = [];
+          for (let prov of provinces) {
+            transformedProvinces.push(new Province(prov.id_province, prov.description_province));
+          }
+
+          console.log("[LUKASK USER SERVICE] - PROVINCIAS FROM CACHE", transformedProvinces);
+          return transformedProvinces;
+        });
+    }
+    return new Promise((resolve, reject) => {
+      reject(null);
+    });
+  }
+
+  /**
+   * MÉTODO PARA OBTENER LOS CANTONES DE UNA PROVINCIA SEA DE LA WEB O DE LA CACHÉ
+   * */
+  public getCantonList(id_provincia: string) {
+    return this.getCantonWeb(id_provincia).then((webCanton: Canton[]) => {
+      if (!this.isFetchedCanton) {
+        return this.getCantonCache(id_provincia).then((cacheCanton: Canton[]) => {
+          return cacheCanton;
+        });
+      }
+      else {
+        this.isFetchedCanton = false;
+      }
+
+      return webCanton;
+    }).catch((error: Response) => {
+      if (error.json().code == 401) {
+        localStorage.clear();
+      }
+      console.log(error.json());
+    });
+  }
+
+  /**
+   * MÉTODO PARA CARGAR LOS CANTONES DE UNA PROVINCIA ESPECÍFICA DESDE LA WEB
+   * @param id_provincia 
+   */
+  private getCantonWeb(id_provincia: string) {
+    const qTheaders = new Headers({ 'Content-Type': 'application/json' });
+    return this._http.get(REST_SERV.cantonUrl + "/?province_id=" + id_provincia, { headers: qTheaders, withCredentials: true }).toPromise()
+      .then((response: Response) => {
+        const cantones = response.json().data;
+        let transformedCantones: Canton[] = [];
+        for (let canton of cantones) {
+          transformedCantones.push(new Canton(canton.id_canton, canton.description_canton));
+        }
+        this.isFetchedCanton = true;
+
+        console.log("[LUKASK USER SERVICE] - CANTONES FROM WEB", transformedCantones);
+        return transformedCantones;
+      })
+      .catch((error: Response) => {
+        if (error.json().code == 401) {
+          localStorage.clear();
+        }
+        console.log(error.json());
+      });
+  }
+
+  /**
+   * MÉTODO PARA CARGAR LOS CANTONES DE UNA PROVINCIA ESPECÍFICA DESDE LA CACHÉ
+   * @param id_provincia 
+   */
+  private getCantonCache(id_provincia: string) {
+    if ('indexedDB' in window) {
+      return readAllData('canton')
+        .then((cantones) => {
+          let transformedCantones: Canton[] = [];
+          for (let canton of cantones) {
+            if (canton.province == id_provincia) {
+              transformedCantones.push(new Canton(canton.id_canton, canton.description_canton));
+            }
+          }
+          console.log("[LUKASK USER SERVICE] - CANTONES FROM CACHE", transformedCantones);
+          return transformedCantones;
+        });
+    }
+    return new Promise((resolve, reject) => {
+      reject(null);
+    });
+  }
+
+  /**
+   * MÉTODO PARA OBTENER LAS PARROQUIAS SEA DE LA WEB O DE LA CACHÉ
+   * */
+  public getParroquiaList(canton_id: any) {
+    return this.getParroquiaWeb(canton_id).then((webParroquia: Parroquia[]) => {
+      if (!this.isFetchedParroquia) {
+        return this.getParroquiaCache(canton_id).then((cacheParroquia: Canton[]) => {
+          return cacheParroquia;
+        });
+      }
+      else {
+        this.isFetchedCanton = false;
+      }
+
+      return webParroquia;
+    }).catch((error: Response) => {
+      if (error.json().code == 401) {
+        localStorage.clear();
+      }
+      console.log(error.json());
+    });
+  }
+
+  /**
+   * MÉTODO PARA CARGAR LAS PARROQUIAS DE UN CANTÓN ESPECÍFICO DESDE LA WEB
+   * @param canton_id 
+   */
+  private getParroquiaWeb(canton_id: string) {
+    const qTheaders = new Headers({ 'Content-Type': 'application/json' });
+    return this._http.get(REST_SERV.parroquiaUrl + "/?canton_id=" + canton_id, { headers: qTheaders, withCredentials: true }).toPromise()
+      .then((response: Response) => {
+        const parroquias = response.json().data;
+        let transformedParroquias: Parroquia[] = [];
+        for (let parroq of parroquias) {
+          transformedParroquias.push(new Parroquia(parroq.id_parish, parroq.description_parish));
+        }
+        this.isFetchedParroquia = true;
+
+        console.log("[LUKASK USER SERVICE] - PARROQUIAS FROM WEB", transformedParroquias);
+        return transformedParroquias;
+      })
+      .catch((error: Response) => {
+        if (error.json().code == 401) {
+          localStorage.clear();
+        }
+        console.log(error.json());
+      });
+  }
+
+  /**
+   * MÉTODO PARA CARGAR LAS PARROQUIAS DE UN CANTÓN ESPECÍFICO DESDE LA CACHÉ
+   * @param canton_id 
+   */
+  private getParroquiaCache(canton_id: string) {
+    if ('indexedDB' in window) {
+      return readAllData('parroquia')
+        .then((parroquias) => {
+          console.log("desde user service parroquias cache: ", parroquias);
+          let transformedParroquias: Parroquia[] = [];
+          for (let parroq of parroquias) {
+            if (parroq.canton == canton_id) {
+              transformedParroquias.push(new Parroquia(parroq.id_parish, parroq.description_parish));
+            }
+          }
+          console.log("[LUKASK USER SERVICE] - PARROQUIAS FROM CACHE", transformedParroquias);
+          return transformedParroquias;
+        });
+    }
+    return new Promise((resolve, reject) => {
+      reject(null);
+    });
   }
 }

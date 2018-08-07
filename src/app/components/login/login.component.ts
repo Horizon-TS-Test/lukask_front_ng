@@ -60,7 +60,7 @@ export class LoginComponent implements OnInit {
         this.activeLoadingContent(true);
         this.resetForm();
 
-        this.alertData = new Alert({ title: 'Proceso Correcto', message: "Bienvenido a LUKASK", type: ALERT_TYPES.success });
+        this.alertData = new Alert({ title: 'Mensaje del Sistema', message: "Te damos la bienvenida a LUKASK", type: ALERT_TYPES.info });
         this.setAlert();
 
         this._router.navigateByUrl('/inicio');
@@ -69,11 +69,22 @@ export class LoginComponent implements OnInit {
         const respJson: any = error.json();
         console.log("error", respJson);
 
+        switch (respJson.code) {
+          case 400:
+            this.alertData = new Alert({ title: 'Proceso Fallido', message: "Las credenciales ingesadas son incorrectas", type: ALERT_TYPES.danger });
+            break;
+          case 500:
+            this.alertData = new Alert({ title: 'Proceso Fallido', message: "Error inesperado en el servidor, lamentamos los inconvenientes", type: ALERT_TYPES.warning });
+            break;
+          case undefined:
+            this.alertData = new Alert({ title: 'Proceso Fallido', message: "Se ha perdido la conexión con el servidor", type: ALERT_TYPES.danger });
+            break;
+        }
+
         $("#resetBtn").click();
         this.activeLoadingContent(true);
         this.resetForm();
 
-        this.alertData = new Alert({ title: 'Proceso Fallido', message: "Las credenciales ingesadas son incorrectas", type: ALERT_TYPES.danger });
         this.setAlert();
       });
   }

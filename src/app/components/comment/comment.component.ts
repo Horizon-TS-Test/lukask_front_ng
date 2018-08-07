@@ -7,7 +7,8 @@ import { Subscription } from 'rxjs';
 import { UserService } from '../../services/user.service';
 import { User } from '../../models/user';
 import { ActionService } from '../../services/action.service';
-
+import { Alert } from '../../models/alert';
+import { ALERT_TYPES } from '../../config/alert-types';
 
 @Component({
   selector: 'comment',
@@ -23,6 +24,8 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
   @Input() hideBtn: boolean;
 
   private subscription: Subscription;
+  private alertData: Alert;
+  
   public userProfile: User;
 
   constructor(
@@ -47,10 +50,17 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   /**
+   * MÉTODO PARA MOSTRAR UN ALERTA EN EL DOM:
+   */
+  setAlert() {
+    this._notifierService.sendAlert(this.alertData);
+  }
+
+  /**
    * MÉTODO PARA ACTUALIZAR EL OBJETO USUARIO DE LOS COMENTARIOS DEL 
    * USUARIOS LOGEADOAL MOMENTO DE ACTUALIZAR EL PERFIL DE USUARIO:
    */
-  setOwnUserProfile() {
+  private setOwnUserProfile() {
     this.userProfile = this._userService.getUserProfile();
     if (this.commentModel.user.id == this.userProfile.id) {
       this.commentModel.user = this.userProfile;
@@ -61,7 +71,7 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
    * MÉTODO PARA SOLICITAR LA APERTURA DE UN HORIZON MODAL PARA MOSTRAR LAS RESPUESTAS DE UN COMENTARIO:
    * @param event 
    */
-  viewReplies(event: any = null) {
+  public viewReplies(event: any = null) {
     if (event) {
       event.preventDefault();
     }
@@ -81,12 +91,23 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
    * MÉTODO PARA DAR RELEVANCIA A UNA PUBLICACIÓN Y ENVIARLA AL BACKEND:
    * @param event 
    */
-  onRelevance(event: any) {
+  public onRelevance(event: any) {
     event.preventDefault();
     this._actionService.saveRelevance(this.commentModel.publicationId, this.commentModel.commentId, !this.commentModel.userRelevance)
-      .then((active: boolean) => {
-        this.commentModel.userRelevance = active;
-      }).catch((error) => console.log(error));
+      .then((response: any) => {
+        if (response == 'backSyncOk') {
+          this.alertData = new Alert({ title: 'Proceso Pendiente', message: 'Tu apoyo se enviará en la próxima conexión', type: ALERT_TYPES.info });
+          this.setAlert();
+        }
+        else {
+          this.commentModel.userRelevance = response;
+        }
+      })
+      .catch((error) => {
+        this.alertData = new Alert({ title: 'Proceso Fallido', message: 'No se ha podido procesar la petición', type: ALERT_TYPES.danger });
+        this.setAlert();
+        console.log(error);
+      });
   }
 
   /**

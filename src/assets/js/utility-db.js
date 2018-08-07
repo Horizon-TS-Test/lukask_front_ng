@@ -21,6 +21,15 @@ var dbPromise = idb.open('lukask-store', 1, function (db) {
     if (!db.objectStoreNames.contains('ownuser')) {
         db.createObjectStore('ownuser', { keyPath: 'id' });
     }
+    if (!db.objectStoreNames.contains('province')) {
+        db.createObjectStore('province', { keyPath: 'id' });
+    }
+    if (!db.objectStoreNames.contains('canton')) {
+        db.createObjectStore('canton', { keyPath: 'id' });
+    }
+    if (!db.objectStoreNames.contains('parroquia')) {
+        db.createObjectStore('parroquia', { keyPath: 'id' });
+    }
 
     /**
      * TABLES FOR BACKGROUND SYNC:
@@ -138,6 +147,15 @@ function verifyStoredDataArray(table, dataToSave) {
                         break;
                     case 'qtype':
                         dataToSave[d].id = dataToSave[d].id_type_publication;
+                        break;
+                    case 'province':
+                        dataToSave[d].id = dataToSave[d].id_province;
+                        break;
+                    case 'canton':
+                        dataToSave[d].id = dataToSave[d].id_canton;
+                        break;
+                    case 'parroquia':
+                        dataToSave[d].id = dataToSave[d].id_parish;
                         break;
                 }
                 for (var t = 0; t < tableData.length; t++) {
