@@ -117,7 +117,7 @@ export class UserService {
    * @param userId 
    */
   private storeUserIndexedTable(userKey: any, userData: any) {
-    if ('serviceWorker' in window && 'indexedDB' in window) {
+    if ('indexedDB' in window) {
       readAllData('ownuser')
         .then((tableData) => {
           if (tableData.length == 0) {
@@ -330,7 +330,6 @@ export class UserService {
 
     return this._http.get(REST_SERV.provinceUrl, { headers: qTheaders, withCredentials: true }).toPromise()
       .then((response: Response) => {
-        console.log(response);
         const qtypes = response.json().data.results;
         let transformedProvinces: Province[] = [];
         for (let type of qtypes) {

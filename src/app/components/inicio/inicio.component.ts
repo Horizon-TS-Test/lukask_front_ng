@@ -24,12 +24,12 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   private customCarousel: any;
   private subscriptor: Subscription;
   private alertData: Alert;
-  private touchDrag: boolean;
-
+  
   public enableSecondOp: boolean;
   public enableThirdOp: boolean;
   public carouselOptions: any;
   public focusedPubId: string;
+  public touchDrag: boolean;
 
   constructor(
     private _contentService: ContentService,

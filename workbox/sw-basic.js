@@ -13,19 +13,19 @@ var SYNC_TYPE = {
 };
 
 var REST_URLS_PATTERN = {
-    medios: /http:\/\/192.168.1.56:8081\/repositorio_lukask\/.*/,
-    firstPubs: /http:\/\/192.168.1.62:3001\/publication\/\?limit=[0-9]+$/,
-    morePubs: /http:\/\/192.168.1.62:3001\/publication\/\?limit=[0-9]+&offset=[0-9]+$/,
-    qtype: 'http://192.168.1.62:3001/qtype',
-    comments: /http:\/\/192.168.1.62:3001\/comment\/\?pub_id=[0-9|a-f|-]+\&(?:limit=[0-9]+|limit=[0-9]+\&offset=[0-9]+)$/,
-    replies: /http:\/\/192.168.1.62:3001\/comment\/\?com_id=[0-9|a-f|-]+\&(?:limit=[0-9]+|limit=[0-9]+\&offset=[0-9]+)\&replies=true$/,
+    medios: /http:\/\/192.168.1.58:8081\/repositorio_lukask\/.*/,
+    firstPubs: /http:\/\/192.168.1.37:3001\/publication\/\?limit=[0-9]+$/,
+    morePubs: /http:\/\/192.168.1.37:3001\/publication\/\?limit=[0-9]+&offset=[0-9]+$/,
+    qtype: 'http://192.168.1.37:3001/qtype',
+    comments: /http:\/\/192.168.1.37:3001\/comment\/\?pub_id=[0-9|a-f|-]+\&(?:limit=[0-9]+|limit=[0-9]+\&offset=[0-9]+)$/,
+    replies: /http:\/\/192.168.1.37:3001\/comment\/\?com_id=[0-9|a-f|-]+\&(?:limit=[0-9]+|limit=[0-9]+\&offset=[0-9]+)\&replies=true$/,
 };
 
 var REST_URLS = {
-    pub: 'http://192.168.1.62:3001/publication',
-    comment: 'http://192.168.1.62:3001/comment',
-    relevance: 'http://192.168.1.62:3001/relevance',
-    user: 'http://192.168.1.62:3001/user',
+    pub: 'http://192.168.1.37:3001/publication',
+    comment: 'http://192.168.1.37:3001/comment',
+    relevance: 'http://192.168.1.37:3001/relevance',
+    user: 'http://192.168.1.37:3001/user',
 };
 
 workbox.precaching.suppressWarnings();
@@ -229,9 +229,9 @@ function sendData(restUrl, formData, indexedTable, syncTable) {
             fetch(restUrl, {
                 method: 'POST',
                 body: formData,
-                credentials: 'include',
+                credentials: "include", //REF: https://developer.mozilla.org/es/docs/Web/API/Fetch_API/Utilizando_Fetch
                 headers: {
-                    "Pass-Key": userKey
+                    "X-Access-Token": userKey
                 }
             }).then(function (res) {
                 console.log('[LUKASK SERVICE WORKER] Fetch response', res);
