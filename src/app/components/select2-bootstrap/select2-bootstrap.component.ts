@@ -20,10 +20,31 @@ export class Select2BootstrapComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    $(".js-example-basic-single").select2({
+    $(".personal-select2").select2({
       theme: "bootstrap"
     });
-    
+
+    $('#' + this.fcName).select2({
+      dropdownParent: $('.horizon-modal')
+    });
+
+    //REF: https://stackoverflow.com/questions/17995057/prevent-select2-from-autmatically-focussing-its-search-input-when-dropdown-is-op
+    $(".personal-select2").on('select2:open', function (e) {
+      $('.select2-search input').prop('focus', false);
+
+      $('.select2-search input').on("blur", function (e) {
+        $('.select2-search').parent().removeClass('p-fixed-select2');
+      });
+
+      $('.select2-search input').on("focus", function (e) {
+        if (e.originalEvent) {
+          setTimeout(() => {
+            $('.select2-search').parent().addClass('p-fixed-select2');
+          }, 1000);
+        }
+      });
+    });
+
   }
 
   ngAfterViewInit() {

@@ -4,8 +4,7 @@ import { CONTENT_TYPES } from '../../config/content-type';
 import { ContentService } from '../../services/content.service';
 import { MENU_OPTIONS } from '../../config/menu-option';
 import { Subscription } from '../../../../node_modules/rxjs';
-import { Router, ActivatedRoute } from '../../../../node_modules/@angular/router';
-import { UserService } from '../../services/user.service';
+import { Router } from '../../../../node_modules/@angular/router';
 import { LoginService } from '../../services/login.service';
 
 declare var $: any;

@@ -8,6 +8,9 @@ import { NotifierService } from '../../services/notifier.service';
 import { CONTENT_TYPES } from '../../config/content-type';
 import { Subscription } from 'rxjs';
 import { DateManager } from '../../tools/date-manager';
+import * as SnackBar from 'node-snackbar';
+import { Alert } from '../../models/alert';
+import { ALERT_TYPES } from '../../config/alert-types';
 
 @Component({
   selector: 'comment-form',
@@ -18,6 +21,8 @@ export class CommentFormComponent implements OnInit, OnDestroy {
   @Input() commentModel: Comment;
   @Input() modalForm: boolean;
   @Output() closeModal = new EventEmitter<boolean>();
+
+  private alertData: Alert;
 
   public maxChars: number;
   public restChars: number;
@@ -70,12 +75,25 @@ export class CommentFormComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * MÉTODO PARA MOSTRAR UN ALERTA EN EL DOM:
+   */
+  setAlert() {
+    this._notifierService.sendAlert(this.alertData);
+  }
+
+  /**
    * MÉTODO PARA ENVIAR UN COMENTARIO AL BACKEND:
    */
   publishComment() {
     this._actionService.saveComment(this.commentModel)
       .then((response) => {
-        this._notifierService.notifyNewCommentResp(this._actionService.extractCommentJson(response));
+        if (response == true) {
+          this.alertData = new Alert({ title: 'Proceso Pendiente', message: 'Tu ' + (this.commentModel.commentParentId ? 'respuesta' : 'comentario') + ' se enviará en la próxima conexión', type: ALERT_TYPES.info });
+          this.setAlert();
+        }
+        else {
+          this._notifierService.notifyNewCommentResp(this._actionService.extractCommentJson(response));
+        }
 
         this.resetComment();
         this.validateLettersNumber(null);
@@ -84,6 +102,8 @@ export class CommentFormComponent implements OnInit, OnDestroy {
       })
       .catch(err => {
         console.log(err);
+        this.alertData = new Alert({ title: 'Proceso Fallido', message: 'No se pudo procesar la petición', type: ALERT_TYPES.danger });
+        this.setAlert();
       });
   }
 

@@ -1,6 +1,7 @@
 @import "_layout.scss";
 @import "_variables.scss";
 @import "_fonts.scss";
+@import "_switch-input.scss";
 
 //////////////////////////////////////////////////////GENERIC STYLES////////////////////////////////////////////
 html {
@@ -189,7 +190,7 @@ p, label, div {
 ////
 
 //LOADING CONTENT:
-#loading-content {
+.loading-content {
     position: fixed;
     top: 0;
     left: 0;
@@ -200,13 +201,13 @@ p, label, div {
     z-index: -1;
     transition: opacity .8s ease, z-index .6s ease;
 }
-#loading-content.active {
+.loading-content.active {
     opacity: .8;
     z-index: 10;
     transition: opacity .5s ease, z-index .2s ease;
 }
 
-#loading-content-pop {
+.loading-content-pop {
     position: absolute;
     top: 0;
     left: 0;
@@ -217,7 +218,7 @@ p, label, div {
     z-index: -1;
     transition: opacity .8s ease, z-index .6s ease;
 }
-#loading-content-pop.active {
+.loading-content-pop.active {
     opacity: .8;
     z-index: 10;
     transition: opacity .5s ease, z-index .2s ease;
@@ -1354,6 +1355,15 @@ p, label, div {
 .absolute-layer {
     position: absolute;
 }
+.fixed-layer {
+    position: fixed;
+}
+.p-top-layer {
+    top: 0px;
+}
+.p-bottom-layer {
+    bottom: -1px;
+}
 .relative-background {
     position: relative;
 }
@@ -1426,14 +1436,31 @@ p, label, div {
     z-index: 99999999999;
     width: 100% !important;
 }
+.p-fixed-select2 {
+    position: fixed !important;
+    top: unset !important;
+    bottom: 0px !important;
+}
 .p-select2-container {
     .select2-container {
         z-index: 1;
     }
+
+    //PARA SOLUCIONAR PROBLEMA CON EL OVERFLOW DEL COMPONENTE PADRE:
+    /*.select2-hidden-accessible {
+        clip: unset !important;
+        -webkit-clip-path: unset !important;
+        clip-path: unset !important;
+    }*/
+    ////
 }
+/*.select2-search {
+    display: none !important;
+}*/
 .select2-container--open {
     width: unset !important;
 }
+
 /////////////////
 
 ///PERSONAL BUTTONS:
@@ -1753,7 +1780,7 @@ p, label, div {
 }
 ////
 
-//TEXT CUSTOME STYLES:
+//TEXT CUSTOM STYLES:
 .p-normal-text-color, .p-normal-text-color:hover {
     color: $primary;
 }
@@ -1766,6 +1793,21 @@ p, label, div {
 }
 .p-secondary-text-color, .p-secondary-text-color:hover {
     color: $secondary-text !important;
+}
+////
+
+//BACKGROUND COLOR CUSTOM STYLES:
+.p-normal-back-color, .p-normal-back-color:hover {
+    background: $primary !important;
+}
+.p-dark-back-color, .p-dark-back-color:hover {
+    background: $primary-dark !important;
+}
+.p-primary-back-color, .p-primary-back-color:hover {
+    background: $primary-text !important;
+}
+.p-secondary-back-color, .p-secondary-back-color:hover {
+    background: $secondary-text !important;
 }
 ////
 
@@ -1892,6 +1934,14 @@ input[type=text], input[type=password], input[type=email], input[type=number], i
     .p-img-pop {
         //REF: https://stackoverflow.com/questions/2182716/is-it-possible-to-set-the-equivalent-of-a-src-attribute-of-an-img-tag-in-css
         content: url("/assets/images/payments/card-hands-sm.jpg");
+        height: 160px;
+    }
+}
+
+.p-signup {
+    .p-img-pop {
+        //REF: https://stackoverflow.com/questions/2182716/is-it-possible-to-set-the-equivalent-of-a-src-attribute-of-an-img-tag-in-css
+        content: url("/assets/images/registro/signup-sm.jpg");
         height: 160px;
     }
 }
@@ -2121,3 +2171,146 @@ input[type=text], input[type=password], input[type=email], input[type=number], i
     }
 }
 ////
+
+/////SWITCH INPUT/////
+//REF: https://www.abeautifulsite.net/bootstrap-4-switches
+.switch {
+  font-size: $font-size-base;
+  position: relative;
+
+  input {
+    position: absolute;
+    height: 1px;
+    width: 1px;
+    background: none;
+    border: 0;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    overflow: hidden;
+    padding: 0;
+
+    + label {
+      position: relative;
+      min-width: calc(#{$switch-height} * 2);
+      border-radius: $switch-border-radius;
+      height: $switch-height;
+      line-height: $switch-height;
+      display: inline-block;
+      cursor: pointer;
+      outline: none;
+      user-select: none;
+      vertical-align: middle;
+      text-indent: calc(calc(#{$switch-height} * 2) + .5rem);
+    }
+
+    + label::before,
+    + label::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: calc(#{$switch-height} * 2);
+      bottom: 0;
+      display: block;
+    }
+
+    + label::before {
+      right: 0;
+      background-color: $switch-bg;
+      border-radius: $switch-border-radius;
+      transition: $switch-transition;
+    }
+
+    + label::after {
+      top: $switch-thumb-padding;
+      left: $switch-thumb-padding;
+      width: calc(#{$switch-height} - calc(#{$switch-thumb-padding} * 2));
+      height: calc(#{$switch-height} - calc(#{$switch-thumb-padding} * 2));
+      border-radius: $switch-thumb-border-radius;
+      background-color: $switch-thumb-bg;
+      transition: $switch-transition;
+    }
+
+    &:checked + label::before {
+      background-color: $primary-dark;
+    }
+
+    &:checked + label::after {
+      margin-left: $switch-height;
+    }
+
+    &:focus + label::before {
+      outline: none;
+      box-shadow: $switch-focus-box-shadow;
+    }
+
+    &:disabled + label {
+      color: $switch-disabled-color;
+      cursor: not-allowed;
+    }
+
+    &:disabled + label::before {
+      //background-color: $switch-disabled-bg;
+      background-color: $primary-text;
+    }
+  }
+
+  // Small variation
+  &.switch-sm {
+    font-size: $font-size-sm;
+
+    input {
+      + label {
+        min-width: calc(#{$switch-height-sm} * 2);
+        height: $switch-height-sm;
+        line-height: $switch-height-sm;
+        text-indent: calc(calc(#{$switch-height-sm} * 2) + .5rem);
+      }
+
+      + label::before {
+        width: calc(#{$switch-height-sm} * 2);
+      }
+
+      + label::after {
+        width: calc(#{$switch-height-sm} - calc(#{$switch-thumb-padding} * 2));
+        height: calc(#{$switch-height-sm} - calc(#{$switch-thumb-padding} * 2));
+      }
+
+      &:checked + label::after {
+        margin-left: $switch-height-sm;
+      }
+    }
+  }
+
+  // Large variation
+  &.switch-lg {
+    font-size: $font-size-lg;
+
+    input {
+      + label {
+        min-width: calc(#{$switch-height-lg} * 2);
+        height: $switch-height-lg;
+        line-height: $switch-height-lg;
+        text-indent: calc(calc(#{$switch-height-lg} * 2) + .5rem);
+      }
+
+      + label::before {
+        width: calc(#{$switch-height-lg} * 2);
+      }
+
+      + label::after {
+        width: calc(#{$switch-height-lg} - calc(#{$switch-thumb-padding} * 2));
+        height: calc(#{$switch-height-lg} - calc(#{$switch-thumb-padding} * 2));
+      }
+
+      &:checked + label::after {
+        margin-left: $switch-height-lg;
+      }
+    }
+  }
+
+  + .switch {
+    margin-left: 1rem;
+  }
+}
+////////////////////////

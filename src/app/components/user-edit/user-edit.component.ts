@@ -26,6 +26,8 @@ export class UserEditComponent implements OnInit, OnDestroy, OnChanges {
   public fileToUpload: MediaFile;
   public carouselOptions: any;
   public actionType: number;
+  public loadingClass: string;
+  public activeClass: string;
 
   constructor(
     private _notifierService: NotifierService,
@@ -34,7 +36,7 @@ export class UserEditComponent implements OnInit, OnDestroy, OnChanges {
     public _domSanitizer: DomSanitizer
   ) {
     this.fileToUpload = {
-      mediaFileUrl: _userService.getUserProfile().profileImg,
+      mediaFileUrl: this._userService.getUserProfile().profileImg,
       mediaFile: null
     };
 
@@ -61,6 +63,14 @@ export class UserEditComponent implements OnInit, OnDestroy, OnChanges {
 
   ngOnInit() {
     this.initCarousel();
+  }
+
+  /**
+   * MÉTODO PARA ACTIVAR EL EECTO DE CARGANDO:
+   */
+  private loadingAnimation() {
+    this.loadingClass = "on";
+    this.activeClass = "active";
   }
 
   /**
@@ -97,6 +107,25 @@ export class UserEditComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   /**
+  * MÉTODO PARA EJECUTAR LA FUNCION SEGUN LA ACCION DEL BOTON
+  * @param event = EVENTO DE LA CAMARA
+  */
+  actionBtn(event: number) {
+    switch (event) {
+      case ACTION_TYPES.userEdition:
+        this.actionType = null;
+        setTimeout(() => {
+          this.actionType = ACTION_TYPES.userEdition;
+        });
+        this.loadingAnimation();
+        break;
+      case ACTION_TYPES.close:
+        this.closeModal.emit(true);
+        break;
+    }
+  }
+
+  /**
    * MÉTODO PARA DETECTAR LOS CAMBIOS DE UNA PROPIEDAD INYECTADA DESDE EL COMPONENTE PADRE DE ESTE COMPONENTE:
    * @param changes LOS CAMBIOS GENERADOS
    */
@@ -109,24 +138,6 @@ export class UserEditComponent implements OnInit, OnDestroy, OnChanges {
           }
           break;
       }
-    }
-  }
-
-  /**
-  * MÉTODO PARA EJECUTAR LA FUNCION SEGUN LA ACCION DEL BOTON
-  * @param event = EVENTO DE LA CAMARA
-  */
-  actionBtn(event: number) {
-    switch (event) {
-      case ACTION_TYPES.userEdition:
-        this.actionType = null;
-        setTimeout(() => {
-          this.actionType = ACTION_TYPES.userEdition;
-        });
-        break;
-      case ACTION_TYPES.close:
-        this.closeModal.emit(true);
-        break;
     }
   }
 

@@ -1,6 +1,6 @@
-<div class="personal-content relative-background min-height-full-modal max-height-full-modal p-overflow-hidden relative-background col-12 p-0"
+<div class="personal-content relative-background min-height-full-modal max-height-full-modal p-overflow-hidden light-background {{ loadingClass }} col-12 p-0"
   id="newPubContainer">
-  <div id="loading-content"></div>
+  <div class="loading-content {{ activeClass }}"></div>
   <div class="personal-carousel" id="normalPub">
     <a href="#" class="no-border-button {{ transmitStyle }} p-float-btn top-right-corner mt-2 mr-2" (click)="initStreaming($event)">
       <span class="personal-site-icon">f</span>

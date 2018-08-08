@@ -10,8 +10,8 @@ import { User } from '../models/user';
 import { UserService } from './user.service';
 import { SocketService } from './socket.service';
 import { ArrayManager } from '../tools/array-manager';
-import * as lodash from 'lodash';
 import { BackSyncService } from './back-sync.service';
+import * as lodash from 'lodash';
 
 declare var readAllData: any;
 declare var writeData: any;
@@ -37,7 +37,7 @@ export class QuejaService {
   public pubList: Publication[];
   public pubFilterList: Publication[];
   public _mapEmitter: EventEmitter<string>;
-  public _pubDetailEmitter: EventEmitter<number>;
+  public _pubDetailEmitter: EventEmitter<any>;
 
   constructor(
     private _http: Http,
@@ -52,7 +52,7 @@ export class QuejaService {
     this.isUpdatedTrans = false;
 
     this._mapEmitter = new EventEmitter<string>();
-    this._pubDetailEmitter = new EventEmitter<number>();
+    this._pubDetailEmitter = new EventEmitter<any>();
 
     this.defineMainMediaArray();
     this.listenToSocket();
@@ -149,6 +149,7 @@ export class QuejaService {
       return this._http.get(REST_SERV.pubsUrl + "/" + ((this.pagePattern && morePubs == true) ? this.pagePattern : "?limit=" + this.DEFAULT_LIMIT), { headers: pubHeaders, withCredentials: true }).toPromise()
         .then((response: Response) => {
           const respJson = response.json().data;
+          console.log(respJson);
           this.pagePattern = respJson.next;
           const pubs = respJson.results;
 
@@ -310,8 +311,11 @@ export class QuejaService {
    */
   public savePub(pub: Publication) {
     return this.sendQueja(pub).then((response) => {
-      if (!this.isPostedPub) {
-        return this._backSyncService.storeForBackSync('sync-pub', 'sync-new-pub', this.mergeJSONData(pub));
+      if (!this.isPostedPub && !navigator.onLine) {
+        this._backSyncService.storeForBackSync('sync-pub', 'sync-new-pub', this.mergeJSONData(pub))
+        if ('serviceWorker' in navigator && 'SyncManager' in window) {
+          return true;
+        }
       }
       else {
         this.isPostedPub = false;
@@ -335,7 +339,7 @@ export class QuejaService {
           return response;
         },
         (err) => {
-          console.log(err);
+          console.log("Erro al enviar: ", err);
         }
       );
   }
@@ -596,7 +600,6 @@ export class QuejaService {
             this.updatePubMediaList(socketPub.payload.data, action);
             break;
           case "actions":
-            console.log("Actions");
             this.updateRelevanceNumber(socketPub.payload.data);
             break;
         }
@@ -726,7 +729,7 @@ export class QuejaService {
   /**
    * MÉTODO PARA ACTUALIZAR EL REGISTRO EN INDEXED-DB
    */
-  updateRelNumberIndexDb(pubId: string, add: boolean) {
+  updateRelNumberIndexDb(pubId: string, add: boolean, userId: any) {
     readAllData("publication")
       .then(function (tableData) {
         let dataToSave;
@@ -739,6 +742,10 @@ export class QuejaService {
             else {
               dataToSave.count_relevance -= 1;
             }
+            if (userId == dataToSave.user_register.id) {
+              dataToSave.user_relevance = true;
+            }
+
             deleteItemData("publication", tableData[t].id_publication)
               .then(function () {
                 writeData("publication", dataToSave);
@@ -756,14 +763,19 @@ export class QuejaService {
   updateRelevanceNumber(actionData: any) {
     let updatedPub = this.pubList.find(pub => pub.id_publication === actionData.publication);
 
-    if (actionData.active) {
-      updatedPub.relevance_counter += 1;
-    }
-    else {
-      updatedPub.relevance_counter -= 1;
+    if (updatedPub) {
+      if (actionData.active) {
+        updatedPub.relevance_counter += 1;
+      }
+      else {
+        updatedPub.relevance_counter -= 1;
+      }
+
+      updatedPub.user_relevance = actionData.user_register.id == updatedPub.user.id;
+
+      this._pubDetailEmitter.emit({ relevance_counter: updatedPub.relevance_counter, user_relevance: updatedPub.user_relevance });
     }
 
-    this._pubDetailEmitter.emit(updatedPub.relevance_counter);
-    this.updateRelNumberIndexDb(actionData.publication, actionData.active);
+    this.updateRelNumberIndexDb(actionData.publication, actionData.active, updatedPub.user.id);
   }
 }

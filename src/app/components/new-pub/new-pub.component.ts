@@ -6,6 +6,7 @@ import { NotifierService } from '../../services/notifier.service';
 import { CONTENT_TYPES } from '../../config/content-type';
 import { Alert } from '../../models/alert';
 import { ALERT_TYPES } from '../../config/alert-types';
+import * as Snackbar from 'node-snackbar';
 
 declare var $: any;
 
@@ -28,6 +29,8 @@ export class NewPubComponent implements OnInit, AfterViewInit, OnChanges {
   public transmitStyle: string;
   public newPubId: string;
   public nextButton: any;
+  public loadingClass: string;
+  public activeClass: string;
 
   constructor(
     private _notifierService: NotifierService
@@ -100,12 +103,12 @@ export class NewPubComponent implements OnInit, AfterViewInit, OnChanges {
    */
   private showLoadingContent(show: boolean) {
     if (show == true) {
-      $("#loading-content").parent().css("opacity", ".4");
-      $("#loading-content").addClass("active");
+      this.loadingClass = "on";
+      this.activeClass = "active";
     }
     else {
-      $("#loading-content").removeClass("active");
-      $("#loading-content").parent().css("opacity", "1");
+      this.loadingClass = "";
+      this.activeClass = "";
     }
   }
 
@@ -136,14 +139,21 @@ export class NewPubComponent implements OnInit, AfterViewInit, OnChanges {
           break;
       }
 
-      this.alertData = new Alert({ title: 'Proceso Correcto', message: event.message, type: ALERT_TYPES.success });
+      if (event.backSync == true) {
+        Snackbar.show({ text: event.message, pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#34b4db' });
+      }
+      else {
+        this.alertData = new Alert({ title: 'Proceso Correcto', message: event.message, type: ALERT_TYPES.success });
+      }
     }
     else {
       this.alertData = new Alert({ title: 'Proceso Fallido', message: event.message, type: ALERT_TYPES.danger });
     }
     setTimeout(() => {
       this.showLoadingContent(!event.finished);
-      this.setAlert();
+      if (event.backSync != true) {
+        this.setAlert();
+      }
     }, 200);
   }
 

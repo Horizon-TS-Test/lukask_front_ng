@@ -5,27 +5,34 @@ importScripts('/assets/js/idb.js');
 importScripts('/assets/js/utility-db.js');
 ///////////
 
-var SYNC_TYPE = {
+const SERVERS = {
+    middleWare: 'http://192.168.1.62:3001'
+};
+
+const SYNC_TYPE = {
     pubSyn: 'sync-new-pub',
     comSyn: 'sync-new-comment',
     relSyn: 'sync-new-relevance',
     userSyn: 'sync-update-user',
 };
 
-var REST_URLS_PATTERN = {
+const REST_URLS_PATTERN = {
     medios: /http:\/\/192.168.1.56:8081\/repositorio_lukask\/.*/,
     firstPubs: /http:\/\/192.168.1.62:3001\/publication\/\?limit=[0-9]+$/,
     morePubs: /http:\/\/192.168.1.62:3001\/publication\/\?limit=[0-9]+&offset=[0-9]+$/,
-    qtype: 'http://192.168.1.62:3001/qtype',
     comments: /http:\/\/192.168.1.62:3001\/comment\/\?pub_id=[0-9|a-f|-]+\&(?:limit=[0-9]+|limit=[0-9]+\&offset=[0-9]+)$/,
     replies: /http:\/\/192.168.1.62:3001\/comment\/\?com_id=[0-9|a-f|-]+\&(?:limit=[0-9]+|limit=[0-9]+\&offset=[0-9]+)\&replies=true$/,
+    qtype: SERVERS.middleWare + '/qtype',
+    province: SERVERS.middleWare + '/province',
+    canton: /http:\/\/192.168.1.62:3001\/canton\/\?province_id=[0-9|a-f|-]+$/,
+    parroq: /http:\/\/192.168.1.62:3001\/parroquia\/\?canton_id=[0-9|a-f|-]+$/
 };
 
-var REST_URLS = {
-    pub: 'http://192.168.1.62:3001/publication',
-    comment: 'http://192.168.1.62:3001/comment',
-    relevance: 'http://192.168.1.62:3001/relevance',
-    user: 'http://192.168.1.62:3001/user',
+const REST_URLS = {
+    pub: SERVERS.middleWare + '/publication',
+    comment: SERVERS.middleWare + '/comment',
+    relevance: SERVERS.middleWare + '/relevance',
+    user: SERVERS.middleWare + '/user',
 };
 
 workbox.precaching.suppressWarnings();
@@ -118,11 +125,14 @@ workbox.routing.registerRoute(REST_URLS_PATTERN.qtype, function (args) {
     return fetch(args.event.request)
         .then(function (res) {
             var clonedRes = res.clone();
-            clonedRes.json()
+            clearAllData('qtype')
+                .then(function () {
+                    return clonedRes.json();
+                })
                 .then(function (response) {
                     //STORE THE RESPONSE ON INDEX DB:
                     console.log("[LUKASK SERVICE WORKER - INDEXED-DB] Qtype from rest api", response.data);
-                    let types = response.data.results;
+                    let types = response.data;
 
                     verifyStoredDataArray('qtype', types);
                 });
@@ -165,6 +175,75 @@ workbox.routing.registerRoute(REST_URLS_PATTERN.replies, function (args) {
 
                     upgradeTableFieldDataArray('reply', replies);
                 });
+            return res;
+        });
+});
+
+/**
+ * HANDLER TO STORING PROVINCIAS INTO INDEXED DB:
+ */
+workbox.routing.registerRoute(REST_URLS_PATTERN.province, function (args) {
+    return fetch(args.event.request)
+        .then(function (res) {
+            var clonedRes = res.clone();
+            clearAllData('province')
+                .then(function () {
+                    return clonedRes.json();
+                })
+                .then(function (response) {
+                    //STORE THE RESPONSE ON INDEX DB:
+                    console.log("[LUKASK SERVICE WORKER - INDEXED-DB] PROVINCE from rest api", response.data);
+                    let provinces = response.data;
+
+                    clearAllData('canton')
+                        .then(function () {
+                            clearAllData('parroquia')
+                                .then(function () {
+                                    verifyStoredDataArray('province', provinces);
+                                })
+                        })
+                });
+
+            return res;
+        });
+});
+
+/**
+ * HANDLER TO STORING CANTONES INTO INDEXED DB:
+ */
+workbox.routing.registerRoute(REST_URLS_PATTERN.canton, function (args) {
+    return fetch(args.event.request)
+        .then(function (res) {
+            var clonedRes = res.clone();
+            clonedRes.json()
+                .then(function (response) {
+                    //STORE THE RESPONSE ON INDEX DB:
+                    console.log("[LUKASK SERVICE WORKER - INDEXED-DB] CANTON from rest api", response.data);
+                    let cantones = response.data;
+
+                    verifyStoredDataArray('canton', cantones);
+                });
+
+            return res;
+        });
+});
+
+/**
+ * HANDLER TO STORING PARROQUIAS INTO INDEXED DB:
+ */
+workbox.routing.registerRoute(REST_URLS_PATTERN.parroq, function (args) {
+    return fetch(args.event.request)
+        .then(function (res) {
+            var clonedRes = res.clone();
+            clonedRes.json()
+                .then(function (response) {
+                    //STORE THE RESPONSE ON INDEX DB:
+                    console.log("[LUKASK SERVICE WORKER - INDEXED-DB] PARROQ from rest api", response.data);
+                    let parroquias = response.data;
+
+                    verifyStoredDataArray('parroquia', parroquias);
+                });
+
             return res;
         });
 });
@@ -223,16 +302,21 @@ function getUserId() {
  * @param {*} indexedTable LA TABLA EN LA QUE SE VA A ALMACENAR LA RESPUESTA DEL SERVIDOR
  * @param {*} syncTable LA TABLA EN LA QUE SE ALMACENA LOS DATOS DEL PROCESO BACK-SYNC
  */
-function sendData(restUrl, formData, indexedTable, syncTable) {
+function sendData(restUrl, data, indexedTable, syncTable, jsonDataType) {
     getUserId()
         .then(function (userKey) {
+            let fetchHeaders;
+            if (jsonDataType == true) {
+                fetchHeaders = { 'Content-Type': 'application/json', 'X-Access-Token': userKey };
+            }
+            else {
+                fetchHeaders = { 'X-Access-Token': userKey };
+            }
             fetch(restUrl, {
                 method: 'POST',
-                body: formData,
-                credentials: 'include',
-                headers: {
-                    "Pass-Key": userKey
-                }
+                body: jsonDataType == true ? JSON.stringify(data) : data,
+                credentials: "include", //REF: https://developer.mozilla.org/es/docs/Web/API/Fetch_API/Utilizando_Fetch
+                headers: fetchHeaders
             }).then(function (res) {
                 console.log('[LUKASK SERVICE WORKER] Fetch response', res);
                 if (res.ok) {
@@ -249,7 +333,7 @@ function sendData(restUrl, formData, indexedTable, syncTable) {
                                     break;
                             }
                             //ALWAYS IT MUST BE "id" FOR GENERIC PURPOSES:
-                            deleteItemData(syncTable, formData.get('id'));
+                            deleteItemData(syncTable, jsonDataType == true ? data.id : data.get('id'));
                             ////
                         });
                 }
@@ -289,7 +373,7 @@ self.addEventListener('sync', function (event) {
                                 formData.append('media_files[]', media.file, media.fileName);
                             }
 
-                            sendData(REST_URLS.pub, formData, 'publication', 'sync-pub');
+                            sendData(REST_URLS.pub, formData, 'publication', 'sync-pub', false);
                         }
                     })
             );
@@ -309,11 +393,13 @@ self.addEventListener('sync', function (event) {
                             formData.append('description', com.description);
                             formData.append('id_publication', com.id_publication);
                             formData.append('action_parent', com.action_parent);
+                            formData.append('date', com.date);
                             formData.append('active', com.active);
+                            formData.append('userId', com.userId);
                             formData.append('userName', com.userName);
                             formData.append('userImage', com.userImage);
 
-                            sendData(REST_URLS.comment, formData, (com.action_parent == "") ? 'comment' : 'reply', 'sync-comment');
+                            sendData(REST_URLS.comment, formData, (com.action_parent == "") ? 'comment' : 'reply', 'sync-comment', false);
                         }
                     })
             );
@@ -324,17 +410,7 @@ self.addEventListener('sync', function (event) {
                 readAllData('sync-relevance')
                     .then(function (data) {
                         for (var rel of data) {
-                            console.log("relevance: ", rel);
-                            //SENDING RELEVANCE TO THE BACKEND SERVER:
-                            var formData = new FormData();
-                            //ALWAYS IT MUST BE "id" FOR GENERIC PURPOSES:
-                            formData.append('id', rel.id);
-                            //
-                            formData.append('parentId', rel.parentId);
-                            formData.append('active', rel.active);
-                            formData.append('isComment', rel.isComment);
-
-                            sendData(REST_URLS.relevance, formData, 'publication', 'sync-relevance');
+                            sendData(REST_URLS.relevance, rel, '', 'sync-relevance', true);
                         }
                     })
             );
@@ -364,7 +440,7 @@ self.addEventListener('sync', function (event) {
                             formData.append('is_active', prof.isActive);
 
 
-                            sendData(REST_URLS.user + "/" + prof.id, formData, '', 'sync-user-profile');
+                            sendData(REST_URLS.user + "/" + prof.id, formData, '', 'sync-user-profile', false);
                         }
                     })
             );

@@ -30,6 +30,7 @@ export class ActionService {
   ) {
     this.isFetchedComments = false;
     this.isPostedComment = false;
+    this.isPostedRelevance = false;
     this.pageLimit = this.DEFAULT_LIMIT;
   }
 
@@ -208,8 +209,6 @@ export class ActionService {
     });
   }
 
-  
-
   /**
    * MÉTODO PARA GUARDAR UN COMENTARIO O UNA RESPUESTA A UN COMENTARIO:
    * @param comment EL COMENTARIO O RESPUESTA A ENVIAR
@@ -251,8 +250,11 @@ export class ActionService {
    */
   public saveComment(comment: Comment) {
     return this.sendComment(comment).then((response) => {
-      if (!this.isPostedComment) {
-        return this._backSyncService.storeForBackSync('sync-comment', 'sync-new-comment', this.mergeJSONData(comment));
+      if (!this.isPostedComment && !navigator.onLine) {
+        this._backSyncService.storeForBackSync('sync-comment', 'sync-new-comment', this.mergeJSONData(comment));
+        if ('serviceWorker' in navigator && 'SyncManager' in window) {
+          return true;
+        }
       }
       else {
         this.isPostedComment = false;
@@ -316,8 +318,11 @@ export class ActionService {
    */
   public saveRelevance(pubId: string, parentCommentId: string, isRelevance: boolean) {
     return this.sendRelevance(pubId, parentCommentId, isRelevance).then((response) => {
-      if (!this.isPostedRelevance) {
-        return this._backSyncService.storeForBackSync('sync-relevance', 'sync-new-relevance', { id: new Date().toISOString(), id_publication: pubId, action_parent: parentCommentId, active: isRelevance, userId: this._userService.getUserProfile().id, userName: this._userService.getUserProfile().person.name, userImage: this._userService.getUserProfile().profileImg });
+      if (!this.isPostedRelevance && !navigator.onLine) {
+        this._backSyncService.storeForBackSync('sync-relevance', 'sync-new-relevance', { id: new Date().toISOString(), id_publication: pubId, action_parent: parentCommentId, active: isRelevance, date: DateManager.getFormattedDate(), userId: this._userService.getUserProfile().id, userName: this._userService.getUserProfile().person.name, userImage: this._userService.getUserProfile().profileImg });
+        if ('serviceWorker' in navigator && 'SyncManager' in window) {
+          return "backSyncOk";
+        }
       }
       else {
         this.isPostedRelevance = false;

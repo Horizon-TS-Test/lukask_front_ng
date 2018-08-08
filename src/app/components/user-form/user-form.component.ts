@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, SimpleChanges, OnChanges, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, Input, SimpleChanges, OnChanges, EventEmitter, Output, AfterViewInit } from '@angular/core';
 import { User } from '../../models/user';
 import { UserService } from '../../services/user.service';
 import { Province } from '../../models/province';
@@ -17,7 +17,7 @@ import { ALERT_TYPES } from '../../config/alert-types';
   templateUrl: './user-form.component.html',
   styleUrls: ['./user-form.component.css']
 })
-export class UserFormComponent implements OnInit, OnChanges {
+export class UserFormComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() actionType: number;
   @Input() mediaFile: MediaFile;
   @Output() closeModal: EventEmitter<boolean>;
@@ -48,7 +48,9 @@ export class UserFormComponent implements OnInit, OnChanges {
     this.closeModal = new EventEmitter<boolean>();
   }
 
-  ngOnInit() {
+  ngOnInit() { }
+
+  ngAfterViewInit() {
     this.getProvince();
   }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, OnDestroy, EventEmitter, Output, AfterViewInit } from '@angular/core';
 
 import { QuejaService } from '../../services/queja.service';
 import { Publication } from '../../models/publications';
@@ -13,7 +13,7 @@ import { DateManager } from '../../tools/date-manager';
   templateUrl: './queja-list.component.html',
   styleUrls: ['./queja-list.component.css'],
 })
-export class QuejaListComponent implements OnInit, OnDestroy {
+export class QuejaListComponent implements OnInit, AfterViewInit, OnDestroy {
   @Output() actionType = new EventEmitter<DynaContent>();
 
   private LOADER_HIDE: string = "hide";
@@ -22,14 +22,14 @@ export class QuejaListComponent implements OnInit, OnDestroy {
   private subscriptor: Subscription
 
   public pubList: Publication[];
+  public mainLoadingClass: string;
+  public mainActiveClass: string;
   public activeClass: string;
 
   constructor(
     private _quejaService: QuejaService,
     private _notifierService: NotifierService
   ) {
-    this.getPubList();
-
     /**
      * SUBSCRIPCIÓN PARA CAPTAR EL LLAMADO DEL COMPONENTE INICIO QUIEN SOLICITA 
      * LA CARGA DE MAS COMPONENTES AL LLEGAR EL SCROLL DEL USUARIO AL FINAL DE LA PÁGINA
@@ -42,7 +42,29 @@ export class QuejaListComponent implements OnInit, OnDestroy {
     /*** */
   }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.loadingAnimation();
+  }
+
+  ngAfterViewInit() {
+    setTimeout(() => {
+      this.getPubList();
+    }, 2000);
+  }
+
+  /**
+   * MÉTODO PARA ACTIVAR EL EECTO DE CARGANDO:
+   */
+  private loadingAnimation(hide: boolean = false) {
+    if (hide) {
+      this.mainLoadingClass = "";
+      this.mainActiveClass = "";
+    }
+    else {
+      this.mainLoadingClass = "on";
+      this.mainActiveClass = "active";
+    }
+  }
 
   /**
    * FUNCIÓN PARA OBTENER UN NÚMERO INICIAL DE PUBLICACIONES, PARA DESPUÉS CARGAR MAS PUBLICACIONES BAJO DEMANDA
@@ -51,9 +73,11 @@ export class QuejaListComponent implements OnInit, OnDestroy {
     this._quejaService.getPubList().then((pubs: Publication[]) => {
       this.pubList = pubs;
       this.activeClass = this.LOADER_HIDE;
+      this.loadingAnimation(true);
     }).catch(err => {
       console.log(err);
       this.activeClass = this.LOADER_HIDE;
+      this.loadingAnimation(true);
     });
   }
 

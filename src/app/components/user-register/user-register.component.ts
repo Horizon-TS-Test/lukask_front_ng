@@ -1,8 +1,6 @@
 import { Component, OnInit, EventEmitter, Output, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { User } from '../../models/user';
 import { Subscription } from 'rxjs';
-import { CameraService } from '../../services/camera.service';
-import { MediaFile } from '../../interfaces/media-file.interface';
 import { HorizonButton } from '../../interfaces/horizon-button.interface';
 import { NotifierService } from '../../services/notifier.service';
 import { CONTENT_TYPES } from '../../config/content-type';
@@ -18,24 +16,17 @@ export class UserRegisterComponent implements OnInit, OnChanges {
   @Input() showClass: string;
   @Output() closeModal = new EventEmitter<boolean>();
 
-  private subscription: Subscription;
-
   public materialButtons: HorizonButton[];
   public userObj: User;
-  public fileToUpload: MediaFile;
   public carouselOptions: any;
   public actionType: number;
+  public loadingClass: string;
+  public activeClass: string;
 
   constructor(
-    private _cameraService: CameraService,
     private _notifierService: NotifierService,
     public _domSanitizer: DomSanitizer
   ) {
-    this.fileToUpload = {
-      mediaFileUrl: "/assets/images/profile/default_profile.jpg",
-      mediaFile: null
-    };
-
     this.materialButtons = [
       {
         action: ACTION_TYPES.userRegister,
@@ -46,14 +37,6 @@ export class UserRegisterComponent implements OnInit, OnChanges {
         icon: "close"
       }
     ]
-
-    /**
-    * LISTEN TO NEW SNAPSHOT SENT BY NEW MEDIA CONTENT:
-    */
-    this.subscription = this._cameraService._snapShot.subscribe(
-      (snapShot: MediaFile) => {
-        this.addUserSnapShot(snapShot);
-      });
   }
 
   ngOnInit() {
@@ -71,6 +54,14 @@ export class UserRegisterComponent implements OnInit, OnChanges {
   }
 
   /**
+   * MÉTODO PARA ACTIVAR EL EECTO DE CARGANDO:
+   */
+  private loadingAnimation() {
+    this.loadingClass = "on";
+    this.activeClass = "active";
+  }
+
+  /**
   * MÉTODO PARA MOSTRAR EL MODAL DE LA CAMARA
   * @param event = EVENTO DE LA CAMARA
   */
@@ -80,15 +71,11 @@ export class UserRegisterComponent implements OnInit, OnChanges {
   }
 
   /**
-   * MÉTODO PARA COLOCAR LA IMAGEN TOMADA EN EL MODAL Y ALMACENARLA EN UNA VARIABLE TIPO ARCHIVO
-   * @param event = ARCHIVO FOTO
-  */
-  addUserSnapShot(media: MediaFile) {
-    this.fileToUpload = media;
-  }
-
+   * MÉTODO PARA OBTENER EL EVENTO DEL COMPONENTE HIJO LUEGO DEL SUBMIT
+   * @param event VALOR BOOLEANO DEL EVENT EMITTER
+   */
   childAfterSubmit(event: any) {
-    if(event) {
+    if (event) {
       this.closeModal.emit(true);
     }
   }
@@ -104,6 +91,7 @@ export class UserRegisterComponent implements OnInit, OnChanges {
         setTimeout(() => {
           this.actionType = ACTION_TYPES.userRegister;
         });
+        this.loadingAnimation();
         break;
       case ACTION_TYPES.close:
         this.closeModal.emit(true);
@@ -125,12 +113,5 @@ export class UserRegisterComponent implements OnInit, OnChanges {
           break;
       }
     }
-  }
-
-  /**
-  * METODO PARA OBTENER LA FECHA
-  */
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
   }
 }

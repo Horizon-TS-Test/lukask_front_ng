@@ -1,11 +1,12 @@
 import { Component, OnInit, Input, EventEmitter, Output, SimpleChanges, OnChanges } from '@angular/core';
 import { ActionService } from '../../services/action.service';
 import { Publication } from '../../models/publications';
-import { Router } from '@angular/router';
 import { ContentService } from '../../services/content.service';
 import { NotifierService } from '../../services/notifier.service';
 import { CONTENT_TYPES } from '../../config/content-type';
 import { ACTION_TYPES } from '../../config/action-types';
+import { Alert } from '../../models/alert';
+import { ALERT_TYPES } from '../../config/alert-types';
 
 declare var $: any;
 
@@ -19,6 +20,8 @@ export class TaskListComponent implements OnInit, OnChanges {
   @Input() isModal: boolean;
   @Output() actionType = new EventEmitter<number>();
 
+  private alertData: Alert;
+  
   constructor(
     private _actionService: ActionService,
     private _contentService: ContentService,
@@ -29,16 +32,32 @@ export class TaskListComponent implements OnInit, OnChanges {
   }
 
   /**
+   * MÉTODO PARA MOSTRAR UN ALERTA EN EL DOM:
+   */
+  setAlert() {
+    this._notifierService.sendAlert(this.alertData);
+  }
+
+  /**
    * MÉTODO PARA DAR RELEVANCIA A UNA PUBLICACIÓN Y ENVIARLA AL BACKEND:
    * @param event 
    */
   onRelevance(event: any) {
     event.preventDefault();
     this._actionService.saveRelevance(this.queja.id_publication, null, !this.queja.user_relevance)
-      .then((active: boolean) => {
-        this.queja.user_relevance = active;
+      .then((response: any) => {
+        if (response == 'backSyncOk') {
+          this.alertData = new Alert({ title: 'Proceso Pendiente', message: 'Tu apoyo se enviará en la próxima conexión', type: ALERT_TYPES.info });
+          this.setAlert();
+        }
+        else {
+          this.queja.user_relevance = response;
+        }
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        this.alertData = new Alert({ title: 'Proceso Fallido', message: 'No se ha podido procesar la petición', type: ALERT_TYPES.danger });
+        this.setAlert();
+      });
   }
 
   /**
