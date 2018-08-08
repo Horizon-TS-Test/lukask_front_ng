@@ -8,7 +8,7 @@ export const REST_SERV = {
     mediaBack: 'http://back.lukaksarticles.com:8080',
     pushSub: 'http://ec2-18-228-7-103.sa-east-1.compute.amazonaws.com:3003/subscribe',
     socketServerUrl: 'https://www.lukaksarticles.com',
-    webRtcSocketServerUrl: 'ws://ec2-54-233-240-226.sa-east-1.compute.amazonaws.com:8080/lukaskstreaming',
+    webRtcSocketServerUrl: 'ws://18.228.114.178:8080//lukaskstreaming',
     userUrl: 'https://www.lukaksarticles.com/user/',
     notifUrl: 'https://www.lukaksarticles.com/notification',
     paymentPay: 'https://www.lukaksarticles.com/payment/pay',
