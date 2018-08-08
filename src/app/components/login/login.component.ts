@@ -71,7 +71,7 @@ export class LoginComponent implements OnInit {
 
         switch (respJson.code) {
           case 400:
-            this.alertData = new Alert({ title: 'Proceso Fallido', message: "Las credenciales ingesadas son incorrectas", type: ALERT_TYPES.danger });
+            this.alertData = new Alert({ title: 'Proceso Fallido', message: "Las credenciales ingresadas son incorrectas", type: ALERT_TYPES.danger });
             break;
           case 500:
             this.alertData = new Alert({ title: 'Proceso Fallido', message: "Error inesperado en el servidor, lamentamos los inconvenientes", type: ALERT_TYPES.warning });

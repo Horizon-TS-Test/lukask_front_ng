@@ -46,7 +46,6 @@ export class TaskListComponent implements OnInit, OnChanges {
     event.preventDefault();
     this._actionService.saveRelevance(this.queja.id_publication, null, !this.queja.user_relevance)
       .then((response: any) => {
-        console.log("Respuesta del action relevance: ", response);
         if (response == 'backSyncOk') {
           this.alertData = new Alert({ title: 'Proceso Pendiente', message: 'Tu apoyo se enviará en la próxima conexión', type: ALERT_TYPES.info });
           this.setAlert();
@@ -58,7 +57,6 @@ export class TaskListComponent implements OnInit, OnChanges {
       .catch((error) => {
         this.alertData = new Alert({ title: 'Proceso Fallido', message: 'No se ha podido procesar la petición', type: ALERT_TYPES.danger });
         this.setAlert();
-        console.log(error);
       });
   }
 

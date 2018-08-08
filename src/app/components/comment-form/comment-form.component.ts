@@ -88,7 +88,7 @@ export class CommentFormComponent implements OnInit, OnDestroy {
     this._actionService.saveComment(this.commentModel)
       .then((response) => {
         if (response == true) {
-          this.alertData = new Alert({ title: 'Proceso Pendiente', message: 'Tu ' + this.commentModel.commentParentId ? 'respuesta' : 'comentario' + ' se enviará en la próxima conexión', type: ALERT_TYPES.info });
+          this.alertData = new Alert({ title: 'Proceso Pendiente', message: 'Tu ' + (this.commentModel.commentParentId ? 'respuesta' : 'comentario') + ' se enviará en la próxima conexión', type: ALERT_TYPES.info });
           this.setAlert();
         }
         else {

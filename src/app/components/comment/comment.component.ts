@@ -25,7 +25,7 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
 
   private subscription: Subscription;
   private alertData: Alert;
-  
+
   public userProfile: User;
 
   constructor(
@@ -106,7 +106,6 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
       .catch((error) => {
         this.alertData = new Alert({ title: 'Proceso Fallido', message: 'No se ha podido procesar la petición', type: ALERT_TYPES.danger });
         this.setAlert();
-        console.log(error);
       });
   }
 

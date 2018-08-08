@@ -10,8 +10,8 @@ import { User } from '../models/user';
 import { UserService } from './user.service';
 import { SocketService } from './socket.service';
 import { ArrayManager } from '../tools/array-manager';
-import * as lodash from 'lodash';
 import { BackSyncService } from './back-sync.service';
+import * as lodash from 'lodash';
 
 declare var readAllData: any;
 declare var writeData: any;
@@ -37,7 +37,7 @@ export class QuejaService {
   public pubList: Publication[];
   public pubFilterList: Publication[];
   public _mapEmitter: EventEmitter<string>;
-  public _pubDetailEmitter: EventEmitter<number>;
+  public _pubDetailEmitter: EventEmitter<any>;
 
   constructor(
     private _http: Http,
@@ -52,7 +52,7 @@ export class QuejaService {
     this.isUpdatedTrans = false;
 
     this._mapEmitter = new EventEmitter<string>();
-    this._pubDetailEmitter = new EventEmitter<number>();
+    this._pubDetailEmitter = new EventEmitter<any>();
 
     this.defineMainMediaArray();
     this.listenToSocket();
@@ -729,7 +729,7 @@ export class QuejaService {
   /**
    * MÉTODO PARA ACTUALIZAR EL REGISTRO EN INDEXED-DB
    */
-  updateRelNumberIndexDb(pubId: string, add: boolean) {
+  updateRelNumberIndexDb(pubId: string, add: boolean, userId: any) {
     readAllData("publication")
       .then(function (tableData) {
         let dataToSave;
@@ -742,6 +742,10 @@ export class QuejaService {
             else {
               dataToSave.count_relevance -= 1;
             }
+            if (userId == dataToSave.user_register.id) {
+              dataToSave.user_relevance = true;
+            }
+
             deleteItemData("publication", tableData[t].id_publication)
               .then(function () {
                 writeData("publication", dataToSave);
@@ -759,14 +763,19 @@ export class QuejaService {
   updateRelevanceNumber(actionData: any) {
     let updatedPub = this.pubList.find(pub => pub.id_publication === actionData.publication);
 
-    if (actionData.active) {
-      updatedPub.relevance_counter += 1;
-    }
-    else {
-      updatedPub.relevance_counter -= 1;
+    if (updatedPub) {
+      if (actionData.active) {
+        updatedPub.relevance_counter += 1;
+      }
+      else {
+        updatedPub.relevance_counter -= 1;
+      }
+
+      updatedPub.user_relevance = actionData.user_register.id == updatedPub.user.id;
+
+      this._pubDetailEmitter.emit({ relevance_counter: updatedPub.relevance_counter, user_relevance: updatedPub.user_relevance });
     }
 
-    this._pubDetailEmitter.emit(updatedPub.relevance_counter);
-    this.updateRelNumberIndexDb(actionData.publication, actionData.active);
+    this.updateRelNumberIndexDb(actionData.publication, actionData.active, updatedPub.user.id);
   }
 }

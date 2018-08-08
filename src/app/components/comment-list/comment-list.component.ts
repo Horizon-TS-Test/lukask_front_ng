@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, EventEmitter, Output, OnDestroy, OnChanges, SimpleChange, SimpleChanges, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output, OnDestroy, OnChanges, SimpleChanges, AfterViewInit } from '@angular/core';
 import { ActionService } from '../../services/action.service';
 import { Comment } from '../../models/comment';
 import { ArrayManager } from '../../tools/array-manager';
@@ -214,7 +214,7 @@ export class CommentListComponent implements OnInit, AfterViewInit, OnDestroy, O
   /**
    * MÉTODO PARA ACTUALIZAR EL REGISTRO EN INDEXED-DB
    */
-  updateRelNumberIndexDb(comId: string, add: boolean) {
+  updateRelNumberIndexDb(comId: string, add: boolean, userId: any) {
     readAllData("comment")
       .then(function (tableData) {
         let dataToSave;
@@ -226,6 +226,9 @@ export class CommentListComponent implements OnInit, AfterViewInit, OnDestroy, O
             }
             else {
               dataToSave.count_relevance -= 1;
+            }
+            if (userId == dataToSave.user_register.id) {
+              dataToSave.user_relevance = true;
             }
             deleteItemData("comment", tableData[t].id_action)
               .then(function () {
@@ -243,6 +246,7 @@ export class CommentListComponent implements OnInit, AfterViewInit, OnDestroy, O
   updateRelevanceCounter(actionData) {
     if (actionData.action_parent) {
       let updatedComment = this.commentList.find(com => com.commentId == actionData.action_parent);
+
       if (updatedComment) {
         if (actionData.active) {
           updatedComment.relevance_counter += 1;
@@ -250,9 +254,11 @@ export class CommentListComponent implements OnInit, AfterViewInit, OnDestroy, O
         else {
           updatedComment.relevance_counter -= 1;
         }
+
+        updatedComment.userRelevance = actionData.user_register.id == updatedComment.user.id;
       }
 
-      this.updateRelNumberIndexDb(actionData.id_action, actionData.active);
+      this.updateRelNumberIndexDb(actionData.id_action, actionData.active, actionData.user_register.id);
     }
   }
 

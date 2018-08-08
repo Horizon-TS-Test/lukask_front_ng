@@ -302,16 +302,21 @@ function getUserId() {
  * @param {*} indexedTable LA TABLA EN LA QUE SE VA A ALMACENAR LA RESPUESTA DEL SERVIDOR
  * @param {*} syncTable LA TABLA EN LA QUE SE ALMACENA LOS DATOS DEL PROCESO BACK-SYNC
  */
-function sendData(restUrl, formData, indexedTable, syncTable) {
+function sendData(restUrl, data, indexedTable, syncTable, jsonDataType) {
     getUserId()
         .then(function (userKey) {
+            let fetchHeaders;
+            if (jsonDataType == true) {
+                fetchHeaders = { 'Content-Type': 'application/json', 'X-Access-Token': userKey };
+            }
+            else {
+                fetchHeaders = { 'X-Access-Token': userKey };
+            }
             fetch(restUrl, {
                 method: 'POST',
-                body: formData,
+                body: jsonDataType == true ? JSON.stringify(data) : data,
                 credentials: "include", //REF: https://developer.mozilla.org/es/docs/Web/API/Fetch_API/Utilizando_Fetch
-                headers: {
-                    "X-Access-Token": userKey
-                }
+                headers: fetchHeaders
             }).then(function (res) {
                 console.log('[LUKASK SERVICE WORKER] Fetch response', res);
                 if (res.ok) {
@@ -328,7 +333,7 @@ function sendData(restUrl, formData, indexedTable, syncTable) {
                                     break;
                             }
                             //ALWAYS IT MUST BE "id" FOR GENERIC PURPOSES:
-                            deleteItemData(syncTable, formData.get('id'));
+                            deleteItemData(syncTable, jsonDataType == true ? data.id : data.get('id'));
                             ////
                         });
                 }
@@ -368,7 +373,7 @@ self.addEventListener('sync', function (event) {
                                 formData.append('media_files[]', media.file, media.fileName);
                             }
 
-                            sendData(REST_URLS.pub, formData, 'publication', 'sync-pub');
+                            sendData(REST_URLS.pub, formData, 'publication', 'sync-pub', false);
                         }
                     })
             );
@@ -394,7 +399,7 @@ self.addEventListener('sync', function (event) {
                             formData.append('userName', com.userName);
                             formData.append('userImage', com.userImage);
 
-                            sendData(REST_URLS.comment, formData, (com.action_parent == "") ? 'comment' : 'reply', 'sync-comment');
+                            sendData(REST_URLS.comment, formData, (com.action_parent == "") ? 'comment' : 'reply', 'sync-comment', false);
                         }
                     })
             );
@@ -405,21 +410,7 @@ self.addEventListener('sync', function (event) {
                 readAllData('sync-relevance')
                     .then(function (data) {
                         for (var rel of data) {
-                            console.log("relevance: ", rel);
-                            //SENDING RELEVANCE TO THE BACKEND SERVER:
-                            var formData = new FormData();
-                            //ALWAYS IT MUST BE "id" FOR GENERIC PURPOSES:
-                            formData.append('id', rel.id);
-                            //
-                            formData.append('id_publication', rel.id_publication);
-                            formData.append('action_parent', rel.action_parent);
-                            formData.append('active', rel.active);
-                            formData.append('date', rel.date);
-                            formData.append('userId', rel.userId);
-                            formData.append('userName', rel.userName);
-                            formData.append('userImage', rel.userImage);
-
-                            sendData(REST_URLS.relevance, formData, '', 'sync-relevance');
+                            sendData(REST_URLS.relevance, rel, '', 'sync-relevance', true);
                         }
                     })
             );
@@ -449,7 +440,7 @@ self.addEventListener('sync', function (event) {
                             formData.append('is_active', prof.isActive);
 
 
-                            sendData(REST_URLS.user + "/" + prof.id, formData, '', 'sync-user-profile');
+                            sendData(REST_URLS.user + "/" + prof.id, formData, '', 'sync-user-profile', false);
                         }
                     })
             );
