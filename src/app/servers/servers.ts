@@ -1,6 +1,6 @@
 export const SERV_IP = {
-    backend: 'http://192.168.1.56:8081',
-    middleware: 'http://192.168.1.62:3001',
-    push: 'http://192.168.1.20:3200',
-    kurentoClient: 'ws://192.168.1.58:8080'
+    backend: 'http://back.lukaksarticles.com:8080',
+    middleware: 'https://www.lukaksarticles.com',
+    push: 'http://ec2-18-231-59-168.sa-east-1.compute.amazonaws.com:3005',
+    kurentoClient: 'ws://18.228.114.178:8080'
 }
