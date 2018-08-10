@@ -238,8 +238,8 @@ export class UserService {
   extractUserJson(jsonUser: any) {
     let user: User;
 
-    jsonUser.media_profile = (jsonUser.media_profile.indexOf("http") == -1) ? REST_SERV.mediaBack + jsonUser.media_profile : jsonUser.media_profile;
-    user = new User(jsonUser.email, '', jsonUser.media_profile, jsonUser.is_active, null, null, jsonUser.id);
+    jsonUser.profile_path = jsonUser.profile_path.indexOf("http") !== -1 || jsonUser.profile_path.indexOf("https") !== -1 ? jsonUser.profile_path : REST_SERV.mediaBack + jsonUser.profile_path;
+    user = new User(jsonUser.email, '', jsonUser.profile_path, jsonUser.is_active, null, null, jsonUser.id);
     user.person = new Person(jsonUser.person.id_person, jsonUser.person.age, jsonUser.person.identification_card, jsonUser.person.name, jsonUser.person.last_name, jsonUser.person.telephone, jsonUser.person.address, jsonUser.person.active, jsonUser.person.birthdate, jsonUser.person.cell_phone, null, null, DateManager.convertStringToDate(jsonUser.person.birthdate));
     user.person.location = jsonUser.person.location;
 
