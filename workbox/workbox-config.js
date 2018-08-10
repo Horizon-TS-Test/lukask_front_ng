@@ -1,7 +1,7 @@
 module.exports = {
   "globDirectory": "../dist/lukask-pwa/",
   "globPatterns": [
-    "**/*.{ico,html,js,json,css,eot,svg,woff,woff2,ttf}",
+    "**/*.{ico,png,html,js,json,css,eot,svg,woff,woff2,ttf}",
     "assets/icons/*.png",
     "assets/images/**/*.{jpg,png,gif,cur}",
     "assets/fonts/*.{eot,woff,woff2,ttf}"

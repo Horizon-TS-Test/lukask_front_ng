@@ -7,7 +7,7 @@ export const REST_SERV = {
     qTypeUrl: SERV_IP.middleware + '/qtype',
     commentUrl: SERV_IP.middleware + '/comment',
     relevanceUrl: SERV_IP.middleware + '/relevance',
-    mediaBack: SERV_IP.backend,
+    mediaBack: SERV_IP.middleware,
     pushSub: SERV_IP.push + '/subscribe',
     socketServerUrl: SERV_IP.middleware,
     webRtcSocketServerUrl: SERV_IP.kurentoClient + '/lukaskstreaming',

@@ -369,6 +369,7 @@ self.addEventListener('sync', function (event) {
                             formData.append('location', pub.location);
                             formData.append('address', pub.address);
                             formData.append('is_trans', pub.is_trans);
+                            formData.append('userId', pub.userId);
                             for (var media of pub.media_files) {
                                 formData.append('media_files[]', media.file, media.fileName);
                             }

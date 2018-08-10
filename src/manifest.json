@@ -1,7 +1,7 @@
 {
-  "name": "lukask-pwa",
-  "short_name": "lukask-pwa",
-  "theme_color": "#1976d2",
+  "name": "Lukask, expresa tu opinión",
+  "short_name": "Lukask",
+  "theme_color": "#5dbeb6",
   "background_color": "#fafafa",
   "display": "standalone",
   "scope": "/",

@@ -70,7 +70,7 @@ export class QuejaService {
 
     return this._http.get(REST_SERV.qTypeUrl, { headers: qTheaders, withCredentials: true }).toPromise()
       .then((response: Response) => {
-        const qtypes = response.json().data.results;
+        const qtypes = response.json().data;
         let transformedQtypes: QuejaType[] = [];
         for (let type of qtypes) {
           transformedQtypes.push(new QuejaType(type.id_type_publication, type.description));
@@ -296,6 +296,7 @@ export class QuejaService {
       is_trans: queja.isTrans,
       trans_done: queja.transDone,
       media_files: [],
+      userId: this._userService.getUserProfile().id,
     }
 
     for (let med of queja.media) {
@@ -355,9 +356,9 @@ export class QuejaService {
     pub = new Publication(pubJson.id_publication, pubJson.latitude, pubJson.length, pubJson.detail, pubJson.date_publication, pubJson.priority_publication, pubJson.active, type, usr, pubJson.location, pubJson.count_relevance, pubJson.user_relevance, pubJson.address, pubJson.is_trans, pubJson.trans_done);
     for (let med of pubJson.medios) {
       //PREPPENDING THE BACKEND SERVER IP/DOMAIN:
-      med.media_file = ((med.media_file.indexOf("http") == -1) ? REST_SERV.mediaBack : "") + med.media_file;
+      med.media_path = (med.media_path.indexOf("http") !== -1 || med.media_path.indexOf("https") !== -1 ? "" : REST_SERV.mediaBack) + med.media_path;
       ////
-      pub.media.push(new Media(med.id_multimedia, med.format_multimedia, med.media_file));
+      pub.media.push(new Media(med.id_multimedia, med.format_multimedia, med.media_path));
     }
 
     return pub;
@@ -374,6 +375,7 @@ export class QuejaService {
     formData.append('location', queja.location);
     formData.append('address', queja.address);
     formData.append('is_trans', queja.isTrans + "");
+    formData.append('userId', this._userService.getUserProfile().id);
 
     for (let med of queja.media) {
       formData.append('media_files[]', med.file, med.fileName);
@@ -705,7 +707,7 @@ export class QuejaService {
     let isDelete: boolean = false;
 
     //PREPPENDING THE BACKEND SERVER IP/DOMAIN:
-    mediaJson.media_file = ((mediaJson.media_file.indexOf("http") == -1) ? REST_SERV.mediaBack : "") + mediaJson.media_file;
+    mediaJson.media_path = (mediaJson.media_path.indexOf("http") == -1 || mediaJson.media_path.indexOf("https") !== -1 ? REST_SERV.mediaBack : "") + mediaJson.media_path;
     ////
 
     //REF: https://stackoverflow.com/questions/39019808/angular-2-get-object-from-array-by-id
@@ -716,7 +718,7 @@ export class QuejaService {
 
     if (action != ArrayManager.DELETE) {
       isDelete = true;
-      newMedia = new Media(mediaJson.id_multimedia, mediaJson.format_multimedia, mediaJson.media_file, null, null, null, mediaJson.id_publication);
+      newMedia = new Media(mediaJson.id_multimedia, mediaJson.format_multimedia, mediaJson.media_path, null, null, null, mediaJson.id_publication);
     }
 
     //UPDATING THE MEDIA DATA OF A PUBLICATION
