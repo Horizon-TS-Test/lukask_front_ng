@@ -70,7 +70,7 @@ export class QuejaService {
 
     return this._http.get(REST_SERV.qTypeUrl, { headers: qTheaders, withCredentials: true }).toPromise()
       .then((response: Response) => {
-        const qtypes = response.json().data.results;
+        const qtypes = response.json().data;
         let transformedQtypes: QuejaType[] = [];
         for (let type of qtypes) {
           transformedQtypes.push(new QuejaType(type.id_type_publication, type.description));
