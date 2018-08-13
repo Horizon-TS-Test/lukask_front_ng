@@ -71,6 +71,7 @@ import { HorizonPopOverComponent } from './components/horizon-pop-over/horizon-p
 import { UserRegisterComponent } from './components/user-register/user-register.component';
 import { UserFormComponent } from './components/user-form/user-form.component';
 import { HorizonSwitchInputComponent } from './components/horizon-switch-input/horizon-switch-input.component';
+import { DebounceClickDirective } from './directives/debounce-click.directive';
 
 @NgModule({
   declarations: [
@@ -121,7 +122,8 @@ import { HorizonSwitchInputComponent } from './components/horizon-switch-input/h
     HorizonPopOverComponent,
     UserRegisterComponent,
     UserFormComponent,
-    HorizonSwitchInputComponent
+    HorizonSwitchInputComponent,
+    DebounceClickDirective
   ],
   imports: [
     HttpModule,

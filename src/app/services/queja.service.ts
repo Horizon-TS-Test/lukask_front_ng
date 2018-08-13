@@ -37,7 +37,7 @@ export class QuejaService {
   public pubList: Publication[];
   public pubFilterList: Publication[];
   public _mapEmitter: EventEmitter<string>;
-  public _pubDetailEmitter: EventEmitter<any>;
+  public _pubDetailEmitter: EventEmitter<Publication>;
 
   constructor(
     private _http: Http,
@@ -52,7 +52,7 @@ export class QuejaService {
     this.isUpdatedTrans = false;
 
     this._mapEmitter = new EventEmitter<string>();
-    this._pubDetailEmitter = new EventEmitter<any>();
+    this._pubDetailEmitter = new EventEmitter<Publication>();
 
     this.defineMainMediaArray();
     this.listenToSocket();
@@ -338,11 +338,7 @@ export class QuejaService {
           this.updatePubList(response, "CREATE");
           this.isPostedPub = true;
           return response;
-        },
-        (err) => {
-          console.log("Erro al enviar: ", err);
-        }
-      );
+        });
   }
 
   extractPubJson(pubJson) {
@@ -397,7 +393,7 @@ export class QuejaService {
             if (xhr.status == 401) {
               localStorage.clear();
             }
-            reject(xhr.response);
+            reject(JSON.parse(xhr.response));
           }
         }
       };
@@ -731,19 +727,15 @@ export class QuejaService {
   /**
    * MÉTODO PARA ACTUALIZAR EL REGISTRO EN INDEXED-DB
    */
-  updateRelNumberIndexDb(pubId: string, add: boolean, userId: any) {
+  updateRelNumberIndexDb(pubId: string, newRelCount: number, userId: any) {
     readAllData("publication")
       .then(function (tableData) {
         let dataToSave;
         for (var t = 0; t < tableData.length; t++) {
           if (tableData[t].id_publication === pubId) {
             dataToSave = tableData[t];
-            if (add) {
-              dataToSave.count_relevance += 1;
-            }
-            else {
-              dataToSave.count_relevance -= 1;
-            }
+            dataToSave.count_relevance = newRelCount;
+
             if (userId == dataToSave.user_register.id) {
               dataToSave.user_relevance = true;
             }
@@ -763,21 +755,18 @@ export class QuejaService {
    * @param actionData 
    */
   updateRelevanceNumber(actionData: any) {
-    let updatedPub = this.pubList.find(pub => pub.id_publication === actionData.publication);
+    var currentPub = this.pubList.find(pub => pub.id_publication === actionData.publication);
 
-    if (updatedPub) {
-      if (actionData.active) {
-        updatedPub.relevance_counter += 1;
-      }
-      else {
-        updatedPub.relevance_counter -= 1;
-      }
+    if (currentPub) {
+      this.getPubById(actionData.publication).then((newPub: Publication) => {
+        ArrayManager.backendServerSays("UPDATE", this.pubList, currentPub, newPub);
+        //ACTUALIZACIÓN PARA LA VISTA QUEJA DETAIL:
+        this._pubDetailEmitter.emit(newPub);
+        ////
 
-      updatedPub.user_relevance = actionData.user_register.id == updatedPub.user.id;
-
-      this._pubDetailEmitter.emit({ relevance_counter: updatedPub.relevance_counter, user_relevance: updatedPub.user_relevance });
+        this.updateRelNumberIndexDb(actionData.publication, newPub.relevance_counter, newPub.user.id);
+      });
     }
 
-    this.updateRelNumberIndexDb(actionData.publication, actionData.active, updatedPub.user.id);
   }
 }

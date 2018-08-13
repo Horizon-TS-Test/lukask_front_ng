@@ -1751,4 +1751,16 @@ input[type=text], input[type=password], input[type=email], input[type=number], i
   .switch + .switch {
     margin-left: 1rem; }
 
+.p-snackbar-layout {
+  z-index: 10000000000000000 !important;
+  font-family: "Barlow", sans-serif !important; }
+  .p-snackbar-layout p {
+    font-size: .9rem !important; }
+  .p-snackbar-layout button {
+    font-family: "Barlow", sans-serif !important; }
+
+.p-carousel-control {
+  top: 50px !important;
+  bottom: 50px !important; }
+
 /*# sourceMappingURL=styles.css.map */

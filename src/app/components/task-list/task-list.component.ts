@@ -7,6 +7,7 @@ import { CONTENT_TYPES } from '../../config/content-type';
 import { ACTION_TYPES } from '../../config/action-types';
 import { Alert } from '../../models/alert';
 import { ALERT_TYPES } from '../../config/alert-types';
+import * as Snackbar from 'node-snackbar';
 
 declare var $: any;
 
@@ -15,18 +16,21 @@ declare var $: any;
   templateUrl: './task-list.component.html',
   styleUrls: ['./task-list.component.css']
 })
-export class TaskListComponent implements OnInit, OnChanges {
+export class TaskListComponent implements OnInit {
   @Input() queja: Publication;
   @Input() isModal: boolean;
   @Output() actionType = new EventEmitter<number>();
 
   private alertData: Alert;
-  
+  private relevanceProc: boolean;
+
   constructor(
     private _actionService: ActionService,
     private _contentService: ContentService,
     private _notifierService: NotifierService
-  ) { }
+  ) {
+    this.relevanceProc = true;
+  }
 
   ngOnInit() {
   }
@@ -44,20 +48,24 @@ export class TaskListComponent implements OnInit, OnChanges {
    */
   onRelevance(event: any) {
     event.preventDefault();
-    this._actionService.saveRelevance(this.queja.id_publication, null, !this.queja.user_relevance)
-      .then((response: any) => {
-        if (response == 'backSyncOk') {
-          this.alertData = new Alert({ title: 'Proceso Pendiente', message: 'Tu apoyo se enviará en la próxima conexión', type: ALERT_TYPES.info });
+    if (this.relevanceProc == true) {
+      this.relevanceProc = false;
+      this._actionService.saveRelevance(this.queja.id_publication, null, !this.queja.user_relevance)
+        .then((response: any) => {
+          if (response == 'backSyncOk') {
+            Snackbar.show({ text: 'Tu apoyo se enviará en la próxima conexión', pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#34b4db', customClass: "p-snackbar-layout" });
+          }
+          else {
+            this.queja.user_relevance = response;
+          }
+          this.relevanceProc = true;
+        })
+        .catch((error) => {
+          this.alertData = new Alert({ title: 'Proceso Fallido', message: 'No se ha podido procesar la petición', type: ALERT_TYPES.danger });
           this.setAlert();
-        }
-        else {
-          this.queja.user_relevance = response;
-        }
-      })
-      .catch((error) => {
-        this.alertData = new Alert({ title: 'Proceso Fallido', message: 'No se ha podido procesar la petición', type: ALERT_TYPES.danger });
-        this.setAlert();
-      });
+          this.relevanceProc = true;
+        });
+    }
   }
 
   /**
@@ -108,7 +116,7 @@ export class TaskListComponent implements OnInit, OnChanges {
    * MÉTODO PARA ESCUCHAR LOS CAMBIOS QUE SE DEN EN EL ATRIBUTO QUE VIENE DESDE EL COMPONENTE PADRE:
    * @param changes 
    */
-  ngOnChanges(changes: SimpleChanges) {
+  /*ngOnChanges(changes: SimpleChanges) {
     for (const property in changes) {
       switch (property) {
         case 'queja':
@@ -118,5 +126,5 @@ export class TaskListComponent implements OnInit, OnChanges {
           break;
       }
     }
-  }
+  }*/
 }

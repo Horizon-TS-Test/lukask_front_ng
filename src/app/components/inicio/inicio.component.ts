@@ -9,6 +9,8 @@ import { Alert } from '../../models/alert';
 import { SocketService } from '../../services/socket.service';
 import { ALERT_TYPES } from '../../config/alert-types';
 import { OwlCarousel } from '../../../../node_modules/ngx-owl-carousel';
+import { DomSanitizer } from '../../../../node_modules/@angular/platform-browser';
+
 
 declare var $: any;
 
@@ -19,7 +21,6 @@ declare var $: any;
 })
 export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('owlElement') owlElement: OwlCarousel;
-
   private pubContainer: any;
   private customCarousel: any;
   private subscriptor: Subscription;
@@ -30,18 +31,21 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   public carouselOptions: any;
   public focusedPubId: string;
   public touchDrag: boolean;
+  
 
   constructor(
+    private _domSanitizer: DomSanitizer,
     private _contentService: ContentService,
     private _notifierService: NotifierService,
     private _socket: SocketService
   ) {
-    this.touchDrag = true;
+   
   }
 
   ngOnInit() {
     this.pubContainer = $('#pub-container');
     this._contentService.fadeInComponent($("#homeContainer"));
+    
 
     this._notifierService.notifyChangeMenuContent(MENU_OPTIONS.home);
     this.subscriptor = this._notifierService._changeMenuOption.subscribe(

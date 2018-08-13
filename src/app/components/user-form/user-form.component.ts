@@ -196,15 +196,20 @@ export class UserFormComponent implements OnInit, AfterViewInit, OnChanges {
       this._userService.sendUser(this.userObj).then((resp: boolean) => {
         this.closeModal.emit(true);
         setTimeout(() => {
-          this.alertData = new Alert({ title: 'Proceso Correcto', message: "Datos del perfil actualizado correctamente", type: ALERT_TYPES.success });
+          this.alertData = new Alert({ title: 'Proceso Correcto', message: "Su perfil se ha actualizado correctamente", type: ALERT_TYPES.success });
           this.setAlert();
         }, 200);
       }).catch((err) => {
+        if (err.code == 400) {
+          this.alertData = new Alert({ title: 'Proceso Fallido', message: "Verifique que los datos ingresados sean correctos", type: ALERT_TYPES.danger });
+        }
+        else {
+          this.alertData = new Alert({ title: 'Error Inesperado', message: "Lamentamos los inconvenientes, por favor intente más tarde", type: ALERT_TYPES.danger });
+        }
         this.closeModal.emit(true);
         setTimeout(() => {
-          this.alertData = new Alert({ title: 'Proceso Fallido', message: "No se pudo actualizar el perfil", type: ALERT_TYPES.danger });
           this.setAlert();
-        }, 200)
+        }, 200);
       });
     }
     else {
@@ -215,9 +220,15 @@ export class UserFormComponent implements OnInit, AfterViewInit, OnChanges {
           this.setAlert();
         }, 200);
       }).catch((err) => {
+        console.log(err);
+        if (err.code == 400) {
+          this.alertData = new Alert({ title: 'Proceso Fallido', message: "Verifique que los datos ingresados sean correctos", type: ALERT_TYPES.danger });
+        }
+        else {
+          this.alertData = new Alert({ title: 'Error Inesperado', message: "Lamentamos los inconvenientes, por favor intente más tarde", type: ALERT_TYPES.danger });
+        }
         this.closeModal.emit(true);
         setTimeout(() => {
-          this.alertData = new Alert({ title: 'Proceso Fallido', message: "No se ha podido registrar en el sistema", type: ALERT_TYPES.danger });
           this.setAlert();
         }, 200);
       });

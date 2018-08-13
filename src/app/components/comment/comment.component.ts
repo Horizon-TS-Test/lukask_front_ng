@@ -9,6 +9,7 @@ import { User } from '../../models/user';
 import { ActionService } from '../../services/action.service';
 import { Alert } from '../../models/alert';
 import { ALERT_TYPES } from '../../config/alert-types';
+import * as Snackbar from 'node-snackbar';
 
 @Component({
   selector: 'comment',
@@ -25,6 +26,7 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
 
   private subscription: Subscription;
   private alertData: Alert;
+  private relevanceProc: boolean;
 
   public userProfile: User;
 
@@ -34,6 +36,8 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
     private _actionService: ActionService,
     private _userService: UserService
   ) {
+    this.relevanceProc = true;
+
     this.subscription = this._userService._userUpdate.subscribe((update: boolean) => {
       if (update) {
         this.setOwnUserProfile();
@@ -93,20 +97,24 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
    */
   public onRelevance(event: any) {
     event.preventDefault();
-    this._actionService.saveRelevance(this.commentModel.publicationId, this.commentModel.commentId, !this.commentModel.userRelevance)
-      .then((response: any) => {
-        if (response == 'backSyncOk') {
-          this.alertData = new Alert({ title: 'Proceso Pendiente', message: 'Tu apoyo se enviará en la próxima conexión', type: ALERT_TYPES.info });
+    if (this.relevanceProc == true) {
+      this.relevanceProc = false;
+      this._actionService.saveRelevance(this.commentModel.publicationId, this.commentModel.commentId, !this.commentModel.userRelevance)
+        .then((response: any) => {
+          if (response == 'backSyncOk') {
+            Snackbar.show({ text: 'Tu apoyo se enviará en la próxima conexión', pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#34b4db', customClass: "p-snackbar-layout" });
+          }
+          else {
+            this.commentModel.userRelevance = response;
+          }
+          this.relevanceProc = true;
+        })
+        .catch((error) => {
+          this.alertData = new Alert({ title: 'Proceso Fallido', message: 'No se ha podido procesar la petición', type: ALERT_TYPES.danger });
           this.setAlert();
-        }
-        else {
-          this.commentModel.userRelevance = response;
-        }
-      })
-      .catch((error) => {
-        this.alertData = new Alert({ title: 'Proceso Fallido', message: 'No se ha podido procesar la petición', type: ALERT_TYPES.danger });
-        this.setAlert();
-      });
+          this.relevanceProc = true;
+        });
+    }
   }
 
   /**

@@ -6,8 +6,13 @@ import { Subscription } from 'rxjs';
 import { NotifierService } from '../../services/notifier.service';
 import { ACTION_TYPES } from '../../config/action-types';
 import { DynaContent } from '../../interfaces/dyna-content.interface';
-import { DateManager } from '../../tools/date-manager';
+import { IntroData } from '../../interfaces/intro-data.interface';
+import IntroDataInterface from '../../data/intro-data';
+import { SliderManager } from '../../tools/slider-manger';
+import { DomSanitizer } from '../../../../node_modules/@angular/platform-browser';
+import { ContentService } from '../../services/content.service';
 
+declare var $: any;
 @Component({
   selector: 'app-quejas-list',
   templateUrl: './queja-list.component.html',
@@ -15,21 +20,26 @@ import { DateManager } from '../../tools/date-manager';
 })
 export class QuejaListComponent implements OnInit, AfterViewInit, OnDestroy {
   @Output() actionType = new EventEmitter<DynaContent>();
+  private _sliderManager: SliderManager;
 
   private LOADER_HIDE: string = "hide";
   private LOADER_ON: string = "on";
 
-  private subscriptor: Subscription
-
+  private subscriptor: Subscription;
+  public styles: any;
+  public IntroList: IntroData[];
   public pubList: Publication[];
   public mainLoadingClass: string;
   public mainActiveClass: string;
   public activeClass: string;
+  public introDataList: IntroData[];
 
   constructor(
+    private _domSanitizer: DomSanitizer,
     private _quejaService: QuejaService,
     private _notifierService: NotifierService
   ) {
+    this.introDataList = IntroDataInterface;
     /**
      * SUBSCRIPCIÓN PARA CAPTAR EL LLAMADO DEL COMPONENTE INICIO QUIEN SOLICITA 
      * LA CARGA DE MAS COMPONENTES AL LLEGAR EL SCROLL DEL USUARIO AL FINAL DE LA PÁGINA
@@ -44,12 +54,32 @@ export class QuejaListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     this.loadingAnimation();
+    this.defineImageStyle();
   }
 
   ngAfterViewInit() {
     setTimeout(() => {
       this.getPubList();
     }, 2000);
+  }
+
+  defineSlider() {
+    let slider = $("#Intro").find(".cd-hero-slider");
+    let navPause = $("#Intro").find(".personal-pause");
+    let navPlay = $("#Intro").find(".personal-play");
+    console.log(navPlay);
+    this._sliderManager = new SliderManager(slider, navPause, navPlay);
+  }
+
+  /**
+   * MÉTODO PARA DEFINIR EL STILO USANDO URL'S SEGURAS PARA LAS IMÁGENES DEL SLIDER:
+   */
+  defineImageStyle() {
+    this.styles = [];
+    //REF: https://angular.io/guide/security#xss
+    for (let intro of this.introDataList) {
+      this.styles.push(this._domSanitizer.bypassSecurityTrustStyle("url(" + intro.image + ")"));
+    }
   }
 
   /**
@@ -74,6 +104,9 @@ export class QuejaListComponent implements OnInit, AfterViewInit, OnDestroy {
       this.pubList = pubs;
       this.activeClass = this.LOADER_HIDE;
       this.loadingAnimation(true);
+      setTimeout(() => {
+        this.defineSlider();
+      }, 500);
     }).catch(err => {
       console.log(err);
       this.activeClass = this.LOADER_HIDE;
@@ -120,6 +153,11 @@ export class QuejaListComponent implements OnInit, AfterViewInit, OnDestroy {
     if (event === ACTION_TYPES.mapFocus) {
       this.actionType.emit({ contentType: event, contentData: pubId });
     }
+  }
+
+  nextPrev(event: any, next: boolean) {
+    event.preventDefault();
+    this._sliderManager.goPrevNext(next);
   }
 
   ngOnDestroy() {

@@ -9,6 +9,7 @@ import { Province } from '../models/province';
 import { Canton } from '../models/canton';
 import { Parroquia } from '../models/parroquia';
 import { DateManager } from '../tools/date-manager';
+import { throwError } from 'rxjs';
 
 declare var writeData: any;
 declare var readAllData: any;
@@ -164,15 +165,10 @@ export class UserService {
   public sendUser(user: User) {
     let userFormData: FormData = this.mergeFormData(user);
     return this.patchUserClient(userFormData)
-      .then(
-        (response: any) => {
-          this.updateUserData(response);
-          return true;
-        },
-        (err) => {
-          console.log(err);
-        }
-      );
+      .then((response: any) => {
+        this.updateUserData(response);
+        return true;
+      });
   }
 
   /**
@@ -211,16 +207,15 @@ export class UserService {
       let xhr = new XMLHttpRequest();
       xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
-          if (xhr.status === 200) {
+          if (xhr.status === 201) {
             let resp = JSON.parse(xhr.response).data;
-            console.log(JSON.parse(xhr.response));
             resolve(resp);
           }
           else {
             if (xhr.status == 401) {
               localStorage.clear();
             }
-            reject(xhr.response);
+            reject(JSON.parse(xhr.response));
           }
         }
       };
@@ -316,7 +311,7 @@ export class UserService {
             if (xhr.status == 401) {
               localStorage.clear();
             }
-            reject(xhr.response);
+            reject(JSON.parse(xhr.response));
           }
         }
       };
@@ -333,16 +328,11 @@ export class UserService {
   public registerUser(user: User) {
     let userFormData: FormData = this.mergeFormData(user);
     return this.postUserClient(userFormData)
-      .then(
-        (response: any) => {
-          console.log(response);
+      .then((response: any) => {
+        console.log(response);
 
-          return true;
-        },
-        (err) => {
-          console.log(err);
-        }
-      );
+        return true;
+      });
   }
 
   /**

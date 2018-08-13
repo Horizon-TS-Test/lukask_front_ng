@@ -11,8 +11,12 @@ import { ACTION_TYPES } from '../../config/action-types';
   providers: [NotifierService]
 })
 export class NewMediaComponent implements OnInit, OnChanges {
+  @Input() maxSnapShots: number;
   @Input() showClass: string;
+  @Input() backCamera: boolean;
   @Output() closeModal: EventEmitter<boolean>;
+
+  private snapShotCounter: number;
 
   public cameraActions: any;
   public _ref: any;
@@ -23,6 +27,7 @@ export class NewMediaComponent implements OnInit, OnChanges {
     private _notifierService: NotifierService
   ) {
     this.cameraActions = CAMERA_ACTIONS;
+    this.snapShotCounter = 0;
 
     this.closeModal = new EventEmitter<boolean>();
     this.matButtons = [
@@ -59,7 +64,13 @@ export class NewMediaComponent implements OnInit, OnChanges {
     if (event) {
       event.preventDefault();
     }
-    this._notifierService.notifyCameraAction(action);
+    if (action == CAMERA_ACTIONS.snap_shot && this.snapShotCounter < this.maxSnapShots) {
+      this.snapShotCounter++;
+      this._notifierService.notifyCameraAction(action);
+      if (this.snapShotCounter == this.maxSnapShots) {
+        this.closeModal.emit(true);
+      }
+    }
   }
 
   /**
@@ -77,7 +88,7 @@ export class NewMediaComponent implements OnInit, OnChanges {
       }
     }
   }
-  
+
   /**
    * MÉTODO PARA ESCUCHAR LA ACCIÓN DEL EVENTO DE CLICK DE UN BOTÓN DINÁMICO:
    */

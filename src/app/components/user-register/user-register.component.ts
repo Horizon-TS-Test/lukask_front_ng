@@ -90,6 +90,7 @@ export class UserRegisterComponent implements OnInit, OnChanges {
         this.actionType = null;
         setTimeout(() => {
           this.actionType = ACTION_TYPES.userRegister;
+          this.showClass = "";
         });
         this.loadingAnimation();
         break;

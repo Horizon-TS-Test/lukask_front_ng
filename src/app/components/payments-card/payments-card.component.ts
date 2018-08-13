@@ -73,12 +73,12 @@ export class PaymentsCardComponent implements OnInit {
       this._paymentsService.postPagosCards(this.planilla, this.paymentCard).then((data) => {
         console.log("[DATOS DE RESPUESTA DE PAYPAL A PAGAR]", data);
         const mensaje = "CONSUMIDOR:" + data.data.data.email;
-        this.alertData = new Alert({ title: "SU PAGO SE FUE EXITOSO", message: mensaje, type: ALERT_TYPES.success });
+        this.alertData = new Alert({ title: "Su pago realizado con tarjeta fue exitoso", message: mensaje, type: ALERT_TYPES.success });
         this.setAlert();
         this.closePop.emit(true);
       }, (err) => {
         console.log("[ERROR DE LA RESPUESTA A PAGAR]", err);
-        this.alertData = new Alert({ title: "DATOS ERRONEOS DE LA TARJETA", message: "VERIFIQUE SUS DATOS", type: ALERT_TYPES.danger });
+        this.alertData = new Alert({ title: "Proceso Fallido", message: "Verifique los datos ingresados", type: ALERT_TYPES.danger });
         this.setAlert();
         this.closePop.emit(true);
       });

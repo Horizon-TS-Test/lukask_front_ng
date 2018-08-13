@@ -15,7 +15,7 @@ import { ACTION_TYPES } from '../../config/action-types';
   styleUrls: ['./queja.component.css'],
   providers: [ActionService]
 })
-export class QuejaComponent implements OnInit, OnDestroy, OnChanges {
+export class QuejaComponent implements OnInit, OnDestroy {
   @Input() queja: Publication;
   @Output() actionType = new EventEmitter<number>();
 
@@ -70,7 +70,7 @@ export class QuejaComponent implements OnInit, OnDestroy, OnChanges {
    * MÉTODO PARA ESCUCHAR LOS CAMBIOS QUE SE DEN EN EL ATRIBUTO QUE VIENE DESDE EL COMPONENTE PADRE:
    * @param changes 
    */
-  ngOnChanges(changes: SimpleChanges) {
+  /*ngOnChanges(changes: SimpleChanges) {
     for (const property in changes) {
       switch (property) {
         case 'queja':
@@ -80,7 +80,7 @@ export class QuejaComponent implements OnInit, OnDestroy, OnChanges {
           break;
       }
     }
-  }
+  }*/
 
   ngOnDestroy() {
     this.subscription.unsubscribe();

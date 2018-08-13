@@ -37,7 +37,8 @@ export class UserEditComponent implements OnInit, OnDestroy, OnChanges {
   ) {
     this.fileToUpload = {
       mediaFileUrl: this._userService.getUserProfile().profileImg,
-      mediaFile: null
+      mediaFile: null,
+      removeable: false
     };
 
     this.materialButtons = [
@@ -89,7 +90,7 @@ export class UserEditComponent implements OnInit, OnDestroy, OnChanges {
    */
   newMedia(event: any) {
     event.preventDefault();
-    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.new_media, contentData: null });
+    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.new_media, contentData: { maxSnapShots: 1 } });
   }
 
   /**
@@ -116,6 +117,7 @@ export class UserEditComponent implements OnInit, OnDestroy, OnChanges {
         this.actionType = null;
         setTimeout(() => {
           this.actionType = ACTION_TYPES.userEdition;
+          this.showClass = "";
         });
         this.loadingAnimation();
         break;

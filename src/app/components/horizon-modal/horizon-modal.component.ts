@@ -5,8 +5,6 @@ import { CONTENT_TYPES } from '../../config/content-type';
 import { Subscription } from 'rxjs';
 import { NotifierService } from '../../services/notifier.service';
 
-declare var $: any;
-
 @Component({
   selector: 'app-horizon-modal',
   templateUrl: './horizon-modal.component.html',
@@ -23,7 +21,6 @@ export class HorizonModalComponent implements OnInit, OnDestroy {
   public showClass: string;
 
   constructor(
-    private _contentService: ContentService,
     private _notifierService: NotifierService
   ) {
     this.contentTypes = CONTENT_TYPES;

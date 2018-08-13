@@ -6,7 +6,8 @@ importScripts('/assets/js/utility-db.js');
 ///////////
 
 const SERVERS = {
-    middleWare: 'https://www.lukaksarticles.com'
+    middleWare: 'https://www.lukaksarticles.com',
+    frontend: 'https://www.lukask.horizon-ts.com',
 };
 
 const SYNC_TYPE = {
@@ -17,7 +18,7 @@ const SYNC_TYPE = {
 };
 
 const REST_URLS_PATTERN = {
-    medios: /http:\/\/back.lukaksarticles.com:8080\/repositorio_lukask\/.*/,
+    medios: /https:\/\/www.lukaksarticles.com\/images\/.*/,
     firstPubs: /https:\/\/www.lukaksarticles.com\/publication\/\?limit=[0-9]+$/,
     morePubs: /https:\/\/www.lukaksarticles.com\/publication\/\?limit=[0-9]+&offset=[0-9]+$/,
     comments: /https:\/\/www.lukaksarticles.com\/comment\/\?pub_id=[0-9|a-f|-]+\&(?:limit=[0-9]+|limit=[0-9]+\&offset=[0-9]+)$/,
@@ -58,6 +59,14 @@ workbox.routing.registerRoute(REST_URLS_PATTERN.medios, workbox.strategies.stale
  */
 workbox.routing.registerRoute(new RegExp("http://maps.googleapis.com/maps/api/.*"), workbox.strategies.staleWhileRevalidate({
     cacheName: 'google-maps'
+}));
+////
+
+/**
+ * REGULAR EXPRESSION FOR GOOGLE MAPS API:
+ */
+workbox.routing.registerRoute(/\.(?:js|png|ico|css)$/, workbox.strategies.staleWhileRevalidate({
+    cacheName: 'lukask-cache'
 }));
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -451,6 +460,10 @@ self.addEventListener('sync', function (event) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 workbox.precaching.precacheAndRoute([], {});
+
+/*workbox.routing.registerRoute(/**\/*.{ico,png,html,js,json,css,eot,svg,woff,woff2,ttf}/\, workbox.strategies.staleWhileRevalidate({
+    cacheName: 'lukask-cache'
+}));*/
 
 /////////////////////////////////////PUSH NOTIFICATIONS///////////////////////////////////////////////////////
 
