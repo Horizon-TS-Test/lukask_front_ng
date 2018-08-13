@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { DynaContent } from '../../interfaces/dyna-content.interface';
 import { CONTENT_TYPES } from '../../config/content-type';
+import { Subscription } from '../../../../node_modules/rxjs';
+import { NotifierService } from '../../services/notifier.service';
 
 @Component({
   selector: 'app-horizon-pop-over',
@@ -8,6 +10,8 @@ import { CONTENT_TYPES } from '../../config/content-type';
   styleUrls: ['./horizon-pop-over.component.css']
 })
 export class HorizonPopOverComponent implements OnInit {
+  private subscriber: Subscription;
+
   public _ref: any;
   public _dynaContent: DynaContent;
   public visibleClass: string;
@@ -15,8 +19,15 @@ export class HorizonPopOverComponent implements OnInit {
 
   public contentTypes: any;
 
-  constructor() {
+  constructor(
+    private _notifierService: NotifierService
+  ) {
     this.contentTypes = CONTENT_TYPES;
+    this.subscriber = this._notifierService._closeModal.subscribe((closeIt: boolean) => {
+      if (closeIt) {
+        this.closePopOver();
+      }
+    });
   }
 
   ngOnInit() {
@@ -59,7 +70,7 @@ export class HorizonPopOverComponent implements OnInit {
    * @param $event VALOR DEL EVENT EMITTER
    */
   closePopFromChild(event: boolean) {
-    if(event) {
+    if (event) {
       this.closePopOver();
     }
   }

@@ -214,19 +214,14 @@ export class CommentListComponent implements OnInit, AfterViewInit, OnDestroy, O
   /**
    * MÉTODO PARA ACTUALIZAR EL REGISTRO EN INDEXED-DB
    */
-  updateRelNumberIndexDb(comId: string, add: boolean, userId: any) {
+  updateRelNumberIndexDb(comId: string, newRelCount: number, userId: any) {
     readAllData("comment")
       .then(function (tableData) {
         let dataToSave;
         for (var t = 0; t < tableData.length; t++) {
           if (tableData[t].id_action === comId) {
             dataToSave = tableData[t];
-            if (add) {
-              dataToSave.count_relevance += 1;
-            }
-            else {
-              dataToSave.count_relevance -= 1;
-            }
+            dataToSave.count_relevance = newRelCount;
             if (userId == dataToSave.user_register.id) {
               dataToSave.user_relevance = true;
             }
@@ -245,20 +240,15 @@ export class CommentListComponent implements OnInit, AfterViewInit, OnDestroy, O
    */
   updateRelevanceCounter(actionData) {
     if (actionData.action_parent) {
-      let updatedComment = this.commentList.find(com => com.commentId == actionData.action_parent);
+      let currentComment = this.commentList.find(com => com.commentId == actionData.action_parent);
 
-      if (updatedComment) {
-        if (actionData.active) {
-          updatedComment.relevance_counter += 1;
-        }
-        else {
-          updatedComment.relevance_counter -= 1;
-        }
-
-        updatedComment.userRelevance = actionData.user_register.id == updatedComment.user.id;
+      if (currentComment) {
+        this._actionService.getCommentById(actionData.action_parent).then((newCom: Comment) => {
+          ArrayManager.backendServerSays("UPDATE", this.commentList, currentComment, newCom)
+          this.updateRelNumberIndexDb(actionData.id_action, newCom.relevance_counter, actionData.user_register.id);
+        });
       }
 
-      this.updateRelNumberIndexDb(actionData.id_action, actionData.active, actionData.user_register.id);
     }
   }
 

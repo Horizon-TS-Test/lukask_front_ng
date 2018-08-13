@@ -2314,3 +2314,25 @@ input[type=text], input[type=password], input[type=email], input[type=number], i
   }
 }
 ////////////////////////
+
+//////////////////////SNACK BAR PERSONAL CLASSES///////////////////////////
+.p-snackbar-layout {
+    z-index: 10000000000000000 !important;
+    font-family: $primary-font !important;
+    
+    p {
+        font-size: .9rem !important;
+    }
+    
+    button {
+        font-family: $primary-font !important;
+    }
+}
+///////////////////////////////////////////////////////////////////////////
+
+////////////////////////////BOOTSTRAP CAROUSEL/////////////////////////////
+.p-carousel-control {
+    top: 50px !important;
+    bottom: 50px !important;
+}
+///////////////////////////////////////////////////////////////////////////

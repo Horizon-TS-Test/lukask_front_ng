@@ -63,9 +63,8 @@ export class QuejaDetailComponent implements OnInit, OnChanges, OnDestroy {
         }
       }).catch(error => console.log(error));
 
-    this.subscriptor = this._quejaService._pubDetailEmitter.subscribe((relevanceData: any) => {
-      this.quejaDetail.relevance_counter = relevanceData.relevance_counter;
-      this.quejaDetail.user_relevance = relevanceData.user_relevance;
+    this.subscriptor = this._quejaService._pubDetailEmitter.subscribe((newPub: Publication) => {
+      this.quejaDetail = newPub;
     });
   }
 

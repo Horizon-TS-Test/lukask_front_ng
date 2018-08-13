@@ -7,8 +7,8 @@ import { MediaFile } from '../../interfaces/media-file.interface';
 import { DomSanitizer } from '../../../../node_modules/@angular/platform-browser';
 import { ACTION_TYPES } from '../../config/action-types';
 import { OnSubmit } from '../../interfaces/on-submit.interface';
+import * as Snackbar from 'node-snackbar';
 
-declare var $: any;
 
 @Component({
   selector: 'edit-queja',
@@ -21,6 +21,10 @@ export class EditQuejaComponent implements OnInit, OnDestroy, OnChanges {
   @Output() afterSubmit = new EventEmitter<OnSubmit>();
 
   private subscription: Subscription;
+
+  private _initSnapShotsNumber: number;
+  private _maxSnapShots: number;
+
   public carouselOptions: any;
   public filesToUpload: MediaFile[];
 
@@ -29,13 +33,10 @@ export class EditQuejaComponent implements OnInit, OnDestroy, OnChanges {
     private _cameraService: CameraService,
     private _domSanitizer: DomSanitizer,
   ) {
+    this._initSnapShotsNumber = 5;
+    this._maxSnapShots = this._initSnapShotsNumber;
 
-    this.filesToUpload = [
-      {
-        mediaFileUrl: "/assets/images/edit-queja/window-sm.jpg",
-        mediaFile: null
-      }
-    ];
+    this.initMediaFiles();
 
     //LISTEN TO NEW SNAPSHOT SENT BY NEW MEDIA CONTENT:
     this.subscription = this._cameraService._snapShot.subscribe(
@@ -45,17 +46,18 @@ export class EditQuejaComponent implements OnInit, OnDestroy, OnChanges {
     );
   }
 
-  ngOnInit() {
-    this.initCarousel();
-  }
+  ngOnInit() { }
 
   ngAfterViewInit() { }
 
-  /**
-   * MÉTODO PARA DEFINIR LAS PROPIEDADES DEL CAROUSEL DE FOTOS:
-   */
-  initCarousel() {
-    $('.carousel').carousel()
+  private initMediaFiles() {
+    this.filesToUpload = [
+      {
+        mediaFileUrl: "/assets/images/edit-queja/window-sm.jpg",
+        mediaFile: null,
+        removeable: false
+      }
+    ];
   }
 
   /**
@@ -75,7 +77,28 @@ export class EditQuejaComponent implements OnInit, OnDestroy, OnChanges {
    */
   newMedia(event: any) {
     event.preventDefault();
-    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.new_media, contentData: null });
+    if (this.filesToUpload.length < this._initSnapShotsNumber) {
+      this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.new_media, contentData: { maxSnapShots: this._maxSnapShots } });
+    }
+    else {
+      Snackbar.show({ text: "Ha llegado al límite de imágenes permitidas", pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#34b4db', customClass: "p-snackbar-layout" });
+    }
+  }
+
+  /**
+   * MÉTODO PARA ELIMINAR UNA IMAGEN DEL GRUPO DE MEDIA
+   * @param $event 
+   * @param i POSICIÓN DEL ARRAY DE MEDIA A ELIMINAR
+   */
+  removeMedia(event: any, media: MediaFile) {
+    event.preventDefault();
+    this.filesToUpload.splice(this.filesToUpload.indexOf(media), 1);
+    this._maxSnapShots = this._initSnapShotsNumber - this.filesToUpload.length;
+    if (this.filesToUpload.length == 0) {
+      this.initMediaFiles();
+    }
+
+    Snackbar.show({ text: "El recurso se ha eliminado correctamente", pos: 'bottom-center', actionText: 'Listo', actionTextColor: '#34b4db', customClass: "p-snackbar-layout" });
   }
 
   /**

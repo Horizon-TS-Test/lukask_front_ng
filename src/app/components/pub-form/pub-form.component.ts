@@ -190,7 +190,12 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges {
       }
       this.formPub.reset();
     }).catch((error) => {
-      this.afterSubmit.emit({ finished: true, dataAfterSubmit: null, hasError: true, message: 'No se ha podido procesar la petición' });
+      if(error.code == 400) {
+        this.afterSubmit.emit({ finished: true, dataAfterSubmit: null, hasError: true, message: 'Verifique que la información ingresada sea correcta' });
+      }
+      else {
+        this.afterSubmit.emit({ finished: true, dataAfterSubmit: null, hasError: true, message: 'No se ha podido procesar la petición' });
+      }
       this.formPub.reset();
     });
   }

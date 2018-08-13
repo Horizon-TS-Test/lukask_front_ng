@@ -6,7 +6,8 @@ importScripts('/assets/js/utility-db.js');
 ///////////
 
 const SERVERS = {
-    middleWare: 'http://192.168.1.62:3001'
+    middleWare: 'http://192.168.1.62:3001',
+    frontend: 'http://127.0.0.1:4200',
 };
 
 const SYNC_TYPE = {
@@ -58,6 +59,14 @@ workbox.routing.registerRoute(REST_URLS_PATTERN.medios, workbox.strategies.stale
  */
 workbox.routing.registerRoute(new RegExp("http://maps.googleapis.com/maps/api/.*"), workbox.strategies.staleWhileRevalidate({
     cacheName: 'google-maps'
+}));
+////
+
+/**
+ * REGULAR EXPRESSION FOR GOOGLE MAPS API:
+ */
+workbox.routing.registerRoute(/\.(?:js|png|ico|css|svg|eot)$/, workbox.strategies.staleWhileRevalidate({
+    cacheName: 'lukask-cache'
 }));
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -451,6 +460,10 @@ self.addEventListener('sync', function (event) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 workbox.precaching.precacheAndRoute([], {});
+
+/*workbox.routing.registerRoute(/**\/*.{ico,png,html,js,json,css,eot,svg,woff,woff2,ttf}/\, workbox.strategies.staleWhileRevalidate({
+    cacheName: 'lukask-cache'
+}));*/
 
 /////////////////////////////////////PUSH NOTIFICATIONS///////////////////////////////////////////////////////
 

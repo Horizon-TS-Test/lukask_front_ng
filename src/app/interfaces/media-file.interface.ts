@@ -1,4 +1,5 @@
 export interface MediaFile {
     mediaFileUrl: string,
-    mediaFile: any
+    mediaFile: any,
+    removeable: boolean
 }

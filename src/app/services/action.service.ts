@@ -71,10 +71,10 @@ export class ActionService {
 
             this.isFetchedComments = true;
             if (isReplies) {
-              console.log("[LUKASK QUEJA SERVICE] - REPLIES OF A COMMENT WITH ID " + parentId + " FROM WEB", comments);
+              console.log("[LUKASK ACTION SERVICE] - REPLIES OF A COMMENT WITH ID " + parentId + " FROM WEB", comments);
             }
             else {
-              console.log("[LUKASK QUEJA SERVICE] - COMMENTS OF A PUBLICATION WITH ID " + parentId + " FROM WEB", comments);
+              console.log("[LUKASK ACTION SERVICE] - COMMENTS OF A PUBLICATION WITH ID " + parentId + " FROM WEB", comments);
             }
             return { comments: comments, pagePattern: respJson.comments.next };
           }
@@ -132,10 +132,10 @@ export class ActionService {
           }
 
           if (isReplies) {
-            console.log("[LUKASK QUEJA SERVICE] - REPLIES OF A COMMENT WITH ID " + parentId + " FROM CACHE", comments);
+            console.log("[LUKASK ACTION SERVICE] - REPLIES OF A COMMENT WITH ID " + parentId + " FROM CACHE", comments);
           }
           else {
-            console.log("[LUKASK QUEJA SERVICE] - COMMENTS OF A PUBLICATION WITH ID " + parentId + " FROM CACHE", comments);
+            console.log("[LUKASK ACTION SERVICE] - COMMENTS OF A PUBLICATION WITH ID " + parentId + " FROM CACHE", comments);
           }
 
           return { comments: comments, pagePattern: (offset) ? "&limit=" + this.pageLimit + "&offset=" + offset : null };
@@ -310,7 +310,7 @@ export class ActionService {
         let respJson = response.json().data.active;
 
         return respJson;
-      });
+      }).catch((error) => throwError(error));;
   }
 
   /**
@@ -330,6 +330,40 @@ export class ActionService {
 
       return response;
     });
+  }
+
+  /**
+   * MÉTODO PARA OBTENER COMENTARIOS/RESPUESTAS SEA DE LA WEB O DE LA CACHÉ
+   * @param parentId ID DE PUBLICACIÓN / COMENTARIO
+   * @param isReplies SI SE TRATA DE OBTENER RESPUESTAS DE UN COMENTARIO
+   * @param pagePattern PATTERN DE PAGINACIÓN
+   */
+  public getCommentById(commentId: string) {
+    const requestHeaders = new Headers({
+      "Content-Type": "application/json",
+      'X-Access-Token': this._userService.getUserKey()
+    });
+
+    return this._http.get(REST_SERV.commentUrl + "/" + commentId, {
+      headers: requestHeaders,
+      withCredentials: true
+    }).toPromise()
+      .then((response: Response) => {
+        const respJson = response.json();
+        if (response.status == 200) {
+          let jsonComment = respJson.data;
+          let comment: Comment = this.extractCommentJson(jsonComment);
+          
+          console.log("[LUKASK ACTION SERVICE] - COMMENT BY ID FROM WEB", comment);
+          return comment;
+        }
+      })
+      .catch((error: Response) => {
+        if (error.json().code == 401) {
+          localStorage.clear();
+        }
+        return throwError(error.json());
+      });
   }
 
   /**

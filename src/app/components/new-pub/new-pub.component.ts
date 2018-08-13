@@ -130,6 +130,7 @@ export class NewPubComponent implements OnInit, AfterViewInit, OnChanges {
           this.closeModal.emit(true);
           break;
         case ACTION_TYPES.pubStream:
+        this.showClass = "show";
           this.newPubId = event.dataAfterSubmit;
           this.nextButton = null;
           setTimeout(() => {
@@ -140,13 +141,14 @@ export class NewPubComponent implements OnInit, AfterViewInit, OnChanges {
       }
 
       if (event.backSync == true) {
-        Snackbar.show({ text: event.message, pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#34b4db' });
+        Snackbar.show({ text: event.message, pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#34b4db', customClass: "p-snackbar-layout" });
       }
       else {
         this.alertData = new Alert({ title: 'Proceso Correcto', message: event.message, type: ALERT_TYPES.success });
       }
     }
     else {
+      this.showClass = "show";
       this.alertData = new Alert({ title: 'Proceso Fallido', message: event.message, type: ALERT_TYPES.danger });
     }
     setTimeout(() => {
@@ -184,6 +186,7 @@ export class NewPubComponent implements OnInit, AfterViewInit, OnChanges {
           this.actionType = actionEvent;
         });
         this.showLoadingContent(true);
+        this.showClass = "";
         break;
       case ACTION_TYPES.viewComments:
         this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_comments, contentData: { pubId: this.newPubId, halfModal: true, hideBtn: true } });

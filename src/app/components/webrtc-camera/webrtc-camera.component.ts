@@ -9,6 +9,7 @@ import { ImageCapture } from 'image-capture';
 import { MediaFile } from '../../interfaces/media-file.interface';
 import { WebrtcSocketService } from '../../services/webrtc-socket.service';
 import { UserService } from '../../services/user.service';
+import * as Snackbar from 'node-snackbar';
 
 @Component({
   selector: 'app-webrtc-camera',
@@ -19,6 +20,7 @@ import { UserService } from '../../services/user.service';
 })
 export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
   @Input() startCamera: boolean;
+  @Input() backCamera: boolean;
   @Input() streamOwnerId: string;
   @Input() pubId: string;
   @Output() fileEmitter = new EventEmitter<MediaFile>();
@@ -28,7 +30,6 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
   private _video: any;
   private _navigator: any;
   private localStream: any;
-  private backCamera: boolean;
   public snapShot: MediaFile;
   public swapCamera: boolean;
   private mediaStreamTrack: any;
@@ -45,7 +46,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
     this._frontCamera = { id: "", description: "" };
     this._backCamera = { id: "", description: "" };
     this.swapCamera = false;
-    this.backCamera = false;
+    this.backCamera = (!this.backCamera) ? false : this.backCamera;
     this.transmissionOn = false;
 
     //LISTEN FOR ANY CAMERA EVENT:
@@ -108,14 +109,19 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
     navigator.mediaDevices.enumerateDevices().then((data) => {
       console.log("dispositivos", data);
       this.getDevices(data);
-    }).catch(this.handleError);
 
-    if (this.streamOwnerId) {
-      this.joinTransmission();
-    }
-    else {
-      this.startFrontLiveCam();
-    }
+      if (this.streamOwnerId) {
+        this.joinTransmission();
+      }
+      else {
+        if (this.backCamera) {
+          this.startBackLiveCam();
+        }
+        else {
+          this.startFrontLiveCam();
+        }
+      }
+    }).catch(this.handleError);
   }
 
   /**
@@ -193,6 +199,9 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
       this.stopStream();
       this.startLiveCamp(this._backCamera);
     }
+    else {
+      this.startFrontLiveCam();
+    }
   }
 
   /**
@@ -216,8 +225,10 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
         console.log(blob);
         this.snapShot = {
           mediaFileUrl: URL.createObjectURL(blob),
-          mediaFile: blob
+          mediaFile: blob,
+          removeable: true
         }
+        Snackbar.show({ text: "Imagen capturada correctamente", pos: 'bottom-center', actionText: 'Listo', actionTextColor: '#34b4db', customClass: "p-snackbar-layout" });
         this._cameraService.notifySnapShot(this.snapShot);
       });
     }

@@ -11,6 +11,7 @@ import { DateManager } from '../../tools/date-manager';
 import * as SnackBar from 'node-snackbar';
 import { Alert } from '../../models/alert';
 import { ALERT_TYPES } from '../../config/alert-types';
+import * as Snackbar from 'node-snackbar';
 
 @Component({
   selector: 'comment-form',
@@ -88,8 +89,7 @@ export class CommentFormComponent implements OnInit, OnDestroy {
     this._actionService.saveComment(this.commentModel)
       .then((response) => {
         if (response == true) {
-          this.alertData = new Alert({ title: 'Proceso Pendiente', message: 'Tu ' + (this.commentModel.commentParentId ? 'respuesta' : 'comentario') + ' se enviará en la próxima conexión', type: ALERT_TYPES.info });
-          this.setAlert();
+          Snackbar.show({ text: 'Tu ' + (this.commentModel.commentParentId ? 'respuesta' : 'comentario') + ' se enviará en la próxima conexión', pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#34b4db', customClass: "p-snackbar-layout" });
         }
         else {
           this._notifierService.notifyNewCommentResp(this._actionService.extractCommentJson(response));
