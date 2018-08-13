@@ -1,11 +1,11 @@
 <div class="personal-fadeout personal-intro-slider p-home-full-height cd-section d-flex justify-content-center" id="pagosIntro">
   <ul class="cd-hero-slider autoplay">
-    <div class="p-slide-nav-gen">
+    <!--div class="p-slide-nav-gen">
       <a href="#" (click)="nextPrev($event, false)" class="personal-nav-prev"></a>
       <a href="#" (click)="playPause($event, false)" class="personal-play"></a>
       <a href="#" (click)="playPause($event, true)" class="personal-pause"></a>
       <a href="#" (click)="nextPrev($event, true)" class="personal-nav-next"></a>
-    </div>
+    </div-->
     <ng-container *ngFor="let intro of payIntroList; let i = index">
       <li [ngClass]="{'selected': i == 0}" [style.background]="styles[i]">
         <div class="img-opacity"></div>

@@ -1,6 +1,9 @@
-<div class="relative-background light-background {{ mainLoadingClass }} pt-1 pb-4">
+<div class="relative-background light-background {{ mainLoadingClass }}" [ngClass]="{ 'pt-1 pb-4': pubList && pubList.length > 0 }">
   <div class="loading-content {{ mainActiveClass }}"></div>
-    <ul *ngIf="pubList.length == 0" class="cd-hero-slider autoplay">
+
+  <div *ngIf="pubList && pubList.length == 0" class="personal-intro-slider p-home-full-height cd-section d-flex justify-content-center"
+    id="Intro">
+    <ul class="cd-hero-slider autoplay">
       <div class="p-slide-nav-gen">
         <a href="#" (click)="nextPrev($event, false)" class="personal-nav-prev"></a>
         <a href="#" (click)="playPause($event, false)" class="personal-play"></a>
@@ -16,7 +19,9 @@
         </li>
       </ng-container>
     </ul>
-  <div *ngIf="pubList.length > 0" >
+  </div>
+
+  <div *ngIf="pubList && pubList.length > 0">
     <app-queja *ngFor="let queja of pubList" [queja]="queja" (actionType)="optionButtonAction($event, queja.id_publication)"></app-queja>
     <div id="morePubs" class="bottom-loader {{ activeClass }} col-12 d-flex justify-content-center align-items-center">
       <img src="/assets/images/forms/preloader.gif" width="60px" class="p-owl-img">

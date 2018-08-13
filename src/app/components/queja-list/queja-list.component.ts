@@ -6,7 +6,6 @@ import { Subscription } from 'rxjs';
 import { NotifierService } from '../../services/notifier.service';
 import { ACTION_TYPES } from '../../config/action-types';
 import { DynaContent } from '../../interfaces/dyna-content.interface';
-import { DateManager } from '../../tools/date-manager';
 import { IntroData } from '../../interfaces/intro-data.interface';
 import IntroDataInterface from '../../data/intro-data';
 import { SliderManager } from '../../tools/slider-manger';
@@ -36,12 +35,10 @@ export class QuejaListComponent implements OnInit, AfterViewInit, OnDestroy {
   public introDataList: IntroData[];
 
   constructor(
-    private _contentService: ContentService,
     private _domSanitizer: DomSanitizer,
     private _quejaService: QuejaService,
     private _notifierService: NotifierService
   ) {
-    this.pubList = [];
     this.introDataList = IntroDataInterface;
     /**
      * SUBSCRIPCIÓN PARA CAPTAR EL LLAMADO DEL COMPONENTE INICIO QUIEN SOLICITA 
@@ -59,14 +56,19 @@ export class QuejaListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loadingAnimation();
     this.defineImageStyle();
   }
+
   ngAfterViewInit() {
-    let slider = $("#Intro").find(".cd-hero-slider");
-    let navPause = $("#Intro").find(".personal-pause");
-    let navPlay = $("#Intro").find(".personal-play");
-    this._sliderManager = new SliderManager(slider, navPause, navPlay);
     setTimeout(() => {
       this.getPubList();
     }, 2000);
+  }
+
+  defineSlider() {
+    let slider = $("#Intro").find(".cd-hero-slider");
+    let navPause = $("#Intro").find(".personal-pause");
+    let navPlay = $("#Intro").find(".personal-play");
+    console.log(navPlay);
+    this._sliderManager = new SliderManager(slider, navPause, navPlay);
   }
 
   /**
@@ -102,6 +104,9 @@ export class QuejaListComponent implements OnInit, AfterViewInit, OnDestroy {
       this.pubList = pubs;
       this.activeClass = this.LOADER_HIDE;
       this.loadingAnimation(true);
+      setTimeout(() => {
+        this.defineSlider();
+      }, 500);
     }).catch(err => {
       console.log(err);
       this.activeClass = this.LOADER_HIDE;
@@ -149,6 +154,7 @@ export class QuejaListComponent implements OnInit, AfterViewInit, OnDestroy {
       this.actionType.emit({ contentType: event, contentData: pubId });
     }
   }
+
   nextPrev(event: any, next: boolean) {
     event.preventDefault();
     this._sliderManager.goPrevNext(next);
