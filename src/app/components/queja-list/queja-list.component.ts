@@ -67,7 +67,6 @@ export class QuejaListComponent implements OnInit, AfterViewInit, OnDestroy {
     let slider = $("#Intro").find(".cd-hero-slider");
     let navPause = $("#Intro").find(".personal-pause");
     let navPlay = $("#Intro").find(".personal-play");
-    console.log(navPlay);
     this._sliderManager = new SliderManager(slider, navPause, navPlay);
   }
 

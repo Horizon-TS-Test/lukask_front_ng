@@ -78,7 +78,7 @@ export class EditQuejaComponent implements OnInit, OnDestroy, OnChanges {
   newMedia(event: any) {
     event.preventDefault();
     if (this.filesToUpload.length < this._initSnapShotsNumber) {
-      this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.new_media, contentData: { maxSnapShots: this._maxSnapShots } });
+      this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.new_media, contentData: { maxSnapShots: this._maxSnapShots, backCamera: true } });
     }
     else {
       Snackbar.show({ text: "Ha llegado al límite de imágenes permitidas", pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#34b4db', customClass: "p-snackbar-layout" });

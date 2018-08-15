@@ -47,6 +47,7 @@
               "node_modules/bootstrap/dist/js/bootstrap.min.js",
               "node_modules/owl.carousel/dist/owl.carousel.min.js",
               "node_modules/node-snackbar/dist/snackbar.min.js",
+              "node_modules/blueimp-load-image/js/load-image.all.min.js",
               "src/assets/js/fechaJS/moment.min.js",
               "src/assets/js/fechaJS/popper.min.js",
               "src/assets/js/fechaJS/bootstrap-datetimepicker.min.js",

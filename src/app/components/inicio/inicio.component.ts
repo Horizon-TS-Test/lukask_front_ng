@@ -25,13 +25,13 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   private customCarousel: any;
   private subscriptor: Subscription;
   private alertData: Alert;
-  
+
   public enableSecondOp: boolean;
   public enableThirdOp: boolean;
   public carouselOptions: any;
   public focusedPubId: string;
   public touchDrag: boolean;
-  
+
 
   constructor(
     private _domSanitizer: DomSanitizer,
@@ -39,13 +39,13 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
     private _notifierService: NotifierService,
     private _socket: SocketService
   ) {
-   
+    this.touchDrag = true;
   }
 
   ngOnInit() {
     this.pubContainer = $('#pub-container');
     this._contentService.fadeInComponent($("#homeContainer"));
-    
+
 
     this._notifierService.notifyChangeMenuContent(MENU_OPTIONS.home);
     this.subscriptor = this._notifierService._changeMenuOption.subscribe(

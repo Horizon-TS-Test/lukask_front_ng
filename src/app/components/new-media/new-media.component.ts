@@ -16,8 +16,6 @@ export class NewMediaComponent implements OnInit, OnChanges {
   @Input() backCamera: boolean;
   @Output() closeModal: EventEmitter<boolean>;
 
-  private snapShotCounter: number;
-
   public cameraActions: any;
   public _ref: any;
   public matButtons: HorizonButton[];
@@ -27,7 +25,6 @@ export class NewMediaComponent implements OnInit, OnChanges {
     private _notifierService: NotifierService
   ) {
     this.cameraActions = CAMERA_ACTIONS;
-    this.snapShotCounter = 0;
 
     this.closeModal = new EventEmitter<boolean>();
     this.matButtons = [
@@ -64,13 +61,8 @@ export class NewMediaComponent implements OnInit, OnChanges {
     if (event) {
       event.preventDefault();
     }
-    if (action == CAMERA_ACTIONS.snap_shot && this.snapShotCounter < this.maxSnapShots) {
-      this.snapShotCounter++;
-      this._notifierService.notifyCameraAction(action);
-      if (this.snapShotCounter == this.maxSnapShots) {
-        this.closeModal.emit(true);
-      }
-    }
+
+    this._notifierService.notifyCameraAction(action);
   }
 
   /**
@@ -86,6 +78,16 @@ export class NewMediaComponent implements OnInit, OnChanges {
           }
           break;
       }
+    }
+  }
+
+  /**
+   * MÉTODO PARA CAPTAR EL EVENTO DEL COMPONENTE HIJO
+   * @param event 
+   */
+  getChildEvent(event: boolean) {
+    if (event) {
+      this.closeModal.emit(true);
     }
   }
 

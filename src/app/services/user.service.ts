@@ -232,7 +232,6 @@ export class UserService {
    */
   extractUserJson(jsonUser: any) {
     let user: User;
-
     jsonUser.profile_path = jsonUser.profile_path.indexOf("http") !== -1 || jsonUser.profile_path.indexOf("https") !== -1 ? jsonUser.profile_path : REST_SERV.mediaBack + jsonUser.profile_path;
     user = new User(jsonUser.email, '', jsonUser.profile_path, jsonUser.is_active, null, null, jsonUser.id);
     user.person = new Person(jsonUser.person.id_person, jsonUser.person.age, jsonUser.person.identification_card, jsonUser.person.name, jsonUser.person.last_name, jsonUser.person.telephone, jsonUser.person.address, jsonUser.person.active, jsonUser.person.birthdate, jsonUser.person.cell_phone, null, null, DateManager.convertStringToDate(jsonUser.person.birthdate));
@@ -533,7 +532,6 @@ export class UserService {
     if ('indexedDB' in window) {
       return readAllData('parroquia')
         .then((parroquias) => {
-          console.log("desde user service parroquias cache: ", parroquias);
           let transformedParroquias: Parroquia[] = [];
           for (let parroq of parroquias) {
             if (parroq.canton == canton_id) {

@@ -149,7 +149,6 @@ export class QuejaService {
       return this._http.get(REST_SERV.pubsUrl + "/" + ((this.pagePattern && morePubs == true) ? this.pagePattern : "?limit=" + this.DEFAULT_LIMIT), { headers: pubHeaders, withCredentials: true }).toPromise()
         .then((response: Response) => {
           const respJson = response.json().data;
-          console.log(respJson);
           this.pagePattern = respJson.next;
           const pubs = respJson.results;
 
@@ -386,7 +385,6 @@ export class QuejaService {
       xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
           if (xhr.status === 201) {
-            console.log(JSON.parse(xhr.response));
             resolve(JSON.parse(xhr.response).data);
           }
           else {
@@ -548,8 +546,6 @@ export class QuejaService {
 
     return this._http.post(REST_SERV.pubsUrl + "/transmission/" + pubId, requestBody, { headers: requestHeaders, withCredentials: true }).toPromise()
       .then((response: Response) => {
-        let respJson = response.json().data;
-        console.log("respJson.trans_done: " + respJson.trans_done);
         if (response.status === 200) {
           return true;
         }

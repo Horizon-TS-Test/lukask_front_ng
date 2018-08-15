@@ -1,5 +1,5 @@
 <div class="personal-content min-height-full-modal relative-background col-12 p-0">
-  <app-webrtc-camera [backCamera]="backCamera"></app-webrtc-camera>
+  <app-webrtc-camera [backCamera]="backCamera" [maxSnapShots]="maxSnapShots" (closeEmitter)="getChildEvent($event)"></app-webrtc-camera>
 
   <owl-carousel id="corousel-snapshot-op" class="personal-owl-nav" [options]="carouselOptions" [carouselClasses]="['owl-theme']">
     <div class="d-flex justify-content-center align-items-center min-height-full-modal">

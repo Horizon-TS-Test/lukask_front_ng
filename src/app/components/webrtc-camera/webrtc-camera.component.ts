@@ -4,12 +4,13 @@ import { NotifierService } from '../../services/notifier.service';
 import { CAMERA_ACTIONS } from '../../config/camera-actions';
 import { Subscription } from 'rxjs';
 import { CameraService } from '../../services/camera.service';
-
 import { ImageCapture } from 'image-capture';
 import { MediaFile } from '../../interfaces/media-file.interface';
 import { WebrtcSocketService } from '../../services/webrtc-socket.service';
 import { UserService } from '../../services/user.service';
+
 import * as Snackbar from 'node-snackbar';
+import * as loadImage from 'blueimp-load-image';
 
 @Component({
   selector: 'app-webrtc-camera',
@@ -23,8 +24,10 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
   @Input() backCamera: boolean;
   @Input() streamOwnerId: string;
   @Input() pubId: string;
-  @Output() fileEmitter = new EventEmitter<MediaFile>();
+  @Input() maxSnapShots: number;
+  @Output() closeEmitter = new EventEmitter<boolean>();
 
+  private snapShotCounter: number;
   private _frontCamera: Device;
   private _backCamera: Device;
   private _video: any;
@@ -43,23 +46,31 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
     private _webrtcSocketService: WebrtcSocketService,
     private _userService: UserService
   ) {
+    this.snapShotCounter = 0;
+
     this._frontCamera = { id: "", description: "" };
     this._backCamera = { id: "", description: "" };
     this.swapCamera = false;
     this.backCamera = (!this.backCamera) ? false : this.backCamera;
+    console.log("this.backCamera", this.backCamera);
     this.transmissionOn = false;
 
     //LISTEN FOR ANY CAMERA EVENT:
     this.subscription = this._notifierService._cameraAction.subscribe(
       (cameraAction: number) => {
-        console.log("cameraAction", cameraAction);
         switch (cameraAction) {
           case CAMERA_ACTIONS.start_camera:
             this.startCamera = true;
             this.startFrontLiveCam();
             break;
           case CAMERA_ACTIONS.snap_shot:
-            this.takeSnapShot();
+            if (this.snapShotCounter < this.maxSnapShots) {
+              this.takeSnapShot();
+              this.snapShotCounter++;
+              if (this.snapShotCounter == this.maxSnapShots) {
+                this.closeEmitter.emit(true);
+              }
+            }
             break;
           case CAMERA_ACTIONS.change_camera:
             if (this.backCamera) {
@@ -140,14 +151,15 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
       this._navigator = <any>navigator;
       this._navigator.getUserMedia = (this._navigator.getUserMedia || this._navigator.webkitGetUserMedia || this._navigator.mozGetUserMedia || this._navigator.msGetUserMedia);
       this._navigator.mediaDevices.getUserMedia({
-        video: { deviceId: infoCamp.id ? { exact: infoCamp.id } : undefined }
+        //video: { deviceId: infoCamp.id ? { exact: infoCamp.id } : undefined }
+        video: true
       }).then((stream) => {
         console.log("stream", stream)
         this.localStream = stream;
         this._video.srcObject = stream;
 
         this.mediaStreamTrack = stream.getVideoTracks()[0];
-        this.imageCapture = new ImageCapture(this.mediaStreamTrack);
+        this.imageCapture = new ImageCapture(this.mediaStreamTrack, stream);
         console.log(this.imageCapture);
       }).catch(error => console.error('getUserMedia() error:', error));
     }
@@ -222,14 +234,33 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
   takeSnapShot() {
     if (this.imageCapture) {
       this.imageCapture.takePhoto().then((blob: any) => {
-        console.log(blob);
-        this.snapShot = {
-          mediaFileUrl: URL.createObjectURL(blob),
-          mediaFile: blob,
-          removeable: true
-        }
-        Snackbar.show({ text: "Imagen capturada correctamente", pos: 'bottom-center', actionText: 'Listo', actionTextColor: '#34b4db', customClass: "p-snackbar-layout" });
-        this._cameraService.notifySnapShot(this.snapShot);
+        let fixedBlob;
+
+        loadImage.parseMetaData(blob, (data) => {
+          let blobOrientation;
+          if (data.exif) {
+            blobOrientation = data.exif.get('Orientation');
+          }
+          loadImage(blob, (img) => {
+            img.toBlob((blob) => {
+              fixedBlob = blob;
+              console.log("[WEBRTC-CAMERA COMPONENT] - IMAGE CAPTURE WITH FIXED ORIENTATION", fixedBlob);
+
+              this.snapShot = {
+                mediaFileUrl: URL.createObjectURL(fixedBlob),
+                mediaFile: fixedBlob,
+                removeable: true
+              }
+              Snackbar.show({ text: "Imagen capturada correctamente", pos: 'bottom-center', actionText: 'Listo', actionTextColor: '#34b4db', customClass: "p-snackbar-layout" });
+              this._cameraService.notifySnapShot(this.snapShot);
+            });
+          }, {
+              canvas: true,
+              orientation: blobOrientation
+            }
+          );
+        });
+
       });
     }
   }
