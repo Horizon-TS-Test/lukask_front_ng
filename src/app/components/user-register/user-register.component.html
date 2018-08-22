@@ -8,7 +8,7 @@
     <img width="100%" class="p-img-pop mb-1">
   </div>
 
-  <user-form [actionType]="actionType" (closeModal)="childAfterSubmit($event)"></user-form>
+  <user-form [actionType]="actionType" [userObj]="newUser" (closeModal)="childAfterSubmit($event)"></user-form>
 </div>
 
 <material-btn-list [showClass]='showClass' [materialBtns]="materialButtons" (someBtnAction)="actionBtn($event)"></material-btn-list>
