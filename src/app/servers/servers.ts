@@ -1,5 +1,5 @@
 export const SERV_IP = {
-    middleware: 'https://lukaksarticles.com',
-    push: 'https://push.lukaksarticles.com',
+    middleware: 'https://www.lukaksarticles.com',
+    push: 'https://www.push.lukaksarticles.com',
     kurentoClient: 'wss://kms.lukaksarticles.com'
 }

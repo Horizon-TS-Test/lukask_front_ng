@@ -6,8 +6,8 @@ importScripts('/assets/js/utility-db.js');
 ///////////
 
 const SERVERS = {
-    middleWare: 'https://lukaksarticles.com',
-    frontend: 'https://lukask.horizon-ts.com',
+    middleWare: 'https://www.lukaksarticles.com.com',
+    frontend: 'https://www.lukask.horizon-ts.com',
 };
 
 const SYNC_TYPE = {
@@ -18,15 +18,15 @@ const SYNC_TYPE = {
 };
 
 const REST_URLS_PATTERN = {
-    medios: /https:\/\/lukaksarticles.com\/images\/.*/,
-    firstPubs: /https:\/\/lukaksarticles.com\/publication\/\?limit=[0-9]+$/,
-    morePubs: /https:\/\/lukaksarticles.com\/publication\/\?limit=[0-9]+&offset=[0-9]+$/,
-    comments: /https:\/\/lukaksarticles.com\/comment\/\?pub_id=[0-9|a-f|-]+\&(?:limit=[0-9]+|limit=[0-9]+\&offset=[0-9]+)$/,
-    replies: /https:\/\/lukaksarticles.com\/comment\/\?com_id=[0-9|a-f|-]+\&(?:limit=[0-9]+|limit=[0-9]+\&offset=[0-9]+)\&replies=true$/,
+    medios: /https:\/\/www.lukaksarticles.com.com\/images\/.*/,
+    firstPubs: /https:\/\/www.lukaksarticles.com.com\/publication\/\?limit=[0-9]+$/,
+    morePubs: /https:\/\/www.lukaksarticles.com.com\/publication\/\?limit=[0-9]+&offset=[0-9]+$/,
+    comments: /https:\/\/www.lukaksarticles.com.com\/comment\/\?pub_id=[0-9|a-f|-]+\&(?:limit=[0-9]+|limit=[0-9]+\&offset=[0-9]+)$/,
+    replies: /https:\/\/www.lukaksarticles.com.com\/comment\/\?com_id=[0-9|a-f|-]+\&(?:limit=[0-9]+|limit=[0-9]+\&offset=[0-9]+)\&replies=true$/,
     qtype: SERVERS.middleWare + '/qtype',
     province: SERVERS.middleWare + '/province',
-    canton: /https:\/\/lukaksarticles.com\/canton\/\?province_id=[0-9|a-f|-]+$/,
-    parroq: /https:\/\/lukaksarticles.com\/parroquia\/\?canton_id=[0-9|a-f|-]+$/
+    canton: /https:\/\/www.lukaksarticles.com.com\/canton\/\?province_id=[0-9|a-f|-]+$/,
+    parroq: /https:\/\/www.lukaksarticles.com.com\/parroquia\/\?canton_id=[0-9|a-f|-]+$/
 };
 
 const REST_URLS = {
