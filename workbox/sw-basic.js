@@ -6,8 +6,8 @@ importScripts('/assets/js/utility-db.js');
 ///////////
 
 const SERVERS = {
-    middleWare: 'http://192.168.1.62:3001',
-    frontend: 'https://127.0.0.1:4200',
+    middleWare: 'https://lukaksarticles.com',
+    frontend: 'https://lukask.horizon-ts.com',
 };
 
 const SYNC_TYPE = {
@@ -18,15 +18,15 @@ const SYNC_TYPE = {
 };
 
 const REST_URLS_PATTERN = {
-    medios: /http:\/\/192.168.1.62:3001\/images\/.*/,
-    firstPubs: /http:\/\/192.168.1.62:3001\/publication\/\?limit=[0-9]+$/,
-    morePubs: /http:\/\/192.168.1.62:3001\/publication\/\?limit=[0-9]+&offset=[0-9]+$/,
-    comments: /http:\/\/192.168.1.62:3001\/comment\/\?pub_id=[0-9|a-f|-]+\&(?:limit=[0-9]+|limit=[0-9]+\&offset=[0-9]+)$/,
-    replies: /http:\/\/192.168.1.62:3001\/comment\/\?com_id=[0-9|a-f|-]+\&(?:limit=[0-9]+|limit=[0-9]+\&offset=[0-9]+)\&replies=true$/,
+    medios: /https:\/\/lukaksarticles.com\/images\/.*/,
+    firstPubs: /https:\/\/lukaksarticles.com\/publication\/\?limit=[0-9]+$/,
+    morePubs: /https:\/\/lukaksarticles.com\/publication\/\?limit=[0-9]+&offset=[0-9]+$/,
+    comments: /https:\/\/lukaksarticles.com\/comment\/\?pub_id=[0-9|a-f|-]+\&(?:limit=[0-9]+|limit=[0-9]+\&offset=[0-9]+)$/,
+    replies: /https:\/\/lukaksarticles.com\/comment\/\?com_id=[0-9|a-f|-]+\&(?:limit=[0-9]+|limit=[0-9]+\&offset=[0-9]+)\&replies=true$/,
     qtype: SERVERS.middleWare + '/qtype',
     province: SERVERS.middleWare + '/province',
-    canton: /http:\/\/192.168.1.62:3001\/canton\/\?province_id=[0-9|a-f|-]+$/,
-    parroq: /http:\/\/192.168.1.62:3001\/parroquia\/\?canton_id=[0-9|a-f|-]+$/
+    canton: /https:\/\/lukaksarticles.com\/canton\/\?province_id=[0-9|a-f|-]+$/,
+    parroq: /https:\/\/lukaksarticles.com\/parroquia\/\?canton_id=[0-9|a-f|-]+$/
 };
 
 const REST_URLS = {
