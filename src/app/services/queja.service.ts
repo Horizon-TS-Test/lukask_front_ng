@@ -311,17 +311,17 @@ export class QuejaService {
    */
   public savePub(pub: Publication) {
     return this.sendQueja(pub).then((response) => {
+      return response;
+    }).catch(err => {
       if (!this.isPostedPub && !navigator.onLine) {
         this._backSyncService.storeForBackSync('sync-pub', 'sync-new-pub', this.mergeJSONData(pub))
-        if ('serviceWorker' in navigator && 'SyncManager' in window) {
+        if (navigator.serviceWorker.controller) {
           return true;
         }
       }
-      else {
-        this.isPostedPub = false;
-      }
 
-      return response;
+      this.isPostedPub = false;
+      throw err;
     });
   }
 
@@ -332,12 +332,13 @@ export class QuejaService {
   private sendQueja(queja: Publication) {
     let quejaFormData: FormData = this.mergeFormData(queja);
     return this.postQuejaClient(quejaFormData)
-      .then(
-        (response) => {
-          this.updatePubList(response, "CREATE");
-          this.isPostedPub = true;
-          return response;
-        });
+      .then((response) => {
+        this.updatePubList(response, "CREATE");
+        this.isPostedPub = true;
+        return response;
+      }).catch(err => {
+        throw err;
+      });
   }
 
   extractPubJson(pubJson) {
@@ -391,7 +392,12 @@ export class QuejaService {
             if (xhr.status == 401) {
               localStorage.clear();
             }
-            reject(JSON.parse(xhr.response));
+            if (xhr.status == 0) {
+              reject(xhr.response);
+            }
+            else {
+              reject(JSON.parse(xhr.response));
+            }
           }
         }
       };

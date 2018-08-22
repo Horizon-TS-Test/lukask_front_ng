@@ -9,7 +9,7 @@
   </div>
 
   <div class="personal-carousel next" id="streamingPub">
-    <media-streaming [startCamera]="startCamera" [initTrans]="actionType" [pubId]="newPubId" (closeModal)="getButtonAction($event)"></media-streaming>
+    <media-streaming [initTrans]="actionType" [pubId]="newPubId" (closeModal)="getButtonAction($event)"></media-streaming>
   </div>
 
   <material-btn-list [showClass]="showClass" [animateNext]="nextButton" [materialBtns]="matButtons" (someBtnAction)="getButtonAction($event)"></material-btn-list>

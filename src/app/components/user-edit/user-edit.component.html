@@ -26,7 +26,7 @@
     </div>
   </div>
 
-  <user-form [actionType]="actionType" [mediaFile]="fileToUpload" (closeModal)="childAfterSubmit($event)"></user-form>
+  <user-form *ngIf="userProfile" [actionType]="actionType" [userObj]="userProfile" [mediaFile]="fileToUpload" (closeModal)="childAfterSubmit($event)"></user-form>
 </div>
 
 <material-btn-list [showClass]="showClass" [materialBtns]="materialButtons" (someBtnAction)="actionBtn($event)"></material-btn-list>

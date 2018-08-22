@@ -471,6 +471,12 @@ p, label, div {
 }
 .personal-owl-nav {
     display: unset !important;
+
+    .owl-stage {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
     
     .owl-nav {
         position: absolute;

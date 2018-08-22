@@ -371,6 +371,10 @@ p, label, div {
 
 .personal-owl-nav {
   display: unset !important; }
+  .personal-owl-nav .owl-stage {
+    display: flex;
+    justify-content: center;
+    align-items: center; }
   .personal-owl-nav .owl-nav {
     position: absolute;
     bottom: 5px;

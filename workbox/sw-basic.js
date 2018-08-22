@@ -6,8 +6,8 @@ importScripts('/assets/js/utility-db.js');
 ///////////
 
 const SERVERS = {
-    middleWare: 'https://www.lukaksarticles.com',
-    frontend: 'https://www.lukask.horizon-ts.com',
+    middleWare: 'http://192.168.1.62:3001',
+    frontend: 'https://127.0.0.1:4200',
 };
 
 const SYNC_TYPE = {
@@ -18,15 +18,15 @@ const SYNC_TYPE = {
 };
 
 const REST_URLS_PATTERN = {
-    medios: /https:\/\/www.lukaksarticles.com\/images\/.*/,
-    firstPubs: /https:\/\/www.lukaksarticles.com\/publication\/\?limit=[0-9]+$/,
-    morePubs: /https:\/\/www.lukaksarticles.com\/publication\/\?limit=[0-9]+&offset=[0-9]+$/,
-    comments: /https:\/\/www.lukaksarticles.com\/comment\/\?pub_id=[0-9|a-f|-]+\&(?:limit=[0-9]+|limit=[0-9]+\&offset=[0-9]+)$/,
-    replies: /https:\/\/www.lukaksarticles.com\/comment\/\?com_id=[0-9|a-f|-]+\&(?:limit=[0-9]+|limit=[0-9]+\&offset=[0-9]+)\&replies=true$/,
+    medios: /http:\/\/192.168.1.62:3001\/images\/.*/,
+    firstPubs: /http:\/\/192.168.1.62:3001\/publication\/\?limit=[0-9]+$/,
+    morePubs: /http:\/\/192.168.1.62:3001\/publication\/\?limit=[0-9]+&offset=[0-9]+$/,
+    comments: /http:\/\/192.168.1.62:3001\/comment\/\?pub_id=[0-9|a-f|-]+\&(?:limit=[0-9]+|limit=[0-9]+\&offset=[0-9]+)$/,
+    replies: /http:\/\/192.168.1.62:3001\/comment\/\?com_id=[0-9|a-f|-]+\&(?:limit=[0-9]+|limit=[0-9]+\&offset=[0-9]+)\&replies=true$/,
     qtype: SERVERS.middleWare + '/qtype',
     province: SERVERS.middleWare + '/province',
-    canton: /https:\/\/www.lukaksarticles.com\/canton\/\?province_id=[0-9|a-f|-]+$/,
-    parroq: /https:\/\/www.lukaksarticles.com\/parroquia\/\?canton_id=[0-9|a-f|-]+$/
+    canton: /http:\/\/192.168.1.62:3001\/canton\/\?province_id=[0-9|a-f|-]+$/,
+    parroq: /http:\/\/192.168.1.62:3001\/parroquia\/\?canton_id=[0-9|a-f|-]+$/
 };
 
 const REST_URLS = {
@@ -437,20 +437,26 @@ self.addEventListener('sync', function (event) {
                             //ALWAYS IT MUST BE "id" FOR GENERIC PURPOSES:
                             formData.append('id', prof.id);
                             //
-                            formData.append('email', prof.username);
-                            formData.append('identification_card', prof.person.identification_card);
-                            formData.append('name', prof.person.name);
-                            formData.append('last_name', prof.person.last_name);
-                            formData.append('age', prof.person.age);
-                            formData.append('birthdate', prof.person.birthdate);
-                            formData.append('cell_phone', prof.person.cell_phone);
-                            formData.append('telephone', prof.person.telephone);
-                            formData.append('address', prof.person.address);
-                            formData.append('user_file', prof.file, prof.fileName);
-                            formData.append('is_active', prof.isActive);
 
+                            formData.append('user_id', prof.user_id);
+                            formData.append('email', prof.email);
+                            formData.append('password', prof.password);
+                            formData.append('person_id', prof.person_id);
+                            formData.append('age', prof.age);
+                            formData.append('identification_card', prof.identification_card);
+                            formData.append('name', prof.name);
+                            formData.append('last_name', prof.last_name);
+                            formData.append('telephone', prof.telephone);
+                            formData.append('address', prof.address);
+                            formData.append('cell_phone', prof.cell_phone);
+                            formData.append('birthdate', prof.birthdate);
+                            formData.append('user_file', prof.profile_img, prof.profile_img_name);
+                            formData.append('province', prof.province);
+                            formData.append('canton', prof.canton);
+                            formData.append('parroquia', prof.parroquia);
+                            formData.append('is_active', prof.is_active);
 
-                            sendData(REST_URLS.user + "/" + prof.id, formData, '', 'sync-user-profile', false);
+                            sendData(REST_URLS.user + "/" + prof.user_id, formData, '', 'sync-user-profile', false);
                         }
                     })
             );
