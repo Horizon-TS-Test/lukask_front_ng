@@ -6,11 +6,12 @@ export default[
             tittle : 'Reclamos por Falta de Servicio Eléctrico',
             content : [
                 {
-                    section0 : `Antes de presentar su reclamo por falta de servicio eléctrico es 
-                                necesario que verifique lo siguiente:`
+                    section : `Antes de presentar su reclamo por falta de servicio eléctrico es 
+                                necesario que verifique lo siguiente:`,
+                    type : 'parrafo'
                 },
                 {
-                    section1 : [
+                    list : [
                         {item : '¿Está el día en sus pagos?'},
                         {item : '¿Su servicio fue cortado por falta de pago?'},
                         {item : `¿Existe algún daño al interior de su domicilio, es decir en las 
@@ -20,10 +21,11 @@ export default[
                     ]
                 },
                 {
-                    section2 : 'Al presentar su reclamo proporcione los datos que se detallan a continuación, los cuales nos permitirán atenderle en el menor tiempo:'
+                    section : 'Al presentar su reclamo proporcione los datos que se detallan a continuación, los cuales nos permitirán atenderle en el menor tiempo:',
+                    type : 'parrafo'
                 },
                 {
-                    section3 : [
+                    list : [
                        {item : 'Número de Cta. Cliente, registrado en su Factura de Consumo'},
                        {item : 'Nombres y apellidos de la persona que atenderá al personal de la EERSA'},
                        {item : 'Dirección completa: barrio o sector, calle, intersección, número de casa o lote; alguna referencia adicional de ubicación'},
@@ -41,18 +43,20 @@ export default[
             tittle : 'Reclamos por Falta de Alumbrado Público',
             content : [
                 {
-                    section0 : `Si usted tiene una falla en el alumbrado público cercano a su 
+                    section : `Si usted tiene una falla en el alumbrado público cercano a su 
                                 domicilio, empresa u oficina el problema puede ser reportado 
                                 llamando a la línea directa de atención 136, registrando en línea 
                                 su reclamo o acercándose personalmente a la oficina de Atención al 
-                                Cliente ubicada en las calles Gracia Moreno y 10 de Agosto.`
+                                Cliente ubicada en las calles Gracia Moreno y 10 de Agosto.`,
+                    type : 'parrafo'
                 },
                 {
-                    section1 : `Al presentar su reclamo proporcione los datos que se detallan a 
-                                continuación, los cuales nos permitirán atenderle en el menor tiempo:`
+                    section : `Al presentar su reclamo proporcione los datos que se detallan a 
+                                continuación, los cuales nos permitirán atenderle en el menor tiempo:`,
+                    type : 'parrafo'
                 },
                 {
-                    section2 : [
+                    list : [
                         {item : `Número de Cta. Cliente, registrado en su Factura de Consumo`},
                         {item : `Nombres y apellidos de la persona que atenderá al personal de la EERSA`},
                         {item : `Dirección completa: barrio o sector, calle, intersección, número de 
@@ -71,10 +75,11 @@ export default[
           tittle : 'Reclamos Comerciales',
           content : [
               {
-                  section0 : 'Los reclamos comerciales comprenden aquellos originados por los siguientes aspectos:'
+                  section : 'Los reclamos comerciales comprenden aquellos originados por los siguientes aspectos:',
+                  type : 'parrafo'
               },
               {
-                  section1 : [
+                  list : [
                       {item :  `Cuando usted considere que existe errores en los valores facturados en 
                                 su planilla de consumo.`},
                       {item : `Si hay demora en la reconexión del servicio eléctrico luego de haber 
@@ -83,11 +88,12 @@ export default[
                   ]
               },
               {
-                  section2 : `Al presentar su reclamo proporcione los datos que se detallan a 
-                              continuación, los cuales nos permitirán atenderle en el menor tiempo:`
+                  section : `Al presentar su reclamo proporcione los datos que se detallan a 
+                              continuación, los cuales nos permitirán atenderle en el menor tiempo:`,
+                  type : 'parrafo'
               },
               {
-                 section3 : [
+                 list : [
                      {item : 'Número de Cta. Cliente, registrado en su Factura de Consumo'},
                      {item : 'Nombres y apellidos de la persona que atenderá al personal de la EERSA'},
                      {item : `Dirección completa: barrio o sector, calle, intersección, número de casa o 
@@ -106,25 +112,28 @@ export default[
             tittle : 'Reclamos por daños de artefactos y/o equipos eléctricos o electrónicos.',
             content : [
                 {
-                    section0 : `Corresponde a los reclamos de daños de artefactos debidos a la 
+                    section : `Corresponde a los reclamos de daños de artefactos debidos a la 
                                 deficiencia en la prestación del servicio.`,
+                    type : 'parrafo'
                 },
                 {
-                    section1 : `No constituye motivo de reclamo la falta de suministro de energía 
+                    section : `No constituye motivo de reclamo la falta de suministro de energía 
                                 que haya sido causado por caso fortuito o fuerza mayor declarado 
                                 por autoridad competente.`,
+                    type : 'parrafo'
                 },
                 {
-                    section2 : `Los reclamos podrán ser presentados por parte de los consumidores, 
+                    section : `Los reclamos podrán ser presentados por parte de los consumidores, 
                                 en un plazo máximo de 30 días, contados a partir de la ocurrencia 
                                 del evento.`,
+                    type : 'parrafo'
                 },
                 {
-                    section3 : 'Consideraciones Especiales',
+                    section : 'Consideraciones Especiales',
                     type : 'subTitulo'
                 },
                 {
-                    section3 : [
+                    list : [
                        {
                             item : 'Daños Imputables y No Imputables',
                             type : 'numeracion' 
@@ -148,7 +157,7 @@ export default[
                        },
                        {
                            item : 'Causales de daño no imputables al distribuidor.',
-                           type : 'subtitulo'
+                           type : 'subtituloInterno'
                        },
                        {
                            item : 'Daños producidos por fuerza mayor o caso fortuito, conforme lo establecido en el Art. 30 del Código Civil.',
@@ -161,11 +170,11 @@ export default[
                        },
                        {
                            item : 'Operaciones e interrupciones del sistema eléctrico, causadas por otros agentes del sector eléctrico.',
-                           type : 'viniete'
+                           type : 'vinieta'
                        },
                        {
                            item : 'Daños producidos por fallas internas del consumidor.',
-                           type : 'viniete'
+                           type : 'vinieta'
                        },
                        {
                            item : 'Reconocimiento de Daños',
@@ -179,23 +188,23 @@ export default[
                        },
                        {
                            item : 'Fecha en que se realizó la revisión del o los artefactos.',
-                           type : 'viniete'
+                           type : 'vinieta'
                        },
                        {
                            item : 'Detalle de las características de cada uno de los artefactos dañados (marca, modelo, número de serie, etc.).',
-                           type : 'viniete'
+                           type : 'vinieta'
                        },
                        {
                            item : 'Descripción detallada de cada uno de los componentes que fueron dañados en cada artefacto.',
-                           type : 'viniete'
+                           type : 'vinieta'
                        },
                        {
                            item : 'El costo total de reparación que debe incluir materiales a ser reemplazados, mano de obra e impuestos.',
-                           type : 'viniete'
+                           type : 'vinieta'
                        },
                        {
                            item : 'Vigencia del presupuesto.',
-                           type : 'viniete'
+                           type : 'vinieta'
                        },
                        {
                            item : `El pago de la reparación de los equipos se lo establecerá a través de convenios de pagos que realice 
@@ -210,11 +219,11 @@ export default[
                        },
                        {
                            item : 'Año de fabricación del artefacto eléctrico.',
-                           type : 'viniete'
+                           type : 'vinieta'
                        },
                        {
                            item : 'Una pro forma de compra de un artefacto de características similares al dañado.',
-                           type : 'viniete'
+                           type : 'vinieta'
                        },
                        {
                            item : `Una vez cumplida la entrega de la información, el distribuidor por parte del consumidor, 
