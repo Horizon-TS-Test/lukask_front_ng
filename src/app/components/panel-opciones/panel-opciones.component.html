@@ -16,8 +16,11 @@
 
 <div class="bot-panel d-flex justify-content-start align-items-center">
   <div class="px-3 d-flex">
-    <a href="#" (click)="openLayer($event, contentTypes.new_pub)" class="ml-2 custom-panel-btn">
+    <a href="#" (click)="openLayer($event, contentTypes.new_pub)" class="ml-2 custom-panel-btn" title="Nueva publicación">
       <fa name="plus"></fa>
+    </a>
+    <a href="#" (click)="openLayer($event, contentTypes.rew_claim)" class="ml-2 custom-panel-btn" title="Nuevo reclamo">
+      <fa name="bullhorn"></fa>
     </a>
     <a href="#" (click)="openLayer($event, contentTypes.view_notifs)" class="relative-background ml-2 custom-panel-btn">
       <span *ngIf="entriesNumber > 0" class="news-number">{{ entriesNumber }}</span>

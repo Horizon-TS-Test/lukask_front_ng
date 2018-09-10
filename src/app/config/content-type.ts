@@ -18,5 +18,6 @@ export const CONTENT_TYPES = {
     planilla_detail: 16,
     payment_card: 17,
     paypal: 18,
-    register_profile: 19
+    register_profile: 19,
+    rew_claim: 20
 }

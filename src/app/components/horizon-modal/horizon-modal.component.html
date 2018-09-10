@@ -21,7 +21,8 @@
   <ng-container [ngSwitch]="_dynaContent.contentType">
     <new-pub *ngSwitchCase="contentTypes.new_pub" [showClass]="showClass" (closeModal)="close($event)"></new-pub>
 
-    <new-media *ngSwitchCase="contentTypes.new_media" [maxSnapShots]="_dynaContent.contentData.maxSnapShots" [backCamera]="_dynaContent.contentData.backCamera" [showClass]="showClass" (closeModal)="close($event)"></new-media>
+    <new-media *ngSwitchCase="contentTypes.new_media" [maxSnapShots]="_dynaContent.contentData.maxSnapShots" [backCamera]="_dynaContent.contentData.backCamera"
+      [showClass]="showClass" (closeModal)="close($event)"></new-media>
 
     <queja-detail *ngSwitchCase="contentTypes.view_queja" [showClass]="showClass" [idQueja]="_dynaContent.contentData" [isModal]="true"
       (closeModal)="close($event)"></queja-detail>
@@ -65,6 +66,8 @@
     <app-paypal *ngSwitchCase="contentTypes.paypal" [showClass]="showClass" [paypalUrl]='_dynaContent.contentData'></app-paypal>
 
     <user-register *ngSwitchCase="contentTypes.register_user" [showClass]="showClass" (closeModal)="close($event)"></user-register>
+
+    <app-claim *ngSwitchCase="contentTypes.rew_claim" [showClass]="showClass" (closeModal)="close($event)"></app-claim>
 
   </ng-container>
 </div>

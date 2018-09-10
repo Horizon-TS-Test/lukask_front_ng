@@ -1,0 +1,13 @@
+<div class="personal-content relative-background min-height-full-modal max-height-full-modal p-overflow-hidden light-background {{ loadingClass }} col-12 p-0"
+  id="newClaimContainer">
+  <div class="loading-content {{ activeClass }}"></div>
+  <div class="personal-carousel" id="normalPub">
+    <!--edit-queja [submit]="actionType" [isStreamPub]="initStream" (afterSubmit)="onSubmitForm($event)"></edit-queja-->
+  </div>
+
+  <div class="personal-carousel next" id="streamingPub">
+    <!--media-streaming [initTrans]="actionType" [pubId]="newPubId" (closeModal)="getButtonAction($event)"></media-streaming-->
+  </div>
+
+  <material-btn-list [showClass]="showClass" [animateNext]="nextButton" [materialBtns]="matButtons" (someBtnAction)="getButtonAction($event)"></material-btn-list>
+</div>
