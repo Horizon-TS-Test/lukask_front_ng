@@ -58,4 +58,13 @@ export class ClaimComponent implements OnInit {
     }
   }
 
+  /**
+   * MÉTODO PARA DETECTAR LOS CAMBIOS DEL SWITCH INPUT COMO COMPONENTE HIJO
+   * @param event VALOR BOOLEANO DEL EVENT EMITTER DEL COMPONENTE HIJO
+   */
+  public getSwitchChanges(event: boolean) {
+    //this.switchChange.emit(event);
+    console.log("change detected");
+  }
+
 }

@@ -7,6 +7,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 })
 export class HorizonSwitchInputComponent implements OnInit {
   @Input() checkedInput: boolean;
+  @Input() inputId: boolean;
   @Input() label: string;
   @Output() onChange: EventEmitter<boolean>;
 

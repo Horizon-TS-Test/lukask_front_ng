@@ -1,8 +1,49 @@
 <div class="personal-content relative-background min-height-full-modal max-height-full-modal p-overflow-hidden light-background {{ loadingClass }} col-12 p-0"
   id="newClaimContainer">
   <div class="loading-content {{ activeClass }}"></div>
-  <div class="personal-carousel" id="normalPub">
-    <!--edit-queja [submit]="actionType" [isStreamPub]="initStream" (afterSubmit)="onSubmitForm($event)"></edit-queja-->
+
+  <div class="personal-carousel col-12 py-2" id="normalPub">
+
+    <div class="card">
+      <div class="card-header d-flex align-items-center">
+        <fa name="bullhorn"></fa>
+        <div class="pl-2">Causa del Reclamo</div>
+      </div>
+      <ul class="list-group list-group-flush pb-0">
+
+        <li class="list-group-item">
+          <horizon-switch-input [checkedInput]="true" [inputId]="'claim-1'" [label]="'Falta de energía'" (onChange)="getSwitchChanges($event)"></horizon-switch-input>
+        </li>
+
+        <li class="list-group-item">
+          <horizon-switch-input [checkedInput]="false" [inputId]="'claim-2'" [label]="'Falta de alumbrado público'" (onChange)="getSwitchChanges($event)"></horizon-switch-input>
+        </li>
+
+        <li class="list-group-item">
+          <horizon-switch-input [checkedInput]="false" [inputId]="'claim-3'" [label]="'Reclamo comercial'" (onChange)="getSwitchChanges($event)"></horizon-switch-input>
+        </li>
+
+        <li class="list-group-item">
+          <horizon-switch-input [checkedInput]="false" [inputId]="'claim-4'" [label]="'Daño de artefactos'" (onChange)="getSwitchChanges($event)"></horizon-switch-input>
+        </li>
+
+      </ul>
+    </div>
+
+    <div class="card mt-2">
+      <div class="card-header d-flex align-items-center">
+        <fa name="bullhorn"></fa>
+        <div class="pl-2">Términos y condiciones</div>
+      </div>
+
+      <div class="card-block">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam scelerisque tincidunt ante dictum interdum. In sagittis massa
+        vitae neque faucibus facilisis. Vivamus vestibulum faucibus tincidunt. Phasellus ac sagittis augue. In pulvinar sodales
+        semper. Vivamus et blandit turpis. Fusce a orci sit amet ex tempus dapibus id non eros. Pellentesque eu velit non
+        est sodales imperdiet eu eget nibh.
+      </div>
+    </div>
+
   </div>
 
   <div class="personal-carousel next" id="streamingPub">
