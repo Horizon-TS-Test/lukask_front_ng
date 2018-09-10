@@ -1767,4 +1767,41 @@ input[type=text], input[type=password], input[type=email], input[type=number], i
   top: 50px !important;
   bottom: 50px !important; }
 
+.p-install-label {
+  font-size: .9rem; }
+  .p-install-label span {
+    text-transform: uppercase;
+    color: #004360;
+    font-family: "Barlow Condensed", sans-serif;
+    line-height: 1rem;
+    font-size: 1.1rem; }
+
+.p-ins-slider-op {
+  position: absolute; }
+  .p-ins-slider-op .p-install-illustration {
+    width: 230px;
+    height: 230px;
+    overflow: hidden;
+    border-radius: 50%;
+    -webkit-box-shadow: 4px 4px 7px 2px rgba(0, 0, 0, 0.2) !important;
+    -moz-box-shadow: 4px 4px 7px 2px rgba(0, 0, 0, 0.2) !important;
+    box-shadow: 4px 4px 7px 2px rgba(0, 0, 0, 0.2) !important;
+    transform: translateX(-100%); }
+  .p-ins-slider-op .p-slider-label {
+    font-size: .85rem;
+    transform: translateX(100%); }
+  .p-ins-slider-op .p-install-illustration, .p-ins-slider-op .p-slider-label {
+    opacity: 0;
+    transition: opacity 0s 0.1s, transform .6s ease; }
+
+.p-ins-slider-op.sl-relative {
+  position: relative; }
+
+.p-ins-slider-op.p-ins-slider-active {
+  position: relative; }
+  .p-ins-slider-op.p-ins-slider-active .p-install-illustration, .p-ins-slider-op.p-ins-slider-active .p-slider-label {
+    opacity: 1;
+    transition: opacity 0s 0.4s, transform .7s ease;
+    transform: translateX(0); }
+
 /*# sourceMappingURL=styles.css.map */

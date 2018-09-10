@@ -5,9 +5,15 @@ importScripts('/assets/js/idb.js');
 importScripts('/assets/js/utility-db.js');
 ///////////
 
+//NEXT ALLOWS US TO MAKE NOTIFICATIONS BETWEEN SERVICE WORKER AND BROWSER CLIENTS:
+const channel = new BroadcastChannel('lsw-events');
+
+// Close the channel when you're done.
+//channel.close();
+///////////
+
 const SERVERS = {
-    middleWare: 'http://192.168.1.62:3001',
-    frontend: 'https://127.0.0.1:4200',
+    middleWare: 'http://192.168.1.62:3001'
 };
 
 const SYNC_TYPE = {
@@ -63,11 +69,11 @@ workbox.routing.registerRoute(new RegExp("http://maps.googleapis.com/maps/api/.*
 ////
 
 /**
- * REGULAR EXPRESSION FOR GOOGLE MAPS API:
+ * REGULAR EXPRESSION FOR LUKASK JS FILES:
  */
-workbox.routing.registerRoute(/\.(?:js|png|ico|css)$/, workbox.strategies.staleWhileRevalidate({
+/*workbox.routing.registerRoute(/\.(?:js|png|ico|css)$/, workbox.strategies.staleWhileRevalidate({
     cacheName: 'lukask-cache'
-}));
+}));*/
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
@@ -290,6 +296,29 @@ workbox.routing.registerRoute(function (routeData) {
 });
 ///////////
 
+//////////////////////////////////HANDLING THE INSTALL AND ACTIVATE EVENTS://///////////////////////////////////////
+self.addEventListener('install', function (event) {
+    //REMOVE NEXT WHEN A NEW METHOD TO NOTIFY FOR AN UPCOMMING UPDATE IS READY TO BE USED:
+    self.skipWaiting();
+    ////
+    console.log('[LUKASKS SERVICE WORKER] Installing Service Worker ....', event);
+});
+
+self.addEventListener('activate', function (event) {
+    console.log('[LUKASKS SERVICE WORKER] Activating Service Worker ....', event);
+    channel.postMessage({ title: 'Service worker ready', message: true });
+});
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////HANDLING THE MESSAGE EVENT://///////////////////////////////////////
+channel.onmessage = function (event) {
+    if (event.data.skipWaiting === true) {
+        console.log("The service worker has been reinstalled and activated!!");
+        self.skipWaiting();
+    }
+};
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 /////////////POST REQUEST TO THE SERVER WITH A BACKGROUND SYNCRONIZATION WAY USING THE SERVICE WORKER://////////////
 
 /**
@@ -466,10 +495,6 @@ self.addEventListener('sync', function (event) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 workbox.precaching.precacheAndRoute([], {});
-
-/*workbox.routing.registerRoute(/**\/*.{ico,png,html,js,json,css,eot,svg,woff,woff2,ttf}/\, workbox.strategies.staleWhileRevalidate({
-    cacheName: 'lukask-cache'
-}));*/
 
 /////////////////////////////////////PUSH NOTIFICATIONS///////////////////////////////////////////////////////
 

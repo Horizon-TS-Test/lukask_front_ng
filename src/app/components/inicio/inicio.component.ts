@@ -11,7 +11,6 @@ import { ALERT_TYPES } from '../../config/alert-types';
 import { OwlCarousel } from '../../../../node_modules/ngx-owl-carousel';
 import { DomSanitizer } from '../../../../node_modules/@angular/platform-browser';
 
-
 declare var $: any;
 
 @Component({

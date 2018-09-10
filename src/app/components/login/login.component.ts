@@ -53,6 +53,8 @@ export class LoginComponent implements OnInit {
   }
 
   onLogin() {
+    this._notifierService.requestInstallation();
+    
     this.activeLoadingContent();
     this._loginService.restLogin(this.user)
       .then(response => {
@@ -100,6 +102,7 @@ export class LoginComponent implements OnInit {
  */
   openLayer(event: any, contType: number) {
     event.preventDefault();
+    this._notifierService.requestInstallation();
     this._notifierService.notifyNewContent({ contentType: contType, contentData: "" });
   }
 }

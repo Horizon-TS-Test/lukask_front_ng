@@ -18,6 +18,7 @@ export class NotifierService {
   public _changeMenuOption = new EventEmitter<number>();
   public _changeMenuContent = new EventEmitter<number>();
   public _showHorizonMaterialBtn: EventEmitter<boolean>;
+  public _reqInstallation = new EventEmitter<boolean>();
 
   constructor() { }
 
@@ -85,6 +86,14 @@ export class NotifierService {
    */
   public notifyShowHorizonBtn(show: boolean = true) {
     this._showHorizonMaterialBtn.emit(show);
+  }
+  /*********************************************************************************************************/
+  
+  /**
+   * MÉTODO PARA NOTIFICAR AL COMPONENTE PRINCIPAL QUE ACTIVE EL MODAL DE INSTALACIÓN DEL APP:
+   */
+  public requestInstallation() {
+    this._reqInstallation.emit(true);
   }
   /*********************************************************************************************************/
 }

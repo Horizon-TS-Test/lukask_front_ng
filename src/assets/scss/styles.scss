@@ -2342,3 +2342,54 @@ input[type=text], input[type=password], input[type=email], input[type=number], i
     bottom: 50px !important;
 }
 ///////////////////////////////////////////////////////////////////////////
+
+////////////////////////////INSTALLATION SLIDER/////////////////////////////
+.p-install-label {
+    font-size: .9rem;
+    
+    span {
+        text-transform: uppercase;
+        color: $primary-dark;
+        font-family: $secondary-font;
+        line-height: 1rem;
+        font-size: 1.1rem;
+    }
+}
+
+.p-ins-slider-op {
+    position: absolute;
+
+    .p-install-illustration {
+        width: 230px;
+        height: 230px;
+        overflow: hidden;
+        border-radius: 50%;
+        -webkit-box-shadow: 4px 4px 7px 2px rgba(0,0,0,0.2) !important;
+        -moz-box-shadow: 4px 4px 7px 2px rgba(0,0,0,0.2) !important;
+        box-shadow: 4px 4px 7px 2px rgba(0,0,0,0.2) !important;
+        transform: translateX(-100%);
+    }
+    .p-slider-label {
+        font-size: .85rem;
+        transform: translateX(100%);
+    }
+
+    .p-install-illustration, .p-slider-label {
+        opacity: 0;
+        transition: opacity 0s 0.1s, transform .6s ease;
+    }
+}
+.p-ins-slider-op.sl-relative {
+    position: relative;
+}
+.p-ins-slider-op.p-ins-slider-active {
+    position: relative;
+
+    .p-install-illustration, .p-slider-label {
+        opacity: 1;
+        transition: opacity 0s 0.4s, transform .7s ease;
+        transform: translateX(0);
+    }
+}
+///////////////////////////////////////////////////////////////////////////
+
