@@ -1,0 +1,12 @@
+<div class="fixed-background {{ backgroundClass }}"></div>
+
+<div class="min-height-full-modal max-height-full-modal personal-dyna-cont show col-12 d-flex justify-content-center align-items-center">
+  <div class="personal-pop-over {{ visibleClass }} card">
+    <div class="p-install-label p-normal-text-color text-justify card-block">
+      Una nueva actualización de <span>Lukask</span> ha sido encontrada, para aplicarla por favor de click en Ok
+    </div>
+    <a href="#" class="p-dark-text-color card-footer text-center" (click)="onUpdateClick($event)">
+      OK
+    </a>
+  </div>
+</div>

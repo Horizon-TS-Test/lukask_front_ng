@@ -8,7 +8,6 @@ import { NotifierService } from '../../services/notifier.service';
 import { CONTENT_TYPES } from '../../config/content-type';
 import { Subscription } from 'rxjs';
 import { DateManager } from '../../tools/date-manager';
-import * as SnackBar from 'node-snackbar';
 import { Alert } from '../../models/alert';
 import { ALERT_TYPES } from '../../config/alert-types';
 import * as Snackbar from 'node-snackbar';

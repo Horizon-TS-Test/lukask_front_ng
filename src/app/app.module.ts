@@ -72,6 +72,9 @@ import { UserRegisterComponent } from './components/user-register/user-register.
 import { UserFormComponent } from './components/user-form/user-form.component';
 import { HorizonSwitchInputComponent } from './components/horizon-switch-input/horizon-switch-input.component';
 import { DebounceClickDirective } from './directives/debounce-click.directive';
+import { InitComponent } from './components/init/init.component';
+import { InstallSliderComponent } from './components/install-slider/install-slider.component';
+import { PromptComponent } from './components/prompt/prompt.component';
 
 @NgModule({
   declarations: [
@@ -123,7 +126,10 @@ import { DebounceClickDirective } from './directives/debounce-click.directive';
     UserRegisterComponent,
     UserFormComponent,
     HorizonSwitchInputComponent,
-    DebounceClickDirective
+    DebounceClickDirective,
+    InitComponent,
+    InstallSliderComponent,
+    PromptComponent
   ],
   imports: [
     HttpModule,
