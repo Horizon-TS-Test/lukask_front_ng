@@ -1,4 +1,4 @@
 export interface TypeClaim{
-    idTypeClaim:String;
-    description:String;
+    idTypeClaim: string;
+    description: string;
 }

@@ -1,0 +1,50 @@
+<div class="personal-content relative-background min-height-full-modal max-height-full-modal p-overflow-hidden light-background {{ loadingClass }} relative-background col-12 p-0">
+  <div class="loading-content-pop {{ activeClass }}"></div>
+
+  <div class="card pb-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <fa name="user" class="mr-1"> </fa>
+      <div class="ml-2 f-child-no-auto">Datos Personales EERSA</div>
+
+    </div>
+    
+    <div class="card-img-top d-flex justify-content-center align-items-center">
+      <img class="mb-1" id="imagen" src="../../../assets/images/eersa/logoeersa1.jpg" >
+    </div>
+
+    <ul class="list-group list-group-flush pb-0">
+      <li style="border: none" class="list-group-item d-flex justify-content-between align-items-start">
+        <fa name="user" class="mr-1"></fa>
+        <input  type="text" name="nombre" class="ml-2 f-child-no-auto form-control" placeholder="Nombre" required />
+      </li>
+
+      <li class="list-group-item d-flex justify-content-between align-items-start">
+        <span class="p-primary-text-color personal-site-icon mr-1">y</span>
+        <input type="text" name="cedula" class="ml-2 f-child-no-auto form-control" placeholder="Cédula" pattern="[0-9]+"
+          required />
+      </li>
+
+      <li class="list-group-item d-flex justify-content-between align-items-start">
+        <span class="p-primary-text-color personal-site-icon mr-1">x</span>
+        <input type="text" name="telefono" class="ml-2 f-child-no-auto form-control" placeholder="N° Telefonico"
+          required />
+      </li>
+
+      <li class="list-group-item d-flex justify-content-between align-items-start">
+        <span class="p-primary-text-color personal-site-icon mr-1">x</span>
+        <input type="text" name="celular" class="ml-2 f-child-no-auto form-control" placeholder="N° Celular" required />
+      </li>
+
+
+      <li class="p-border-trans list-group-item d-flex justify-content-between align-items-center">
+        <fa name="envelope" class="mr-1"></fa>
+        <input type="email" name="email" class="ml-2 f-child-no-auto form-control" placeholder="Email" required />
+      </li>
+
+
+    </ul>
+  </div>
+
+</div>
+
+<material-btn-list [showClass]="showClass" [materialBtns]="matButtons" (someBtnAction)="getButtonAction($event)"></material-btn-list>
