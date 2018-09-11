@@ -21,7 +21,6 @@ export class NewPubComponent implements OnInit, AfterViewInit, OnChanges {
 
   private alertData: Alert;
 
-  public startCamera: boolean;
   public initStream: boolean;
   public hideActionBtns: boolean;
   public matButtons: HorizonButton[];
@@ -36,7 +35,6 @@ export class NewPubComponent implements OnInit, AfterViewInit, OnChanges {
     private _notifierService: NotifierService
   ) {
     this.initStream = false;
-    this.startCamera = false;
     this.hideActionBtns = false;
     this.transmitStyle = "secondary";
     this.matButtons = [

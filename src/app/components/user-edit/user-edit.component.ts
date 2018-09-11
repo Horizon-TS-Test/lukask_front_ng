@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Output, OnDestroy, SimpleChanges, Input, OnChanges } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output, OnDestroy, SimpleChanges, Input, OnChanges, AfterViewChecked, AfterViewInit } from '@angular/core';
 import { HorizonButton } from '../../interfaces/horizon-button.interface';
 import { User } from '../../models/user';
 import { NotifierService } from '../../services/notifier.service';
@@ -15,14 +15,14 @@ import { UserService } from '../../services/user.service';
   templateUrl: './user-edit.component.html',
   styleUrls: ['./user-edit.component.css']
 })
-export class UserEditComponent implements OnInit, OnDestroy, OnChanges {
+export class UserEditComponent implements OnInit, OnDestroy, OnChanges, AfterViewInit {
   @Input() showClass: string;
   @Output() closeModal = new EventEmitter<boolean>();
 
   private subscription: Subscription;
 
   public materialButtons: HorizonButton[];
-  public userObj: User;
+  public userProfile: User;
   public fileToUpload: MediaFile;
   public carouselOptions: any;
   public actionType: number;
@@ -36,7 +36,7 @@ export class UserEditComponent implements OnInit, OnDestroy, OnChanges {
     public _domSanitizer: DomSanitizer
   ) {
     this.fileToUpload = {
-      mediaFileUrl: this._userService.getUserProfile().profileImg,
+      mediaFileUrl: "/assets/images/edit-queja/window-sm.jpg",
       mediaFile: null,
       removeable: false
     };
@@ -64,6 +64,20 @@ export class UserEditComponent implements OnInit, OnDestroy, OnChanges {
 
   ngOnInit() {
     this.initCarousel();
+  }
+
+  ngAfterViewInit() {
+    this.setUserProfile();
+  }
+
+  /**
+   * MÉTODO PARA CARGAR LOS DATOS DEL PERFIL DE USUARIO A MODIFICAR
+   */
+  setUserProfile() {
+    this._userService.getRevalidatedUser().then((userData: User) => {
+      this.userProfile = userData;
+      this.fileToUpload.mediaFileUrl = this._userService.getUserProfile().profileImg;
+    });
   }
 
   /**

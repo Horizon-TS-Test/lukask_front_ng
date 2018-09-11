@@ -22,6 +22,7 @@ export class UserService {
   private isFetchedProvince: boolean;
   private isFetchedCanton: boolean;
   private isFetchedParroquia: boolean;
+  private isPatchedUser: boolean;
 
   public userProfile: User;
   public _userUpdate = new EventEmitter<boolean>();
@@ -35,6 +36,7 @@ export class UserService {
     this.isFetchedProvince = false;
     this.isFetchedCanton = false;
     this.isFetchedParroquia = false;
+    this.isPatchedUser = false;
   }
 
   /**
@@ -152,11 +154,21 @@ export class UserService {
    * MÉTODO PARA ACTUALIZAR UN PERFIL DE USUARIO EN EL BACKEND O EN SU DEFECTO PARA BACK SYNC:
    */
   public saveUser(user: User) {
-    this.sendUser(user).then((response: any) => {
-      if (!(response == true)) {
-        this._backSyncService.storeForBackSync('sync-user-profile', 'sync-update-user', user);
-      }
-    });
+    return this.sendUser(user).then(
+      (response: any) => {
+        this.isPatchedUser = false;
+        return response;
+      }).catch(err => {
+        if (!this.isPatchedUser && !navigator.onLine) {
+          this._backSyncService.storeForBackSync('sync-user-profile', 'sync-update-user', this.mergeJsonData(user));
+          if (navigator.serviceWorker.controller) {
+            return true;
+          }
+        }
+        
+        this.isPatchedUser = false;
+        throw err;
+      });
   }
 
   /**
@@ -167,10 +179,40 @@ export class UserService {
     return this.patchUserClient(userFormData)
       .then((response: any) => {
         this.updateUserData(response);
-        return true;
+        this.isPatchedUser = true;
+        return response;
+      }).catch(err => {
+        throw err;
       });
   }
 
+  /**
+   * MÉTODO PARA CREAR UN OBJETO JAVASCRIPT MAS REDUCIDO
+   * @param user 
+   */
+  private mergeJsonData(user: User) {
+    return {
+      id: new Date().toISOString(),
+      user_id: user.id,
+      email: user.username,
+      password: user.password,
+      person_id: user.person.id_person,
+      age: user.person.age,
+      identification_card: user.person.identification_card,
+      name: user.person.name,
+      last_name: user.person.last_name,
+      telephone: user.person.telephone,
+      address: user.person.address,
+      cell_phone: user.person.cell_phone,
+      birthdate: user.person.transBirthDate,
+      profile_img: user.file,
+      profile_img_name: user.fileName,
+      province: user.person.parroquia.canton.province.id_province,
+      canton: user.person.parroquia.canton.id_canton,
+      parroquia: user.person.parroquia.id_parroquia,
+      is_active: true
+    };
+  }
   /**
     * MÉTODO PARA TOMAR LOS DATOS QUE BIENEN POR POST PARA REGISTRO
     */
@@ -215,11 +257,16 @@ export class UserService {
             if (xhr.status == 401) {
               localStorage.clear();
             }
-            reject(JSON.parse(xhr.response));
+            else if (xhr.status == 0) {
+              reject(xhr.response);
+            }
+            else {
+              reject(JSON.parse(xhr.response));
+            }
           }
         }
       };
-      xhr.open("post", REST_SERV.signUrl + userFormData.get("id"), true);
+      xhr.open("post", REST_SERV.signUrl, true);
       xhr.setRequestHeader('X-Access-Token', this.getUserKey());
       xhr.withCredentials = true;
       xhr.send(userFormData);
@@ -294,6 +341,16 @@ export class UserService {
   }
 
   /**
+   * MÉTODO PARA CARGAR LOS DATOS DEL USUARIO DESDE LA WEB O EN SU DEFECTO DESDE LOCAL STORAGE: 
+   */
+  public getRevalidatedUser() {
+    return this.getRestUserProfile().then((resp) => {
+      this.userProfile = null;
+      return this.getUserProfile();
+    });
+  }
+
+  /**
    * MÉTODO PARA ENVIAR MEDIANTE POST LOS DATOS DEL PERFIL
    * @param userFormData 
    */
@@ -310,11 +367,16 @@ export class UserService {
             if (xhr.status == 401) {
               localStorage.clear();
             }
-            reject(JSON.parse(xhr.response));
+            if (xhr.status == 0) {
+              reject(xhr.response);
+            }
+            else {
+              reject(JSON.parse(xhr.response));
+            }
           }
         }
       };
-      xhr.open("post", REST_SERV.userUrl + userFormData.get("id"), true);
+      xhr.open("post", REST_SERV.userUrl + "/" + userFormData.get("id"), true);
       xhr.setRequestHeader('X-Access-Token', this.getUserKey());
       xhr.withCredentials = true;
       xhr.send(userFormData);

@@ -13,7 +13,6 @@ import { Subscription } from '../../../../node_modules/rxjs';
   styleUrls: ['./media-streaming.component.css']
 })
 export class MediaStreamingComponent implements OnInit, OnChanges, OnDestroy {
-  @Input() startCamera: boolean;
   @Input() initTrans: boolean;
   @Input() streamOwnerId: string;
   @Input() pubId: string;
@@ -125,14 +124,6 @@ export class MediaStreamingComponent implements OnInit, OnChanges, OnDestroy {
         case 'pubId':
           if (changes[property].currentValue) {
             this.pubId = changes[property].currentValue;
-          }
-          break;
-        case 'startCamera':
-          if (changes[property].currentValue == true) {
-            this.sendCameraAction(null, this.cameraActions.start_camera);
-          }
-          else if (changes[property].currentValue == false) {
-            this.sendCameraAction(null, this.cameraActions.stop_stream);
           }
           break;
         case 'showClass':

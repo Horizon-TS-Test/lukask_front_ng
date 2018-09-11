@@ -1,0 +1,10 @@
+<div class="relative-background px-4">
+  <div *ngFor="let insOp of installSliderData" class="p-ins-slider-op {{ insOp.class }} d-flex flex-column justify-content-center align-items-center">
+    <div class="p-install-illustration d-flex justify-content-center align-items-center">
+      <img src="{{ insOp.illustration }}" width="100%">
+    </div>
+    <div class="p-slider-label p-dark-text-color pt-3 text-center">
+      {{ insOp.label }}
+    </div>
+  </div>
+</div>

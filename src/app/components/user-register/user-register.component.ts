@@ -1,6 +1,5 @@
 import { Component, OnInit, EventEmitter, Output, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { User } from '../../models/user';
-import { Subscription } from 'rxjs';
 import { HorizonButton } from '../../interfaces/horizon-button.interface';
 import { NotifierService } from '../../services/notifier.service';
 import { CONTENT_TYPES } from '../../config/content-type';
@@ -16,6 +15,7 @@ export class UserRegisterComponent implements OnInit, OnChanges {
   @Input() showClass: string;
   @Output() closeModal = new EventEmitter<boolean>();
 
+  public newUser: User;
   public materialButtons: HorizonButton[];
   public userObj: User;
   public carouselOptions: any;
@@ -27,6 +27,7 @@ export class UserRegisterComponent implements OnInit, OnChanges {
     private _notifierService: NotifierService,
     public _domSanitizer: DomSanitizer
   ) {
+    this.newUser = new User(null, null);
     this.materialButtons = [
       {
         action: ACTION_TYPES.userRegister,

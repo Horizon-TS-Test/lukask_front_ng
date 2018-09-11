@@ -11,6 +11,7 @@ import { UserService } from '../../services/user.service';
 
 import * as Snackbar from 'node-snackbar';
 import * as loadImage from 'blueimp-load-image';
+import { resolve } from '../../../../node_modules/@types/q';
 
 @Component({
   selector: 'app-webrtc-camera',
@@ -51,8 +52,6 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
     this._frontCamera = { id: "", description: "" };
     this._backCamera = { id: "", description: "" };
     this.swapCamera = false;
-    this.backCamera = (!this.backCamera) ? false : this.backCamera;
-    console.log("this.backCamera", this.backCamera);
     this.transmissionOn = false;
 
     //LISTEN FOR ANY CAMERA EVENT:
@@ -61,15 +60,10 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
         switch (cameraAction) {
           case CAMERA_ACTIONS.start_camera:
             this.startCamera = true;
-            this.startFrontLiveCam();
             break;
           case CAMERA_ACTIONS.snap_shot:
             if (this.snapShotCounter < this.maxSnapShots) {
               this.takeSnapShot();
-              this.snapShotCounter++;
-              if (this.snapShotCounter == this.maxSnapShots) {
-                this.closeEmitter.emit(true);
-              }
             }
             break;
           case CAMERA_ACTIONS.change_camera:
@@ -117,22 +111,16 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
   }
 
   ngAfterViewInit() {
-    navigator.mediaDevices.enumerateDevices().then((data) => {
-      console.log("dispositivos", data);
-      this.getDevices(data);
+    this.backCamera = (!this.backCamera) ? false : this.backCamera;
 
-      if (this.streamOwnerId) {
-        this.joinTransmission();
-      }
-      else {
-        if (this.backCamera) {
-          this.startBackLiveCam();
-        }
-        else {
-          this.startFrontLiveCam();
-        }
-      }
-    }).catch(this.handleError);
+    if (this.streamOwnerId) {
+      this.joinTransmission();
+    }
+    else {
+      navigator.mediaDevices.enumerateDevices().then((data) => {
+        this.getDevices(data);
+      }).catch(this.handleError);
+    }
   }
 
   /**
@@ -141,40 +129,6 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
   initVariables() {
     let videoArray = document.querySelectorAll(".video-camera");
     this._video = videoArray.item(videoArray.length - 1);
-  }
-
-  /**
-   * MÉTODO PARA INICIAR LA CAPTURA DE LA CÁMARA:
-   */
-  startLiveCamp(infoCamp: Device) {
-    if (!(this.startCamera == false)) {
-      this._navigator = <any>navigator;
-      this._navigator.getUserMedia = (this._navigator.getUserMedia || this._navigator.webkitGetUserMedia || this._navigator.mozGetUserMedia || this._navigator.msGetUserMedia);
-      this._navigator.mediaDevices.getUserMedia({
-        //video: { deviceId: infoCamp.id ? { exact: infoCamp.id } : undefined }
-        video: true
-      }).then((stream) => {
-        console.log("stream", stream)
-        this.localStream = stream;
-        this._video.srcObject = stream;
-
-        this.mediaStreamTrack = stream.getVideoTracks()[0];
-        this.imageCapture = new ImageCapture(this.mediaStreamTrack, stream);
-        console.log(this.imageCapture);
-      }).catch(error => console.error('getUserMedia() error:', error));
-    }
-  }
-
-  /**
-   * MÉTODO PARA ENCONTRAR LOS DIFERENTES DISPOSITIVOS DE AUDIO Y VIDEO:
-   * @param deviceInfos Información  de los dispositivos
-   */
-  getDevices(deviceInfos: any) {
-    deviceInfos.forEach((device) => {
-      if (device.kind === "videoinput") {
-        this.setCamera(device);
-      }
-    });
   }
 
   /**
@@ -190,6 +144,54 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
     } else {
       let textLabel = (device.label.length > 6) ? device.label.substr(0, 6) + "..." : device.label;
       this._frontCamera = { id: device.deviceId, description: textLabel }
+    }
+  }
+
+  /**
+   * MÉTODO PARA ABRIR UNA CÁMARA POR DEFECTO
+   */
+  openSomeCamera() {
+    if (this.backCamera) {
+      this.startBackLiveCam();
+    }
+    else {
+      this.startFrontLiveCam();
+    }
+  }
+
+  /**
+   * MÉTODO PARA ENCONTRAR LOS DIFERENTES DISPOSITIVOS DE AUDIO Y VIDEO:
+   * @param deviceInfos Información  de los dispositivos
+   */
+  getDevices(deviceInfos: any) {
+    let counter = 0;
+    deviceInfos.forEach((device) => {
+      if (device.kind === "videoinput") {
+        this.setCamera(device);
+      }
+      counter++;
+      if (counter == deviceInfos.length) {
+        this.openSomeCamera();
+      }
+    });
+  }
+
+  /**
+   * MÉTODO PARA INICIAR LA CAPTURA DE LA CÁMARA:
+   */
+  startLiveCamp(infoCamp: Device) {
+    if (this.startCamera != false) {
+      this._navigator = <any>navigator;
+      this._navigator.getUserMedia = (this._navigator.getUserMedia || this._navigator.webkitGetUserMedia || this._navigator.mozGetUserMedia || this._navigator.msGetUserMedia);
+      this._navigator.mediaDevices.getUserMedia({
+        video: { deviceId: infoCamp.id ? { exact: infoCamp.id } : undefined }
+      }).then((stream) => {
+        this.localStream = stream;
+        this._video.srcObject = stream;
+
+        this.mediaStreamTrack = stream.getVideoTracks()[0];
+        this.imageCapture = new ImageCapture(this.mediaStreamTrack, stream);
+      }).catch(error => console.error('getUserMedia() error:', error));
     }
   }
 
@@ -253,6 +255,11 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
               }
               Snackbar.show({ text: "Imagen capturada correctamente", pos: 'bottom-center', actionText: 'Listo', actionTextColor: '#34b4db', customClass: "p-snackbar-layout" });
               this._cameraService.notifySnapShot(this.snapShot);
+
+              this.snapShotCounter++;
+              if (this.snapShotCounter == this.maxSnapShots) {
+                this.closeEmitter.emit(true);
+              }
             });
           }, {
               canvas: true,
@@ -269,7 +276,6 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
    * MÉTODO PARA INCIAR LA CONEXIÓN AL SOCKET DE KURENTO CLIENT:
    */
   connectToStreamingClient() {
-    console.log("this.pubId: " + this.pubId);
     return this._webrtcSocketService.connecToKurento(this._userService.userProfile.id, this.pubId, this._video);
   }
 
@@ -298,7 +304,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
         }
       })
       .catch((response: boolean) => {
-        console.log("[WERTC-CAMERA COMPONENT]: NO SE HA PODIDO CONECTARSE A LA TRANSMISIÓN, FALLO EN LA CONEXIÓN");
+        console.log("[WERTC-CAMERA COMPONENT]: NO SE HA PODIDO CONECTAR A LA TRANSMISIÓN, FALLO EN LA CONEXIÓN");
       });
   }
 
@@ -311,7 +317,6 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
       switch (property) {
         case 'pubId':
           if (changes[property].currentValue) {
-            console.log("pubId" + this.pubId);
             this.pubId = changes[property].currentValue;
             this.startTransmission();
           }

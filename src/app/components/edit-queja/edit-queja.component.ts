@@ -9,7 +9,6 @@ import { ACTION_TYPES } from '../../config/action-types';
 import { OnSubmit } from '../../interfaces/on-submit.interface';
 import * as Snackbar from 'node-snackbar';
 
-
 @Component({
   selector: 'edit-queja',
   templateUrl: './edit-queja.component.html',

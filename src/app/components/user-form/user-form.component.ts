@@ -11,6 +11,7 @@ import { DateManager } from '../../tools/date-manager';
 import { NotifierService } from '../../services/notifier.service';
 import { Alert } from '../../models/alert';
 import { ALERT_TYPES } from '../../config/alert-types';
+import * as Snackbar from 'node-snackbar';
 
 @Component({
   selector: 'user-form',
@@ -20,6 +21,7 @@ import { ALERT_TYPES } from '../../config/alert-types';
 export class UserFormComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() actionType: number;
   @Input() mediaFile: MediaFile;
+  @Input() userObj: User;
   @Output() closeModal: EventEmitter<boolean>;
 
   private province: string;
@@ -27,7 +29,6 @@ export class UserFormComponent implements OnInit, AfterViewInit, OnChanges {
   private parroquia: string;
   private alertData: Alert;
 
-  public userObj: User;
   public provinceList: Province[];
   public provinceSelect: Select2[];
   public cantonList: Canton[];
@@ -39,18 +40,16 @@ export class UserFormComponent implements OnInit, AfterViewInit, OnChanges {
     private _userService: UserService,
     private _notifierService: NotifierService
   ) {
-    this.userObj = this._userService.getUserProfile();
-    this.province = (this.userObj) ? this.userObj.person.location[0].province.id : null;
-    this.canton = (this.userObj) ? this.userObj.person.location[1].canton.id : null;
-    this.parroquia = (this.userObj) ? this.userObj.person.location[2].parish.id : null;
-    this.userObj = (!this.userObj) ? new User("", "", "", true, "", "", "") : this.userObj;
-
     this.closeModal = new EventEmitter<boolean>();
   }
 
   ngOnInit() { }
 
   ngAfterViewInit() {
+    this.province = (this.userObj && this.userObj.person.location) ? this.userObj.person.location[0].province.id : null;
+    this.canton = (this.userObj && this.userObj.person.location) ? this.userObj.person.location[1].canton.id : null;
+    this.parroquia = (this.userObj && this.userObj.person.location) ? this.userObj.person.location[2].parish.id : null;
+    this.userObj = (!this.userObj && this.userObj.person.location) ? new User("", "", "", true, "", "", "") : this.userObj;
     this.getProvince();
   }
 
@@ -193,12 +192,17 @@ export class UserFormComponent implements OnInit, AfterViewInit, OnChanges {
 
     this.formmatSendDate();
     if (update) {
-      this._userService.sendUser(this.userObj).then((resp: boolean) => {
+      this._userService.saveUser(this.userObj).then((resp: any) => {
         this.closeModal.emit(true);
-        setTimeout(() => {
-          this.alertData = new Alert({ title: 'Proceso Correcto', message: "Su perfil se ha actualizado correctamente", type: ALERT_TYPES.success });
-          this.setAlert();
-        }, 200);
+        if (resp == true) {
+          Snackbar.show({ text: 'Su perfil se actualizará en la próxima conexión', pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#34b4db', customClass: "p-snackbar-layout" });
+        }
+        else {
+          setTimeout(() => {
+            this.alertData = new Alert({ title: 'Proceso Correcto', message: "Su perfil se ha actualizado correctamente", type: ALERT_TYPES.success });
+            this.setAlert();
+          }, 200);
+        }
       }).catch((err) => {
         if (err.code == 400) {
           this.alertData = new Alert({ title: 'Proceso Fallido', message: "Verifique que los datos ingresados sean correctos", type: ALERT_TYPES.danger });

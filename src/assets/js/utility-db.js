@@ -194,6 +194,7 @@ function verifyStoredData(table, dataToSave, isDeleted) {
                 }
             }
             if (isDeleted == false) {
+                console.log("Guardando en teoría los datos que vienen del socket.Io");
                 writeData(table, dataToSave);
             }
         });
