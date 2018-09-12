@@ -1,33 +1,28 @@
-import { Component, OnInit, Input, Output, EventEmitter, AfterViewInit } from '@angular/core';
-import { Alert } from 'selenium-webdriver';
-import { Province } from '../../models/province';
+import { Component, OnInit } from '@angular/core';
 import { Select2 } from '../../interfaces/select2.interface';
 import { Canton } from '../../models/canton';
 import { Parroquia } from '../../models/parroquia';
-import { Claim } from '../../models/claim';
+import { Province } from '../../models/province';
 import { UserService } from '../../services/user.service';
-import { NotifierService } from '../../services/notifier.service';
 import { User } from '../../models/user';
-import { TypeClaim } from '../../interfaces/type-claim.interface';
-import typeClaim from '../../data/type-claim';
-
+import { claimType } from '../../interfaces/claim-type.interface';
+import claimTypes from '../../data/claim-type';
 
 @Component({
-  selector: 'app-claim-eersa',
-  templateUrl: './claim-eersa.component.html',
-  styleUrls: ['./claim-eersa.component.css']
+  selector: 'claim-location-frm',
+  templateUrl: './claim-location-frm.component.html',
+  styleUrls: ['./claim-location-frm.component.css']
 })
-export class ClaimEersaComponent implements OnInit {
-  @Input() actionType: number;
-  @Input() userObj: User;
-  @Output() closeModal: EventEmitter<boolean>;
+export class ClaimLocationFrmComponent implements OnInit {
 
-
+  private userObj: User;
   private province: string;
   private canton: string;
   private parroquia: string;
-  private claim: string;
-  private alertData: Alert;
+  private selecTypeClaim: string;
+
+  public claimTypeList: claimType[];
+  public claimTypeSelect: Select2[];
 
   public provinceList: Province[];
   public provinceSelect: Select2[];
@@ -35,43 +30,47 @@ export class ClaimEersaComponent implements OnInit {
   public cantonSelect: Select2[];
   public parroquiaList: Parroquia[];
   public parroquiaSelect: Select2[];
-  public claimList: Claim[];
-  public dataclaim: TypeClaim[];
-  public claimSelect: Select2[];
+  public barrioList: Province[];
+  public barrioSelect: Select2[];
 
   constructor(
     private _userService: UserService,
-    private _notifierService: NotifierService
-  ) { 
-    this.closeModal = new EventEmitter<boolean>();
-    this.dataclaim = typeClaim;
-   
+  ) { }
+
+  ngOnInit() {
+    this.userObj = this._userService.getUserProfile();
+    //PROVISIONAL:
+    this.claimTypeList = claimTypes;
+    this.claimTypeSelect = [];
+    for (let cType of this.claimTypeList) {
+      this.claimTypeSelect.push({ value: cType.claimTypeId, data: cType.description });
+    }
+    ////
   }
 
-  ngOnInit() { }
-
   ngAfterViewInit() {
-    this.getClaim();
+    this.province = this.userObj.person.parroquia.canton.province.id_province;
+    this.canton = this.userObj.person.parroquia.canton.id_canton;
+    this.parroquia = this.userObj.person.parroquia.id_parroquia;
     this.getProvince();
-    }
+  }
+
   /**
    * MÉTODO QUE TRAE LAS PROVINCIAS EXISTENTES EN EL SISTEMA
    */
   getProvince() {
-    
     this.provinceSelect = [];
+
     this._userService.getProvinceList().then((qProvinces) => {
       this.provinceList = qProvinces;
-      
       for (let type of this.provinceList) {
-        
         if (!this.province) {
           this.province = type.id_province;
         }
+
         this.provinceSelect.push({ value: type.id_province, data: type.name, selectedItem: (this.province == type.id_province) ? this.province : "" });
-       // this.userObj.person.parroquia.canton.province.id_province = this.province;
       }
-      console.log(this.province);
+
       if (this.province) {
         this.getCanton(this.province);
       }
@@ -80,17 +79,11 @@ export class ClaimEersaComponent implements OnInit {
   }
 
   /**
-   * MÉTODO QUE TRAE LAS PROVINCIAS EXISTENTES EN EL SISTEMA
+   * METODO QUE CAPTURA LA PROVINCIA DESDE EL SELECT
+   * @param event 
    */
-  getClaim() {
-    this.claimSelect = [];
-    console.log(this.dataclaim);
-    for (let type of this.dataclaim) {
-        if (!this.claim) {
-          this.claim = type.idTypeClaim;
-        }
-        this.claimSelect.push({ value: type.idTypeClaim, data: type.description, selectedItem: (this.claim == type.idTypeClaim) ? this.claim : "" });
-      }
+  getTypeSelect(event: string) {
+    this.selecTypeClaim = event;
   }
 
   /**
@@ -99,7 +92,6 @@ export class ClaimEersaComponent implements OnInit {
    */
   getProvinciaSelect(event: string) {
     this.province = event;
-    //this.userObj.person.parroquia.canton.province.id_province = this.province;
     this.cantonSelect = [];
     this.parroquiaSelect = [];
     this.canton = "";
@@ -123,11 +115,9 @@ export class ClaimEersaComponent implements OnInit {
         }
 
         this.cantonSelect.push({ value: type.id_canton, data: type.name, selectedItem: (this.canton == type.id_canton) ? this.canton : "" });
-        //this.userObj.person.parroquia.canton.id_canton = this.canton;
       }
 
       if (this.canton) {
-        console.log("this.parroqu...............");
         this.getParroquia(this.canton);
       }
     });
@@ -141,7 +131,6 @@ export class ClaimEersaComponent implements OnInit {
     this.canton = event;
     this.parroquiaSelect = [];
     this.parroquia = "";
-    //this.userObj.person.parroquia.canton.id_canton = this.canton;
     this.getParroquia(this.canton);
   }
 
@@ -159,7 +148,6 @@ export class ClaimEersaComponent implements OnInit {
         }
 
         this.parroquiaSelect.push({ value: parroq.id_parroquia, data: parroq.name, selectedItem: (this.parroquia === parroq.id_parroquia) ? this.parroquia : "" });
-        //this.userObj.person.parroquia.id_parroquia = this.parroquia;
       }
     });
   }
@@ -170,8 +158,6 @@ export class ClaimEersaComponent implements OnInit {
    */
   getParroquiaSelect(event: string) {
     this.parroquia = event;
-    //this.userObj.person.parroquia.id_parroquia = this.parroquia;
   }
-
 
 }

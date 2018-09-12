@@ -78,6 +78,10 @@ import { PromptComponent } from './components/prompt/prompt.component';
 import { ClaimComponent } from './components/claim/claim.component';
 import { HorizonSwitchInListComponent } from './components/horizon-switch-in-list/horizon-switch-in-list.component';
 import { ClaimTermsComponent } from './components/claim-terms/claim-terms.component';
+import { ClaimUserDataComponent } from './components/claim-user-data/claim-user-data.component';
+import { ClaimDetailComponent } from './components/claim-detail/claim-detail.component';
+import { ClaimCauseComponent } from './components/claim-cause/claim-cause.component';
+import { ClaimLocationFrmComponent } from './components/claim-location-frm/claim-location-frm.component';
 
 @NgModule({
   declarations: [
@@ -135,7 +139,11 @@ import { ClaimTermsComponent } from './components/claim-terms/claim-terms.compon
     PromptComponent,
     ClaimComponent,
     HorizonSwitchInListComponent,
-    ClaimTermsComponent
+    ClaimTermsComponent,
+    ClaimUserDataComponent,
+    ClaimDetailComponent,
+    ClaimCauseComponent,
+    ClaimLocationFrmComponent
   ],
   imports: [
     HttpModule,

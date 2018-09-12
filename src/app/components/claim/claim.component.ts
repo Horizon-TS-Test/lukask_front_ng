@@ -1,9 +1,6 @@
 import { Component, OnInit, Output, Input, EventEmitter } from '@angular/core';
 import { HorizonButton } from '../../interfaces/horizon-button.interface';
 import { ACTION_TYPES } from '../../config/action-types';
-import { HorizonSwitchInputInterface } from '../../interfaces/horizon-switch-in.interface';
-import { ClaimCauseInterface } from '../../interfaces/cause-claim.interface';
-import causeClaim from '../../data/cause-claim';
 
 declare var $: any;
 
@@ -16,26 +13,36 @@ export class ClaimComponent implements OnInit {
   @Input() showClass: string;
   @Output() closeModal = new EventEmitter<boolean>();
 
+  private aceptedTerms: boolean;
+  private animateClass: string;
 
   public matButtons: HorizonButton[];
-  public switchIns: HorizonSwitchInputInterface[];
   public loadingClass: string;
   public activeClass: string;
   public transmitStyle: string;
   public selectedCause: string;
-  public claimCauses: ClaimCauseInterface[];
-  public aceptedTerms: boolean;
+  public showPub: boolean;
 
   constructor() {
     this.aceptedTerms = false;
-
+    this.showPub = false;
+    this.animateClass = 'animate-in';
     this.transmitStyle = "secondary";
+  }
 
+  ngOnInit() {
+    this.initButtons();
+  }
+
+  /**
+   * MÉTODO PARA INICIALIZAR EL OBJETO DE LOS HORIZON-MATERIAL-BUTTONS:
+   */
+  initButtons() {
     this.matButtons = [
       {
         action: ACTION_TYPES.nextStep,
         icon: 'chevron-right',
-        class: 'animated-btn-h animate-in'
+        class: 'animated-btn-h ' + this.animateClass
       },
       {
         action: ACTION_TYPES.prevStep,
@@ -44,61 +51,49 @@ export class ClaimComponent implements OnInit {
       },
       {
         action: ACTION_TYPES.close,
-        icon: 'close'
+        icon: 'close',
+        class: 'animated-btn-h' + this.animateClass
       }
     ];
   }
 
-  ngOnInit() {
-    this.claimCauses = causeClaim;
-    this.initSwitchInputs();
-    this.selectedCause = this.claimCauses[0].causeId;
-  }
-
   /**
-   * MÉTODO PARA DEFINIR EL ARRAY DE TIPO HORIZON-SWITCH-INPUT:
+   * MÉTODO PARA OBTENER LA CAUSA DEL RECLAMO, MEDIANTE EVENT EMITTER:
    */
-  private initSwitchInputs() {
-    this.switchIns = [];
-    for (let i = 0; i < this.claimCauses.length; i++) {
-      this.switchIns[i] = {
-        id: this.claimCauses[i].causeId,
-        label: this.claimCauses[i].description,
-        checked: (i == 0) ? true : false,
-        immutable: true,
-        customClass: 'switch-normal'
-      }
-    }
-  }
-
-  /**
-   * MÉTODO PARA ESCUCHAR LA ACCIÓN DEL EVENTO DE CLICK DE UN BOTÓN DINÁMICO:
-   */
-  public aceptTerms(event: any) {
-    this.aceptedTerms = !this.aceptedTerms;
-  }
-
-  /**
-   * MÉTODO PARA CAPTURAR LA CAUSA DEL RECLAMO ESCOGIDO POR EL USUARIO:
-   * @param event ID QUE VIENE POR EL OUTPUT EVENT EMITTER DEL COMPONENTE HIJO
-   */
-  public getSelectedClainCause(event: string) {
+  public getSelectCause(event: string) {
     this.selectedCause = event;
+  }
+
+  /**
+   * MÉTODO PARA OBTENER SI EL USUARIO ACEPTA O NO LOS TÉRMINOS:
+   */
+  public getAceptTerms(event: boolean) {
+    this.aceptedTerms = event;
   }
 
   /**
    * MÉTODO PARA DESLIZAR EN PRIMER PLANO LA SIGUIENTES INTERFACES DEL WIZARD:
    */
   private nextPrevStep(next: boolean) {
+    let counter = 0;
     $(".personal-carousel").each((index, element) => {
-      if (next) {
-        if ($(element).hasClass("next")) {
-          $(element).removeClass("next").prevAll().first().addClass("prev");
+      if (counter < 1) {
+        if (next) {
+          if ($(element).hasClass("next")) {
+            if ($(element).attr("id") == "customPub") {
+              this.showPub = true;
+              this.animateClass = '';
+              this.initButtons();
+            }
+            counter++;
+            $(element).removeClass("next").prevAll().first().addClass("prev");
+          }
         }
-      }
-      else {
-        if ($(element).hasClass("prev")) {
-          $(element).removeClass("prev").nextAll().first().addClass("next");
+        else {
+          if ($(element).hasClass("prev")) {
+            counter++;
+            $(element).removeClass("prev").nextAll().first().addClass("next");
+          }
         }
       }
     });
@@ -116,7 +111,6 @@ export class ClaimComponent implements OnInit {
         else {
           console.log("Acepte los términos primero");
         }
-        
         break;
       case ACTION_TYPES.prevStep:
         this.nextPrevStep(false);
@@ -124,6 +118,15 @@ export class ClaimComponent implements OnInit {
       case ACTION_TYPES.close:
         this.closeModal.emit(true);
         break;
+    }
+  }
+
+  /**
+   * MÉTODO PARA CERRAR EL MODAL PADRE, SOLICITADO DESDE UN COMPONENTE HIJO
+   */
+  close(event: boolean) {
+    if (event) {
+      this.closeModal.emit(true);
     }
   }
 

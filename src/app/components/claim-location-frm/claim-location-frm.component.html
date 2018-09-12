@@ -1,0 +1,77 @@
+<form #formLocation class="p-select2-container p-no-border-rad-card p-shadow-card card mt-3">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    Datos de Ubicación
+  </div>
+
+  <ul class="list-group list-group-flush pb-0">
+
+    <li class="p-border-trans list-group-item d-flex justify-content-between align-items-center pb-0">
+      <fa name="home" class="icon-xs mr-1"></fa>
+
+      <div class="f-child-no-auto ml-2 form-group row pb-1" [ngClass]="{ 'has-danger': !address.valid && address.touched }">
+        <div class="col-12">
+          <input type="text" name="address" #address="ngModel" [(ngModel)]="userObj.person.address" class="form-control pb-0"
+            required placeholder="Dirección" />
+          <small *ngIf="address.touched && !address.valid" class="form-control-feedback absolute-layer p-index-1">
+            Por favor ingrese la dirección
+          </small>
+        </div>
+      </div>
+    </li>
+
+    <li class="p-border-trans list-group-item d-flex justify-content-between align-items-center pb-0">
+      <fa name="bullhorn" class="mr-1"></fa>
+
+      <div class="f-child-no-auto ml-2 form-group row pb-1">
+        <div class="col-12">
+          <app-select2-bootstrap [fcName]="'claimType'" [select2Data]="claimTypeSelect" (select2Change)="getTypeSelect($event)"></app-select2-bootstrap>
+        </div>
+      </div>
+    </li>
+
+    <li class="p-border-trans list-group-item d-flex justify-content-between align-items-center pb-0">
+      <fa name="map-marker" class="mr-1"></fa>
+
+      <div class="f-child-no-auto ml-2 form-group row pb-1">
+        <div class="col-12">
+          <app-select2-bootstrap [fcName]="'canton'" [select2Data]="cantonSelect" (select2Change)="getCantonSelect($event)"></app-select2-bootstrap>
+        </div>
+      </div>
+    </li>
+
+    <li class="p-border-trans list-group-item d-flex justify-content-between align-items-center pb-0">
+      <fa name="map-marker" class="mr-1"></fa>
+
+      <div class="f-child-no-auto ml-2 form-group row pb-1">
+        <div class="col-12">
+          <app-select2-bootstrap [fcName]="'parroquia'" [select2Data]="parroquiaSelect" (select2Change)="getParroquiaSelect($event)"></app-select2-bootstrap>
+        </div>
+      </div>
+    </li>
+
+    <li class="p-border-trans list-group-item d-flex justify-content-between align-items-center pb-0">
+      <fa name="map-marker" class="mr-1"></fa>
+
+      <div class="f-child-no-auto ml-2 form-group row pb-1">
+        <div class="col-12">
+          <app-select2-bootstrap [fcName]="'barrio'" [select2Data]="parroquiaSelect" (select2Change)="getParroquiaSelect($event)"></app-select2-bootstrap>
+        </div>
+      </div>
+    </li>
+
+    <li class="p-border-trans list-group-item d-flex justify-content-between align-items-center pb-0">
+      <fa name="home" class="icon-xs mr-1"></fa>
+
+      <div class="f-child-no-auto ml-2 form-group row pb-2" [ngClass]="{ 'has-danger': !address.valid && address.touched }">
+        <div class="col-11">
+          <textarea name="reference" #address="ngModel" [(ngModel)]="userObj.person.address" class="form-control pb-0"
+            cols="20" rows="5" required placeholder="Indique alguna referencia de su ubicación"></textarea>
+          <small *ngIf="address.touched && !address.valid" class="form-control-feedback absolute-layer p-index-1">
+            Por favor ingrese una referencia
+          </small>
+        </div>
+      </div>
+    </li>
+
+  </ul>
+</form>

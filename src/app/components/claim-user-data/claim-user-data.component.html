@@ -1,0 +1,34 @@
+<div class="p-no-border-rad-card p-shadow-card card">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    Datos del Cliente
+  </div>
+
+  <ul class="list-group list-group-flush pb-0">
+
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <fa name="user" class="mr-1"></fa>
+      <div class="ml-2 f-child-no-auto">{{ userData.person.name }} {{ userData.person.last_name }}</div>
+    </li>
+
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <span class="p-primary-text-color personal-site-icon mr-1">y</span>
+      <div class="ml-2 f-child-no-auto">{{ userData.person.identification_card }}</div>
+    </li>
+
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <fa name="phone" class="mr-1"></fa>
+      <div class="ml-2 f-child-no-auto">{{ userData.person.telephone }}</div>
+    </li>
+
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <fa name="mobile" class="icon-xs mr-1"></fa>
+      <div class="ml-2 f-child-no-auto">{{ userData.person.cell_phone }}</div>
+    </li>
+
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <fa name="envelope" class="mr-1"></fa>
+      <div class="ml-2 f-child-no-auto">{{ userData.username }}</div>
+    </li>
+
+  </ul>
+</div>

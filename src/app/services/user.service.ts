@@ -165,7 +165,7 @@ export class UserService {
             return true;
           }
         }
-        
+
         this.isPatchedUser = false;
         throw err;
       });
@@ -281,8 +281,18 @@ export class UserService {
     let user: User;
     jsonUser.profile_path = jsonUser.profile_path.indexOf("http") !== -1 || jsonUser.profile_path.indexOf("https") !== -1 ? jsonUser.profile_path : REST_SERV.mediaBack + jsonUser.profile_path;
     user = new User(jsonUser.email, '', jsonUser.profile_path, jsonUser.is_active, null, null, jsonUser.id);
-    user.person = new Person(jsonUser.person.id_person, jsonUser.person.age, jsonUser.person.identification_card, jsonUser.person.name, jsonUser.person.last_name, jsonUser.person.telephone, jsonUser.person.address, jsonUser.person.active, jsonUser.person.birthdate, jsonUser.person.cell_phone, null, null, DateManager.convertStringToDate(jsonUser.person.birthdate));
-    user.person.location = jsonUser.person.location;
+    user.person = new Person(jsonUser.person.id_person, jsonUser.person.age, jsonUser.person.identification_card, jsonUser.person.name, jsonUser.person.last_name, jsonUser.person.telephone, jsonUser.person.address, jsonUser.person.active, jsonUser.person.birthdate, jsonUser.person.cell_phone, null, DateManager.convertStringToDate(jsonUser.person.birthdate));
+    
+    //PROVISIONAL
+    user.person.parroquia.id_parroquia = jsonUser.person.location.parish.id;
+    user.person.parroquia.name = jsonUser.person.location.parish.description;
+
+    user.person.parroquia.canton.id_canton = jsonUser.person.location.canton.id;
+    user.person.parroquia.canton.name = jsonUser.person.location.canton.description;
+
+    user.person.parroquia.canton.province.id_province = jsonUser.person.location.province.id;
+    user.person.parroquia.canton.province.name = jsonUser.person.location.province.description;
+    ////
 
     return user;
   }

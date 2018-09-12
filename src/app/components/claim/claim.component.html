@@ -1,37 +1,17 @@
-<div class="personal-content relative-background min-height-full-modal max-height-full-modal p-overflow-auto light-background {{ loadingClass }} col-12 p-0"
+<div class="personal-content relative-background min-height-full-modal max-height-full-modal p-overflow-hidden light-background {{ loadingClass }} col-12 p-0"
   id="newClaimContainer">
   <div class="loading-content {{ activeClass }}"></div>
 
-  <div class="personal-carousel col-12 py-3 px-4">
-
-    <div class="p-no-border-rad-card p-shadow-card card">
-      <div class="card-header d-flex align-items-center">
-        <fa name="bullhorn"></fa>
-        <div class="pl-2">Causa del Reclamo</div>
-      </div>
-      <horizon-switch-in-list [switchIns]="switchIns" (selectedInput)="getSelectedClainCause($event)"></horizon-switch-in-list>
-    </div>
-
-    <div class="p-no-border-rad-card p-shadow-card card mt-3">
-      <div class="card-header d-flex align-items-center">
-        <fa name="certificate"></fa>
-        <div class="pl-2">Términos y condiciones</div>
-      </div>
-
-      <div class="max-height-fourth p-overflow-auto card-block px-4 pb-1">
-        <claim-terms [selectedCause]="selectedCause"></claim-terms>
-      </div>
-
-      <div class="card-footer py-2 d-flex align-items-center">
-        <input type="checkbox" id="termsCheck" [checked]="aceptedTerms" (click)="aceptTerms($event)">
-        <label for="termsCheck" class="mt-1 pl-1"><small>He leído y acepto los términos y condiciones</small></label>
-      </div>
-    </div>
-
+  <div class="personal-carousel">
+    <claim-cause (onSelectCause)="getSelectCause($event)" (onAceptTerms)="getAceptTerms($event)"></claim-cause>
   </div>
 
   <div class="personal-carousel next">
-    <!--media-streaming [initTrans]="actionType" [pubId]="newPubId" (closeModal)="getButtonAction($event)"></media-streaming-->
+    <claim-detail></claim-detail>
+  </div>
+
+  <div class="personal-carousel next" id="customPub">
+    <new-pub *ngIf="showPub" [showClass]="showClass" (closeModal)="close($event)"></new-pub>
   </div>
 
   <material-btn-list [showClass]="showClass" [materialBtns]="matButtons" (someBtnAction)="getButtonAction($event)"></material-btn-list>

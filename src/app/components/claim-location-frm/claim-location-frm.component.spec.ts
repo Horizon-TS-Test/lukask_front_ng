@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ClaimEersaComponent } from './claim-eersa.component';
+import { ClaimLocationFrmComponent } from './claim-location-frm.component';
 
-describe('ClaimEersaComponent', () => {
-  let component: ClaimEersaComponent;
-  let fixture: ComponentFixture<ClaimEersaComponent>;
+describe('ClaimLocationFrmComponent', () => {
+  let component: ClaimLocationFrmComponent;
+  let fixture: ComponentFixture<ClaimLocationFrmComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ClaimEersaComponent ]
+      declarations: [ ClaimLocationFrmComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ClaimEersaComponent);
+    fixture = TestBed.createComponent(ClaimLocationFrmComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

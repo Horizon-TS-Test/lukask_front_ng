@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DataEersaComponent } from './data-eersa.component';
+import { ClaimDetailComponent } from './claim-detail.component';
 
-describe('DataEersaComponent', () => {
-  let component: DataEersaComponent;
-  let fixture: ComponentFixture<DataEersaComponent>;
+describe('ClaimDetailComponent', () => {
+  let component: ClaimDetailComponent;
+  let fixture: ComponentFixture<ClaimDetailComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ DataEersaComponent ]
+      declarations: [ ClaimDetailComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(DataEersaComponent);
+    fixture = TestBed.createComponent(ClaimDetailComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
