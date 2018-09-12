@@ -90,6 +90,8 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
           case CAMERA_ACTIONS.stop_transmision:
             //AQUÍ DEBES LLAMAR A TUS MÉTODOS PARA LA TRANSMISIÓN DENNYS :D
             this._webrtcSocketService.closeTransmissionCnn();
+            this.startCamera = false;
+            this.stopStream();
             break;
           case CAMERA_ACTIONS.join_transmision:
             if (this.streamOwnerId) {
@@ -97,6 +99,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
             }
             break;
           case CAMERA_ACTIONS.stop_stream:
+            console.log("ecucha  Proceso de cerrar camara ")
             this.startCamera = false;
             this.stopStream();
             break;

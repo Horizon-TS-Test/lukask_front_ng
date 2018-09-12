@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as kurentoUtils from 'kurento-utils';
-import * as kurentoClientLibs from 'kurento-client';
+//import * as kurentoClientLibs from 'kurento-client';
 import { REST_SERV } from '../rest-url/rest-servers';
 import { QuejaService } from './queja.service';
 import { SERV_IP } from "../servers/servers";
@@ -31,6 +31,7 @@ export class WebrtcSocketService {
   ) {
     this.isPresenter = false;
     this.recordedBlobs  = [];
+    console.log("this.recordedBlobs ", this.recordedBlobs );
   }
 
   /**
@@ -60,6 +61,7 @@ export class WebrtcSocketService {
       this.kurentoWs.onclose = (close) => {
         this.kurentoWs = null;
         console.log("[WEBRTC-SOCKET SERVICE]: CONEXIÓN CERRADA AL WEBSOCKET DE KURENTO CLIENT", close);
+        this.dispose();
         if (this.isPresenter) {
           this._quejaService.updateTransmission(this.pubId, true);
         }
@@ -105,7 +107,8 @@ export class WebrtcSocketService {
     let constraints = {
       audio: true,
       video: {
-        deviceId: { exact: idCamera }
+        width : 1280,
+        height : 720
       }
     }
 
@@ -128,10 +131,6 @@ export class WebrtcSocketService {
 
       //Proceso de incio de grabación.
       this.dataRecord(constraints);
-
-      //Proceso de grabación.
-      this.startRecording();
-
     }
   }
 
@@ -277,20 +276,20 @@ export class WebrtcSocketService {
    */
   closeTransmissionCnn() {
     if (this.webRtcPeer) {
+      console.log("Proceso de detener la transmicion metodo 1")
       var messege = {
         keyWord: 'stop',
         idUser: this.userId
       }
       console.log("messege", messege);
       this.sendMessage(messege);
-      //this.recordRtc.stop();
-      //this.pipeline.release();
-      this.dispose();
-
+      
       //Detener la transmición.
       this.stopRecorder();
+      this.dispose();
     }
   }
+
 
   /***********************************
   * Respuestas desde el servidor node 
@@ -329,45 +328,47 @@ export class WebrtcSocketService {
    */
   dispose() {
     if (this.webRtcPeer) {
+      console.log("liberar cámara de transmicion: ", this.webRtcPeer)
       this.webRtcPeer.dispose();
       this.webRtcPeer = null;
       this.closeWebSocketConn();
     }
   }
 
+  /**
+   * Cerramos la coneccion del WS de kurento.
+   */
   private closeWebSocketConn() {
     this.kurentoWs.close();
   }
 
-  /*setIceCandidateCallbacks(){
-    this.webRtcPeer.on('icecandidate', (candidate) =>{
-      console.log("Local candidate:",candidate);
-      candidate = kurentoClientLibs.getComplexType('IceCandidate')(candidate);
-      webRtcEp.addIceCandidate(candidate, onerror);
-    });
+  /***********************************************
+   ** Proceso de grabación del video en memoria ** 
+   ***********************************************/
 
-    webRtcEp.on('OnIceCandidate', (event) => {
-      var candidate = event.candidate;
-      console.log("Remote candidate:",candidate);
-      webRtcPeer.addIceCandidate(candidate, onerror);
-    });
-  }*/
-
-
-  dataRecord(constraints){
+  /**
+   * Proceso para obtener datos para la grabación
+   * @param constraints 
+   */
+  async  dataRecord(constraints){
     try{
-      this.stream = navigator.mediaDevices.getUserMedia(constraints);
+      this.stream = await navigator.mediaDevices.getUserMedia(constraints);
+      console.log("media stream:", this.stream);
+      this.startRecording();
     } catch(e){
       console.log('navigator.getUserMedia error', e);
     }
   }
   
+
   /**
    * Inicio del proceso de grabación.
    */
   startRecording(){
     
     this.recordedBlobs = [];
+
+    console.log("this.recordedBlobs ", this.recordedBlobs );
 
     //Opciones de datos.
     let options = {
@@ -405,7 +406,9 @@ export class WebrtcSocketService {
     }
 
     //proceso de almacenamiento de blob´s de la transmición
-    this.mediaRecorder.ondataavailable = this.handleDataAvailable;
+    this.mediaRecorder.ondataavailable = (event) => {
+      this.handleDataAvailable(event);
+    } 
 
     //Escuchamos el evento de inicio de la grabación.
     this.mediaRecorder.start(10);
@@ -423,15 +426,29 @@ export class WebrtcSocketService {
     }
   }
 
+  /**
+   * Proceso para detener la grabación.
+   */
   stopRecorder(){
     this.mediaRecorder.stop();
     console.log('Recorder Blobs:', this.recordedBlobs);
+    console.log('Longitud de blobs:', this.recordedBlobs.length);
     let bufferContainer = new Blob(this.recordedBlobs, {type: 'video/webm'});
     console.log("cadena de video: ", bufferContainer);
     let urlDataVideo = window.URL.createObjectURL(bufferContainer);
     console.log("URL para descarga devideo", urlDataVideo);
+    
+    //Proceso de descarga del video. Temporal
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.href = urlDataVideo;
+    a.download = 'lukask.webm';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(urlDataVideo);
+    }, 100);
   }
-
-
 }
 
