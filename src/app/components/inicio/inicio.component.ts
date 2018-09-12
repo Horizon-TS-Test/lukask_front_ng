@@ -10,6 +10,7 @@ import { SocketService } from '../../services/socket.service';
 import { ALERT_TYPES } from '../../config/alert-types';
 import { OwlCarousel } from '../../../../node_modules/ngx-owl-carousel';
 import { DomSanitizer } from '../../../../node_modules/@angular/platform-browser';
+import { HorizonSwitchInputInterface } from '../../interfaces/horizon-switch-in.interface';
 
 declare var $: any;
 
@@ -30,7 +31,6 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   public carouselOptions: any;
   public focusedPubId: string;
   public touchDrag: boolean;
-
 
   constructor(
     private _domSanitizer: DomSanitizer,
@@ -188,8 +188,8 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
    * MÉTODO PARA DETECTAR LOS CAMBIOS DEL SWITCH INPUT COMO COMPONENTE HIJO
    * @param event VALOR BOOLEANO DEL EVENT EMITTER DEL COMPONENTE HIJO
    */
-  getSwitchChanges(event: boolean) {
-    this.touchDrag = event;
+  getSwitchChanges(event: HorizonSwitchInputInterface) {
+    this.touchDrag = event.checked;
     this.reInitCarousel();
   }
 

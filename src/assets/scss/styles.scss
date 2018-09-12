@@ -516,8 +516,11 @@ p, label, div {
     }
 }
 
-.personal-ul, .personal-ul li{
+.personal-ul-disc, .personal-ul-disc li{
     list-style: disc;
+}
+.personal-ul-number, .personal-ul-number li{
+    list-style: decimal;
 }
 
 /*GENERIC ANIMATIONS*/
@@ -2318,6 +2321,16 @@ input[type=text], input[type=password], input[type=email], input[type=number], i
   + .switch {
     margin-left: 1rem;
   }
+
+  // MAIN COLOR VARIATION
+  &.switch-normal {
+    input {
+        &:checked + label::before {
+            background-color: $primary;
+        }
+    }
+  }
+
 }
 ////////////////////////
 
@@ -2393,3 +2406,10 @@ input[type=text], input[type=password], input[type=email], input[type=number], i
 }
 ///////////////////////////////////////////////////////////////////////////
 
+////////////////////////////////TERMINOS Y CONDICIONES////////////////////
+.p-terms {
+    p, ul, li {
+        font-size: .9rem;
+    }
+}
+///////////////////////////////////////////////////////////////////////////

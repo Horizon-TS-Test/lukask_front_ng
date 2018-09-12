@@ -399,8 +399,11 @@ p, label, div {
     .personal-owl-nav .owl-nav button:hover {
       opacity: .7; }
 
-.personal-ul, .personal-ul li {
+.personal-ul-disc, .personal-ul-disc li {
   list-style: disc; }
+
+.personal-ul-number, .personal-ul-number li {
+  list-style: decimal; }
 
 /*GENERIC ANIMATIONS*/
 .generic-left-to-right {
@@ -1754,6 +1757,8 @@ input[type=text], input[type=password], input[type=email], input[type=number], i
       margin-left: calc(3rem * .8); }
   .switch + .switch {
     margin-left: 1rem; }
+  .switch.switch-normal input:checked + label::before {
+    background-color: #5dbeb6; }
 
 .p-snackbar-layout {
   z-index: 10000000000000000 !important;
@@ -1803,5 +1808,8 @@ input[type=text], input[type=password], input[type=email], input[type=number], i
     opacity: 1;
     transition: opacity 0s 0.4s, transform .7s ease;
     transform: translateX(0); }
+
+.p-terms p, .p-terms ul, .p-terms li {
+  font-size: .9rem; }
 
 /*# sourceMappingURL=styles.css.map */

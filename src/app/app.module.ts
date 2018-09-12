@@ -76,6 +76,8 @@ import { InitComponent } from './components/init/init.component';
 import { InstallSliderComponent } from './components/install-slider/install-slider.component';
 import { PromptComponent } from './components/prompt/prompt.component';
 import { ClaimComponent } from './components/claim/claim.component';
+import { HorizonSwitchInListComponent } from './components/horizon-switch-in-list/horizon-switch-in-list.component';
+import { ClaimTermsComponent } from './components/claim-terms/claim-terms.component';
 
 @NgModule({
   declarations: [
@@ -131,7 +133,9 @@ import { ClaimComponent } from './components/claim/claim.component';
     InitComponent,
     InstallSliderComponent,
     PromptComponent,
-    ClaimComponent
+    ClaimComponent,
+    HorizonSwitchInListComponent,
+    ClaimTermsComponent
   ],
   imports: [
     HttpModule,
