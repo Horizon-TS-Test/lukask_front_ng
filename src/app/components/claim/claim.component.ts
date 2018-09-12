@@ -4,7 +4,8 @@ import { ACTION_TYPES } from '../../config/action-types';
 import { HorizonSwitchInputInterface } from '../../interfaces/horizon-switch-in.interface';
 import { ClaimCauseInterface } from '../../interfaces/cause-claim.interface';
 import causeClaim from '../../data/cause-claim';
-import { $ } from 'protractor';
+
+declare var $: any;
 
 @Component({
   selector: 'app-claim',
@@ -15,7 +16,7 @@ export class ClaimComponent implements OnInit {
   @Input() showClass: string;
   @Output() closeModal = new EventEmitter<boolean>();
 
-  
+
   public matButtons: HorizonButton[];
   public switchIns: HorizonSwitchInputInterface[];
   public loadingClass: string;
@@ -89,12 +90,18 @@ export class ClaimComponent implements OnInit {
    * MÉTODO PARA DESLIZAR EN PRIMER PLANO LA SIGUIENTES INTERFACES DEL WIZARD:
    */
   private nextPrevStep(next: boolean) {
-    if (next) {
-      $(".personal-carousel").find(".next").removeClass("next").prevAll().first().addClass("prev");
-    }
-    else {
-      $(".personal-carousel").find(".prev").removeClass("prev").nextAll().first().addClass("next");
-    }
+    $(".personal-carousel").each((index, element) => {
+      if (next) {
+        if ($(element).hasClass("next")) {
+          $(element).removeClass("next").prevAll().first().addClass("prev");
+        }
+      }
+      else {
+        if ($(element).hasClass("prev")) {
+          $(element).removeClass("prev").nextAll().first().addClass("next");
+        }
+      }
+    });
   }
 
   /**
@@ -103,7 +110,13 @@ export class ClaimComponent implements OnInit {
   public getButtonAction(actionEvent: number) {
     switch (actionEvent) {
       case ACTION_TYPES.nextStep:
-        this.nextPrevStep(true);
+        if (this.aceptedTerms) {
+          this.nextPrevStep(true);
+        }
+        else {
+          console.log("Acepte los términos primero");
+        }
+        
         break;
       case ACTION_TYPES.prevStep:
         this.nextPrevStep(false);
