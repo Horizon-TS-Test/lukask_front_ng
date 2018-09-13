@@ -82,6 +82,9 @@ import { ClaimUserDataComponent } from './components/claim-user-data/claim-user-
 import { ClaimDetailComponent } from './components/claim-detail/claim-detail.component';
 import { ClaimCauseComponent } from './components/claim-cause/claim-cause.component';
 import { ClaimLocationFrmComponent } from './components/claim-location-frm/claim-location-frm.component';
+import { OwnPubsComponent } from './components/own-pubs/own-pubs.component';
+import { ShortPubComponent } from './components/short-pub/short-pub.component';
+import { StepsComponent } from './components/steps/steps.component';
 
 @NgModule({
   declarations: [
@@ -143,7 +146,10 @@ import { ClaimLocationFrmComponent } from './components/claim-location-frm/claim
     ClaimUserDataComponent,
     ClaimDetailComponent,
     ClaimCauseComponent,
-    ClaimLocationFrmComponent
+    ClaimLocationFrmComponent,
+    OwnPubsComponent,
+    ShortPubComponent,
+    StepsComponent
   ],
   imports: [
     HttpModule,

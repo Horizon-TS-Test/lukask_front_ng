@@ -6,6 +6,7 @@ import { MENU_OPTIONS } from '../../config/menu-option';
 import { Subscription } from '../../../../node_modules/rxjs';
 import { Router } from '../../../../node_modules/@angular/router';
 import { LoginService } from '../../services/login.service';
+import { UserService } from '../../services/user.service';
 
 declare var $: any;
 
@@ -19,11 +20,14 @@ export class PanelOpcionesComponent implements OnInit, OnChanges, OnDestroy {
   @Output() seenEntries = new EventEmitter<boolean>();
 
   private subscriber: Subscription;
+  private adminSubscriber: Subscription;
 
   public contentTypes: any;
   public menuOptions: any;
+  public isAdmin: boolean;
 
   constructor(
+    private _userService: UserService,
     private _notifierService: NotifierService,
     private _contentService: ContentService,
     private _router: Router,
@@ -32,6 +36,29 @@ export class PanelOpcionesComponent implements OnInit, OnChanges, OnDestroy {
     this.contentTypes = CONTENT_TYPES;
     this.menuOptions = MENU_OPTIONS;
 
+    this.listenMenuChanges();
+  }
+
+  ngOnInit() {
+    this.listenAdminFlag();
+  }
+
+  /**
+   * LISTEN TO EVENT EMITTER WITH ADMIN/USER FLAG:
+   */
+  listenAdminFlag() {
+    this.adminSubscriber = this._userService._userUpdate.subscribe((resp) => {
+      if(resp) {
+        this.isAdmin = this._userService.verifyIsAdmin();
+        console.log(this.isAdmin);
+      }
+    });
+  }
+
+  /**
+   * MÉTODO PARA ESCUCHAR LOS CAMBIOS DE LA OPCIÓN DE MENÚ:
+   */
+  listenMenuChanges() {
     this.subscriber = this._notifierService._changeMenuContent.subscribe((menuOption: number) => {
       let idOp;
       switch (menuOption) {
@@ -41,15 +68,13 @@ export class PanelOpcionesComponent implements OnInit, OnChanges, OnDestroy {
         case MENU_OPTIONS.mapview:
           idOp = 'top-option-1';
           break;
-        case MENU_OPTIONS.payment:
+        case MENU_OPTIONS.ownPubs:
           idOp = 'top-option-2';
           break;
       }
       this.focusOption(null, idOp, menuOption, false);
     });
   }
-
-  ngOnInit() { }
 
   /**
    * MÉTODO PARA SOLICITAR QUE SE INCRUSTE DINÁMICAMENTE UN HORIZON MODAL CON CIERTO CONTENIDO EN SU INTERIOR
@@ -108,5 +133,6 @@ export class PanelOpcionesComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnDestroy() {
     this.subscriber.unsubscribe();
+    this.adminSubscriber.unsubscribe();
   }
 }

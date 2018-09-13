@@ -9,7 +9,7 @@ import { Province } from '../models/province';
 import { Canton } from '../models/canton';
 import { Parroquia } from '../models/parroquia';
 import { DateManager } from '../tools/date-manager';
-import { throwError } from 'rxjs';
+import { USER_PRIVILEGES } from '../config/user-privileges';
 
 declare var writeData: any;
 declare var readAllData: any;
@@ -27,12 +27,14 @@ export class UserService {
   public userProfile: User;
   public _userUpdate = new EventEmitter<boolean>();
   public pageLimit: number;
+  public isAdmin: boolean;
 
   constructor(
     private _http: Http,
     private _backSyncService: BackSyncService,
   ) {
     this.pageLimit = 5;
+    this.isAdmin = false;
     this.isFetchedProvince = false;
     this.isFetchedCanton = false;
     this.isFetchedParroquia = false;
@@ -282,7 +284,7 @@ export class UserService {
     jsonUser.profile_path = jsonUser.profile_path.indexOf("http") !== -1 || jsonUser.profile_path.indexOf("https") !== -1 ? jsonUser.profile_path : REST_SERV.mediaBack + jsonUser.profile_path;
     user = new User(jsonUser.email, '', jsonUser.profile_path, jsonUser.is_active, null, null, jsonUser.id);
     user.person = new Person(jsonUser.person.id_person, jsonUser.person.age, jsonUser.person.identification_card, jsonUser.person.name, jsonUser.person.last_name, jsonUser.person.telephone, jsonUser.person.address, jsonUser.person.active, jsonUser.person.birthdate, jsonUser.person.cell_phone, null, DateManager.convertStringToDate(jsonUser.person.birthdate));
-    
+
     //PROVISIONAL
     user.person.parroquia.id_parroquia = jsonUser.person.location.parish.id;
     user.person.parroquia.name = jsonUser.person.location.parish.description;
@@ -331,6 +333,8 @@ export class UserService {
    */
   public setUserProfile() {
     this.userProfile = this.getStoredUserData();
+    this.isAdmin = this.getUserProfile().id == USER_PRIVILEGES.admin;
+    console.log(this.isAdmin);
   }
 
   /**
@@ -617,5 +621,12 @@ export class UserService {
     return new Promise((resolve, reject) => {
       reject(null);
     });
+  }
+
+  /**
+   * MÉTODO PARA VERIFICAR SI UN USUARIO ES ADMIN O NO --------> PROVISIONAL
+   */
+  public verifyIsAdmin() {
+    return this.isAdmin;
   }
 }

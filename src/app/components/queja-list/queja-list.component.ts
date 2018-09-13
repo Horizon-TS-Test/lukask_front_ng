@@ -10,7 +10,6 @@ import { IntroData } from '../../interfaces/intro-data.interface';
 import IntroDataInterface from '../../data/intro-data';
 import { SliderManager } from '../../tools/slider-manger';
 import { DomSanitizer } from '../../../../node_modules/@angular/platform-browser';
-import { ContentService } from '../../services/content.service';
 
 declare var $: any;
 @Component({

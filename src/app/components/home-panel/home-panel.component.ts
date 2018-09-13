@@ -34,7 +34,8 @@ export class HomePanelComponent implements OnInit, OnChanges {
     this.switchInput = {
       id: 'home-check',
       label: '',
-      checked: this.checkedInput
+      checked: this.checkedInput,
+      customClass: 'switch-light'
     }
 
     console.log(this.switchInput);

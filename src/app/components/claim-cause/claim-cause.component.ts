@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { HorizonSwitchInputInterface } from '../../interfaces/horizon-switch-in.interface';
 import { ClaimCauseInterface } from '../../interfaces/cause-claim.interface';
 import causeClaim from '../../data/cause-claim';
@@ -9,12 +9,12 @@ import causeClaim from '../../data/cause-claim';
   styleUrls: ['./claim-cause.component.css']
 })
 export class ClaimCauseComponent implements OnInit {
+  @Input() aceptedTerms: boolean;
   @Output() onSelectCause: EventEmitter<string>;
   @Output() onAceptTerms: EventEmitter<boolean>;
 
   public switchIns: HorizonSwitchInputInterface[];
   public claimCauses: ClaimCauseInterface[];
-  public aceptedTerms: boolean;
   public selectedCause: string;
 
   constructor() {

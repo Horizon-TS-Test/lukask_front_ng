@@ -9,17 +9,21 @@
     <fa name="map-marker"></fa>
   </a>
 
-  <a href="#" class="opcion f-child-full-space text-center" id="top-option-2" (click)="focusOption($event, 'top-option-2', menuOptions.payment)">
+  <a href="#" class="opcion f-child-full-space text-center" id="top-option-2" (click)="focusOption($event, 'top-option-2', menuOptions.ownPubs)">
     <span class="personal-site-icon">m</span>
   </a>
+
+  <!--a href="#" class="opcion f-child-full-space text-center" id="top-option-2" (click)="focusOption($event, 'top-option-2', menuOptions.payment)">
+    <span class="personal-site-icon">m</span>
+  </a-->
 </div>
 
 <div class="bot-panel d-flex justify-content-start align-items-center">
   <div class="px-3 d-flex">
-    <a href="#" (click)="openLayer($event, contentTypes.new_pub)" class="ml-2 custom-panel-btn" title="Nueva publicación">
+    <a *ngIf="isAdmin" href="#" (click)="openLayer($event, contentTypes.new_pub)" class="ml-2 custom-panel-btn" title="Nueva publicación">
       <fa name="plus"></fa>
     </a>
-    <a href="#" (click)="openLayer($event, contentTypes.rew_claim)" class="ml-2 custom-panel-btn" title="Nuevo reclamo">
+    <a *ngIf="!isAdmin" href="#" (click)="openLayer($event, contentTypes.rew_claim)" class="ml-2 custom-panel-btn" title="Nuevo reclamo">
       <fa name="bullhorn"></fa>
     </a>
     <a href="#" (click)="openLayer($event, contentTypes.view_notifs)" class="relative-background ml-2 custom-panel-btn">

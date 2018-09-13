@@ -563,6 +563,14 @@ p, label, div {
 .f-child-no-auto {
     flex: 1 0 !important;
 }
+//REF: https://medium.com/@stephenbunch/how-to-make-a-scrollable-container-with-dynamic-height-using-flexbox-5914a26ae336
+.f-scroll-child {
+    flex-grow: 1;
+    overflow: auto;
+    
+    /* for Firefox */
+    min-height: 0;
+}
 .f-child-order-0 {
     order: 0;
 }
@@ -1556,11 +1564,11 @@ p, label, div {
     display: flex !important;
     justify-content: center;
     align-items: center;
-    border-color: $primary !important;
+    border-color: $primary-dark !important;
     width: 35px;
     height: 35px;
     border-radius: 50% !important;
-    background: $primary !important;
+    background: $primary-dark !important;
     -webkit-box-shadow: 1px 2px 4px 2px rgba(0,0,0,0.2) !important;
     -moz-box-shadow: 1px 2px 4px 2px rgba(0,0,0,0.2) !important;
     box-shadow: 1px 2px 4px 2px rgba(0,0,0,0.2) !important;
@@ -1568,10 +1576,11 @@ p, label, div {
     fa, span {
         color: $secondary-text !important;
     }
-}
-.p-sec-btn {
-    background: $primary-dark !important;
-    border-color: $primary-dark !important;
+
+    &.custom-btn-normal {
+        background: $primary !important;
+        border-color: $primary !important;
+    }
 }
 
 .custom-panel-btn {
@@ -1688,6 +1697,11 @@ p, label, div {
     -webkit-transition: -webkit-transform 0.3s, visibility 0s 0.3s;
     -moz-transition: -moz-transform 0.3s, visibility 0s 0.3s;
     transition: transform 0.3s, visibility 0s 0.3s;
+
+    &.animated-btn-static {
+        position: relative;
+        top: 0px;
+    }
 }
 .animated-btn-h.animate-in {
     z-index: 1;
@@ -2226,7 +2240,7 @@ input[type=text], input[type=password], input[type=email], input[type=number], i
     }
 
     &:checked + label::before {
-      background-color: $primary-dark;
+      background-color: $switch-checked-bg;
     }
 
     &:checked + label::after {
@@ -2235,7 +2249,7 @@ input[type=text], input[type=password], input[type=email], input[type=number], i
 
     &:focus + label::before {
       outline: none;
-      box-shadow: $switch-focus-box-shadow;
+      //box-shadow: $switch-focus-box-shadow;
     }
 
     &:disabled + label {
@@ -2312,6 +2326,22 @@ input[type=text], input[type=password], input[type=email], input[type=number], i
     input {
         &:checked + label::before {
             background-color: $primary;
+        }
+    }
+  }
+  // PRIMARY LIGHT COLOR VARIATION
+  &.switch-dark {
+    input {
+        &:checked + label::before {
+            background-color: $primary-dark;
+        }
+    }
+  }
+  // PRIMARY LIGHT COLOR VARIATION
+  &.switch-light {
+    input {
+        &:checked + label::before {
+            background-color: $primary-light;
         }
     }
   }
@@ -2395,6 +2425,68 @@ input[type=text], input[type=password], input[type=email], input[type=number], i
 .p-terms {
     p, ul, li {
         font-size: .9rem;
+    }
+}
+///////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////SHORT PUB//////////////////////////////////
+.short-img-pub {
+    position: relative;
+    width: 40%;
+    border: 1px solid rgba(0, 0, 0, .125);
+    object-fit: cover;
+
+    span {
+        position: absolute;
+        bottom: 5px;
+        right: 7px;
+        width: 30px;
+        height: 30px;
+        z-index: 1;
+        background: rgba(255, 255, 255, .7);
+        border-radius: 50%;
+        text-align: center;
+
+        fa {
+            color: $primary-dark;
+            font-size: 1.3rem;
+        }
+    }
+}
+
+.short-text-pub {
+    font-size: .9rem;
+}
+///////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////STEPS//////////////////////////////////////
+.p-step-container {
+    border-bottom: solid 1px rgba(0,0,0,0.2) !important;
+    -webkit-box-shadow: 2px 1px 3px rgba(0,0,0,0.2) !important;
+    -moz-box-shadow: 2px 1px 3px rgba(0,0,0,0.2) !important;
+    box-shadow: 2px 1px 3px rgba(0,0,0,0.2) !important;
+
+    .p-step, span {
+        background: $custom-control-indicator-bg;
+    }
+    
+    .p-step {
+        width: 35px;
+        height: 35px;
+        font-weight: bold;
+        color: $secondary-text;
+        border-radius: 50%;
+        transition: all .5s ease;
+
+        &.p-selected-step {
+            background: $primary-light;
+        }
+    }
+
+    span {
+        width: 25px;
+        height: 3px;
+        border-radius: 3px;
     }
 }
 ///////////////////////////////////////////////////////////////////////////

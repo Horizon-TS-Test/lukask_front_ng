@@ -11,7 +11,6 @@ import { UserService } from '../../services/user.service';
 
 import * as Snackbar from 'node-snackbar';
 import * as loadImage from 'blueimp-load-image';
-import { resolve } from '../../../../node_modules/@types/q';
 
 @Component({
   selector: 'app-webrtc-camera',

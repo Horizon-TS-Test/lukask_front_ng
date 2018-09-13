@@ -117,7 +117,7 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
           this.touchDrag = false;
           this.reInitCarousel();
           break;
-        case MENU_OPTIONS.payment:
+        case MENU_OPTIONS.ownPubs:
           this.enableThirdOp = true;
           break;
       }
@@ -140,7 +140,7 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
             this.reInitCarousel();
           }
           break;
-        case MENU_OPTIONS.payment:
+        case MENU_OPTIONS.ownPubs:
           this.enableThirdOp = true;
           if (!this.touchDrag) {
             this.touchDrag = true;

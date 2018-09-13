@@ -134,19 +134,20 @@ export class QuejaService {
   /**
    * MÉTODO PARA CARGAR PUBLICACIONES BAJO DEMANDA DESDE LA WEB:
    */
-  getPubsWebByPage(morePubs: boolean = false) {
+  getPubsWebByPage(userPubs: boolean, morePubs: boolean = false) {
     const pubHeaders = new Headers({
       'Content-Type': 'application/json',
       'X-Access-Token': this._userService.getUserKey()
     });
     let flag = true;
+    let userPattern = '&user_id=' + this._userService.getUserProfile().id;
 
     if (morePubs == true && !this.pagePattern) {
       flag = false;
     }
 
     if (flag) {
-      return this._http.get(REST_SERV.pubsUrl + "/" + ((this.pagePattern && morePubs == true) ? this.pagePattern : "?limit=" + this.DEFAULT_LIMIT), { headers: pubHeaders, withCredentials: true }).toPromise()
+      return this._http.get(REST_SERV.pubsUrl + "/" + (this.pagePattern && morePubs == true ? this.pagePattern : "?limit=" + this.DEFAULT_LIMIT) + (userPubs == true ? userPattern : ''), { headers: pubHeaders, withCredentials: true }).toPromise()
         .then((response: Response) => {
           const respJson = response.json().data;
           this.pagePattern = respJson.next;
@@ -215,11 +216,14 @@ export class QuejaService {
     });
   }
 
-  getPubList() {
+  /**
+   * MÉTODO PARA CARGAR LAS PUBLICACIONES
+   */
+  getPubList(userPubs: boolean = false) {
     /**
      * IMPLEMENTING NETWORK FIRST STRATEGY
     */
-    return this.getPubsWebByPage().then((webPubs: Publication[]) => {
+    return this.getPubsWebByPage(userPubs).then((webPubs: Publication[]) => {
       this.pubList = webPubs;
 
       if (!this.isFetchedPubs) {
@@ -244,11 +248,11 @@ export class QuejaService {
   /**
    * FUNCIÓN PARA OBTENER PUBLICACIONES BAJO DEMANDA A TRAVÉS DE UN PATTERN DE PAGINACIÓN:
    */
-  getMorePubs() {
+  getMorePubs(userPubs: boolean = false) {
     /**
      * IMPLEMENTING NETWORK FIRST STRATEGY
     */
-    return this.getPubsWebByPage(true).then((webPubs: Publication[]) => {
+    return this.getPubsWebByPage(userPubs, true).then((webPubs: Publication[]) => {
       this.pubList = (webPubs.length > 0) ? this.pubList.concat(webPubs) : this.pubList;
 
       if (!this.isFetchedPubs) {
