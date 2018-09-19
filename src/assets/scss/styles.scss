@@ -1450,8 +1450,13 @@ p, label, div {
 
 ////JQUERY SELECT2 WITH BOOTSTRAP
 .select2-container {
-    z-index: 99999999999;
+    width: 100% !important;
 }
+.select2-container.select2-container--open {
+    z-index: 99999999999;
+    width: unset !important;
+}
+
 .p-fixed-select2 {
     position: fixed !important;
     top: unset !important;

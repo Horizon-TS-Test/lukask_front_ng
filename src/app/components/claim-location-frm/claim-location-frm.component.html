@@ -22,7 +22,7 @@
     <li class="p-border-trans list-group-item d-flex justify-content-between align-items-center pb-0">
       <fa name="bullhorn" class="mr-1"></fa>
 
-      <div class="f-child-no-auto ml-2 form-group row pb-1">
+      <div class="f-child-no-auto ml-2 form-group row pb-1" style="width: 90%">
         <div class="col-12">
           <app-select2-bootstrap [fcName]="'claimType'" [select2Data]="claimTypeSelect" (select2Change)="getTypeSelect($event)"></app-select2-bootstrap>
         </div>
@@ -32,7 +32,7 @@
     <li class="p-border-trans list-group-item d-flex justify-content-between align-items-center pb-0">
       <fa name="map-marker" class="mr-1"></fa>
 
-      <div class="f-child-no-auto ml-2 form-group row pb-1">
+      <div class="f-child-no-auto ml-2 form-group row pb-1" style="width: 90%">
         <div class="col-12">
           <app-select2-bootstrap [fcName]="'canton'" [select2Data]="cantonSelect" (select2Change)="getCantonSelect($event)"></app-select2-bootstrap>
         </div>
@@ -42,7 +42,7 @@
     <li class="p-border-trans list-group-item d-flex justify-content-between align-items-center pb-0">
       <fa name="map-marker" class="mr-1"></fa>
 
-      <div class="f-child-no-auto ml-2 form-group row pb-1">
+      <div class="f-child-no-auto ml-2 form-group row pb-1" style="width: 90%">
         <div class="col-12">
           <app-select2-bootstrap [fcName]="'parroquia'" [select2Data]="parroquiaSelect" (select2Change)="getParroquiaSelect($event)"></app-select2-bootstrap>
         </div>
@@ -52,9 +52,9 @@
     <li class="p-border-trans list-group-item d-flex justify-content-between align-items-center pb-0">
       <fa name="map-marker" class="mr-1"></fa>
 
-      <div class="f-child-no-auto ml-2 form-group row pb-1">
+      <div class="f-child-no-auto ml-2 form-group row pb-1" style="width: 90%">
         <div class="col-12">
-          <app-select2-bootstrap [fcName]="'barrio'" [select2Data]="parroquiaSelect" (select2Change)="getParroquiaSelect($event)"></app-select2-bootstrap>
+          <app-select2-bootstrap [fcName]="'barrio'" [select2Data]="barrioSelect" (select2Change)="getbarrioSelect($event)"></app-select2-bootstrap>
         </div>
       </div>
     </li>

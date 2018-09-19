@@ -15,6 +15,7 @@ import * as Snackbar from 'node-snackbar';
   styleUrls: ['./edit-queja.component.css'],
 })
 export class EditQuejaComponent implements OnInit, OnDestroy, OnChanges {
+  @Input() isChildPub: boolean;
   @Input() submit: number;
   @Input() isStreamPub: number;
   @Output() afterSubmit = new EventEmitter<OnSubmit>();

@@ -1,4 +1,4 @@
-export interface BarrioDataInterface {
+export interface BarrioInterface {
     barrioId: string;
     description: string;
 }

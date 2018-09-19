@@ -17,7 +17,10 @@ declare var $: any;
 })
 export class NewPubComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() showClass: string;
-  @Output() closeModal = new EventEmitter<boolean>();
+  @Input() isChildPub: boolean;
+  @Input() reqSubmit: number;
+  @Output() closeModal: EventEmitter<boolean>;
+  @Output() streamPub: EventEmitter<boolean>;
 
   private alertData: Alert;
 
@@ -34,6 +37,9 @@ export class NewPubComponent implements OnInit, AfterViewInit, OnChanges {
   constructor(
     private _notifierService: NotifierService
   ) {
+    this.closeModal = new EventEmitter<boolean>();
+    this.streamPub = new EventEmitter<boolean>();
+
     this.initStream = false;
     this.hideActionBtns = false;
     this.transmitStyle = "secondary";
@@ -83,6 +89,10 @@ export class NewPubComponent implements OnInit, AfterViewInit, OnChanges {
       this.nextButton = false;
       this.transmitStyle = "secondary";
     }
+
+    if (this.isChildPub) {
+      this.streamPub.emit(this.initStream);
+    }
   }
 
   /**
@@ -128,7 +138,7 @@ export class NewPubComponent implements OnInit, AfterViewInit, OnChanges {
           this.closeModal.emit(true);
           break;
         case ACTION_TYPES.pubStream:
-        this.showClass = "show";
+          this.showClass = "show";
           this.newPubId = event.dataAfterSubmit;
           this.nextButton = null;
           setTimeout(() => {
@@ -169,8 +179,26 @@ export class NewPubComponent implements OnInit, AfterViewInit, OnChanges {
             this.showClass = changes[property].currentValue;
           }
           break;
+        case 'reqSubmit':
+          if (changes[property].currentValue) {
+            this.reqSubmit = changes[property].currentValue;
+            this.requestSubmit(this.reqSubmit);
+          }
+          break;
       }
     }
+  }
+
+  /**
+   * MÉTODO PARA SOLICITAR AL COMPONENTE HIJO QUE SE EFECTÚE EL SUBMIT DE LA PUBLICACIÓN
+   */
+  private requestSubmit(actionEvent: number) {
+    this.actionType = null;
+    setTimeout(() => {
+      this.actionType = actionEvent;
+    });
+    this.showLoadingContent(true);
+    this.showClass = "";
   }
 
   /**
@@ -179,12 +207,7 @@ export class NewPubComponent implements OnInit, AfterViewInit, OnChanges {
   public getButtonAction(actionEvent: number) {
     switch (actionEvent) {
       default:
-        this.actionType = null;
-        setTimeout(() => {
-          this.actionType = actionEvent;
-        });
-        this.showLoadingContent(true);
-        this.showClass = "";
+        this.requestSubmit(actionEvent);
         break;
       case ACTION_TYPES.viewComments:
         this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_comments, contentData: { pubId: this.newPubId, halfModal: true, hideBtn: true } });

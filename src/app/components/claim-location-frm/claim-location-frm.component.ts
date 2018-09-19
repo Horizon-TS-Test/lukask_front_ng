@@ -7,6 +7,8 @@ import { UserService } from '../../services/user.service';
 import { User } from '../../models/user';
 import { claimType } from '../../interfaces/claim-type.interface';
 import claimTypes from '../../data/claim-type';
+import { BarrioInterface } from '../../interfaces/barrio-data.interface';
+import barrioData from '../../data/barrio-data';
 
 @Component({
   selector: 'claim-location-frm',
@@ -16,10 +18,11 @@ import claimTypes from '../../data/claim-type';
 export class ClaimLocationFrmComponent implements OnInit {
 
   private userObj: User;
+  private selecTypeClaim: string;
   private province: string;
   private canton: string;
   private parroquia: string;
-  private selecTypeClaim: string;
+  private barrio: string;
 
   public claimTypeList: claimType[];
   public claimTypeSelect: Select2[];
@@ -30,7 +33,7 @@ export class ClaimLocationFrmComponent implements OnInit {
   public cantonSelect: Select2[];
   public parroquiaList: Parroquia[];
   public parroquiaSelect: Select2[];
-  public barrioList: Province[];
+  public barrioList: BarrioInterface[];
   public barrioSelect: Select2[];
 
   constructor(
@@ -44,6 +47,12 @@ export class ClaimLocationFrmComponent implements OnInit {
     this.claimTypeSelect = [];
     for (let cType of this.claimTypeList) {
       this.claimTypeSelect.push({ value: cType.claimTypeId, data: cType.description });
+    }
+
+    this.barrioList = barrioData;
+    this.barrioSelect = [];
+    for (let barrio of this.barrioList) {
+      this.barrioSelect.push({ value: barrio.barrioId, data: barrio.description });
     }
     ////
   }
@@ -79,7 +88,7 @@ export class ClaimLocationFrmComponent implements OnInit {
   }
 
   /**
-   * METODO QUE CAPTURA LA PROVINCIA DESDE EL SELECT
+   * MÉTODO QUE CAPTURA LOS TIPOS DE RECLAMO DESDE EL SELECT
    * @param event 
    */
   getTypeSelect(event: string) {
@@ -87,7 +96,7 @@ export class ClaimLocationFrmComponent implements OnInit {
   }
 
   /**
-   * METODO QUE CAPTURA LA PROVINCIA DESDE EL SELECT
+   * MÉTODO QUE CAPTURA LA PROVINCIA DESDE EL SELECT
    * @param event 
    */
   getProvinciaSelect(event: string) {
@@ -124,7 +133,7 @@ export class ClaimLocationFrmComponent implements OnInit {
   }
 
   /**
- * METODO QUE CAPTURA LA PROVINCIA DESDE EL SELECT
+ * MÉTODO QUE CAPTURA LA PROVINCIA DESDE EL SELECT
  * @param event 
  */
   getCantonSelect(event: string) {
@@ -153,11 +162,19 @@ export class ClaimLocationFrmComponent implements OnInit {
   }
 
   /**
-   * METODO QUE CAPTURA LA PROVINCIA DESDE EL SELECT
+   * MÉTODO QUE CAPTURA LA PROVINCIA DESDE EL SELECT
    * @param event 
    */
   getParroquiaSelect(event: string) {
     this.parroquia = event;
+  }
+
+  /**
+   * MÉTODO QUE CAPTURA EL BARRIO DESDE EL SELECT
+   * @param event 
+   */
+  getbarrioSelect(event: string) {
+    this.barrio = event;
   }
 
 }

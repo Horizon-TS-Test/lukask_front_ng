@@ -1,16 +1,18 @@
-<div class="personal-content relative-background min-height-full-modal max-height-full-modal p-overflow-hidden light-background {{ loadingClass }} col-12 p-0"
-  id="newPubContainer">
+<div class="personal-content relative-background p-overflow-hidden light-background {{ loadingClass }} col-12 p-0" id="newPubContainer"
+  [ngClass]="{
+    'min-height-full-modal max-height-full-modal': !isChildPub
+  }">
   <div class="loading-content {{ activeClass }}"></div>
   <div class="personal-carousel" id="normalPub">
     <a href="#" class="no-border-button {{ transmitStyle }} p-float-btn top-right-corner mt-2 mr-2" (click)="initStreaming($event)">
       <span class="personal-site-icon">f</span>
     </a>
-    <edit-queja [submit]="actionType" [isStreamPub]="initStream" (afterSubmit)="onSubmitForm($event)"></edit-queja>
+    <edit-queja [isChildPub]="isChildPub" [submit]="actionType" [isStreamPub]="initStream" (afterSubmit)="onSubmitForm($event)"></edit-queja>
   </div>
 
   <div class="personal-carousel next" id="streamingPub">
     <media-streaming [initTrans]="actionType" [pubId]="newPubId" (closeModal)="getButtonAction($event)"></media-streaming>
   </div>
 
-  <material-btn-list [showClass]="showClass" [animateNext]="nextButton" [materialBtns]="matButtons" (someBtnAction)="getButtonAction($event)"></material-btn-list>
+  <material-btn-list *ngIf="!isChildPub" [showClass]="showClass" [animateNext]="nextButton" [materialBtns]="matButtons" (someBtnAction)="getButtonAction($event)"></material-btn-list>
 </div>

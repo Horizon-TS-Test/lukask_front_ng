@@ -9,12 +9,12 @@
       <claim-cause [aceptedTerms]="aceptedTerms" (onSelectCause)="getSelectCause($event)" (onAceptTerms)="getAceptTerms($event)"></claim-cause>
     </div>
 
-    <div class="personal-carousel next">
-      <claim-detail></claim-detail>
+    <div class="personal-carousel next" id="claimDetail">
+      <claim-detail *ngIf="currentStep == 1"></claim-detail>
     </div>
 
     <div class="personal-carousel next" id="customPub">
-      <new-pub *ngIf="showPub" [showClass]="showClass" (closeModal)="close($event)"></new-pub>
+      <new-pub *ngIf="currentStep == 2" [isChildPub]="true" [reqSubmit]="reqSubmit" [showClass]="showClass" (streamPub)="oInitStream($event)" (closeModal)="close($event)"></new-pub>
     </div>
 
     <material-btn-list [showClass]="showClass" [materialBtns]="matButtons" (someBtnAction)="getButtonAction($event)"></material-btn-list>
