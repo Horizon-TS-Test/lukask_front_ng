@@ -191,7 +191,8 @@ p, label, div {
 
 //LOADING CONTENT:
 .loading-content {
-    position: fixed;
+    //position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
@@ -660,7 +661,7 @@ p, label, div {
 ********************************/
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #menu-nav {
-    z-index: 4;
+    z-index: 12;
     right: $nav-x;
     bottom: $nav-menu-bottom;
     text-indent: 100%;
@@ -885,7 +886,7 @@ p, label, div {
 //////PANEL DE OPCIONES:
 .top-panel, .bot-panel, .p-home-panel {
     position: fixed;
-    z-index: 3;
+    z-index: 11;
     left: 0px;
     width: 100%;
     height: 55px;
@@ -2393,3 +2394,33 @@ input[type=text], input[type=password], input[type=email], input[type=number], i
 }
 ///////////////////////////////////////////////////////////////////////////
 
+/////////////////////////////////////////--BEGIN RESPONSIVE LAYOUT--////////////////////////////////////////
+#reponsive-layout {
+    display: block;
+
+    @include MQ(M) {
+        display: none;
+    }
+}
+
+.p-home-web-view {
+
+    @include MQ(M) {
+        .map-web {
+            width: 65%;
+        }
+        .pub-web {
+            width: 35%;
+        }
+    }
+
+    @include MQ(L) {
+        .map-web {
+            width: 75%;
+        }
+        .pub-web {
+            width: 25%;
+        }
+    }
+}
+/////////////////////////////////////////--END RESPONSIVE LAYOUT--//////////////////////////////////////////

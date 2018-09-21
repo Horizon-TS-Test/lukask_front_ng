@@ -1,4 +1,4 @@
-import { Component, ViewChild, ViewContainerRef, ComponentFactoryResolver, OnDestroy } from '@angular/core';
+import { Component, ViewChild, ViewContainerRef, ComponentFactoryResolver, OnDestroy, OnInit } from '@angular/core';
 import { ContentService } from './services/content.service';
 import { NotifierService } from './services/notifier.service';
 import { AlertComponent } from './components/alert/alert.component';
@@ -16,7 +16,7 @@ import { RouterService } from './services/router.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
-export class AppComponent implements OnDestroy {
+export class AppComponent implements OnInit, OnDestroy {
   @ViewChild('alert_parent', { read: ViewContainerRef }) alertContainer: ViewContainerRef;
 
   private deferredPrompt: any;
@@ -39,7 +39,7 @@ export class AppComponent implements OnDestroy {
     private _cfr: ComponentFactoryResolver,
   ) {
     this.askForUpdates = false;
-
+    
     this.preventInstallPrompt();
     this.afterSwInstall();
 
@@ -57,6 +57,8 @@ export class AppComponent implements OnDestroy {
     this.listenNotifSocket();
   }
 
+  ngOnInit() {
+  }
   /**
    * MÉTODO PARA EVITAR QUE EL NAVEGADOR DESPLIEGUE POR SI MISMO EL BANNER DE INSTALACIÓN DEL APP
    */
@@ -103,8 +105,11 @@ export class AppComponent implements OnDestroy {
     this.channel = new BroadcastChannel('lsw-events');
 
     this.channel.addEventListener('message', (event) => {
-      let swData = event.data;
-      this.firstInstall = !swData.message;
+      /*let swData = event.data;
+      this.firstInstall = !swData.message;*/
+      if (event) {
+        location.href = '';
+      }
     });
   }
 

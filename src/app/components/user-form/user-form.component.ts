@@ -46,10 +46,10 @@ export class UserFormComponent implements OnInit, AfterViewInit, OnChanges {
   ngOnInit() { }
 
   ngAfterViewInit() {
-    this.province = this.userObj.person.parroquia.canton.province.id_province;
-    this.canton = this.userObj.person.parroquia.canton.id_canton;
-    this.parroquia = this.userObj.person.parroquia.id_parroquia;
-    this.userObj = (!this.userObj && this.userObj.person.location) ? new User("", "", "", true, "", "", "") : this.userObj;
+    this.province = (this.userObj) ? this.userObj.person.parroquia.canton.province.id_province : null;
+    this.canton = (this.userObj) ? this.userObj.person.parroquia.canton.id_canton : null;
+    this.parroquia = (this.userObj) ? this.userObj.person.parroquia.id_parroquia : null;
+    this.userObj = (!this.userObj) ? new User("", "", "", true, "", "", "") : this.userObj;
     this.getProvince();
   }
 

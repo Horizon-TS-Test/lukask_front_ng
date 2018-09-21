@@ -188,6 +188,7 @@ function verifyStoredData(table, dataToSave, isDeleted) {
             }
             for (var t = 0; t < tableData.length; t++) {
                 if (tableData[t].id == dataToSave.id) {
+                    console.log("Data deleted: ", tableData[t].id);
                     deleteItemData(table, tableData[t].id);
                     tableData.splice(t, 1);
                     t = tableData.length;
@@ -195,6 +196,7 @@ function verifyStoredData(table, dataToSave, isDeleted) {
             }
             if (isDeleted == false) {
                 console.log("Guardando en teoría los datos que vienen del socket.Io");
+                console.log("dataToSave", dataToSave);
                 writeData(table, dataToSave);
             }
         });

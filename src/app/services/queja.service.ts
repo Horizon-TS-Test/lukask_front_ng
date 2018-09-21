@@ -634,6 +634,7 @@ export class QuejaService {
     console.log("Guardando en teoría los datos que vienen del socket.Io");
 
     ArrayManager.backendServerSays(action, this.pubList, lastPub, newPub);
+    console.log("newPub", newPub);
   }
 
   /**
@@ -653,6 +654,7 @@ export class QuejaService {
                 newPub = JSON.parse(JSON.stringify(pubs[i]));
                 ////
               }
+              console.log("deleting Pub with media", pubId);
               deleteItemData('publication', pubId);
               i = pubs.length;
             }
@@ -689,6 +691,7 @@ export class QuejaService {
                 }
               }
             }
+            console.log("writting Pub with media", pubId);
             writeData('publication', newPub);
           }
         });
@@ -712,7 +715,7 @@ export class QuejaService {
     //REF: https://stackoverflow.com/questions/39019808/angular-2-get-object-from-array-by-id
     ownerPub = this.pubList.find(pub => pub.id_publication === mediaJson.id_publication);
 
-    console.log("Guardando en teoría los datos de medios que vienen del socket.Io");
+    console.log("Guardando en teoría los datos de MEDIOS que vienen del socket.Io");
     lastMedia = ownerPub.media.find(med => med.id === mediaJson.id_multimedia);
 
     if (action != ArrayManager.DELETE) {
