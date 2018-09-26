@@ -26,7 +26,6 @@ export class QuejaService {
   private isFetchedQtype: boolean;
   private isFetchedPubs: boolean;
   private isFetchedPub: boolean;
-  private mainMediaJson: any;
   private pagePattern: string;
   private isPostedPub: boolean;
   private isUpdatedTrans: boolean;
@@ -54,17 +53,12 @@ export class QuejaService {
     this._mapEmitter = new EventEmitter<string>();
     this._pubDetailEmitter = new EventEmitter<Publication>();
 
-    this.defineMainMediaArray();
     this.listenToSocket();
   }
 
-  defineMainMediaArray() {
-    this.mainMediaJson = [{
-      id_pub: '',
-      medios: []
-    }];
-  }
-
+  /**
+   * MÉTODO PARA CONSUMIR EL END POINT PARA OBTENER LA LISTA DE TIPOS DE QUEJAS:
+   */
   getQuejTypeWeb() {
     const qTheaders = new Headers({ 'Content-Type': 'application/json', 'X-Access-Token': this._userService.getUserKey() });
 
@@ -88,6 +82,9 @@ export class QuejaService {
       });
   }
 
+  /**
+   * MÉTODO PARA OBTENER LA LISTA DE TIPOS DE QUEJAS DESDE LA MEMORIA CACHÉ:
+   */
   getQuejTypeCache() {
     if ('indexedDB' in window) {
       return readAllData('qtype')
@@ -107,6 +104,9 @@ export class QuejaService {
     });
   }
 
+  /**
+   * MÉTODO PARA CARGAR LA LISTA DE TIPOS DE QUEJA SEA DE LA WEB O DE LA CACHÉ
+   */
   getQtypeList() {
     /**
      * IMPLEMENTING NETWORK FIRST STRATEGY
@@ -157,7 +157,6 @@ export class QuejaService {
             transformedPubs.push(this.extractPubJson(pubs[i]));
           }
 
-          this.defineMainMediaArray();
           this.isFetchedPubs = true;
           console.log("[LUKASK QUEJA SERVICE] - PUBLICATIONS FROM WEB", transformedPubs);
           return transformedPubs;
@@ -215,6 +214,9 @@ export class QuejaService {
     });
   }
 
+  /**
+   * MÉTODO PARA CARGAR LA LISTA DE PUBLICACIONES SEA DESDE LA WEB O DE LA CACHÉ
+   */
   getPubList() {
     /**
      * IMPLEMENTING NETWORK FIRST STRATEGY
@@ -270,18 +272,33 @@ export class QuejaService {
     });
   }
 
+  /**
+   * MÉTODO PARA RETORNAR EL OBJETO QUE CONTIENE LA LISTA DE PUBLICACIONES
+   */
   getPubListObj() {
     return this.pubList;
   }
 
+  /**
+   * MÉTODO PARA ACTUALIZAR EL OBJETO ARRAY DE PUBLICACIONES
+   * @param pubs NUEVA LISTA DE PUBLICACIONES
+   */
   setPubList(pubs: Publication[]) {
     this.pubList = pubs;
   }
 
+  /**
+   * MÉTODO PARA AÑADIR UNA PUBLICACIÓN A LA LISTA DE PUBS
+   * @param pub 
+   */
   addPubToPubList(pub: Publication) {
     this.pubList.push(pub);
   }
 
+  /**
+   * MÉTODO PARA CREAR UN OBJETO JAVASCRIPT A PARTIR DE UNO DE TIPO PUBLICACION
+   * @param queja 
+   */
   mergeJSONData(queja: Publication) {
     var json = {
       id: new Date().toISOString(),
@@ -341,6 +358,10 @@ export class QuejaService {
       });
   }
 
+  /**
+   * MÉTODO PARA EXTRAER LOS DATOS DE PUBLICACION DE UN OBJETO JSON
+   * @param pubJson 
+   */
   extractPubJson(pubJson) {
     let pub: Publication;
     let usr: User;
@@ -360,6 +381,10 @@ export class QuejaService {
     return pub;
   }
 
+  /**
+   * MÉTODO PARA CREAR UN OBJETO DE TIPO FORM DATA A PARTIR DE UNO DE TIPO PUBLICACION
+   * @param queja 
+   */
   mergeFormData(queja: Publication) {
     let formData = new FormData();
 
@@ -380,6 +405,10 @@ export class QuejaService {
     return formData;
   }
 
+  /**
+   * MÉTODO PARA POSTEAR UNA NUEVA QUEJA HACIA EL BACKEND
+   * @param quejaFormData 
+   */
   postQuejaClient(quejaFormData: FormData) {
     return new Promise((resolve, reject) => {
       let xhr = new XMLHttpRequest();
@@ -409,6 +438,10 @@ export class QuejaService {
     });
   }
 
+  /**
+   * MÉTODO PARA OBTENER UNA PUBLICACION DADO SU ID, DESDE LA WEB
+   * @param id 
+   */
   getPubWebById(id: string) {
     const _headers = new Headers({
       'Content-Type': 'application/json',
@@ -433,6 +466,10 @@ export class QuejaService {
       });
   }
 
+  /**
+   * MÉTODO PARA OBTENER UNA PUBLICACION DADO SU ID, DESDE LA CACHÉ
+   * @param id 
+   */
   getPubCacheById(pubId: string) {
     if ('indexedDB' in window) {
       return readAllData('publication')
@@ -455,6 +492,10 @@ export class QuejaService {
     });
   }
 
+  /**
+   * MÉTODO PARA OBTENER UNA PUBLICACION DADO SU ID SEA DESDE LA WEB O LA CACHÉ
+   * @param id 
+   */
   getPubById(id: string) {
     /**
      * IMPLEMENTING NETWORK FIRST STRATEGY
@@ -481,6 +522,7 @@ export class QuejaService {
     });
   }
 
+  /***************DEPRECATED **********************/
   getPubsFilterWeb(city: string) {
     const pubHeaders = new Headers({ 'Content-Type': 'application/json', 'X-Access-Token': this._userService.getUserKey() });
 
@@ -503,6 +545,7 @@ export class QuejaService {
       });
   }
 
+  /***********DEPRECATED***********/
   getPubListFilter(city: string) {
     /**
      * IMPLEMENTING NETWORK FIRST STRATEGY
@@ -566,7 +609,7 @@ export class QuejaService {
    * QUE TRAE CAMBIOS DESDE EL BACKEND (CREATE/UPDATE/DELETE)
    * Y ACTUALIZAR LA LISTA GLOBAL DE PUBLICACIONES CON LOS NUEVOS CAMBIOS
    */
-  listenToSocket() {
+  private listenToSocket() {
     this._socketService._publicationUpdate.subscribe(
       (socketPub: any) => {
         let stream = socketPub.stream;
@@ -576,28 +619,6 @@ export class QuejaService {
           case "publication":
             this.updatePubList(socketPub.payload.data, action);
             this._mapEmitter.emit(socketPub.payload.data.id_publication);
-            break;
-          case "multimedia":
-            /**
-             * LO SIGUIENTE ES USADO PARA PREVENIR LA ASINCRONÍA EN LA EJECUCIÓN DE LA FUNCIÓN
-             * this.updatePubMediaList(?,?), YA QUE PUEDEN LLEGAR VARIOS MEDIOS DE UNA MISMA PUBLICACIÓN
-             * AL MISMO TIEMPO.
-             */
-            let pubId = socketPub.payload.data.id_publication;
-            let flag = 0;
-            for (let mainMedia of this.mainMediaJson) {
-              if (mainMedia.id_pub == pubId) {
-                mainMedia.medios[mainMedia.medios.length] = socketPub.payload.data;
-                flag = 1;
-              }
-            }
-            if (flag == 0) {
-              this.mainMediaJson[this.mainMediaJson.length] = {
-                id_pub: socketPub.payload.data.id_publication,
-                medios: [socketPub.payload.data]
-              }
-            }
-            this.updatePubMediaList(socketPub.payload.data, action);
             break;
           case "actions":
             this.updateRelevanceNumber(socketPub.payload.data);
@@ -631,103 +652,8 @@ export class QuejaService {
     }
 
     verifyStoredData('publication', pubJson, isDeleted);
-    console.log("Guardando en teoría los datos que vienen del socket.Io");
 
     ArrayManager.backendServerSays(action, this.pubList, lastPub, newPub);
-    console.log("newPub", newPub);
-  }
-
-  /**
-   * MÉTODO PARA ACTUALIZAR LA INFORMACIÓN DE LOS MEDIOS DE UNA PUBLICACIÓN
-   * @param pubId ID DE LA PUBLICACIÓN A SER ACTUALIZADA SUS MEDIOS
-   * @param isDelete SI ES UN PROCESO DE ELIMINACIÓN O NO
-   */
-  updateCachedPubMedia(pubId: string, isDelete: boolean) {
-    if ('indexedDB' in window) {
-      let newPub: any;
-      return readAllData('publication')
-        .then((pubs) => {
-          for (let i = 0; i < pubs.length; i++) {
-            if (pubId == pubs[i].id_publication) {
-              if (isDelete == false) {
-                //NEXT IS FOR CLONNING THE JSON OBJECT PROPERLY:
-                newPub = JSON.parse(JSON.stringify(pubs[i]));
-                ////
-              }
-              console.log("deleting Pub with media", pubId);
-              deleteItemData('publication', pubId);
-              i = pubs.length;
-            }
-          }
-
-          if (newPub) {
-            if (newPub.medios.length == 0) {
-              for (let a = 0; a < this.mainMediaJson.length; a++) {
-                if (this.mainMediaJson[a].id_pub == pubId) {
-                  newPub.medios = this.mainMediaJson[a].medios;
-                }
-              }
-            }
-            else {
-              let canWe = true;
-              for (let a = 0; a < this.mainMediaJson.length; a++) {
-                if (this.mainMediaJson[a].id_pub == pubId) {
-                  for (let m = 0; m < this.mainMediaJson[a].medios.length; m++) {
-                    for (let i = 0; i < newPub.medios.length; i++) {
-                      if (newPub.medios[i].id_multimedia == this.mainMediaJson[a].medios[m].id_multimedia) {
-                        newPub.medios[i] = this.mainMediaJson[a].medios[m];
-                        canWe = false;
-                        i = newPub.medios.length;
-                      }
-                    }
-                    if (canWe) {
-                      newPub.medios[newPub.medios.length] = this.mainMediaJson[a].medios[m];
-                    }
-                    else {
-                      canWe = true;
-                    }
-                  }
-                  a = this.mainMediaJson.length;
-                }
-              }
-            }
-            console.log("writting Pub with media", pubId);
-            writeData('publication', newPub);
-          }
-        });
-    }
-  }
-
-  /**
-   * MÉTODO PARA ACTUALIZAR INFORMACIÓN DE LA LISTA DE MEDIOS DE UNA PUBLICACIÓN
-   * @param mediaJson JSON COMMING FROM THE SOCKET.IO SERVER OR AS A NORMAL HTTP RESPONSE:
-   * @param action THIS CAN BE CREATE, UPDATE OR DELETE:
-   */
-  updatePubMediaList(mediaJson: any, action: string) {
-    let ownerPub: Publication;
-    let lastMedia: Media, newMedia: Media;
-    let isDelete: boolean = false;
-
-    //PREPPENDING THE BACKEND SERVER IP/DOMAIN:
-    mediaJson.media_path = (mediaJson.media_path.indexOf("http") == -1 || mediaJson.media_path.indexOf("https") !== -1 ? REST_SERV.mediaBack : "") + mediaJson.media_path;
-    ////
-
-    //REF: https://stackoverflow.com/questions/39019808/angular-2-get-object-from-array-by-id
-    ownerPub = this.pubList.find(pub => pub.id_publication === mediaJson.id_publication);
-
-    console.log("Guardando en teoría los datos de MEDIOS que vienen del socket.Io");
-    lastMedia = ownerPub.media.find(med => med.id === mediaJson.id_multimedia);
-
-    if (action != ArrayManager.DELETE) {
-      isDelete = true;
-      newMedia = new Media(mediaJson.id_multimedia, mediaJson.format_multimedia, mediaJson.media_path, null, null, null, mediaJson.id_publication);
-    }
-
-    //UPDATING THE MEDIA DATA OF A PUBLICATION
-    this.updateCachedPubMedia(mediaJson.id_publication, isDelete);
-    ////
-
-    ArrayManager.backendServerSays(action, ownerPub.media, lastMedia, newMedia);
   }
 
   /**

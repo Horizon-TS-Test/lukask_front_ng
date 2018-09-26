@@ -13,7 +13,7 @@
       </a>
     </div>
     <div *ngIf="modalForm != false" class="pl-1 pt-1">
-      <button type="submit" [disabled]="restChars == maxChars || restChars < 0" class="btn btn-sm btn-outline-info personal-icon-btn"
+      <button type="submit" [disabled]="restChars == maxChars || restChars < 0 || commentSent" class="btn btn-sm btn-outline-info personal-icon-btn"
         title="Comentar">
         <fa name="send"></fa>
       </button>

@@ -1581,6 +1581,10 @@ p, label, div {
     fa, span {
         color: $secondary-text !important;
     }
+    &.custom-btn-normal {
+        background: $primary !important;
+        border-color: $primary !important;
+    }
 }
 .p-sec-btn {
     background: $primary-dark !important;
