@@ -1707,12 +1707,11 @@ input[type=text], input[type=password], input[type=email], input[type=number], i
       background-color: white;
       transition: 0.2s all; }
     .switch input:checked + label::before {
-      background-color: #004360; }
+      background-color: #08d; }
     .switch input:checked + label::after {
       margin-left: calc(2.375rem * .8); }
     .switch input:focus + label::before {
-      outline: none;
-      box-shadow: 0 0 0 0.2rem rgba(0, 136, 221, 0.25); }
+      outline: none; }
     .switch input:disabled + label {
       color: #868e96;
       cursor: not-allowed; }
@@ -1748,6 +1747,12 @@ input[type=text], input[type=password], input[type=email], input[type=number], i
       margin-left: calc(3rem * .8); }
   .switch + .switch {
     margin-left: 1rem; }
+  .switch.switch-normal input:checked + label::before {
+    background-color: #5dbeb6; }
+  .switch.switch-dark input:checked + label::before {
+    background-color: #004360; }
+  .switch.switch-light input:checked + label::before {
+    background-color: #c1e6ca; }
 
 .p-snackbar-layout {
   z-index: 10000000000000000 !important;
