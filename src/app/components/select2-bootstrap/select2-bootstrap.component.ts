@@ -1,6 +1,5 @@
 import { Component, OnInit, Input, AfterViewInit, Output, EventEmitter } from '@angular/core';
 import { Select2 } from '../../interfaces/select2.interface';
-import { FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
 
 declare var $: any;
 
@@ -25,11 +24,11 @@ export class Select2BootstrapComponent implements OnInit, AfterViewInit {
     });
 
     $('#' + this.fcName).select2({
-      dropdownParent: $('.horizon-modal')
+      //dropdownParent: $('.horizon-modal')
     });
 
     //REF: https://stackoverflow.com/questions/17995057/prevent-select2-from-autmatically-focussing-its-search-input-when-dropdown-is-op
-    $(".personal-select2").on('select2:open', function (e) {
+    $(".personal-select2").on('select2:open', (e) => {
       $('.select2-search input').prop('focus', false);
 
       $('.select2-search input').on("blur", function (e) {

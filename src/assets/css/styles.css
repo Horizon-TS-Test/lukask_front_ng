@@ -1080,28 +1080,19 @@ p, label, div {
   font-size: 1.5rem; }
 
 .select2-container {
-  z-index: 99999999999;
   width: 100% !important; }
+
+.select2-container.select2-container--open {
+  z-index: 99999999999;
+  width: unset !important; }
 
 .p-fixed-select2 {
   position: fixed !important;
   top: unset !important;
   bottom: 0px !important; }
 
-.p-select2-container {
-  /*.select2-hidden-accessible {
-      clip: unset !important;
-      -webkit-clip-path: unset !important;
-      clip-path: unset !important;
-  }*/ }
-  .p-select2-container .select2-container {
-    z-index: 1; }
-
-/*.select2-search {
-    display: none !important;
-}*/
-.select2-container--open {
-  width: unset !important; }
+.p-select2-container .select2-container {
+  z-index: 1; }
 
 .p-trans-btn-generic {
   background: rgba(0, 0, 0, 0.3) !important;
