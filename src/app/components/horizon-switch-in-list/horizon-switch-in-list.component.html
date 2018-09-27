@@ -1,0 +1,7 @@
+<div class="p-border-none card p-0">
+  <ul class="list-group list-group-flush pb-0">
+    <li *ngFor="let switch of switchIns" class="list-group-item py-2">
+      <horizon-switch-input [switchInput]="switch" (onChange)="getSwitchChanges($event)"></horizon-switch-input>
+    </li>
+  </ul>
+</div>

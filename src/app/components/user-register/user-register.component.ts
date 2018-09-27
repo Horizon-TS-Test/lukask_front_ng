@@ -31,11 +31,12 @@ export class UserRegisterComponent implements OnInit, OnChanges {
     this.materialButtons = [
       {
         action: ACTION_TYPES.userRegister,
-        icon: "check"
+        icon: 'check',
+        class: 'custom-btn-normal'
       },
       {
         action: ACTION_TYPES.close,
-        icon: "close"
+        icon: 'close'
       }
     ]
   }
@@ -58,8 +59,8 @@ export class UserRegisterComponent implements OnInit, OnChanges {
    * MÉTODO PARA ACTIVAR EL EECTO DE CARGANDO:
    */
   private loadingAnimation() {
-    this.loadingClass = "on";
-    this.activeClass = "active";
+    this.loadingClass = 'on';
+    this.activeClass = 'active';
   }
 
   /**
@@ -91,7 +92,7 @@ export class UserRegisterComponent implements OnInit, OnChanges {
         this.actionType = null;
         setTimeout(() => {
           this.actionType = ACTION_TYPES.userRegister;
-          this.showClass = "";
+          this.showClass = '';
         });
         this.loadingAnimation();
         break;

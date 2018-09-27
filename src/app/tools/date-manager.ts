@@ -31,15 +31,15 @@ export class DateManager {
     public static makeDateCool(date: string) {
         //Eliminamos caracteres de la fecha.
         date = date.replace("T", " ").replace("Z", " ");
-
+        
         //Inicializamos variables para los calculos
         let currentDate = moment();
-        let localDateData = moment(date);
-
+        let localDateData = moment(date, "YYYY-MM-DD H:mm:ss");
+        
         //Encontramos la cantidad de segundos transcuridos segun la fecha actual a la fecha registrada
         let diff = currentDate.diff(localDateData, 'seconds');
         let textTime: string;
-
+        
         if (diff < _MAX_SECONDS) {
             return "Hace pocos segundos"
         }

@@ -3,8 +3,8 @@
   <!--a href="#" class="btn btn-md btn-outline-info ml-1 px-2">
     <fa name="search" class="ml-1 d-flex justify-content-center"></fa>
   </a-->
-  <div class="f-child-full-space">
-    <select id="{{fcName}}" class="personal-select2 col-12" aria-describedby="basic-addon1">
+  <div class="f-child-full-space w-100">
+    <select id="{{ fcName }}" class="personal-select2 col-12" aria-describedby="basic-addon1">
       <option *ngFor="let select of select2Data" value="{{select.value}}" [selected]="select.selectedItem">
         {{select.data}}
       </option>
