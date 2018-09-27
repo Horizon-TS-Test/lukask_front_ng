@@ -49,7 +49,6 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this._notifierService.notifyChangeMenuContent(MENU_OPTIONS.home);
     this.listenToMenuChanges();
-    this.onScrollPubContainer()
 
     this.initCarousel();
     this.paymentSocketUpdate();
@@ -81,7 +80,7 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   private onScrollPubContainer() {
     this.pubContainer = $('#pub-container');
-
+    console.log("this.pubContainer", this.pubContainer.attr("id"));
     this.pubContainer.scroll(() => {
       if (this._contentService.isBottomScroll(this.pubContainer)) {
         this._notifierService.notifyMorePubsRequest(true);
@@ -125,6 +124,7 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     this.handleMenuCarousel();
+    this.onScrollPubContainer();
   }
 
   /**
