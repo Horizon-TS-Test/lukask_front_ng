@@ -20,5 +20,6 @@ export const REST_SERV = {
     signUrl: SERV_IP.middleware + '/signIn',
     provinceUrl: SERV_IP.middleware + '/province',
     cantonUrl: SERV_IP.middleware + '/canton',
-    parroquiaUrl: SERV_IP.middleware + '/parroquia'
+    parroquiaUrl: SERV_IP.middleware + '/parroquia',
+    mediaRecorder : SERV_IP.middleware_kms + '/media'
 }

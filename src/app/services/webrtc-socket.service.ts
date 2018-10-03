@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
+import {Headers, Http, Response} from '@angular/http';
 import * as kurentoUtils from 'kurento-utils';
-//import * as kurentoClientLibs from 'kurento-client';
 import { REST_SERV } from '../rest-url/rest-servers';
 import { QuejaService } from './queja.service';
-import { SERV_IP } from "../servers/servers";
+
+const SUCCESSFUL:number = 200;
 declare var MediaRecorder:any;
 
 @Injectable({
@@ -13,9 +14,6 @@ declare var MediaRecorder:any;
 //HREF ABOUT WEBSOCKET: https://developer.mozilla.org/es/docs/Web/API/WebSocket
 export class WebrtcSocketService {
   private webRtcPeer: any;
-  /*private webRtc:any;
-  private recordRtc:any;
-  private pipeline:any;*/
   private stream:any;
   private recordedBlobs:any[];
   private mediaRecorder:any;
@@ -27,7 +25,8 @@ export class WebrtcSocketService {
   public video: any;
 
   constructor(
-    private _quejaService: QuejaService
+    private _quejaService: QuejaService,
+    private _http : Http
   ) {
     this.isPresenter = false;
     this.recordedBlobs  = [];
@@ -42,7 +41,6 @@ export class WebrtcSocketService {
   connecToKurento(idUser: string, pubId: string, _video: any) {
     let websocketPromise = new Promise((resolve, reject) => {
       this.kurentoWs = new WebSocket(REST_SERV.webRtcSocketServerUrl);
-
       this.kurentoWs.onopen = (open) => {
         console.log("idUser", idUser);
         console.log("pubId", pubId);
@@ -61,7 +59,7 @@ export class WebrtcSocketService {
       this.kurentoWs.onclose = (close) => {
         this.kurentoWs = null;
         console.log("[WEBRTC-SOCKET SERVICE]: CONEXIÓN CERRADA AL WEBSOCKET DE KURENTO CLIENT", close);
-        this.dispose();
+        this.break();
         if (this.isPresenter) {
           this._quejaService.updateTransmission(this.pubId, true);
         }
@@ -89,7 +87,7 @@ export class WebrtcSocketService {
 
         case 'stopCommunication':
           console.log("se cerro la transmición...")
-          this.dispose();
+          this.break();
           break;
 
         case 'iceCandidate':
@@ -108,7 +106,8 @@ export class WebrtcSocketService {
       audio: true,
       video: {
         width : 1280,
-        height : 720
+        height : 720,
+        deviceId: { exact: idCamera }
       }
     }
 
@@ -151,58 +150,6 @@ export class WebrtcSocketService {
     };
     this.sendMessage(message);
 
-    /*kurentoClientLibs(SERV_IP.kurentoServer, (error, client) =>{
-      if(error){
-        console.log("Error al conectar", error);
-        return error;
-      }
-
-      client.create('MediaPipeline', (error, pipeline) =>{
-        if(error){
-          console.log("Error al crear el pipeline", error);
-          return error;
-        }
-        
-        let elements = [
-          {type: 'RecorderEndPoint', params : {uri : SERV_IP.fileRepository}},
-          {type: 'WebRtcEndpoint', params: {}}
-        ];
-
-        this.pipeline = pipeline;
-        this.pipeline.create(elements, (error, elements) => {
-          if(error){
-            console.log("error al crear el pipeline", error);
-            return error;
-          }
-
-          this.recordRtc = elements[0];
-          this.webRtc   = elements[1];
-          //this.setIceCandidateCallbacks();
-
-          this.webRtc.processOffer(offerSdp, (error, answer) =>{
-            if(error){
-              console.log("error al procesar la oferta", error);
-              return error;
-            }
-            this.webRtcPeer.processAnswer(answer);
-          });
-
-          client.connect(this.webRtc, this.recordRtc, (error) =>{
-            if(error){
-              console.log("error al conectar al recorder", error);
-              return error;
-            }
-
-            this.recordRtc.record((error) =>{
-              if(error) {
-                console.log("Error en el proceso de grabacion", error);
-                return error;
-              }
-            });
-          });
-        });
-      });
-    }); */
   }
 
   /**
@@ -226,7 +173,7 @@ export class WebrtcSocketService {
   sendMessage(message) {
 
     var jsonMessage = JSON.stringify(message);
-    console.log("enviando mensaje", this.kurentoWs);
+    console.log("enviando mensaje", jsonMessage);
     this.kurentoWs.send(jsonMessage);
   }
 
@@ -276,7 +223,7 @@ export class WebrtcSocketService {
    */
   closeTransmissionCnn() {
     if (this.webRtcPeer) {
-      console.log("Proceso de detener la transmicion metodo 1")
+
       var messege = {
         keyWord: 'stop',
         idUser: this.userId
@@ -286,7 +233,7 @@ export class WebrtcSocketService {
       
       //Detener la transmición.
       this.stopRecorder();
-      this.dispose();
+      this.break();
     }
   }
 
@@ -303,7 +250,7 @@ export class WebrtcSocketService {
     if (message.response != 'accepted') {
       var errorMsg = message.message ? message.message : 'Unknow error';
       console.warn('Call not accepted for the following reason: ' + errorMsg);
-      this.dispose();
+      this.break();
     } else {
       this.webRtcPeer.processAnswer(message.sdpAnswer);
     }
@@ -317,7 +264,7 @@ export class WebrtcSocketService {
     if (message.response != 'accepted') {
       let errorMsg = message.message ? message.message : 'Unknow error';
       console.warn('Call not accepted for the following reason: ' + errorMsg);
-      this.dispose();
+      this.break();
     } else {
       this.webRtcPeer.processAnswer(message.sdpAnswer);
     }
@@ -326,10 +273,10 @@ export class WebrtcSocketService {
   /**
    * Liberamos el WebRtcPeer
    */
-  dispose() {
+  break() {
     if (this.webRtcPeer) {
-      console.log("liberar cámara de transmicion: ", this.webRtcPeer)
-      this.webRtcPeer.dispose();
+      var res =  this.webRtcPeer.dispose();
+      console.log("resStop", res);
       this.webRtcPeer = null;
       this.closeWebSocketConn();
     }
@@ -417,7 +364,7 @@ export class WebrtcSocketService {
   }
 
   /**
-   * Proceso de alamacenamiento de blod del video
+   * Proceso de almacenamiento de blod del video
    * @param event 
    */
   handleDataAvailable(event){
@@ -430,25 +377,133 @@ export class WebrtcSocketService {
    * Proceso para detener la grabación.
    */
   stopRecorder(){
-    this.mediaRecorder.stop();
-    console.log('Recorder Blobs:', this.recordedBlobs);
-    console.log('Longitud de blobs:', this.recordedBlobs.length);
-    let bufferContainer = new Blob(this.recordedBlobs, {type: 'video/webm'});
-    console.log("cadena de video: ", bufferContainer);
-    let urlDataVideo = window.URL.createObjectURL(bufferContainer);
-    console.log("URL para descarga devideo", urlDataVideo);
-    
-    //Proceso de descarga del video. Temporal
-    const a = document.createElement('a');
-    a.style.display = 'none';
-    a.href = urlDataVideo;
-    a.download = 'lukask.webm';
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(() => {
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(urlDataVideo);
-    }, 100);
+    if(this.mediaRecorder){
+
+      //Proceso para detener la grabación.
+      try{
+        this.mediaRecorder.stop();
+        this.mediaRecorder.stream.getTracks().forEach(track => {
+          track.stop();
+        });
+      }catch(err){
+        console.log("error al detner la transmicion", err);
+      }
+
+      //this.sendBlobKMS(this.recordedBlobs);
+      //Proceso para convertir 
+      this.bufferToDataUrl((dataUrl, blob) =>{
+        var file  = this.dataUrlToFile(dataUrl);
+        console.log("file send to server ....", file);
+        
+        //let bufferContainer = new Blob(this.recordedBlobs, {type: 'video/webm'});
+        let urlDataVideo = window.URL.createObjectURL(blob);
+        
+        //Proceso de descarga del video. --sTemporal
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = urlDataVideo;
+        a.download = 'lukask.webm';
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(urlDataVideo);
+        }, 100);
+      })
+    }
   }
+
+  private sendBlobKMS(blobRecorder:any){
+
+    console.log("blobRecorder", blobRecorder);
+    let formData  = new FormData();
+    let xhr = new XMLHttpRequest();
+    formData.append('media_file', blobRecorder);
+    xhr.onreadystatechange = function (){
+      if (xhr.readyState === 4) {
+        if (xhr.status === 201) {
+          console.log(JSON.parse(xhr.response).data);
+        }
+        else {
+          if (xhr.status == 0) {
+            console.log(xhr.response);
+          }
+          else {
+            console.log(JSON.parse(xhr.response));
+          }
+        }
+      }
+    };
+
+    xhr.open("post",REST_SERV.mediaRecorder, true);
+    xhr.send(formData);
+    /*let requestheaders = new Headers({
+      "Content-Type" : "application/octet-stream"  
+    });
+ 
+    return this._http.post(REST_SERV.mediaRecorder, blobRecorder, {
+      headers : requestheaders
+    }).toPromise().then((response : Response) =>{
+      let respMediaJson = response.json();
+      if(response.status === SUCCESSFUL){
+        console.log("datos desde el server kms", respMediaJson);
+      }
+    }).catch((error:Response) => {
+      console.log("error...", error);
+      return throwError(error.json());
+    });*/
+  }
+
+  /**
+   * Proceso para obtener url del buffer
+   * @param callback 
+   */
+  bufferToDataUrl(callback){
+    let blob = new Blob(this.recordedBlobs, {
+      type : "video/webm"
+    });
+    console.log("blob....", blob);
+    
+    let reader = new FileReader();
+    reader.onload = () =>{
+      callback(reader.result, blob);
+    };
+    reader.readAsDataURL(blob);
+  }
+
+  /**
+   * Proceso para creacion de archivo que puede ser enviado al servidor.
+   * @param dataUrl 
+   */
+  dataUrlToFile(dataUrl){
+    console.log("dataUrl ...........", dataUrl);
+    let binary = atob(dataUrl.split(',')[1]);
+    let data = [];
+    
+    for(let i = 0; i < binary.length; i++){
+      data.push(binary.charCodeAt(i));
+    }
+
+    return new File([new Uint8Array(data)], this.generateKeyWord() + Date.now() ,{
+      type: 'video/webm'
+    });
+  }
+
+  /**
+   * Proceso para generar cadena de caracteres.
+   */
+  generateKeyWord(){
+    //Diccionario
+    var letters = new Array('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 
+                            'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '1', '2', '3', '4',
+                            '5', '6', '7', '8', '9', '0');
+    var keyWord = ''
+    for (var i = 0; i< 10; i++){
+        keyWord += letters[Math.floor(Math.random() * letters.length)];
+    }
+    console.log(" keyWord..", keyWord)
+    return keyWord;
+  }
+
 }
 
