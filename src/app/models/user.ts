@@ -12,9 +12,7 @@ export class User {
         public file?: any,
         public fileName?: string,
         public id?: string,
-        public objParroquia?: Parroquia,
     ) {
         this.person = new Person();
-        this.objParroquia = new Parroquia();
     }
 }

@@ -75,6 +75,7 @@ import { DebounceClickDirective } from './directives/debounce-click.directive';
 import { InitComponent } from './components/init/init.component';
 import { InstallSliderComponent } from './components/install-slider/install-slider.component';
 import { PromptComponent } from './components/prompt/prompt.component';
+import { HorizonSwitchInListComponent } from './components/horizon-switch-in-list/horizon-switch-in-list.component';
 
 @NgModule({
   declarations: [
@@ -129,7 +130,8 @@ import { PromptComponent } from './components/prompt/prompt.component';
     DebounceClickDirective,
     InitComponent,
     InstallSliderComponent,
-    PromptComponent
+    PromptComponent,
+    HorizonSwitchInListComponent
   ],
   imports: [
     HttpModule,

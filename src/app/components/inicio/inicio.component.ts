@@ -30,7 +30,7 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   public carouselOptions: any;
   public focusedPubId: string;
   public touchDrag: boolean;
-
+  public webViewPort: boolean;
 
   constructor(
     private _domSanitizer: DomSanitizer,
@@ -42,25 +42,50 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.pubContainer = $('#pub-container');
+    ////RESPONSIVE INDICATOR:
+    this.manageResponsiveViewPort();
+    ////
     this._contentService.fadeInComponent($("#homeContainer"));
 
-
     this._notifierService.notifyChangeMenuContent(MENU_OPTIONS.home);
+    this.listenToMenuChanges();
+
+    this.initCarousel();
+    this.paymentSocketUpdate();
+  }
+
+  /**
+   * MÉTODO PARA CONTROLAR EL VIEWPORT RESPONSIVO:
+   */
+  private manageResponsiveViewPort() {
+    this.webViewPort = $("#reponsive-layout").css("display") == "block";
+
+    $(window).resize(() => {
+      this.webViewPort = $("#reponsive-layout").css("display") == "block";
+    })
+  }
+
+  /**
+   * MÉTODO PARA SUBSCRIBIRSE AL EVENTO DE CAMBIO DE MENU DE NAVEGACIÓN:
+   */
+  private listenToMenuChanges() {
     this.subscriptor = this._notifierService._changeMenuOption.subscribe(
       (menuOption: number) => {
-        console.log(menuOption);
         this.changeOwlContent(menuOption);
       });
+  }
 
+  /**
+   * MÉTODO PARA MANIPULAR EL EVENTO DE SCROLL DENTRO DEL COMPONENTE PRINCIPAL DE QUEJAS:
+   */
+  private onScrollPubContainer() {
+    this.pubContainer = $('#pub-container');
+    console.log("this.pubContainer", this.pubContainer.attr("id"));
     this.pubContainer.scroll(() => {
       if (this._contentService.isBottomScroll(this.pubContainer)) {
         this._notifierService.notifyMorePubsRequest(true);
       }
     });
-
-    this.initCarousel();
-    this.paymentSocketUpdate();
   }
 
   /**
@@ -99,6 +124,7 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     this.handleMenuCarousel();
+    this.onScrollPubContainer();
   }
 
   /**

@@ -27,6 +27,7 @@ export class CommentFormComponent implements OnInit, OnDestroy {
   public maxChars: number;
   public restChars: number;
   public subscription: Subscription;
+  public commentSent: boolean;
 
   constructor(
     public _domSanitizer: DomSanitizer,
@@ -36,6 +37,7 @@ export class CommentFormComponent implements OnInit, OnDestroy {
   ) {
     this.maxChars = 200;
     this.restChars = this.maxChars;
+    this.commentSent = false;
 
     this.subscription = this._userService._userUpdate.subscribe((update: boolean) => {
       if (update) {
@@ -85,8 +87,12 @@ export class CommentFormComponent implements OnInit, OnDestroy {
    * MÉTODO PARA ENVIAR UN COMENTARIO AL BACKEND:
    */
   publishComment() {
+    this.commentSent = true;
+
     this._actionService.saveComment(this.commentModel)
       .then((response) => {
+        this.commentSent = false;
+
         if (response == true) {
           Snackbar.show({ text: 'Tu ' + (this.commentModel.commentParentId ? 'respuesta' : 'comentario') + ' se enviará en la próxima conexión', pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#34b4db', customClass: "p-snackbar-layout" });
         }
@@ -101,6 +107,7 @@ export class CommentFormComponent implements OnInit, OnDestroy {
       })
       .catch(err => {
         console.log(err);
+        this.commentSent = false;
         this.alertData = new Alert({ title: 'Proceso Fallido', message: 'No se pudo procesar la petición', type: ALERT_TYPES.danger });
         this.setAlert();
       });

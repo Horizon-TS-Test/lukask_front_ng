@@ -18,16 +18,16 @@ export class SocketService {
 
   constructor() { }
 
+  /**
+   * MÉTODO PARA CONECTARSE AL SOCKET-SERVER Y ABRIR UNA INSTANCIA CLIENTE
+   */
   connectSocket() {
     this.socket = io.connect(REST_SERV.socketServerUrl);
 
     this.socket.on('backend-rules', (backendData) => {
-      console.log("backend-rules: ", backendData);
+      console.log("[SOCKET SERVICE] - backend-rules: ", backendData);
       switch (backendData.stream) {
         case "publication":
-          this._publicationUpdate.emit(backendData);
-          break;
-        case "multimedia":
           this._publicationUpdate.emit(backendData);
           break;
         case "actions":
@@ -50,15 +50,21 @@ export class SocketService {
     });
 
     this.socket.on('response-payment', (paymentData) => {
-      console.log("response-payment: ", paymentData);
+      console.log("[SOCKET SERVICE] - response-payment: ", paymentData);
       this._paymentResponse.emit(paymentData);
     });
   }
 
+  /**
+   * MÉTODO PARA OBTENER LA INSTANCIA DEL OBJETO SOCKET-CLIENT
+   */
   getSocket() {
     return this.socket;
   }
 
+  /**
+   * MÉTODO PARA RECIBIR EL MENSAJE DE CONFIRMACIÓN DEL PAGO DESDE EL MIDDLEWARE
+   */
   public confimPayResp() {
     this.socket.emit('confirm-pay', true);
   }

@@ -191,7 +191,8 @@ p, label, div {
 
 //LOADING CONTENT:
 .loading-content {
-    position: fixed;
+    //position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
@@ -660,7 +661,7 @@ p, label, div {
 ********************************/
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #menu-nav {
-    z-index: 4;
+    z-index: 12;
     right: $nav-x;
     bottom: $nav-menu-bottom;
     text-indent: 100%;
@@ -885,7 +886,7 @@ p, label, div {
 //////PANEL DE OPCIONES:
 .top-panel, .bot-panel, .p-home-panel {
     position: fixed;
-    z-index: 3;
+    z-index: 11;
     left: 0px;
     width: 100%;
     height: 55px;
@@ -1439,9 +1440,13 @@ p, label, div {
 
 ////JQUERY SELECT2 WITH BOOTSTRAP
 .select2-container {
-    z-index: 99999999999;
     width: 100% !important;
 }
+.select2-container.select2-container--open {
+    z-index: 99999999999;
+    width: unset !important;
+}
+
 .p-fixed-select2 {
     position: fixed !important;
     top: unset !important;
@@ -1451,20 +1456,6 @@ p, label, div {
     .select2-container {
         z-index: 1;
     }
-
-    //PARA SOLUCIONAR PROBLEMA CON EL OVERFLOW DEL COMPONENTE PADRE:
-    /*.select2-hidden-accessible {
-        clip: unset !important;
-        -webkit-clip-path: unset !important;
-        clip-path: unset !important;
-    }*/
-    ////
-}
-/*.select2-search {
-    display: none !important;
-}*/
-.select2-container--open {
-    width: unset !important;
 }
 
 /////////////////
@@ -1579,6 +1570,10 @@ p, label, div {
 
     fa, span {
         color: $secondary-text !important;
+    }
+    &.custom-btn-normal {
+        background: $primary !important;
+        border-color: $primary !important;
     }
 }
 .p-sec-btn {
@@ -2181,145 +2176,171 @@ input[type=text], input[type=password], input[type=email], input[type=number], i
 /////SWITCH INPUT/////
 //REF: https://www.abeautifulsite.net/bootstrap-4-switches
 .switch {
-  font-size: $font-size-base;
-  position: relative;
-
-  input {
-    position: absolute;
-    height: 1px;
-    width: 1px;
-    background: none;
-    border: 0;
-    clip: rect(0 0 0 0);
-    clip-path: inset(50%);
-    overflow: hidden;
-    padding: 0;
-
-    + label {
-      position: relative;
-      min-width: calc(#{$switch-height} * 2);
-      border-radius: $switch-border-radius;
-      height: $switch-height;
-      line-height: $switch-height;
-      display: inline-block;
-      cursor: pointer;
-      outline: none;
-      user-select: none;
-      vertical-align: middle;
-      text-indent: calc(calc(#{$switch-height} * 2) + .5rem);
-    }
-
-    + label::before,
-    + label::after {
-      content: '';
+    font-size: $font-size-base;
+    position: relative;
+  
+    input {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: calc(#{$switch-height} * 2);
-      bottom: 0;
-      display: block;
-    }
-
-    + label::before {
-      right: 0;
-      background-color: $switch-bg;
-      border-radius: $switch-border-radius;
-      transition: $switch-transition;
-    }
-
-    + label::after {
-      top: $switch-thumb-padding;
-      left: $switch-thumb-padding;
-      width: calc(#{$switch-height} - calc(#{$switch-thumb-padding} * 2));
-      height: calc(#{$switch-height} - calc(#{$switch-thumb-padding} * 2));
-      border-radius: $switch-thumb-border-radius;
-      background-color: $switch-thumb-bg;
-      transition: $switch-transition;
-    }
-
-    &:checked + label::before {
-      background-color: $primary-dark;
-    }
-
-    &:checked + label::after {
-      margin-left: $switch-height;
-    }
-
-    &:focus + label::before {
-      outline: none;
-      box-shadow: $switch-focus-box-shadow;
-    }
-
-    &:disabled + label {
-      color: $switch-disabled-color;
-      cursor: not-allowed;
-    }
-
-    &:disabled + label::before {
-      //background-color: $switch-disabled-bg;
-      background-color: $primary-text;
-    }
-  }
-
-  // Small variation
-  &.switch-sm {
-    font-size: $font-size-sm;
-
-    input {
+      height: 1px;
+      width: 1px;
+      background: none;
+      border: 0;
+      clip: rect(0 0 0 0);
+      clip-path: inset(50%);
+      overflow: hidden;
+      padding: 0;
+  
       + label {
-        min-width: calc(#{$switch-height-sm} * 2);
-        height: $switch-height-sm;
-        line-height: $switch-height-sm;
-        text-indent: calc(calc(#{$switch-height-sm} * 2) + .5rem);
+        position: relative;
+        min-width: calc(#{$switch-height} * 2);
+        border-radius: $switch-border-radius;
+        height: $switch-height;
+        line-height: $switch-height;
+        display: inline-block;
+        cursor: pointer;
+        outline: none;
+        user-select: none;
+        vertical-align: middle;
+        text-indent: calc(calc(#{$switch-height} * 2) + .5rem);
       }
-
-      + label::before {
-        width: calc(#{$switch-height-sm} * 2);
-      }
-
+  
+      + label::before,
       + label::after {
-        width: calc(#{$switch-height-sm} - calc(#{$switch-thumb-padding} * 2));
-        height: calc(#{$switch-height-sm} - calc(#{$switch-thumb-padding} * 2));
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: calc(#{$switch-height} * 2);
+        bottom: 0;
+        display: block;
       }
-
+  
+      + label::before {
+        right: 0;
+        background-color: $switch-bg;
+        border-radius: $switch-border-radius;
+        transition: $switch-transition;
+      }
+  
+      + label::after {
+        top: $switch-thumb-padding;
+        left: $switch-thumb-padding;
+        width: calc(#{$switch-height} - calc(#{$switch-thumb-padding} * 2));
+        height: calc(#{$switch-height} - calc(#{$switch-thumb-padding} * 2));
+        border-radius: $switch-thumb-border-radius;
+        background-color: $switch-thumb-bg;
+        transition: $switch-transition;
+      }
+  
+      &:checked + label::before {
+        background-color: $switch-checked-bg;
+      }
+  
       &:checked + label::after {
-        margin-left: $switch-height-sm;
+        margin-left: $switch-height;
+      }
+  
+      &:focus + label::before {
+        outline: none;
+        //box-shadow: $switch-focus-box-shadow;
+      }
+  
+      &:disabled + label {
+        color: $switch-disabled-color;
+        cursor: not-allowed;
+      }
+  
+      &:disabled + label::before {
+        //background-color: $switch-disabled-bg;
+        background-color: $primary-text;
       }
     }
-  }
-
-  // Large variation
-  &.switch-lg {
-    font-size: $font-size-lg;
-
-    input {
-      + label {
-        min-width: calc(#{$switch-height-lg} * 2);
-        height: $switch-height-lg;
-        line-height: $switch-height-lg;
-        text-indent: calc(calc(#{$switch-height-lg} * 2) + .5rem);
-      }
-
-      + label::before {
-        width: calc(#{$switch-height-lg} * 2);
-      }
-
-      + label::after {
-        width: calc(#{$switch-height-lg} - calc(#{$switch-thumb-padding} * 2));
-        height: calc(#{$switch-height-lg} - calc(#{$switch-thumb-padding} * 2));
-      }
-
-      &:checked + label::after {
-        margin-left: $switch-height-lg;
+  
+    // Small variation
+    &.switch-sm {
+      font-size: $font-size-sm;
+  
+      input {
+        + label {
+          min-width: calc(#{$switch-height-sm} * 2);
+          height: $switch-height-sm;
+          line-height: $switch-height-sm;
+          text-indent: calc(calc(#{$switch-height-sm} * 2) + .5rem);
+        }
+  
+        + label::before {
+          width: calc(#{$switch-height-sm} * 2);
+        }
+  
+        + label::after {
+          width: calc(#{$switch-height-sm} - calc(#{$switch-thumb-padding} * 2));
+          height: calc(#{$switch-height-sm} - calc(#{$switch-thumb-padding} * 2));
+        }
+  
+        &:checked + label::after {
+          margin-left: $switch-height-sm;
+        }
       }
     }
+  
+    // Large variation
+    &.switch-lg {
+      font-size: $font-size-lg;
+  
+      input {
+        + label {
+          min-width: calc(#{$switch-height-lg} * 2);
+          height: $switch-height-lg;
+          line-height: $switch-height-lg;
+          text-indent: calc(calc(#{$switch-height-lg} * 2) + .5rem);
+        }
+  
+        + label::before {
+          width: calc(#{$switch-height-lg} * 2);
+        }
+  
+        + label::after {
+          width: calc(#{$switch-height-lg} - calc(#{$switch-thumb-padding} * 2));
+          height: calc(#{$switch-height-lg} - calc(#{$switch-thumb-padding} * 2));
+        }
+  
+        &:checked + label::after {
+          margin-left: $switch-height-lg;
+        }
+      }
+    }
+  
+    + .switch {
+      margin-left: 1rem;
+    }
+  
+    // MAIN COLOR VARIATION
+    &.switch-normal {
+      input {
+          &:checked + label::before {
+              background-color: $primary;
+          }
+      }
+    }
+    // PRIMARY LIGHT COLOR VARIATION
+    &.switch-dark {
+      input {
+          &:checked + label::before {
+              background-color: $primary-dark;
+          }
+      }
+    }
+    // PRIMARY LIGHT COLOR VARIATION
+    &.switch-light {
+      input {
+          &:checked + label::before {
+              background-color: $primary-light;
+          }
+      }
+    }
+  
   }
-
-  + .switch {
-    margin-left: 1rem;
-  }
-}
-////////////////////////
+  ////////////////////////
 
 //////////////////////SNACK BAR PERSONAL CLASSES///////////////////////////
 .p-snackbar-layout {
@@ -2393,3 +2414,33 @@ input[type=text], input[type=password], input[type=email], input[type=number], i
 }
 ///////////////////////////////////////////////////////////////////////////
 
+/////////////////////////////////////////--BEGIN RESPONSIVE LAYOUT--////////////////////////////////////////
+#reponsive-layout {
+    display: block;
+
+    @include MQ(M) {
+        display: none;
+    }
+}
+
+.p-home-web-view {
+
+    @include MQ(M) {
+        .map-web {
+            width: 65%;
+        }
+        .pub-web {
+            width: 35%;
+        }
+    }
+
+    @include MQ(L) {
+        .map-web {
+            width: 75%;
+        }
+        .pub-web {
+            width: 25%;
+        }
+    }
+}
+/////////////////////////////////////////--END RESPONSIVE LAYOUT--//////////////////////////////////////////

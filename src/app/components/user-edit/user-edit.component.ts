@@ -36,7 +36,7 @@ export class UserEditComponent implements OnInit, OnDestroy, OnChanges, AfterVie
     public _domSanitizer: DomSanitizer
   ) {
     this.fileToUpload = {
-      mediaFileUrl: "/assets/images/edit-queja/window-sm.jpg",
+      mediaFileUrl: '/assets/images/edit-queja/window-sm.jpg',
       mediaFile: null,
       removeable: false
     };
@@ -44,11 +44,12 @@ export class UserEditComponent implements OnInit, OnDestroy, OnChanges, AfterVie
     this.materialButtons = [
       {
         action: ACTION_TYPES.userEdition,
-        icon: "check"
+        icon: 'check',
+        class: 'custom-btn-normal'
       },
       {
         action: ACTION_TYPES.close,
-        icon: "close"
+        icon: 'close'
       }
     ]
 
@@ -84,8 +85,8 @@ export class UserEditComponent implements OnInit, OnDestroy, OnChanges, AfterVie
    * MÉTODO PARA ACTIVAR EL EECTO DE CARGANDO:
    */
   private loadingAnimation() {
-    this.loadingClass = "on";
-    this.activeClass = "active";
+    this.loadingClass = 'on';
+    this.activeClass = 'active';
   }
 
   /**
@@ -131,7 +132,7 @@ export class UserEditComponent implements OnInit, OnDestroy, OnChanges, AfterVie
         this.actionType = null;
         setTimeout(() => {
           this.actionType = ACTION_TYPES.userEdition;
-          this.showClass = "";
+          this.showClass = '';
         });
         this.loadingAnimation();
         break;

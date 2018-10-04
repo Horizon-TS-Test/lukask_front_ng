@@ -184,7 +184,7 @@ export class MapViewComponent implements OnInit, OnChanges {
    */
   focusPubById() {
     if (this.focusPubId) {
-      let focusZoom = 25;
+      let focusZoom = 15;
       for (let i = 0; i < this.pubList.length; i++) {
         if (this.focusPubId == this.pubList[i].id_publication) {
           this.map.setCenter({ lat: this.pubList[i].latitude, lng: this.pubList[i].longitude });
