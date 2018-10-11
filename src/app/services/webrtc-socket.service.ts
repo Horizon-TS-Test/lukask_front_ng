@@ -3,6 +3,7 @@ import {Headers, Http, Response} from '@angular/http';
 import * as kurentoUtils from 'kurento-utils';
 import { REST_SERV } from '../rest-url/rest-servers';
 import { QuejaService } from './queja.service';
+import * as crypto from '../tools/crypto-gen';
 
 const SUCCESSFUL:number = 200;
 declare var MediaRecorder:any;
@@ -228,7 +229,6 @@ export class WebrtcSocketService {
         keyWord: 'stop',
         idUser: this.userId
       }
-      console.log("messege", messege);
       this.sendMessage(messege);
       
       //Detener la transmición.
@@ -378,7 +378,6 @@ export class WebrtcSocketService {
    */
   stopRecorder(){
     if(this.mediaRecorder){
-
       //Proceso para detener la grabación.
       try{
         this.mediaRecorder.stop();
@@ -389,17 +388,16 @@ export class WebrtcSocketService {
         console.log("error al detner la transmicion", err);
       }
 
-      //this.sendBlobKMS(this.recordedBlobs);
       //Proceso para convertir 
       this.bufferToDataUrl((dataUrl, blob) =>{
         var file  = this.dataUrlToFile(dataUrl);
-        console.log("file send to server ....", file);
-        
+        this.sendFilebKMS(file);
+
         //let bufferContainer = new Blob(this.recordedBlobs, {type: 'video/webm'});
-        let urlDataVideo = window.URL.createObjectURL(blob);
+        //--let urlDataVideo = window.URL.createObjectURL(blob);
         
         //Proceso de descarga del video. --sTemporal
-        const a = document.createElement('a');
+        /*const a = document.createElement('a');
         a.style.display = 'none';
         a.href = urlDataVideo;
         a.download = 'lukask.webm';
@@ -408,20 +406,21 @@ export class WebrtcSocketService {
         setTimeout(() => {
           document.body.removeChild(a);
           window.URL.revokeObjectURL(urlDataVideo);
-        }, 100);
-      })
+        }, 100);*/
+      });
     }
   }
 
-  private sendBlobKMS(blobRecorder:any){
+  private sendFilebKMS(fileVideoRecorder:any){
 
-    console.log("blobRecorder", blobRecorder);
+    console.log("blobRecorder", fileVideoRecorder);
     let formData  = new FormData();
     let xhr = new XMLHttpRequest();
-    formData.append('media_file', blobRecorder);
+    formData.append('media_file', fileVideoRecorder);
+    
     xhr.onreadystatechange = function (){
       if (xhr.readyState === 4) {
-        if (xhr.status === 201) {
+        if (xhr.status === 200) {
           console.log(JSON.parse(xhr.response).data);
         }
         else {
@@ -437,21 +436,6 @@ export class WebrtcSocketService {
 
     xhr.open("post",REST_SERV.mediaRecorder, true);
     xhr.send(formData);
-    /*let requestheaders = new Headers({
-      "Content-Type" : "application/octet-stream"  
-    });
- 
-    return this._http.post(REST_SERV.mediaRecorder, blobRecorder, {
-      headers : requestheaders
-    }).toPromise().then((response : Response) =>{
-      let respMediaJson = response.json();
-      if(response.status === SUCCESSFUL){
-        console.log("datos desde el server kms", respMediaJson);
-      }
-    }).catch((error:Response) => {
-      console.log("error...", error);
-      return throwError(error.json());
-    });*/
   }
 
   /**
@@ -476,15 +460,13 @@ export class WebrtcSocketService {
    * @param dataUrl 
    */
   dataUrlToFile(dataUrl){
-    console.log("dataUrl ...........", dataUrl);
     let binary = atob(dataUrl.split(',')[1]);
     let data = [];
-    
+    console.log("binary......", binary);
     for(let i = 0; i < binary.length; i++){
       data.push(binary.charCodeAt(i));
     }
-
-    return new File([new Uint8Array(data)], this.generateKeyWord() + Date.now() ,{
+    return new File([new Uint8Array(data)], crypto.CrytoGen.encrypt(this.generateKeyWord()) + Date.now() ,{
       type: 'video/webm'
     });
   }
@@ -501,7 +483,6 @@ export class WebrtcSocketService {
     for (var i = 0; i< 10; i++){
         keyWord += letters[Math.floor(Math.random() * letters.length)];
     }
-    console.log(" keyWord..", keyWord)
     return keyWord;
   }
 
