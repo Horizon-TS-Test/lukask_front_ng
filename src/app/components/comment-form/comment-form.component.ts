@@ -5,7 +5,6 @@ import { PatternManager } from '../../tools/pattern-manager';
 import { Comment } from '../../models/comment';
 import { UserService } from '../../services/user.service';
 import { NotifierService } from '../../services/notifier.service';
-import { CONTENT_TYPES } from '../../config/content-type';
 import { Subscription } from 'rxjs';
 import { DateManager } from '../../tools/date-manager';
 import { Alert } from '../../models/alert';

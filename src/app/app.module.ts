@@ -151,7 +151,7 @@ import { WriteCommentComponent } from './components/write-comment/write-comment.
     OwlModule,
     ServiceWorkerModule.register('/sw-workbox.js', { enabled: environment.production })
   ],
-  providers: [appRoutingProviders, ContentService, UserService, AuthGuardService, LoginGuardService, NotifierService, CameraService, SocketService, BrowserNotifierService, QuejaService, NotificationService, RouterService],
+  providers: [appRoutingProviders, ContentService, UserService, NotifierService, CameraService, SocketService, BrowserNotifierService, QuejaService, NotificationService, RouterService],
   bootstrap: [AppComponent],
   entryComponents: [AlertComponent, HorizonModalComponent, SingleMapComponent, HorizonNotificationComponent, HorizonPopOverComponent]
 })
