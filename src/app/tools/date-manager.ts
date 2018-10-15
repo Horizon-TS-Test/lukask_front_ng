@@ -33,8 +33,8 @@ export class DateManager {
         date = date.replace("T", " ").replace("Z", " ");
         
         //Inicializamos variables para los calculos
-        let currentDate = moment();
-        let localDateData = moment(date, "YYYY-MM-DD H:mm:ss");
+        let currentDate = moment(new Date, "YYYY-MM-DD H:mm:ss").locale("es");
+        let localDateData = moment(date, "YYYY-MM-DD H:mm:ss").locale("es");
         
         //Encontramos la cantidad de segundos transcuridos segun la fecha actual a la fecha registrada
         let diff = currentDate.diff(localDateData, 'seconds');
@@ -61,13 +61,13 @@ export class DateManager {
         diff = currentDate.diff(localDateData, 'days');
         if (diff < _DAYS_PER_WEEK) {
             //REF: https://stackoverflow.com/questions/17493309/how-do-i-change-the-language-of-moment-js
-            date = moment(date).locale("es").calendar();
+            date = moment(date, 'YYYY-MM-DD H:mm:ss').locale("es").calendar();
             date = date.substring(0, 1).toUpperCase() + date.substring(1);
             return date;
         }
 
         //REF: https://stackoverflow.com/questions/17493309/how-do-i-change-the-language-of-moment-js
-        return moment(date).locale("es").format('DD, MMMM. YYYY- H:mm:ss').replace(",", " de").replace(".", " de").replace("-", " a las");
+        return moment(date, 'YYYY-MM-DD H:mm:ss').locale("es").format('DD, MMMM. YYYY- H:mm:ss').replace(",", " de").replace(".", " de").replace("-", " a las");
     }
 
     /**

@@ -26,7 +26,7 @@ export class LoginService {
     private _userService: UserService
   ) { }
 
-  restLogin(user: User) {
+  public restLogin(user: User) {
     let encUsr = CrytoGen.encrypt(user.username);
     let encPass = CrytoGen.encrypt(user.password);
 
@@ -52,7 +52,11 @@ export class LoginService {
   /**
    * MÉTODO PARA CERRAR SESIÓN
    */
-  logout() {
+  public logout() {
+    const requestHeaders = new Headers({ 'Content-Type': 'application/json' });
+    this._http.post(REST_SERV.logoutUrl, {}, { headers: requestHeaders, withCredentials: true }).toPromise()
+      .then((response: Response) => { });
+
     localStorage.clear();
     this._userService.delUserProfile();
   }

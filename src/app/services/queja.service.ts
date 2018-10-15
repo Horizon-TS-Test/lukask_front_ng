@@ -1,6 +1,6 @@
-import { Injectable, EventEmitter } from '@angular/core';
+import { Injectable, EventEmitter, OnDestroy } from '@angular/core';
 import { Http, Response, Headers } from '@angular/http';
-import { throwError } from 'rxjs';
+import { throwError, Subscription } from 'rxjs';
 
 import { REST_SERV } from '../rest-url/rest-servers';
 import { QuejaType } from '../models/queja-type';
@@ -21,7 +21,9 @@ declare var verifyStoredData: any;
 @Injectable({
   providedIn: 'root'
 })
-export class QuejaService {
+export class QuejaService implements OnDestroy {
+
+  private subscriptor: Subscription;
 
   private isFetchedQtype: boolean;
   private isFetchedPubs: boolean;
@@ -134,7 +136,7 @@ export class QuejaService {
   /**
    * MÉTODO PARA CARGAR PUBLICACIONES BAJO DEMANDA DESDE LA WEB:
    */
-  getPubsWebByPage(morePubs: boolean = false) {
+  private getPubsWebByPage(morePubs: boolean = false) {
     const pubHeaders = new Headers({
       'Content-Type': 'application/json',
       'X-Access-Token': this._userService.getUserKey()
@@ -227,6 +229,13 @@ export class QuejaService {
       if (!this.isFetchedPubs) {
         return this.getPubsCacheByPage().then((cachePubs: Publication[]) => {
           this.pubList = cachePubs;
+          ////PARA AGREGAR LAS RELEVANCIAS EN MODO OFFLINE:
+          this.getOfflinePubRelevances(this.pubList);
+          ////
+
+          //PARA CARGAR LAS PUBLICACIONES QUE ESTÁN PENDIENTES DE ENVIAR AL BACKEND:
+          this.getOfflinePubsCache()
+          ///
           return cachePubs;
         });
       }
@@ -255,6 +264,9 @@ export class QuejaService {
 
       if (!this.isFetchedPubs) {
         return this.getPubsCacheByPage().then((cachePubs: Publication[]) => {
+          ////PARA AGREGAR LAS RELEVANCIAS EN MODO OFFLINE:
+          this.getOfflinePubRelevances(cachePubs);
+          ////
           this.pubList = this.pubList.concat(cachePubs);
           return this.pubList;
         });
@@ -301,7 +313,7 @@ export class QuejaService {
    */
   mergeJSONData(queja: Publication) {
     var json = {
-      id: new Date().toISOString(),
+      id: queja.id_publication,
       latitude: queja.latitude,
       longitude: queja.longitude,
       detail: queja.detail,
@@ -316,7 +328,7 @@ export class QuejaService {
     }
 
     for (let med of queja.media) {
-      json.media_files.push({ file: med.file, fileName: med.fileName });
+      json.media_files.push({ file: med.file, fileName: med.fileName, fileUrl: med.url });
     }
     /////
 
@@ -331,8 +343,12 @@ export class QuejaService {
       return response;
     }).catch(err => {
       if (!this.isPostedPub && !navigator.onLine) {
+        pub.id_publication = new Date().toISOString();
         this._backSyncService.storeForBackSync('sync-pub', 'sync-new-pub', this.mergeJSONData(pub))
         if (navigator.serviceWorker.controller) {
+          pub.isOffline = true;
+          pub.user = this._userService.getUserProfile();
+          this.pubList.splice(0, 0, pub);
           return true;
         }
       }
@@ -362,7 +378,7 @@ export class QuejaService {
    * MÉTODO PARA EXTRAER LOS DATOS DE PUBLICACION DE UN OBJETO JSON
    * @param pubJson 
    */
-  extractPubJson(pubJson) {
+  public extractPubJson(pubJson) {
     let pub: Publication;
     let usr: User;
     let type: QuejaType;
@@ -370,7 +386,7 @@ export class QuejaService {
     usr = this._userService.extractUserJson(pubJson.user_register);
     type = new QuejaType(pubJson.type_publication, pubJson.type_publication_detail);
 
-    pub = new Publication(pubJson.id_publication, pubJson.latitude, pubJson.length, pubJson.detail, pubJson.date_publication, pubJson.priority_publication, pubJson.active, type, usr, pubJson.location, pubJson.count_relevance, pubJson.user_relevance, pubJson.address, pubJson.is_trans, pubJson.trans_done);
+    pub = new Publication(pubJson.id_publication, pubJson.latitude, pubJson.length, pubJson.detail, pubJson.date_publication, pubJson.priority_publication, pubJson.active, type, usr, pubJson.location, pubJson.count_relevance, pubJson.user_relevance, pubJson.address, pubJson.is_trans);
     for (let med of pubJson.medios) {
       //PREPPENDING THE BACKEND SERVER IP/DOMAIN:
       med.media_path = (med.media_path.indexOf("http") !== -1 || med.media_path.indexOf("https") !== -1 ? "" : REST_SERV.mediaBack) + med.media_path;
@@ -565,6 +581,7 @@ export class QuejaService {
       return throwError(error.json());
     });
   }
+  /************************************************/
 
   /**
    * MÉTODO PARA GUARDAR UN NUEVO COMENTARIO O RESPUESTA EN EL BACKEND O EN SU DEFECTO PARA BACK SYNC:
@@ -610,7 +627,7 @@ export class QuejaService {
    * Y ACTUALIZAR LA LISTA GLOBAL DE PUBLICACIONES CON LOS NUEVOS CAMBIOS
    */
   private listenToSocket() {
-    this._socketService._publicationUpdate.subscribe(
+    this.subscriptor = this._socketService._publicationUpdate.subscribe(
       (socketPub: any) => {
         let stream = socketPub.stream;
         let action = socketPub.payload.action.toUpperCase();
@@ -633,7 +650,7 @@ export class QuejaService {
    * @param pubJson JSON COMMING FROM THE SOCKET.IO SERVER OR AS A NORMAL HTTP RESPONSE:
    * @param action THIS CAN BE CREATE, UPDATE OR DELETE:
    */
-  updatePubList(pubJson: any, action: string) {
+  private updatePubList(pubJson: any, action: string) {
     let lastPub: Publication, newPub: Publication;
     let isDeleted: boolean = false;
 
@@ -653,13 +670,15 @@ export class QuejaService {
 
     verifyStoredData('publication', pubJson, isDeleted);
 
+    this.deleteOffPubAsoc(newPub);
+
     ArrayManager.backendServerSays(action, this.pubList, lastPub, newPub);
   }
 
   /**
    * MÉTODO PARA ACTUALIZAR EL REGISTRO EN INDEXED-DB
    */
-  updateRelNumberIndexDb(pubId: string, newRelCount: number, userId: any) {
+  private updateRelNumberIndexDb(pubId: string, newRelCount: number, userId: any) {
     readAllData("publication")
       .then(function (tableData) {
         let dataToSave;
@@ -686,7 +705,7 @@ export class QuejaService {
    * MÉTODO PAR ACTUALIZAR EL NÚMERO DE RELEVANCIAS DE UNA PUBLICACIÓN:
    * @param actionData 
    */
-  updateRelevanceNumber(actionData: any) {
+  private updateRelevanceNumber(actionData: any) {
     var currentPub = this.pubList.find(pub => pub.id_publication === actionData.publication);
 
     if (currentPub) {
@@ -699,6 +718,106 @@ export class QuejaService {
         this.updateRelNumberIndexDb(actionData.publication, newPub.relevance_counter, newPub.user.id);
       });
     }
+  }
 
+  /**
+   * MÉTODO PARA EXTRAER LOS ATRIBUTOS DE LA LISTA DE PUBLICACIONES OFFLINE:
+   */
+  private extractOfflinePub(offCachePub) {
+    let pub: Publication;
+    let usr: User;
+    let type: QuejaType;
+
+    usr = this._userService.getUserProfile();
+    type = new QuejaType(offCachePub.type_publication, '');
+
+    pub = new Publication(offCachePub.id, offCachePub.latitude, offCachePub.longitude, offCachePub.detail, offCachePub.date_publication, '', true, type, usr, offCachePub.location, 0, false, offCachePub.address, offCachePub.is_trans);
+    for (let med of offCachePub.media_files) {
+      pub.media.push(new Media('', '', med.fileUrl));
+    }
+
+    return pub;
+  }
+
+  /**
+   * MÉTODO PARA OBTENER LAS PUBLICACIONES EN MODO OFFLINE DESDE LA CACHÉ
+   * @param id 
+   */
+  public getOfflinePubsCache() {
+    if ('indexedDB' in window) {
+      readAllData('sync-pub')
+        .then((offlinePubs) => {
+          let offPub: Publication;
+          ////
+          for (let pub of offlinePubs) {
+            offPub = this.extractOfflinePub(pub);
+            offPub.isOffline = true;
+            this.pubList.splice(0, 0, offPub);
+          }
+        });
+    }
+  }
+
+  /**
+   * MÉTODO PARA ELIMINAR UNA PUBLICACIÓN DE LA LISTA DE PUBS:
+   * @param pubId 
+   */
+  public deletePub(pub: Publication) {
+    this.pubList.splice(this.pubList.indexOf(pub), 1);
+  }
+
+  /**
+   * MÉTODO PARA ELIMINAR UNA PUBLICACIÓN DE LA LISTA DE PUBS:
+   * @param pubId 
+   */
+  public deleteOfflinePub(pub: Publication) {
+    this.deletePub(pub);
+
+    deleteItemData("sync-pub", pub.id_publication);
+  }
+
+  /**
+   * MÉTODO PARA ELIMINAR LA PUBLICACIÓN OFFLINE, CUANDO YA SE HAYA GUARDADO EN EL SERVIDOR Y 
+   * VENGA COMO RESPUESTA EN EL SOCKET.IO
+   * @param newPub 
+   */
+  private deleteOffPubAsoc(newPub: any) {
+    //PARA PODER ELIMINAR UNA PUB OFFLINE, LUEGO DE SER GUARDAR:
+    for (let i = 0; i < this.pubList.length; i++) {
+      if (this.pubList[i].isOffline) {
+        let offDate = new Date(this.pubList[i].date_pub).getTime();;
+        let comDate = new Date(newPub.date_pub.replace("T", " ").replace("Z", "")).getTime();;
+
+        if (this.pubList[i].detail == newPub.detail && offDate.toString() == comDate.toString() && this.pubList[i].latitude == newPub.latitude && this.pubList[i].longitude == newPub.longitude && this.pubList[i].type.id == newPub.type.id && this.pubList[i].user.id == newPub.user.id) {
+          this.pubList.splice(i, 1);
+        }
+      }
+    }
+    ////
+  }
+
+  /**
+   * MÉTODO PARA OBTENER LAS RELEVANCIAS OFFLINE DESDE LA CACHÉ, PARA AÑADIR ESTILOS A LAS PUBLICACIONES,
+   * AL MOMENTO DE RECARGAR LA PÁGIN ESTANDO EN MODO OFFLINE:
+   */
+  public getOfflinePubRelevances(pubList: Publication[]) {
+    if ('indexedDB' in window) {
+      readAllData('sync-relevance')
+        .then((offPubRelevances) => {
+          for (let pubRel of offPubRelevances) {
+            if (!pubRel.action_parent) {
+              for (let i = 0; i < pubList.length; i++) {
+                if (pubList[i].id_publication == pubRel.id_publication) {
+                  pubList[i].offRelevance = true;
+                }
+              }
+            }
+          }
+        });
+    }
+  }
+
+  ngOnDestroy() {
+    this.subscriptor.unsubscribe();
   }
 }

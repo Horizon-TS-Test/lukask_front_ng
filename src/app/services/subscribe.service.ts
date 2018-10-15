@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { Http, Headers, Response } from '@angular/http';
+import { Injectable, EventEmitter } from '@angular/core';
+import { Http, Headers } from '@angular/http';
 import { REST_SERV } from '../rest-url/rest-servers';
 import { VAPID_KEY } from '../config/vapid';
 import { BrowserNotifierService } from './browser-notifier.service';
@@ -11,12 +11,15 @@ declare var urlBase64ToUint8Array: any;
   providedIn: 'root'
 })
 export class SubscribeService {
+  public afterSubscribe: EventEmitter<boolean>;
 
   constructor(
     private _http: Http,
     private _browserNotifierService: BrowserNotifierService,
     private _userService: UserService
-  ) { }
+  ) {
+    this.afterSubscribe = new EventEmitter<boolean>();
+  }
 
   /**
    * NEXT METHOD IS NOT FUNCTIONAL ON MOBILE DEVICES:
@@ -33,14 +36,15 @@ export class SubscribeService {
   /**
    * MÉTODO PARA PREGUNTAR SI ES QUE EL USUARIO DESEA RECIBIR NOTIFICACIONES PUSH:
    */
-  public askForSubscription() {
-    Notification.requestPermission((result) => {
-      console.log("User choise", result);
+  public askForSubscription(letSubscribe: boolean = true) {
+    return Notification.requestPermission((result) => {
       if (result !== 'granted') {
-        console.log('No notification persmission granted')
+        console.log('[LUKASK SUBSCRIBE SERVICE] - Notification persmission not granted')
+        return;
       }
       else {
-        this.configurePushSub();
+        console.log('[LUKASK SUBSCRIBE SERVICE] - Notification persmission granted')
+        return this.configurePushSub(letSubscribe);
       }
     });
   }
@@ -48,34 +52,33 @@ export class SubscribeService {
   /**
    * MÉTODO PARA PREPARAR LAS CREDENCIALES Y LLAVES PARA SOLICITAR UNA SUBSCRIPCIÓN AL SERVIDOR:
    */
-  private configurePushSub() {
+  private configurePushSub(letSubscribe: boolean) {
     if (!('serviceWorker' in navigator)) {
       return;
     }
 
-    var reg;
     navigator.serviceWorker.ready
       .then((swreg) => {
-        reg = swreg;
-        swreg.pushManager.getSubscription();
+        var convertedVapidPubKey = urlBase64ToUint8Array(VAPID_KEY);
+
+        return swreg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: convertedVapidPubKey
+        });
       })
-      .then((subscription) => {
+      /*.then((subscription) => {
         if (subscription == null) {
           //CREATE A NEW SUBSCRIPTION
-          var convertedVapidPubKey = urlBase64ToUint8Array(VAPID_KEY);
-
-          return reg.pushManager.subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: convertedVapidPubKey
-          });
+          console.log("No suscrito");
         }
         else {
+          console.log("Suscrito");
           //WE HAVE A SUBSCRIPTION - NOTHING TO DO!
         }
-      })
+        
+      })*/
       .then((newSub) => {//SENDING REQUEST TO OUR SUBS SERVER TO ALSO SEND THE REQUEST AT THE SAME TIME TO FIREBASE
-        console.log(newSub);
-        return this.callPushSub(newSub);
+        this.callPushSub(newSub, letSubscribe);
       })
       .catch((err) => {
         console.log(err);
@@ -86,18 +89,74 @@ export class SubscribeService {
    * MÉTODO PARA SOLICITAR UNA SUBSCRIPCIÓN AL SERVIDOR PUSH:
    * @param newSub LOS DATOS DEL ENDPOINT PARA LA SUBSCRIPCIÓN
    */
-  private callPushSub(newSub: any) {
+  private callPushSub(newSub: any, letSubscribe: boolean) {
     const subBody = JSON.stringify({ user_id: this._userService.getUserProfile().id, push_id: newSub });
-    const subHeaders = new Headers({ 'Content-Type': 'application/json' });
+    const subHeaders = new Headers({
+      'Content-Type': 'application/json',
+      'X-Access-Token': this._userService.getUserKey()
+    });
 
-    return this._http.post(REST_SERV.pushSub, subBody, { headers: subHeaders }).toPromise()
+    if (letSubscribe) {
+      return this._http.post(REST_SERV.pushSub, subBody, { headers: subHeaders, withCredentials: true }).toPromise()
+        .then((response) => {
+          if (response.ok) {
+            this._browserNotifierService.displayConfirmNotification();
+            localStorage.setItem('user_subs', 'true');
+            console.log("[LUKASK SUBSCRIBE SERVICE] - SUCCESSFULLY SUBSCRIBED");
+            this.afterSubscribe.emit(true);
+            return true;
+          }
+        }).catch(function (err) {
+          console.log(err);
+        });
+    }
+
+    this.unsubscribe();
+
+    return this._http.post(REST_SERV.unsubsribe, subBody, { headers: subHeaders, withCredentials: true }).toPromise()
       .then((response) => {
         if (response.ok) {
-          console.log("[LUKASK SUBSCRIBE SERVICE] - SUCCESSFULLY SUBSCRIBED");
-          this._browserNotifierService.displayConfirmNotification();
+          localStorage.setItem('user_subs', 'false');
+          console.log("[LUKASK SUBSCRIBE SERVICE] - SUCCESSFULLY UNSUBSCRIBED");
+          this.afterSubscribe.emit(false);
+          return true;
         }
       }).catch(function (err) {
         console.log(err);
       });
+  }
+
+  /**
+   * MÉTODO PARA DESUSCRIBIR A UN DISPOSITIVO, DE LAS NOTIFICACIONES PUSH
+   * REF: https://blog.learningtree.com/utilizing-push-notifications-progressive-web-app-pwa/
+   */
+  private unsubscribe() {
+    if (!('serviceWorker' in navigator)) {
+      return;
+    }
+
+    navigator.serviceWorker.ready
+      .then((swreg) => {
+        swreg.pushManager.getSubscription()
+          .then((subscription) => {
+            if (subscription) {
+              subscription.unsubscribe();
+            }
+          })
+          .catch(function (error) {
+            console.log('Error while unsubscribing', error);
+          })
+      });
+  }
+
+  /**
+   * MÉTODO PARA VERIFICAR SI EL DISPOSITIVO ESTÁ SUSCRITO A RECIBIR NOTIFICACIONES PUSH:
+   */
+  public isSubscribed() {
+    if (localStorage.getItem('user_subs')) {
+      return localStorage.getItem('user_subs') === 'true';
+    }
+
+    return false;
   }
 }

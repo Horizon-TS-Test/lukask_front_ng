@@ -4,11 +4,12 @@ import { Headers, Http, Response } from '@angular/http';
 import { REST_SERV } from '../rest-url/rest-servers';
 import { throwError } from 'rxjs';
 import { UserService } from './user.service';
-import * as lodash from 'lodash';
 import { BackSyncService } from './back-sync.service';
 import { DateManager } from '../tools/date-manager';
+import * as lodash from 'lodash';
 
 declare var readAllData: any;
+declare var deleteItemData: any;
 declare var upgradeTableFieldData: any;
 
 @Injectable({
@@ -236,7 +237,6 @@ export class ActionService {
       .then((response: Response) => {
         let respJson = response.json().data;
 
-        console.log(respJson);
         upgradeTableFieldData(((comment.commentParentId) ? "reply" : "comment"), respJson, false);
 
         this.isPostedComment = true;
@@ -270,7 +270,7 @@ export class ActionService {
    */
   mergeJSONData(comment: Comment) {
     var json = {
-      id: new Date().toISOString(),
+      id: comment.commentId,
       description: comment.description,
       id_publication: comment.publicationId,
       action_parent: (comment.commentParentId) ? comment.commentParentId : "",
@@ -353,7 +353,7 @@ export class ActionService {
         if (response.status == 200) {
           let jsonComment = respJson.data;
           let comment: Comment = this.extractCommentJson(jsonComment);
-          
+
           console.log("[LUKASK ACTION SERVICE] - COMMENT BY ID FROM WEB", comment);
           return comment;
         }
@@ -374,5 +374,81 @@ export class ActionService {
     let usr = this._userService.extractUserJson(jsonComment.user_register);
 
     return new Comment(jsonComment.id_action, jsonComment.description, jsonComment.publication, usr, jsonComment.action_parent, jsonComment.active, jsonComment.date_register, jsonComment.user_relevance ? jsonComment.user_relevance : false, jsonComment.count_relevance);
+  }
+
+  private extractOffComments(jsonComment: any) {
+    let usr = this._userService.getUserProfile();
+
+    return new Comment(jsonComment.id, jsonComment.description, jsonComment.id_publication, usr, jsonComment.action_parent, jsonComment.active, jsonComment.date, false, 0, true);
+  }
+
+  /**
+   * MÉTODO PARA OBTENER COMENTARIOS Y RESPUESTAS OFFLINE:
+   * @param parentId 
+   * @param isReplies 
+   */
+  public getOffCommentsByPub(parentId: string, isReplies: boolean = false) {
+    if ('indexedDB' in window) {
+      return readAllData(!isReplies ? 'sync-comment' : 'sync-relevance')
+        .then((tableData) => {
+          let comments: Comment[] = [];
+
+          for (let i = 0; i < tableData.length; i++) {
+            if (!isReplies) {
+              if (parentId == tableData[i].id_publication) {
+                comments.push(this.extractOffComments(tableData[i]));
+              }
+            }
+            else {
+              if (parentId == tableData[i].action_parent) {
+                comments.push(this.extractOffComments(tableData[i]));
+              }
+            }
+          }
+
+          if (isReplies) {
+            console.log("[LUKASK ACTION SERVICE] - OFFLINE REPLIES OF A COMMENT WITH ID " + parentId + " FROM CACHE", comments);
+          }
+          else {
+            console.log("[LUKASK ACTION SERVICE] - OFFLINE COMMENTS OF A PUBLICATION WITH ID " + parentId + " FROM CACHE", comments);
+          }
+
+          return comments;
+        });
+    }
+
+    return new Promise((resolve, reject) => {
+      this.isFetchedComments = true;
+      resolve(null);
+    });
+  }
+
+  /**
+   * MÉTODO PARA ELIMINAR UNA RELEVANCIA OFFLINE ANTES DE SER ENVIADA AL SERVIDOR:
+   * @param isCommentRel
+   */
+  public deleteOffRel(parentId: string, isCommentRel: boolean) {
+    if ('indexedDB' in window) {
+      return readAllData('sync-relevance')
+        .then((tableData) => {
+          for (let i = 0; i < tableData.length; i++) {
+            if (!isCommentRel) {
+              if (parentId == tableData[i].id_publication && !tableData[i].action_parent) {
+                deleteItemData("sync-relevance", tableData[i].id)
+              }
+            }
+            else {
+              if (parentId == tableData[i].action_parent) {
+                deleteItemData("sync-relevance", tableData[i].id)
+              }
+            }
+          }
+        });
+    }
+
+    return new Promise((resolve, reject) => {
+      this.isFetchedComments = true;
+      resolve(null);
+    });
   }
 }

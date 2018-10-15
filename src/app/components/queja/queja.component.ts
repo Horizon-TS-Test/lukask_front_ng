@@ -18,6 +18,7 @@ import { ACTION_TYPES } from '../../config/action-types';
 export class QuejaComponent implements OnInit, OnDestroy {
   @Input() queja: Publication;
   @Output() actionType = new EventEmitter<number>();
+  @Output() onCancelPub = new EventEmitter<Publication>();
 
   private subscription: Subscription;
   public userProfile: User;
@@ -40,7 +41,7 @@ export class QuejaComponent implements OnInit, OnDestroy {
    * MÉTODO QUE ESCUCHA LA ACTUALIZACIÓN DE LOS DATOS DE PERFIL DEL USUARIO LOGEADO 
    * PARA ACTUALIZAR LA INFORMACIÓN DE LAS PUBLICACIONES QUE PERTENECEN AL MISMO PERFIL:
    */
-  setOwnUserProfile() {
+  private setOwnUserProfile() {
     this.userProfile = this._userService.getUserProfile();
     if (this.queja.user.id == this.userProfile.id) {
       this.queja.user = this.userProfile;
@@ -51,36 +52,31 @@ export class QuejaComponent implements OnInit, OnDestroy {
    * MÉTODO PARA SOLICITAR LA APERTURA DE UN HORIZON MODAL PARA VER EL DETALLE DE UNA QUEJA:
    * @param event EVENTO DE CLICK DEL ELEMENTO <a href="#">
    */
-  viewQuejaDetail(event: any) {
+  public viewQuejaDetail(event: any) {
     event.preventDefault();
-    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_queja, contentData: this.queja.id_publication });
+    if (!this.queja.isOffline) {
+      this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_queja, contentData: this.queja.id_publication });
+    }
   }
 
   /**
    * MÉTODO PARA CAPTAR LA ACCIÓN DE ALGÚN BOTÓN DEL LA LSITA DE BOTONES, COMPONENTE HIJO
    * @param $event VALOR DEL TIPO DE ACCIÓN QUE VIENE EN UN EVENT-EMITTER
    */
-  optionButtonAction(event: number) {
+  public optionButtonAction(event: number) {
     if (event === ACTION_TYPES.mapFocus) {
       this.actionType.emit(event);
     }
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LOS CAMBIOS QUE SE DEN EN EL ATRIBUTO QUE VIENE DESDE EL COMPONENTE PADRE:
-   * @param changes 
+   * MÉTODO PARA CANCELAR EL ENVÍO DE LA PUBLICACIÓN OFFLINE:
+   * @param event
    */
-  /*ngOnChanges(changes: SimpleChanges) {
-    for (const property in changes) {
-      switch (property) {
-        case 'queja':
-          if (changes[property].currentValue) {
-            this.queja = changes[property].currentValue;
-          }
-          break;
-      }
-    }
-  }*/
+  public cancelPub(event: any) {
+    event.preventDefault();
+    this.onCancelPub.emit(this.queja);
+  }
 
   ngOnDestroy() {
     this.subscription.unsubscribe();

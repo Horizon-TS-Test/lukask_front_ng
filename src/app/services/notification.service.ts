@@ -27,8 +27,10 @@ export class NotificationService {
   /**
    * MÉTODO PARA MOSTRAR NOTIFICACIÓN EN EL DOM:
    */
-  public showNotification(notif: HorizonNotification) {
-    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.new_notification, contentData: notif });
+  public showNotification(notif: HorizonNotification, noShow: boolean = false) {
+    if (noShow == false) {
+      this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.new_notification, contentData: notif });
+    }
     this._newNotif.emit(notif);
   }
 

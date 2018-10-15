@@ -8,6 +8,8 @@ import { ACTION_TYPES } from '../../config/action-types';
 import { Alert } from '../../models/alert';
 import { ALERT_TYPES } from '../../config/alert-types';
 import * as Snackbar from 'node-snackbar';
+import { Router } from '@angular/router';
+import { UserService } from 'src/app/services/user.service';
 
 declare var $: any;
 
@@ -27,7 +29,9 @@ export class TaskListComponent implements OnInit {
   constructor(
     private _actionService: ActionService,
     private _contentService: ContentService,
-    private _notifierService: NotifierService
+    private _notifierService: NotifierService,
+    private _userService: UserService,
+    private _router: Router
   ) {
     this.relevanceProc = true;
   }
@@ -38,7 +42,7 @@ export class TaskListComponent implements OnInit {
   /**
    * MÉTODO PARA MOSTRAR UN ALERTA EN EL DOM:
    */
-  setAlert() {
+  private setAlert() {
     this._notifierService.sendAlert(this.alertData);
   }
 
@@ -46,14 +50,15 @@ export class TaskListComponent implements OnInit {
    * MÉTODO PARA DAR RELEVANCIA A UNA PUBLICACIÓN Y ENVIARLA AL BACKEND:
    * @param event 
    */
-  onRelevance(event: any) {
+  public onRelevance(event: any) {
     event.preventDefault();
-    if (this.relevanceProc == true) {
+    if (!this.queja.isOffline && this.relevanceProc == true && !this.queja.offRelevance) {
       this.relevanceProc = false;
       this._actionService.saveRelevance(this.queja.id_publication, null, !this.queja.user_relevance)
         .then((response: any) => {
           if (response == 'backSyncOk') {
             Snackbar.show({ text: 'Tu apoyo se enviará en la próxima conexión', pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#34b4db', customClass: "p-snackbar-layout" });
+            this.queja.offRelevance = true;
           }
           else {
             this.queja.user_relevance = response;
@@ -71,24 +76,15 @@ export class TaskListComponent implements OnInit {
   /**
    * MÉTODO PARA GEOLOCALIZAR LA QUEJA SELECCIONADA
    */
-  geolocatePub(event: any) {
+  public geolocatePub(event: any) {
     event.preventDefault();
     if (this.isModal == true) {
       this._contentService.elementScrollInside($(".horizon-modal"), $("#sigle-map").offset().top);
     }
     else {
-      //REF:https://github.com/angular/angular/issues/18798#soulfresh
-      /*this._router.navigateByUrl(
-        this._router.createUrlTree(
-          ['/mapview'],
-          {
-            queryParams: {
-              pubId: this.queja.id_publication
-            }
-          }
-        )
-      );*/
-      this.actionType.emit(ACTION_TYPES.mapFocus);
+      if (!this.queja.isOffline) {
+        this.actionType.emit(ACTION_TYPES.mapFocus);
+      }
     }
   }
 
@@ -96,10 +92,11 @@ export class TaskListComponent implements OnInit {
    * MÉTODO PARA ABRIR LA TRANSMISIÓN DE UNA PUBLICACIÓN:
    * @param event 
    */
-  viewTransmission(event: any) {
+  public viewTransmission(event: any) {
     event.preventDefault();
-    if (!this.queja.transDone) {
-      this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_transmission, contentData: { userOwner: this.queja.user.id, pubId: this.queja.id_publication } });
+    if (!this.queja.isOffline && !this.queja.transDone) {
+      this._userService.onStreaming = true;
+      this._router.navigateByUrl('/streaming?pub=' + this.queja.id_publication + '&owner=' + this.queja.user.id);
     }
   }
 
@@ -107,24 +104,19 @@ export class TaskListComponent implements OnInit {
    * MÉTODO PARA ABRIR UN MODAL CON LA LISTA DE PERSONAS QUE APOYAN LA PUBLICACIÓN:
    * @param event 
    */
-  viewSupport(event: any) {
+  public viewSupport(event: any) {
     event.preventDefault();
-    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.support_list, contentData: { pubId: this.queja.id_publication, pubOwner: this.queja.user.person.name } });
+    if (!this.queja.isOffline) {
+      this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.support_list, contentData: { pubId: this.queja.id_publication, pubOwner: this.queja.user.person.name } });
+    }
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LOS CAMBIOS QUE SE DEN EN EL ATRIBUTO QUE VIENE DESDE EL COMPONENTE PADRE:
-   * @param changes 
+   * MÉTODO PARA CANCELAR EL ENVÍO DE UNA RELEVANCIA OFFLINE AL SERVIDOR:
    */
-  /*ngOnChanges(changes: SimpleChanges) {
-    for (const property in changes) {
-      switch (property) {
-        case 'queja':
-          if (changes[property].currentValue) {
-            this.queja = changes[property].currentValue;
-          }
-          break;
-      }
-    }
-  }*/
+  public cancelPubRelevance(event: any) {
+    event.preventDefault();
+    this.queja.offRelevance = false;
+    this._actionService.deleteOffRel(this.queja.id_publication, false);
+  }
 }

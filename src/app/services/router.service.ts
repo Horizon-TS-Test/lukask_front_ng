@@ -18,15 +18,15 @@ export class RouterService {
     this._router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
         let url = event.url;
-        if (url.indexOf("activity") !== -1 || url.indexOf("login") !== -1) {
+        if (url.indexOf("activity") !== -1 || url.indexOf("login") !== -1 || url.indexOf("streaming") !== -1) {
           this._enableMainMenu.emit(false);
         }
         else {
           this._enableMainMenu.emit(true);
         }
-        console.log("Route Change Start!");
+        console.log("[ROUTER SERIVCE]: Route Change Start!");
       } else if (event instanceof NavigationEnd) {
-        console.log("Route Change End!");
+        console.log("[ROUTER SERIVCE]: Route Change End");
       }
     });
   }

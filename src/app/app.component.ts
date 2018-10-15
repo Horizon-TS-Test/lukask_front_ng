@@ -39,7 +39,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private _cfr: ComponentFactoryResolver,
   ) {
     this.askForUpdates = false;
-    
+
     this.preventInstallPrompt();
     this.afterSwInstall();
 
@@ -190,7 +190,7 @@ export class AppComponent implements OnInit, OnDestroy {
       (notifData: any) => {
         if (notifData.payload.data.user_received == this._userService.getUserProfile().id) {
           let newNotif: HorizonNotification = this._notificationService.extractNotifJson(notifData.payload.data);
-          this._notificationService.showNotification(newNotif);
+          this._notificationService.showNotification(newNotif, this._userService.onStreaming);
         }
       }
     );

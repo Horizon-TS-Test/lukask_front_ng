@@ -10,7 +10,6 @@ import { IntroData } from '../../interfaces/intro-data.interface';
 import IntroDataInterface from '../../data/intro-data';
 import { SliderManager } from '../../tools/slider-manger';
 import { DomSanitizer } from '../../../../node_modules/@angular/platform-browser';
-import { ContentService } from '../../services/content.service';
 
 declare var $: any;
 @Component({
@@ -63,7 +62,7 @@ export class QuejaListComponent implements OnInit, AfterViewInit, OnDestroy {
     }, 2000);
   }
 
-  defineSlider() {
+  private defineSlider() {
     let slider = $("#Intro").find(".cd-hero-slider");
     let navPause = $("#Intro").find(".personal-pause");
     let navPlay = $("#Intro").find(".personal-play");
@@ -73,7 +72,7 @@ export class QuejaListComponent implements OnInit, AfterViewInit, OnDestroy {
   /**
    * MÉTODO PARA DEFINIR EL STILO USANDO URL'S SEGURAS PARA LAS IMÁGENES DEL SLIDER:
    */
-  defineImageStyle() {
+  private defineImageStyle() {
     this.styles = [];
     //REF: https://angular.io/guide/security#xss
     for (let intro of this.introDataList) {
@@ -98,7 +97,7 @@ export class QuejaListComponent implements OnInit, AfterViewInit, OnDestroy {
   /**
    * FUNCIÓN PARA OBTENER UN NÚMERO INICIAL DE PUBLICACIONES, PARA DESPUÉS CARGAR MAS PUBLICACIONES BAJO DEMANDA
    */
-  getPubList() {
+  private getPubList() {
     this._quejaService.getPubList().then((pubs: Publication[]) => {
       this.pubList = pubs;
       this.activeClass = this.LOADER_HIDE;
@@ -116,7 +115,7 @@ export class QuejaListComponent implements OnInit, AfterViewInit, OnDestroy {
   /**
    * FUNCIÓN PARA OBTENER PUBLICACIONES BAJO DEMANDA A TRAVÉS DE UN PATTERN DE PAGINACIÓN:
    */
-  getMorePubs() {
+  private getMorePubs() {
     if (this.pubList && this.activeClass != this.LOADER_ON) {
       this.activeClass = this.LOADER_ON;
       this._quejaService.getMorePubs().then((morePubs: Publication[]) => {
@@ -148,15 +147,28 @@ export class QuejaListComponent implements OnInit, AfterViewInit, OnDestroy {
    * MÉTODO PARA CAPTAR LA ACCIÓN DE ALGÚN BOTÓN DEL LA LISTA DE BOTONES, COMPONENTE HIJO
    * @param $event VALOR DEL TIPO DE ACCIÓN QUE VIENE EN UN EVENT-EMITTER
    */
-  optionButtonAction(event: number, pubId: string) {
+  public optionButtonAction(event: number, pubId: string) {
     if (event === ACTION_TYPES.mapFocus) {
       this.actionType.emit({ contentType: event, contentData: pubId });
     }
   }
 
-  nextPrev(event: any, next: boolean) {
+  /**
+   * MÉTODO PARA NAVEGAR E INTERACTUAR CON EL SLIDER:
+   * @param event 
+   * @param next 
+   */
+  public nextPrev(event: any, next: boolean) {
     event.preventDefault();
     this._sliderManager.goPrevNext(next);
+  }
+
+  /**
+   * MÉTODO PARA CANCELAR EL ENVIO DE UNA PUB OFFLINE:
+   * @param $event 
+   */
+  public cancelPub(pub: Publication) {
+    this._quejaService.deleteOfflinePub(pub);
   }
 
   ngOnDestroy() {

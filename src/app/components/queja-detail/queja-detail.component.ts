@@ -29,6 +29,7 @@ export class QuejaDetailComponent implements OnInit, OnChanges, OnDestroy {
   public quejaDetail: Publication;
   public matButtons: HorizonButton[];
   public carouselOptions: any;
+  public isUnavaliable: boolean;
 
   constructor(
     private _quejaService: QuejaService,
@@ -53,9 +54,14 @@ export class QuejaDetailComponent implements OnInit, OnChanges, OnDestroy {
         this.quejaDetail = pub;
         this.initCarousel();
         if (this.commentId) {
-          setTimeout(() => {
-            this.viewComments();
-          }, 100);
+          if (this.quejaDetail) {
+            setTimeout(() => {
+              this.viewComments();
+            }, 100);
+          }
+          else {
+            this.isUnavaliable = true;
+          }
         }
 
         if (this.isModal == true) {

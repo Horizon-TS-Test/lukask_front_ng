@@ -82,18 +82,15 @@ export class ContentService {
 
   /**
    * MÉTODO PARA VERIFICAR SI EL SCROLL ESTÁ AL FINAL DE UN ELEMENTO DEL DOM:
+   * HREF: https://gist.github.com/rajvanshipradeep15/6606779
    * @param domElement ELEMENTO A VERIFICAR SI EL SCROLL ESTÁ AL FINAL DEL MISMO
    */
   isBottomScroll(domElement: any) {
     let elementScroll = domElement.scrollTop();
     let elementHeight = domElement.height();
-    let docHeight = 0;
+    let scrollHeight = domElement[0].scrollHeight;
 
-    domElement.children().first().children().each((index, element) => {
-      docHeight = docHeight + $(element).height();
-    });
-
-    if (elementScroll + elementHeight >= docHeight - 10) {
+    if (elementScroll + elementHeight >= scrollHeight - 20) {
       return true;
     }
 

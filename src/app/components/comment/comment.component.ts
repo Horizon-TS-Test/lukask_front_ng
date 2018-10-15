@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, OnChanges, SimpleChanges, EventEmitter, Output } from '@angular/core';
 import { Comment } from '../../models/comment';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NotifierService } from '../../services/notifier.service';
@@ -23,6 +23,7 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
   @Input() isReply: boolean;
   @Input() noReplyBtn: boolean;
   @Input() hideBtn: boolean;
+  @Output() onCancelComment = new EventEmitter<Comment>();
 
   private subscription: Subscription;
   private alertData: Alert;
@@ -97,12 +98,13 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
    */
   public onRelevance(event: any) {
     event.preventDefault();
-    if (this.relevanceProc == true) {
+    if (this.relevanceProc == true && !this.commentModel.offRelevance) {
       this.relevanceProc = false;
       this._actionService.saveRelevance(this.commentModel.publicationId, this.commentModel.commentId, !this.commentModel.userRelevance)
         .then((response: any) => {
           if (response == 'backSyncOk') {
             Snackbar.show({ text: 'Tu apoyo se enviará en la próxima conexión', pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#34b4db', customClass: "p-snackbar-layout" });
+            this.commentModel.offRelevance = true;
           }
           else {
             this.commentModel.userRelevance = response;
@@ -115,6 +117,24 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
           this.relevanceProc = true;
         });
     }
+  }
+
+  /**
+   * MÉTODO PARA CANCELAR EL ENVÍO DE UN COMENTARIO PENDIENTE:
+   * @param $event 
+   */
+  public cancelComment(event: any) {
+    event.preventDefault();
+    this.onCancelComment.emit(this.commentModel);
+  }
+
+  /**
+   * MÉTODO PARA CANCELAR EL ENVÍO DE UNA RELEVANCIA OFFLINE AL SERVIDOR:
+   */
+  public cancelCommentRel(event: any) {
+    event.preventDefault();
+    this.commentModel.offRelevance = false;
+    this._actionService.deleteOffRel(this.commentModel.commentId, true);
   }
 
   /**

@@ -3,8 +3,9 @@
     <div class="pers-profile-img-comen" [style.background-image]="_domSanitizer.bypassSecurityTrustStyle('url(' + commentModel.user.profileImg + ')')"></div>
 
     <div class="f-child-no-auto form-group pl-1 pb-0 mb-0" [ngClass]="{ 'has-danger': description.touched && restChars < 0 }">
-      <textarea [ngStyle]="{ 'display': (modalForm != false) ? 'inherit': 'none' }" #commentText name="description" #description="ngModel"
-        [(ngModel)]="commentModel.description" class="p-border-none form-control form-control-danger" cols="30" rows="4" placeholder="Escribe {{ (commentModel.commentParentId) ? 'una respuesta...' : 'un comentario...' }}"
+      <textarea [ngStyle]="{ 'display': (modalForm != false) ? 'inherit': 'none' }" #commentText name="description"
+        #description="ngModel" [(ngModel)]="commentModel.description" class="p-border-none form-control form-control-danger"
+        cols="30" rows="4" placeholder="Escribe {{ (commentModel.commentParentId) ? 'una respuesta...' : 'un comentario...' }}"
         (keyup)="validateLettersNumber($event)"></textarea>
       <small *ngIf="modalForm != false" class="pb-0 form-control-feedback">{{restChars}} caracteres restantes.</small>
 

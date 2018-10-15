@@ -7,7 +7,7 @@
     </div>
     <ul class="max-height-fourth p-overflow-auto list-group list-group-flush pb-0">
         <li *ngFor="let reply of replyList" class="f-child-full-space list-group-item">
-            <comment [commentModel]="reply" class="w-100" [isReply]="true"></comment>
+            <comment [commentModel]="reply" class="w-100" [isReply]="true" (onCancelComment)="cancelReply($event)"></comment>
         </li>
     </ul>
     <div *ngIf="pagePattern || firstPattern" class="card-footer text-center">

@@ -561,6 +561,9 @@ p, label, div {
 .f-child-no-auto {
     flex: 1 0 !important;
 }
+.f-child-no-shrink {
+    flex-shrink: 0 !important;
+}
 .f-child-order-0 {
     order: 0;
 }
@@ -1560,8 +1563,8 @@ p, label, div {
     justify-content: center;
     align-items: center;
     border-color: $primary !important;
-    width: 35px;
-    height: 35px;
+    width: $material-btn-wh;
+    height: $material-btn-wh;
     border-radius: 50% !important;
     background: $primary !important;
     -webkit-box-shadow: 1px 2px 4px 2px rgba(0,0,0,0.2) !important;
@@ -1649,6 +1652,18 @@ p, label, div {
 
     fa, span {
         color: $primary-dark;
+    }
+}
+.no-border-button.secondary-dark {
+
+    fa, span {
+        color: $secondary-dark;
+    }
+}
+.no-border-button.light {
+
+    fa, span {
+        color: $primary-light;
     }
 }
 .no-border-button.secondary {
@@ -1740,6 +1755,19 @@ p, label, div {
     -webkit-animation: cd-bounce-out 0.3s linear;
     -moz-animation: cd-bounce-out 0.3s linear;
     animation: cd-bounce-out 0.3s linear;
+}
+
+.p-outline-btn {
+    border-color: $primary !important;
+    color: $primary !important;
+    
+    &.dark {
+        border-color: $primary-dark !important;
+        color: $primary-dark !important;
+    }
+    &.upper {
+        text-transform: uppercase;
+    }
 }
 /////////////////////
 
@@ -1866,15 +1894,20 @@ input[type=text], input[type=password], input[type=email], input[type=number], i
     justify-content: center;
     align-items: center;
     background: $primary-dark;
-}
-.news-main {
-    position: fixed;
-    right: unset;
-    top: unset;
-    z-index: 10000000;
-    right: $nav-x + $nav-menu-size-lg - .5rem;
-    bottom: $nav-menu-bottom-lg + $nav-menu-size-lg - .5rem;
-    background: $primary;
+ 
+    &.news-main {
+        position: fixed;
+        top: unset;
+        z-index: 10000000;
+        right: $nav-x + $nav-menu-size-lg - .5rem;
+        bottom: $nav-menu-bottom-lg + $nav-menu-size-lg - .5rem;
+        background: $primary;
+    }
+
+    &.news-material-btn {
+        right:calc(#{$material-btn-wh} - 5px) ;
+        top: -12px;
+    }
 }
 ////
 
@@ -2444,3 +2477,57 @@ input[type=text], input[type=password], input[type=email], input[type=number], i
     }
 }
 /////////////////////////////////////////--END RESPONSIVE LAYOUT--//////////////////////////////////////////
+
+/////////////////////////////////////////--BEGIN OFFLINE STYLES--//////////////////////////////////////////
+.offline-status {
+    background-color: $primary-light !important;
+    
+    > div {
+        font-size: .9rem;
+    }
+    * {
+        color: $primary-dark;
+    }
+
+    &.status-float {
+        position: absolute;
+        z-index: 1;
+        top: 100%;
+        left: 0;
+    }
+    &.status-float::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 14px;
+        width: 0;
+        height: 0;
+        border: 8px solid transparent;
+        border-bottom-color: $primary-light;
+        border-top: 0;
+        margin-left: -8px;
+        margin-top: -8px;
+    }
+    &.status-rel-comment::before {
+        left: 12px;
+    }
+}
+
+.offline-tasks {
+    a {
+        fa, span {
+            color: $custom-control-indicator-bg !important; 
+        }
+    }
+}
+
+.p-unavaliable {
+    width: 230px;
+    height: 230px;
+    overflow: hidden;
+    border-radius: 50%;
+    -webkit-box-shadow: 4px 4px 7px 2px rgba(0,0,0,0.2) !important;
+    -moz-box-shadow: 4px 4px 7px 2px rgba(0,0,0,0.2) !important;
+    box-shadow: 4px 4px 7px 2px rgba(0,0,0,0.2) !important;
+}
+/////////////////////////////////////////--END OFFLINE STYLES--//////////////////////////////////////////

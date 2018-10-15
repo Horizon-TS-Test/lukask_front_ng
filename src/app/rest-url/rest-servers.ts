@@ -8,7 +8,6 @@ export const REST_SERV = {
     commentUrl: SERV_IP.middleware + '/comment',
     relevanceUrl: SERV_IP.middleware + '/relevance',
     mediaBack: SERV_IP.middleware,
-    pushSub: SERV_IP.push + '/subscribe',
     socketServerUrl: SERV_IP.middleware,
     webRtcSocketServerUrl: SERV_IP.kurentoClient + '/lukaskstreaming',
     userUrl: SERV_IP.middleware + '/user',
@@ -20,5 +19,8 @@ export const REST_SERV = {
     signUrl: SERV_IP.middleware + '/signIn',
     provinceUrl: SERV_IP.middleware + '/province',
     cantonUrl: SERV_IP.middleware + '/canton',
-    parroquiaUrl: SERV_IP.middleware + '/parroquia'
+    parroquiaUrl: SERV_IP.middleware + '/parroquia',
+    logoutUrl: SERV_IP.middleware + '/login/logout',
+    pushSub: SERV_IP.middleware + '/push/subscribe',
+    unsubsribe: SERV_IP.middleware + '/push/unsubscribe',
 }

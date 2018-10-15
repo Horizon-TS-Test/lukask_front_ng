@@ -1,5 +1,5 @@
-<div class="col-12 pt-1 px-1">
-  <div *ngIf="quejaDetail" class="personal-queja p-shadow-card p-no-border-rad-card card mb-3 pb-0">
+<div *ngIf="quejaDetail" class="col-12 pt-1 px-1">
+  <div class="personal-queja p-shadow-card p-no-border-rad-card card mb-3 pb-0">
     <div class="px-2 card-header d-flex justify-content-center align-items-center">
       <task-list class="col-12 p-0" [queja]="quejaDetail" [isModal]="isModal"></task-list>
     </div>
@@ -47,5 +47,7 @@
     </div>
   </div>
 </div>
+
+<unavaliable *ngIf="isUnavaliable"></unavaliable>
 
 <material-btn-list *ngIf="isModal" [showClass]="showClass" [materialBtns]="matButtons" (someBtnAction)="getButtonAction($event)"></material-btn-list>

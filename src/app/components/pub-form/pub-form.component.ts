@@ -178,7 +178,7 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges {
     this.newPub = new Publication("", this._gps.latitude, this._gps.longitude, this.formPub.value.fcnDetail, DateManager.getFormattedDate(), null, null, new QuejaType(this.quejaType, null), null, this._locationCity, null, null, this._locationAdress, this.isStreamPub);
     if (this.mediaFiles.length > 0) {
       for (let i = 0; i < this.mediaFiles.length; i++) {
-        this.newPub.media.push(new Media("", "", "", null, this.mediaFiles[i].mediaFile, i + "-" + new Date().toISOString() + ".png"));
+        this.newPub.media.push(new Media("", "", this.mediaFiles[i].mediaFileUrl, true, this.mediaFiles[i].mediaFile, i + "-" + new Date().toISOString() + ".png"));
       }
     }
     this._quejaService.savePub(this.newPub).then((response: any) => {
@@ -190,7 +190,7 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges {
       }
       this.formPub.reset();
     }).catch((error) => {
-      if(error.code == 400) {
+      if (error.code == 400) {
         this.afterSubmit.emit({ finished: true, dataAfterSubmit: null, hasError: true, message: 'Verifique que la información ingresada sea correcta' });
       }
       else {

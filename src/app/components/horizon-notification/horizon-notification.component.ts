@@ -26,8 +26,7 @@ export class HorizonNotificationComponent implements OnInit {
     public _domSanitizer: DomSanitizer,
     public _notificationService: NotificationService,
     public _notifierService: NotifierService,
-    public _router: Router,
-    public _activatedRoute: ActivatedRoute
+    public _router: Router
   ) { }
 
   ngOnInit() {
@@ -77,7 +76,7 @@ export class HorizonNotificationComponent implements OnInit {
   /**
    * MÉTODO PARA ABRIR EL RECURSO QUE LLEGA JUNTO CON LA NOTIFICACIÓN:
    */
-  openUrl(event: any) {
+  public openUrl(event: any) {
     event.preventDefault();
     this._notifierService.notifyCloseModal();
     if (this._ref) {

@@ -51,9 +51,6 @@
       <notification-list></notification-list>
     </div>
 
-    <media-streaming *ngSwitchCase="contentTypes.view_transmission" [showClass]="showClass" [streamOwnerId]="_dynaContent.contentData.userOwner"
-      [pubId]="_dynaContent.contentData.pubId" (closeModal)="close($event)"></media-streaming>
-
     <div class="personal-dyna-up {{ showClass }} col-12 p-0" *ngSwitchCase="contentTypes.support_list">
       <support-list [pubId]="_dynaContent.contentData.pubId" [pubOwner]="_dynaContent.contentData.pubOwner" [commentId]="_dynaContent.contentData.commentId"
         [commentOwner]="_dynaContent.contentData.commentOwner"></support-list>

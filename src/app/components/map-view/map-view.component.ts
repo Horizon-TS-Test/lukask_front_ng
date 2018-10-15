@@ -95,16 +95,6 @@ export class MapViewComponent implements OnInit, OnChanges {
     }, { timeout: 7000 });
   }
 
-
-  /**
-   * MÉTODO PARA OBTENER LOS PARÁMETROS QUE LLEGAN EN EL URL:
-   */
-  /*getQueryParams() {
-    this._activatedRoute.queryParams.subscribe(params => {
-      this.focusPubId = params['pubId'];
-    });
-  }*/
-
   /**
    * MÉTODO QUE RECORRE LA LISTA DE QUEJAS Y CREA EL MARKER DE CADA UNA
    */

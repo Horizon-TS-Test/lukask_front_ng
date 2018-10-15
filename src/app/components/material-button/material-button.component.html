@@ -1,4 +1,5 @@
-<a #btnRef (click)="requestAction($event)" class="custom-btn p-sec-btn p-0 my-1 btn btn-outline-info {{buttonMeta.class}}">
+<a #btnRef (click)="requestAction($event)" class="relative-background custom-btn p-sec-btn p-0 my-1 btn btn-outline-info {{buttonMeta.class}}">
   <fa *ngIf="!buttonMeta.customIcon" name="{{buttonMeta.icon}}"></fa>
-  <span *ngIf="buttonMeta.customIcon" class="personal-site-icon">{{buttonMeta.icon}}</span>
+  <span *ngIf="buttonMeta.btnNews > 0" class="news-number news-material-btn">{{ buttonMeta.btnNews }}</span>
+  <span *ngIf="buttonMeta.customIcon" class="personal-site-icon">{{ buttonMeta.icon }}</span>
 </a>

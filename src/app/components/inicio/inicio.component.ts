@@ -20,10 +20,12 @@ declare var $: any;
 })
 export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('owlElement') owlElement: OwlCarousel;
+
   private pubContainer: any;
   private customCarousel: any;
-  private subscriptor: Subscription;
   private alertData: Alert;
+  private subscriptor: Subscription;
+  private paymentSubs: Subscription;
 
   public enableSecondOp: boolean;
   public enableThirdOp: boolean;
@@ -80,7 +82,6 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   private onScrollPubContainer() {
     this.pubContainer = $('#pub-container');
-    console.log("this.pubContainer", this.pubContainer.attr("id"));
     this.pubContainer.scroll(() => {
       if (this._contentService.isBottomScroll(this.pubContainer)) {
         this._notifierService.notifyMorePubsRequest(true);
@@ -91,8 +92,8 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   /**
    * MÉTODO PARA ESCUCHAR LA RESPUESTA DEL PAGO DE SERVICIOS BÁSICOS:
    */
-  paymentSocketUpdate() {
-    this._socket._paymentResponse.subscribe(
+  private paymentSocketUpdate() {
+    this.paymentSubs = this._socket._paymentResponse.subscribe(
       (socketPago: any) => {
         const data = JSON.parse(socketPago);
         console.log("CORREO DEL USUARIO QUE PAGA EL SERVICO: ", data.data.email);
@@ -221,5 +222,6 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscriptor.unsubscribe();
+    this.paymentSubs.unsubscribe();
   }
 }

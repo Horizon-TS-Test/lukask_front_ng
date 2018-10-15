@@ -27,6 +27,7 @@ export class UserService {
   public userProfile: User;
   public _userUpdate = new EventEmitter<boolean>();
   public pageLimit: number;
+  public onStreaming: boolean;
 
   constructor(
     private _http: Http,
@@ -37,6 +38,7 @@ export class UserService {
     this.isFetchedCanton = false;
     this.isFetchedParroquia = false;
     this.isPatchedUser = false;
+    this.onStreaming = false;
   }
 
   /**
@@ -284,14 +286,14 @@ export class UserService {
     user.person = new Person(jsonUser.person.id_person, jsonUser.person.age, jsonUser.person.identification_card, jsonUser.person.name, jsonUser.person.last_name, jsonUser.person.telephone, jsonUser.person.address, jsonUser.person.active, jsonUser.person.birthdate, jsonUser.person.cell_phone, null, DateManager.convertStringToDate(jsonUser.person.birthdate));
 
     //PROVISIONAL
-    user.person.parroquia.id_parroquia = jsonUser.person.location.parish.id;
+    /*user.person.parroquia.id_parroquia = jsonUser.person.location.parish.id;
     user.person.parroquia.name = jsonUser.person.location.parish.description;
 
     user.person.parroquia.canton.id_canton = jsonUser.person.location.canton.id;
     user.person.parroquia.canton.name = jsonUser.person.location.canton.description;
 
     user.person.parroquia.canton.province.id_province = jsonUser.person.location.province.id;
-    user.person.parroquia.canton.province.name = jsonUser.person.location.province.description;
+    user.person.parroquia.canton.province.name = jsonUser.person.location.province.description;*/
     ////
 
     return user;

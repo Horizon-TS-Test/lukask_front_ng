@@ -34,8 +34,6 @@ export class WebrtcSocketService {
       this.kurentoWs = new WebSocket(REST_SERV.webRtcSocketServerUrl);
 
       this.kurentoWs.onopen = (open) => {
-        console.log("idUser", idUser);
-        console.log("pubId", pubId);
         this.userId = idUser;
         this.pubId = pubId;
         this._videoData = _video;
@@ -158,7 +156,6 @@ export class WebrtcSocketService {
   sendMessage(message) {
 
     var jsonMessage = JSON.stringify(message);
-    console.log("enviando mensaje", this.kurentoWs);
     this.kurentoWs.send(jsonMessage);
   }
 

@@ -46,7 +46,10 @@ export class MainNavComponent implements OnInit {
 
   ngOnInit() { }
 
-  forceClickMenu() {
+  /**
+   * MÉTODO PARA ABRIR LOS PANELES DE OPCIONES Y NAVEGACIÓN
+   */
+  private forceClickMenu() {
     if (this._enableMainMenu && this._userService.isLoggedIn()) {
       setTimeout(() => {
         let menu: HTMLElement = document.getElementById('menu-nav') as HTMLElement;

@@ -8,6 +8,7 @@ import { ArrayManager } from '../../tools/array-manager';
 import { Subscription } from 'rxjs';
 import { NotifierService } from '../../services/notifier.service';
 
+declare var deleteItemData: any;
 declare var upgradeTableFieldDataArray: any;
 
 @Component({
@@ -23,6 +24,7 @@ export class ReplyListComponent implements OnInit, OnDestroy {
   private LOADER_ON: string = "on";
   private mainReplies: any;
   private subscriptor: Subscription;
+  private replySubs: Subscription;
 
   public firstPattern: string;
   public pagePattern: string;
@@ -66,6 +68,7 @@ export class ReplyListComponent implements OnInit, OnDestroy {
         this.replyList = repliesData.comments;
         this.firstPattern = repliesData.pagePattern;
         this.pagePattern = repliesData.pagePattern;
+        this.getOfflineReplies();
       });
   }
 
@@ -76,12 +79,17 @@ export class ReplyListComponent implements OnInit, OnDestroy {
   onCommentResponse() {
     this.subscriptor = this._notifierService._newCommentResp.subscribe((newRep: Comment) => {
       if (newRep.commentParentId == this.parentComment.commentId) {
-        let lastReply: Comment;
-        //REF: https://stackoverflow.com/questions/39019808/angular-2-get-object-from-array-by-id
-        lastReply = this.replyList.find(com => com.commentId === newRep.commentId);
+        if (newRep.isOffline) {
+          this.replyList.splice(0, 0, newRep);
+        }
+        else {
+          let lastReply: Comment;
+          //REF: https://stackoverflow.com/questions/39019808/angular-2-get-object-from-array-by-id
+          lastReply = this.replyList.find(com => com.commentId === newRep.commentId);
 
-        if (ArrayManager.backendServerSays("CREATE", this.replyList, lastReply, newRep) == true) {
-          this.updatePattern();
+          if (ArrayManager.backendServerSays("CREATE", this.replyList, lastReply, newRep) == true) {
+            this.updatePattern();
+          }
         }
       }
     });
@@ -153,10 +161,11 @@ export class ReplyListComponent implements OnInit, OnDestroy {
    * Y ACTUALIZAR LA LISTA GLOBAL DE RESPUESTAS CON LOS NUEVOS CAMBIOS
    */
   listenToSocket() {
-    this._socketService._commentUpdate.subscribe(
+    this.replySubs = this._socketService._commentUpdate.subscribe(
       (socketPub: any) => {
         let action = socketPub.payload.action.toUpperCase();
-        this.updateCommentList(socketPub.payload.data, action);
+        this.updatereplyList(socketPub.payload.data, action);
+        this.deleteOffRepAsoc(this._actionService.extractCommentJson(socketPub.payload.data));
       }
     );
   }
@@ -166,7 +175,7 @@ export class ReplyListComponent implements OnInit, OnDestroy {
    * @param pubJson JSON COMMING FROM THE SOCKET.IO SERVER OR AS A NORMAL HTTP RESPONSE:
    * @param action THIS CAN BE CREATE, UPDATE OR DELETE:
    */
-  updateCommentList(commentJson: any, action: string) {
+  updatereplyList(commentJson: any, action: string) {
     if (commentJson.description != null && commentJson.action_parent == this.parentComment.commentId) {
       let lastReply: Comment, newRep: Comment;
 
@@ -194,8 +203,51 @@ export class ReplyListComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * MÉTODO PARA OBTENER LAS RESPUESTAS OFFLINE, PENDIENTES DE ENVÍO:
+   */
+  private getOfflineReplies() {
+    this._actionService.getOffCommentsByPub(this.parentComment.commentId, true).then((dataResponse: any) => {
+      let offReplies: Comment[] = <Comment[]>dataResponse;
+      for (let reply of offReplies) {
+        this.replyList.splice(0, 0, reply);
+      }
+    });
+  }
+
+  /**
+   * MÉTODO PARA CANCELAR EL ENVÍO DE UN COMENTARIO OFFLINE:
+   * @param comment COMENTARIO A SER CANCELADO
+   */
+  public cancelReply(reply: Comment) {
+    this.replyList.splice(this.replyList.indexOf(reply), 1);
+
+    deleteItemData("sync-comment", reply.commentId);
+  }
+
+  /**
+   * MÉTODO PARA ELIMINAR LA RESPUESTA OFFLINE, CUANDO YA SE HAYA GUARDADO EN EL SERVIDOR Y 
+   * VENGA COMO RESPUESTA EN EL SOCKET.IO
+   * @param newRep 
+   */
+  private deleteOffRepAsoc(newRep: Comment) {
+    //PARA PODER ELIMINAR UNA PUB OFFLINE, LUEGO DE SER GUARDAR:
+    for (let i = 0; i < this.replyList.length; i++) {
+      if (this.replyList[i].isOffline) {
+        let offDate = new Date(this.replyList[i].dateRegister).getTime();;
+        let comDate = new Date(newRep.dateRegister.replace("T", " ").replace("Z", "")).getTime();;
+
+        if (this.replyList[i].description == newRep.description && offDate.toString() == comDate.toString() && this.replyList[i].publicationId == newRep.publicationId && this.replyList[i].commentParentId == newRep.commentParentId && this.replyList[i].user.id == newRep.user.id) {
+          this.replyList.splice(i, 1);
+        }
+      }
+    }
+    ////
+  }
+
   ngOnDestroy() {
     this.subscriptor.unsubscribe();
+    this.replySubs.unsubscribe();
   }
 
 }

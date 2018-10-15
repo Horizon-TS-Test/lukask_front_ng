@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, Input, Output, EventEmitter, SimpleChanges, OnChanges } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, Input, Output, EventEmitter, SimpleChanges, OnChanges, NgZone } from '@angular/core';
 import { Device } from '../../interfaces/device.interface';
 import { NotifierService } from '../../services/notifier.service';
 import { CAMERA_ACTIONS } from '../../config/camera-actions';
@@ -11,7 +11,6 @@ import { UserService } from '../../services/user.service';
 
 import * as Snackbar from 'node-snackbar';
 import * as loadImage from 'blueimp-load-image';
-import { resolve } from '../../../../node_modules/@types/q';
 
 @Component({
   selector: 'app-webrtc-camera',
@@ -45,7 +44,8 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
     private _notifierService: NotifierService,
     private _cameraService: CameraService,
     private _webrtcSocketService: WebrtcSocketService,
-    private _userService: UserService
+    private _userService: UserService,
+    private _ngZone: NgZone
   ) {
     this.snapShotCounter = 0;
 
@@ -81,19 +81,20 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
           case CAMERA_ACTIONS.flash_off:
             break;
           case CAMERA_ACTIONS.init_transmision:
-            //AQUÍ DEBES LLAMAR A TUS MÉTODOS PARA LA TRANSMISIÓN DENNYS :D 
-            this.startTransmission();
+            //MÉTODO UTILIZADO PARA EL STREAMING
+            this.transmissionOutsideAngular();
             break;
           case CAMERA_ACTIONS.pause_transmision:
-            //AQUÍ DEBES LLAMAR A TUS MÉTODOS PARA LA TRANSMISIÓN DENNYS :D
+            //MÉTODO UTILIZADO PARA EL STREAMING
             break;
           case CAMERA_ACTIONS.stop_transmision:
-            //AQUÍ DEBES LLAMAR A TUS MÉTODOS PARA LA TRANSMISIÓN DENNYS :D
+            //MÉTODO UTILIZADO PARA EL STREAMING
             this._webrtcSocketService.closeTransmissionCnn();
             break;
           case CAMERA_ACTIONS.join_transmision:
+            //MÉTODO UTILIZADO PARA EL STREAMING
             if (this.streamOwnerId) {
-              this.joinTransmission();
+              this.joinOutsideAngular();
             }
             break;
           case CAMERA_ACTIONS.stop_stream:
@@ -114,7 +115,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
     this.backCamera = (!this.backCamera) ? false : this.backCamera;
 
     if (this.streamOwnerId) {
-      this.joinTransmission();
+      this.joinOutsideAngular();
     }
     else {
       navigator.mediaDevices.enumerateDevices().then((data) => {
@@ -149,14 +150,17 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
 
   /**
    * MÉTODO PARA ABRIR UNA CÁMARA POR DEFECTO
+   * @param doneCallback RETORNA UN CALLBACK PARA CREAR UN PROCESO ASÍNCRONO FUERA DEL CONTEXTO DE ANGULAR
    */
-  openSomeCamera() {
+  openSomeCamera(doneCallback: () => void) {
     if (this.backCamera) {
       this.startBackLiveCam();
     }
     else {
       this.startFrontLiveCam();
     }
+
+    doneCallback();
   }
 
   /**
@@ -171,7 +175,18 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
       }
       counter++;
       if (counter == deviceInfos.length) {
-        this.openSomeCamera();
+
+        /**
+         * PARA INICIAR LA TRASMISIÓN FUERA DEL CONTEXTO DE ANGULAR
+        */
+        //REF: https://github.com/angular/angular/issues/20970
+        this._ngZone.runOutsideAngular(() => {
+          this.openSomeCamera(() => {
+            this._ngZone.run(() => {
+              console.log("[WERTC-CAMERA COMPONENT]: Proceso ejecutado fuera del contexto de Angular");
+            });
+          });
+        });
       }
     });
   }
@@ -279,8 +294,10 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
     return this._webrtcSocketService.connecToKurento(this._userService.userProfile.id, this.pubId, this._video);
   }
 
-  startTransmission() {
+  startTransmission(someCallBack: () => void) {
     if (this.pubId && !this.streamOwnerId && !this.transmissionOn) {
+      this._userService.onStreaming = true;
+
       this.connectToStreamingClient()
         .then((response: boolean) => {
           if (response) {
@@ -291,12 +308,16 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
           console.log("[WERTC-CAMERA COMPONENT]: NO SE HA PODIDO INICIAR LA TRANSMISIÓN, FALLO EN LA CONEXIÓN");
         });
     }
+
+    someCallBack();
   }
 
   /**
    * MÉTODO PARA UNIRSE A UNA TRANSMISIÓN
    */
-  joinTransmission() {
+  joinTransmission(doSomeCallback: () => void) {
+    this._userService.onStreaming = true;
+
     this.connectToStreamingClient()
       .then((response: boolean) => {
         if (response) {
@@ -306,6 +327,36 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
       .catch((response: boolean) => {
         console.log("[WERTC-CAMERA COMPONENT]: NO SE HA PODIDO CONECTAR A LA TRANSMISIÓN, FALLO EN LA CONEXIÓN");
       });
+
+    doSomeCallback();
+  }
+
+  /**
+   * PARA INICIAR LA TRASMISIÓN FUERA DEL CONTEXTO DE ANGULAR
+   */
+  transmissionOutsideAngular() {
+    //REF: https://github.com/angular/angular/issues/20970
+    this._ngZone.runOutsideAngular(() => {
+      this.startTransmission(() => {
+        this._ngZone.run(() => {
+          console.log("[WERTC-CAMERA COMPONENT]: Proceso ejecutado fuera del contexto de Angular");
+        });
+      });
+    });
+  }
+
+  /**
+   * PARA UNIRSE A UNA TRASMISIÓN FUERA DEL CONTEXTO DE ANGULAR
+   */
+  joinOutsideAngular() {
+    //REF: https://github.com/angular/angular/issues/20970
+    this._ngZone.runOutsideAngular(() => {
+      this.joinTransmission(() => {
+        this._ngZone.run(() => {
+          console.log("[WERTC-CAMERA COMPONENT]: Proceso ejecutado fuera del contexto de Angular");
+        });
+      });
+    });
   }
 
   /**
@@ -318,7 +369,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
         case 'pubId':
           if (changes[property].currentValue) {
             this.pubId = changes[property].currentValue;
-            this.startTransmission();
+            this.transmissionOutsideAngular();
           }
           break;
       }

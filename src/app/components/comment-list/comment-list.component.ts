@@ -8,7 +8,9 @@ import { HorizonButton } from '../../interfaces/horizon-button.interface';
 import { NotifierService } from '../../services/notifier.service';
 import { Subscription } from 'rxjs';
 import { ACTION_TYPES } from '../../config/action-types';
+import { ContentService } from '../../services/content.service';
 
+declare var $: any;
 declare var readAllData: any;
 declare var writeData: any;
 declare var deleteItemData: any;
@@ -33,7 +35,9 @@ export class CommentListComponent implements OnInit, AfterViewInit, OnDestroy, O
   private LOADER_ON: string = "on";
 
   private subscriptor: Subscription;
+  private commentSubs: Subscription;
   private mainComments: any;
+  private container: any;
 
   public firstPattern: string;
   public pagePattern: string;
@@ -47,6 +51,7 @@ export class CommentListComponent implements OnInit, AfterViewInit, OnDestroy, O
     private _actionService: ActionService,
     private _socketService: SocketService,
     private _notifierService: NotifierService,
+    private _contentService: ContentService,
   ) {
     this.activeClass = this.LOADER_HIDE;
     this.matButtons = [
@@ -67,29 +72,42 @@ export class CommentListComponent implements OnInit, AfterViewInit, OnDestroy, O
     this.listenToSocket();
   }
 
+  /**
+   * MÉTODO PARA MANIPULAR EL EVENTO DE SCROLL DENTRO DEL COMPONENTE PRINCIPAL DE COMENTARIO:
+   */
+  private onScrollCommentContainer() {
+    this.container = $('#comentsBody');
+    this.container.scroll(() => {
+      if (this._contentService.isBottomScroll(this.container)) {
+        this.askForMore(null);
+      }
+    });
+  }
+
   ngAfterViewInit() {
     this.getComments();
     this.onCommentResponse();
+    this.onScrollCommentContainer();
   }
 
   /**
    * MÉTODO PARA INICIALIZAR LOS DATOS DEL ARRAY SECUNDARIO DE COMENTARIOS:
    */
-  defineMainComments() {
+  private defineMainComments() {
     this.mainComments = [];
   }
 
   /**
    * MÉTODO PARA INICIALIZAR EL OBJETO DE TIPO COMMENT PARA REGISTRAR UN NUEVO COMENTARIO:
    */
-  resetComment() {
+  private resetComment() {
     this.newComment = new Comment("", "", this.pubId);
   }
 
   /**
    * MÉTODO PARA CARGAR LOS COMENTARIOS DESDE EL BACKEND:
    */
-  getComments() {
+  private getComments() {
     if (this.isModal == true) {
       this._actionService.pageLimit = this._actionService.MOBILE_LIMIT;
     }
@@ -97,6 +115,9 @@ export class CommentListComponent implements OnInit, AfterViewInit, OnDestroy, O
       .then((commentsData: any) => {
         this.defineMainComments();
         this.commentList = commentsData.comments;
+        this.getOfflineComRelevances(this.commentList);
+        this.getOfflineComments();
+
         this.firstPattern = commentsData.pagePattern;
         this.pagePattern = commentsData.pagePattern;
       });
@@ -106,15 +127,20 @@ export class CommentListComponent implements OnInit, AfterViewInit, OnDestroy, O
    * MÉTODO PARA ESCUCHAR LAS EMISIONES DEL OBJETO EVENT-EMITER DEL COMPONENTE HIJO,
    * EL NUEVO COMENTARIO QUE DEVUELVE EL COMPONENTE HIJO, PROVENIENTE DEL BACKEND:
    */
-  onCommentResponse() {
+  private onCommentResponse() {
     this.subscriptor = this._notifierService._newCommentResp.subscribe((newCom: Comment) => {
       if (newCom.publicationId == this.pubId && !newCom.commentParentId) {
-        let lastComment: Comment;
-        //REF: https://stackoverflow.com/questions/39019808/angular-2-get-object-from-array-by-id
-        lastComment = this.commentList.find(com => com.commentId === newCom.commentId);
+        if (newCom.isOffline) {
+          this.commentList.splice(0, 0, newCom);
+        }
+        else {
+          let lastComment: Comment;
+          //REF: https://stackoverflow.com/questions/39019808/angular-2-get-object-from-array-by-id
+          lastComment = this.commentList.find(com => com.commentId === newCom.commentId);
 
-        if (ArrayManager.backendServerSays("CREATE", this.commentList, lastComment, newCom) == true) {
-          this.updatePattern();
+          if (ArrayManager.backendServerSays("CREATE", this.commentList, lastComment, newCom) == true) {
+            this.updatePattern();
+          }
         }
       }
     });
@@ -124,7 +150,7 @@ export class CommentListComponent implements OnInit, AfterViewInit, OnDestroy, O
    * MÉTODO PARA ACTUALIZAR EL PATTERN QUE VIENE DEL BACKEND PARA NO COMPROMETER LA SECUENCIA 
    * DE REGISTRO A TRAER DEL BACKEND BAJO DEMANDA, CUANDO SE REGISTRE UN NUEVO COMENTARIO:
    */
-  updatePattern() {
+  private updatePattern() {
     if (this.pagePattern) {
       let offsetPos = this.pagePattern.indexOf("=", this.pagePattern.indexOf("offset")) + 1;
       let newOffset = parseInt(this.pagePattern.substring(offsetPos)) + 1;
@@ -136,8 +162,10 @@ export class CommentListComponent implements OnInit, AfterViewInit, OnDestroy, O
    * MÉTODO PARA CARGAR MAS COMENTARIOS
    * @param event EVENTO DE CLICK DEL ELEMENTO <a href="#">
    */
-  askForMore(event: any) {
-    event.preventDefault();
+  public askForMore(event: any) {
+    if (event) {
+      event.preventDefault();
+    }
     if (this.activeClass != this.LOADER_ON) {
       this.activeClass = this.LOADER_ON;
       if (this.pagePattern) {
@@ -148,6 +176,7 @@ export class CommentListComponent implements OnInit, AfterViewInit, OnDestroy, O
 
               setTimeout(() => {
                 this.activeClass = this.LOADER_HIDE;
+                this.getOfflineComRelevances(commentsData.comments);
                 this.commentList = this.commentList.concat(commentsData.comments);
                 this.pagePattern = commentsData.pagePattern;
               }, 800);
@@ -170,11 +199,13 @@ export class CommentListComponent implements OnInit, AfterViewInit, OnDestroy, O
         setTimeout(() => {
           this.activeClass = "";
 
-          setTimeout(() => {
-            this.pagePattern = this.firstPattern;
-            this.activeClass = this.LOADER_HIDE;
-            this.commentList.splice(this._actionService.pageLimit, this.commentList.length - this._actionService.pageLimit);
-          }, 800);
+          if (this.halfModal == false) {
+            setTimeout(() => {
+              this.pagePattern = this.firstPattern;
+              this.activeClass = this.LOADER_HIDE;
+              this.commentList.splice(this._actionService.pageLimit, this.commentList.length - this._actionService.pageLimit);
+            }, 800);
+          }
         }, 1000)
       }
     }
@@ -183,7 +214,7 @@ export class CommentListComponent implements OnInit, AfterViewInit, OnDestroy, O
   /**
    * MÉTODO PARA ESCUCHAR LA ACCIÓN DEL EVENTO DE CLICK DE UN BOTÓN DINÁMICO:
    */
-  getButtonAction(actionEvent: number) {
+  public getButtonAction(actionEvent: number) {
     switch (actionEvent) {
       case ACTION_TYPES.close:
         this.closeModal.emit(true);
@@ -196,13 +227,14 @@ export class CommentListComponent implements OnInit, AfterViewInit, OnDestroy, O
    * QUE TRAE CAMBIOS DESDE EL BACKEND (CREATE/UPDATE/DELETE)
    * Y ACTUALIZAR LA LISTA GLOBAL DE COMENTARIOS CON LOS NUEVOS CAMBIOS
    */
-  listenToSocket() {
-    this._socketService._commentUpdate.subscribe(
+  private listenToSocket() {
+    this.commentSubs = this._socketService._commentUpdate.subscribe(
       (socketPub: any) => {
         let action = socketPub.payload.action.toUpperCase();
 
         if (socketPub.payload.data.description != null) {
           this.updateCommentList(socketPub.payload.data, action);
+          this.deleteOffComAsoc(this._actionService.extractCommentJson(socketPub.payload.data));
         }
         else {
           this.updateRelevanceCounter(socketPub.payload.data);
@@ -214,7 +246,7 @@ export class CommentListComponent implements OnInit, AfterViewInit, OnDestroy, O
   /**
    * MÉTODO PARA ACTUALIZAR EL REGISTRO EN INDEXED-DB
    */
-  updateRelNumberIndexDb(comId: string, newRelCount: number, userId: any) {
+  private updateRelNumberIndexDb(comId: string, newRelCount: number, userId: any) {
     readAllData("comment")
       .then(function (tableData) {
         let dataToSave;
@@ -238,7 +270,7 @@ export class CommentListComponent implements OnInit, AfterViewInit, OnDestroy, O
   /**
    * MÉTODO PARA ACTUALIZAR EL NUMERO DE RELEVANCIAS DE UN COMENTARIO:
    */
-  updateRelevanceCounter(actionData) {
+  private updateRelevanceCounter(actionData) {
     if (actionData.action_parent) {
       let currentComment = this.commentList.find(com => com.commentId == actionData.action_parent);
 
@@ -257,7 +289,7 @@ export class CommentListComponent implements OnInit, AfterViewInit, OnDestroy, O
    * @param pubJson JSON COMMING FROM THE SOCKET.IO SERVER OR AS A NORMAL HTTP RESPONSE:
    * @param action THIS CAN BE CREATE, UPDATE OR DELETE:
    */
-  updateCommentList(commentJson: any, action: string) {
+  private updateCommentList(commentJson: any, action: string) {
     if (commentJson.publication == this.pubId && !commentJson.action_parent) {
       let lastComment: Comment, newCom: Comment;
 
@@ -286,6 +318,18 @@ export class CommentListComponent implements OnInit, AfterViewInit, OnDestroy, O
   }
 
   /**
+   * MÉTODO PARA OBTENER LOS COMENTARIOS OFFLINE, PENDIENTES DE ENVÍO:
+   */
+  private getOfflineComments() {
+    this._actionService.getOffCommentsByPub(this.pubId).then((dataResponse: any) => {
+      let offComments: Comment[] = <Comment[]>dataResponse;
+      for (let comment of offComments) {
+        this.commentList.splice(0, 0, comment);
+      }
+    });
+  }
+
+  /**
    * MÉTODO PARA DETECTAR LOS CAMBIOS DE UNA PROPIEDAD INYECTADA DESDE EL COMPONENTE PADRE DE ESTE COMPONENTE:
    * @param changes LOS CAMBIOS GENERADOS
    */
@@ -306,8 +350,61 @@ export class CommentListComponent implements OnInit, AfterViewInit, OnDestroy, O
     }
   }
 
+  /**
+   * MÉTODO PARA CANCELAR EL ENVÍO DE UN COMENTARIO OFFLINE:
+   * @param comment COMENTARIO A SER CANCELADO
+   */
+  public cancelComment(comment: Comment) {
+    this.commentList.splice(this.commentList.indexOf(comment), 1);
+
+    deleteItemData("sync-comment", comment.commentId);
+  }
+
+  /**
+   * MÉTODO PARA ELIMINAR EL COMENTARIO OFFLINE, CUANDO YA SE HAYA GUARDADO EN EL SERVIDOR Y 
+   * VENGA COMO RESPUESTA EN EL SOCKET.IO
+   * @param newCom 
+   */
+  private deleteOffComAsoc(newCom: Comment) {
+    //PARA PODER ELIMINAR UNA PUB OFFLINE, LUEGO DE SER GUARDAR:
+    for (let i = 0; i < this.commentList.length; i++) {
+      if (this.commentList[i].isOffline) {
+        let offDate = new Date(this.commentList[i].dateRegister).getTime();;
+        let comDate = new Date(newCom.dateRegister.replace("T", " ").replace("Z", "")).getTime();;
+
+        if (this.commentList[i].description == newCom.description && offDate.toString() == comDate.toString() && this.commentList[i].publicationId == newCom.publicationId && this.commentList[i].commentParentId == newCom.commentParentId && this.commentList[i].user.id == newCom.user.id) {
+          this.commentList.splice(i, 1);
+        }
+      }
+    }
+    ////
+  }
+
+  /**
+   * MÉTODO PARA OBTENER LAS RELEVANCIAS OFFLINE DESDE LA CACHÉ, PARA AÑADIR ESTILOS A LOS COMENTARIOS,
+   * AL MOMENTO DE RECARGAR LA PÁGIN ESTANDO EN MODO OFFLINE:
+   */
+  public getOfflineComRelevances(comList: Comment[]) {
+    if ('indexedDB' in window) {
+      readAllData('sync-relevance')
+        .then((offPubRelevances) => {
+          for (let pubRel of offPubRelevances) {
+            if (pubRel.action_parent) {
+              for (let i = 0; i < comList.length; i++) {
+                if (comList[i].commentId == pubRel.action_parent) {
+                  comList[i].offRelevance = true;
+                }
+              }
+            }
+          }
+        });
+    }
+  }
+
   ngOnDestroy() {
     this.subscriptor.unsubscribe();
+    this.commentSubs.unsubscribe();
+
     if (this.halfModal) {
       this._notifierService.notifyShowHorizonBtn();
     }

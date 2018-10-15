@@ -76,6 +76,9 @@ import { InitComponent } from './components/init/init.component';
 import { InstallSliderComponent } from './components/install-slider/install-slider.component';
 import { PromptComponent } from './components/prompt/prompt.component';
 import { HorizonSwitchInListComponent } from './components/horizon-switch-in-list/horizon-switch-in-list.component';
+import { OfflinePageComponent } from './components/offline-page/offline-page.component';
+import { UnavaliableComponent } from './components/unavaliable/unavaliable.component';
+import { StreamingComponent } from './components/streaming/streaming.component';
 
 @NgModule({
   declarations: [
@@ -131,7 +134,10 @@ import { HorizonSwitchInListComponent } from './components/horizon-switch-in-lis
     InitComponent,
     InstallSliderComponent,
     PromptComponent,
-    HorizonSwitchInListComponent
+    HorizonSwitchInListComponent,
+    OfflinePageComponent,
+    UnavaliableComponent,
+    StreamingComponent
   ],
   imports: [
     HttpModule,

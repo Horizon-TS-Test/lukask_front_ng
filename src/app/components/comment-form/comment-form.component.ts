@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, NgZone } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActionService } from '../../services/action.service';
 import { PatternManager } from '../../tools/pattern-manager';
@@ -33,7 +33,8 @@ export class CommentFormComponent implements OnInit, OnDestroy {
     public _domSanitizer: DomSanitizer,
     private _actionService: ActionService,
     private _userService: UserService,
-    private _notifierService: NotifierService
+    private _notifierService: NotifierService,
+    private _ngZone: NgZone
   ) {
     this.maxChars = 200;
     this.restChars = this.maxChars;
@@ -47,6 +48,7 @@ export class CommentFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.commentModel.commentId = new Date().toISOString();;
     this.commentModel.active = true;
     this.commentModel.dateRegister = DateManager.getFormattedDate();
     this.setUser();
@@ -60,13 +62,20 @@ export class CommentFormComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA CONTROLAR EL LÍMITE MÁXIMO DE CARACTERES A INGRESAR EN UN COMENTARIO O RESPUESTA:
+   * MÉTODO PARA CONTROLAR EL LÍMITE MÁXIMO DE CARACTERES A INGRESAR 
+   * EN UN COMENTARIO O RESPUESTA, FUERA DEL CONTEXTO DE ANGULAR
    * @param event EVENTO DE KEYPRESS
    */
   validateLettersNumber(event: KeyboardEvent) {
-    setTimeout(() => {
-      this.restChars = PatternManager.limitWords(this.maxChars, this.commentModel.description.length);
-    })
+    //REF: https://github.com/angular/angular/issues/20970
+    this._ngZone.runOutsideAngular(() => {
+      setTimeout(() => {
+        this._ngZone.run(() => {
+          this.restChars = PatternManager.limitWords(this.maxChars, this.commentModel.description.length);
+          console.log("[COMMENT FORM]: Running outside the angular context");
+        });
+      });
+    });
   }
 
   /**
@@ -95,6 +104,9 @@ export class CommentFormComponent implements OnInit, OnDestroy {
 
         if (response == true) {
           Snackbar.show({ text: 'Tu ' + (this.commentModel.commentParentId ? 'respuesta' : 'comentario') + ' se enviará en la próxima conexión', pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#34b4db', customClass: "p-snackbar-layout" });
+
+          let offComment = new Comment(this.commentModel.commentId, this.commentModel.description, this.commentModel.publicationId, this._userService.getUserProfile(), this.commentModel.commentParentId, this.commentModel.active, this.commentModel.dateRegister, null, null, true);
+          this._notifierService.notifyNewCommentResp(offComment);
         }
         else {
           this._notifierService.notifyNewCommentResp(this._actionService.extractCommentJson(response));
