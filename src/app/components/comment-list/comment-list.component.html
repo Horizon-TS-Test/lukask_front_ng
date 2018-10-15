@@ -5,7 +5,7 @@
       'p-border-none': isModal == false
     }">
       <div class="card-block">
-        <comment-form [commentModel]="newComment" [modalForm]="false"></comment-form>
+        <write-comment [commentModel]="newComment"></write-comment>
       </div>
       <ul class="list-group list-group-flush pb-0">
         <li *ngFor="let comment of commentList" class="pb-1 list-group-item">
@@ -28,7 +28,7 @@
 
 <div *ngIf="halfModal" class="p-no-border-rad-card p-transparent-card card">
   <div class="card-block">
-    <comment-form [commentModel]="newComment" [modalForm]="false"></comment-form>
+    <write-comment [commentModel]="newComment"></write-comment>
   </div>
   <ul class="max-height-fourth p-overflow-auto list-group list-group-flush pb-0" id="comentsBody">
     <li *ngIf="!commentList || commentList.length == 0" class="secondary-color p-border-none list-group-item py-3 px-4">

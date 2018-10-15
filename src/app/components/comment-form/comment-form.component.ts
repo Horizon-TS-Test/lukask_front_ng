@@ -19,7 +19,6 @@ import * as Snackbar from 'node-snackbar';
 })
 export class CommentFormComponent implements OnInit, OnDestroy {
   @Input() commentModel: Comment;
-  @Input() modalForm: boolean;
   @Output() closeModal = new EventEmitter<boolean>();
 
   private alertData: Alert;
@@ -123,18 +122,6 @@ export class CommentFormComponent implements OnInit, OnDestroy {
         this.alertData = new Alert({ title: 'Proceso Fallido', message: 'No se pudo procesar la petición', type: ALERT_TYPES.danger });
         this.setAlert();
       });
-  }
-
-  /**
-   * MÉTODO PARA SOLICITAR LA APERTURA DE UN HORIZON MODAL PARA MOSTRAR 
-   * EL CAMPO DE TEXTO PARA ESCRIBIR UN NUEVO COMENTARIO O RESPUESTA:
-   * @param event EVENTO CLICK DEL ELEMENTO <a href="#">
-   */
-  writeComment(event: any) {
-    event.preventDefault();
-    if (this.modalForm == false) {
-      this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.comment_input, contentData: this.commentModel });
-    }
   }
 
   ngOnDestroy() {

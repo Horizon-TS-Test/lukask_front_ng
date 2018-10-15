@@ -79,6 +79,7 @@ import { HorizonSwitchInListComponent } from './components/horizon-switch-in-lis
 import { OfflinePageComponent } from './components/offline-page/offline-page.component';
 import { UnavaliableComponent } from './components/unavaliable/unavaliable.component';
 import { StreamingComponent } from './components/streaming/streaming.component';
+import { WriteCommentComponent } from './components/write-comment/write-comment.component';
 
 @NgModule({
   declarations: [
@@ -137,7 +138,8 @@ import { StreamingComponent } from './components/streaming/streaming.component';
     HorizonSwitchInListComponent,
     OfflinePageComponent,
     UnavaliableComponent,
-    StreamingComponent
+    StreamingComponent,
+    WriteCommentComponent
   ],
   imports: [
     HttpModule,

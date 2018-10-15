@@ -31,7 +31,7 @@
     </div>
 
     <div class="personal-dyna-down {{ showClass }} col-12 p-0" *ngSwitchCase="contentTypes.comment_input">
-      <comment-form [commentModel]="_dynaContent.contentData" [modalForm]="true" (closeModal)="close($event)"></comment-form>
+      <comment-form [commentModel]="_dynaContent.contentData" (closeModal)="close($event)"></comment-form>
     </div>
 
     <img-viewer *ngSwitchCase="contentTypes.view_img" [showClass]="showClass" [media]="_dynaContent.contentData" (closeModal)="close($event)"></img-viewer>
