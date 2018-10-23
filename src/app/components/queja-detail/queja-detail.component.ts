@@ -94,7 +94,7 @@ export class QuejaDetailComponent implements OnInit, OnChanges, OnDestroy {
    */
   viewImg(event: any) {
     event.preventDefault();
-    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_img, contentData: this.quejaDetail.media });
+    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_img, contentData: { media :this.quejaDetail.media, opView: CONTENT_TYPES.view_img}});
   }
 
   /**

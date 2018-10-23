@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
-import {Headers, Http, Response} from '@angular/http';
-import * as kurentoUtils from 'kurento-utils';
+import { throwError } from 'rxjs';
+import { Headers, Http, Response} from '@angular/http';
+
 import { REST_SERV } from '../rest-url/rest-servers';
 import { QuejaService } from './queja.service';
+import * as kurentoUtils from 'kurento-utils';
 import * as crypto from '../tools/crypto-gen';
 
 const SUCCESSFUL:number = 200;
@@ -24,6 +26,7 @@ export class WebrtcSocketService {
   private isPresenter: any;
   public kurentoWs: any;
   public video: any;
+  public _userService: any;
 
   constructor(
     private _quejaService: QuejaService,
@@ -31,7 +34,19 @@ export class WebrtcSocketService {
   ) {
     this.isPresenter = false;
     this.recordedBlobs  = [];
-    console.log("this.recordedBlobs ", this.recordedBlobs );
+    console.log("this.recordedBlobs ", this.recordedBlobs);
+  }
+
+
+  ////////////////////////////
+  ////// PRIVATE METHOTS /////
+  ////////////////////////////
+
+  /**
+   * Cerramos la coneccion del WS de kurento.
+   */
+  private closeWebSocketConn() {
+    this.kurentoWs.close();
   }
 
   /**
@@ -39,14 +54,13 @@ export class WebrtcSocketService {
    * @param idUser 
    * @param _video 
    */
-  connecToKurento(idUser: string, pubId: string, _video: any) {
+  connecToKurento(userService: any, pubId: string, _video: any) {
     let websocketPromise = new Promise((resolve, reject) => {
       this.kurentoWs = new WebSocket(REST_SERV.webRtcSocketServerUrl);
       this.kurentoWs.onopen = (open) => {
-        console.log("idUser", idUser);
-        console.log("pubId", pubId);
-        this.userId = idUser;
+        this.userId = userService.userProfile.id;
         this.pubId = pubId;
+        this._userService = userService;
         this._videoData = _video;
         this.messageFromKurento();
         console.log("[WEBRTC-SOCKET SERVICE]: CONEXIÓN EXITOSA AL WEBSOCKET DE KURENTO CLIENT", open);
@@ -87,7 +101,6 @@ export class WebrtcSocketService {
           break;
 
         case 'stopCommunication':
-          console.log("se cerro la transmición...")
           this.break();
           break;
 
@@ -106,8 +119,8 @@ export class WebrtcSocketService {
     let constraints = {
       audio: true,
       video: {
-        width : 1280,
-        height : 720,
+        //width : 1280,
+        //height : 720,
         deviceId: { exact: idCamera }
       }
     }
@@ -174,7 +187,6 @@ export class WebrtcSocketService {
   sendMessage(message) {
 
     var jsonMessage = JSON.stringify(message);
-    console.log("enviando mensaje", jsonMessage);
     this.kurentoWs.send(jsonMessage);
   }
 
@@ -232,11 +244,19 @@ export class WebrtcSocketService {
       this.sendMessage(messege);
       
       //Detener la transmición.
-      this.stopRecorder();
       this.break();
+      this.stopRecorder();
     }
   }
 
+  /**
+   * Proceso para reproducir videos.
+   * @param videoInput 
+   */
+  playMedia(videoInput:any){
+    console.log("Proceso para reproducir video");
+    let webRtcPeer = kurentoUtils.WebRtcPeer.startRecvOnly();
+  }
 
   /***********************************
   * Respuestas desde el servidor node 
@@ -276,18 +296,11 @@ export class WebrtcSocketService {
   break() {
     if (this.webRtcPeer) {
       var res =  this.webRtcPeer.dispose();
-      console.log("resStop", res);
       this.webRtcPeer = null;
       this.closeWebSocketConn();
     }
   }
 
-  /**
-   * Cerramos la coneccion del WS de kurento.
-   */
-  private closeWebSocketConn() {
-    this.kurentoWs.close();
-  }
 
   /***********************************************
    ** Proceso de grabación del video en memoria ** 
@@ -300,7 +313,6 @@ export class WebrtcSocketService {
   async  dataRecord(constraints){
     try{
       this.stream = await navigator.mediaDevices.getUserMedia(constraints);
-      console.log("media stream:", this.stream);
       this.startRecording();
     } catch(e){
       console.log('navigator.getUserMedia error', e);
@@ -312,12 +324,9 @@ export class WebrtcSocketService {
    * Inicio del proceso de grabación.
    */
   startRecording(){
-    
-    this.recordedBlobs = [];
-
-    console.log("this.recordedBlobs ", this.recordedBlobs );
-
+   
     //Opciones de datos.
+    this.recordedBlobs = [];
     let options = {
       mimeType : 'video/webm;codecs=vp9'
     }
@@ -359,8 +368,6 @@ export class WebrtcSocketService {
 
     //Escuchamos el evento de inicio de la grabación.
     this.mediaRecorder.start(10);
-
-    console.info('Media recorder iniciado', this.mediaRecorder);
   }
 
   /**
@@ -390,9 +397,8 @@ export class WebrtcSocketService {
 
       //Proceso para convertir 
       this.bufferToDataUrl((dataUrl, blob) =>{
-        var file  = this.dataUrlToFile(dataUrl);
-        this.sendFilebKMS(file);
-
+        //var file  = this.dataUrlToFile(dataUrl);
+        this.sendFilebKMS(blob);
         //let bufferContainer = new Blob(this.recordedBlobs, {type: 'video/webm'});
         //--let urlDataVideo = window.URL.createObjectURL(blob);
         
@@ -409,33 +415,6 @@ export class WebrtcSocketService {
         }, 100);*/
       });
     }
-  }
-
-  private sendFilebKMS(fileVideoRecorder:any){
-
-    console.log("blobRecorder", fileVideoRecorder);
-    let formData  = new FormData();
-    let xhr = new XMLHttpRequest();
-    formData.append('media_file', fileVideoRecorder);
-    
-    xhr.onreadystatechange = function (){
-      if (xhr.readyState === 4) {
-        if (xhr.status === 200) {
-          console.log(JSON.parse(xhr.response).data);
-        }
-        else {
-          if (xhr.status == 0) {
-            console.log(xhr.response);
-          }
-          else {
-            console.log(JSON.parse(xhr.response));
-          }
-        }
-      }
-    };
-
-    xhr.open("post",REST_SERV.mediaRecorder, true);
-    xhr.send(formData);
   }
 
   /**
@@ -486,5 +465,52 @@ export class WebrtcSocketService {
     return keyWord;
   }
 
+   /**
+  * Metodo para obtener flujo de video.
+  */
+ getvideoForUrl(url: string, _userService:any){
+    this._userService = _userService;
+    const mediaHeaders = new Headers({
+      'Content-Type': 'application/json',
+      'X-Access-Token': this._userService.getUserKey()
+    });
+    return this._http.get(REST_SERV.mediaRecorder + "/?pathmedia=" + url, {headers: mediaHeaders, withCredentials : true}).toPromise()
+      .then((response : Response)=>{
+        return response;
+      }).catch((error: Response)=>{
+        return throwError(error.json());
+      });
+  }
+
+  
+  /**
+   * 
+   * @param fileVideoRecorder 
+   */
+  private sendFilebKMS(fileVideoRecorder:any){
+
+    let formData  = new FormData();
+    formData.append('idPublication', this.pubId);
+    formData.append('media_file', fileVideoRecorder, crypto.CrytoGen.encrypt(this.generateKeyWord()) + Date.now());
+    let xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function (){
+      if (xhr.readyState === 4) {
+        if (xhr.status === 201) {
+          console.log(JSON.parse(xhr.response).data);
+        }else {
+          if (xhr.status == 0) {
+            console.error(xhr.response);
+          }
+          else {
+            console.error(JSON.parse(xhr.response));
+          }
+        }
+      }
+    };
+    xhr.open("POST", REST_SERV.mediaRecorder, true);
+    xhr.setRequestHeader('X-Access-Token', this._userService.getUserKey());
+    xhr.withCredentials = true;
+    xhr.send(formData);
+  }
 }
 

@@ -98,8 +98,12 @@ export class TaskListComponent implements OnInit {
    */
   viewTransmission(event: any) {
     event.preventDefault();
+    
     if (!this.queja.transDone) {
       this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_transmission, contentData: { userOwner: this.queja.user.id, pubId: this.queja.id_publication } });
+    }else{
+      this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_img, contentData: {media :this.queja.media, opView : CONTENT_TYPES.view_video }});
+
     }
   }
 

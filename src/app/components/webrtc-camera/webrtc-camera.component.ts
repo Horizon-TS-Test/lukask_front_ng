@@ -11,7 +11,6 @@ import { UserService } from '../../services/user.service';
 
 import * as Snackbar from 'node-snackbar';
 import * as loadImage from 'blueimp-load-image';
-import { resolve } from '../../../../node_modules/@types/q';
 
 @Component({
   selector: 'app-webrtc-camera',
@@ -45,7 +44,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
     private _notifierService: NotifierService,
     private _cameraService: CameraService,
     private _webrtcSocketService: WebrtcSocketService,
-    private _userService: UserService
+    private _userService: UserService,
   ) {
     this.snapShotCounter = 0;
 
@@ -90,8 +89,6 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
           case CAMERA_ACTIONS.stop_transmision:
             //AQUÍ DEBES LLAMAR A TUS MÉTODOS PARA LA TRANSMISIÓN DENNYS :D
             this._webrtcSocketService.closeTransmissionCnn();
-            this.startCamera = false;
-            this.stopStream();
             break;
           case CAMERA_ACTIONS.join_transmision:
             if (this.streamOwnerId) {
@@ -279,7 +276,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
    * MÉTODO PARA INCIAR LA CONEXIÓN AL SOCKET DE KURENTO CLIENT:
    */
   connectToStreamingClient() {
-    return this._webrtcSocketService.connecToKurento(this._userService.userProfile.id, this.pubId, this._video);
+    return this._webrtcSocketService.connecToKurento(this._userService, this.pubId, this._video);
   }
 
   startTransmission() {

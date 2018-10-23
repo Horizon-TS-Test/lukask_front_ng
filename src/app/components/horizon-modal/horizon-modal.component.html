@@ -34,7 +34,7 @@
       <comment-form [commentModel]="_dynaContent.contentData" [modalForm]="true" (closeModal)="close($event)"></comment-form>
     </div>
 
-    <img-viewer *ngSwitchCase="contentTypes.view_img" [showClass]="showClass" [media]="_dynaContent.contentData" (closeModal)="close($event)"></img-viewer>
+    <img-viewer *ngSwitchCase="contentTypes.view_img" [showClass]="showClass" [media]="_dynaContent.contentData.media" [opView]= "_dynaContent.contentData.opView" (closeModal)="close($event)"></img-viewer>
 
     <div [ngClass]="{'personal-dyna-down col-12 p-0': _dynaContent.contentData.halfModal}" class="{{ showClass }}" *ngSwitchCase="contentTypes.view_comments">
       <comment-list *ngIf="!_dynaContent.contentData.halfModal" [showClass]="showClass" [pubId]="_dynaContent.contentData.pubId"

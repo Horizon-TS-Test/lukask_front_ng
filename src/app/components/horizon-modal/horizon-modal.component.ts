@@ -1,5 +1,4 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ContentService } from '../../services/content.service';
 import { DynaContent } from '../../interfaces/dyna-content.interface';
 import { CONTENT_TYPES } from '../../config/content-type';
 import { Subscription } from 'rxjs';

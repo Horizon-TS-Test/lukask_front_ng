@@ -20,11 +20,11 @@
 
         <ng-container *ngFor="let med of queja.media; let i = index">
 
-          <ng-container *ngIf="queja.media.length == 2">
+          <ng-container *ngIf="med.format == 'IG' && queja.media.length == 2">
             <img [ngClass]="{'mr-1': i % 2 == 0}" class="mb-1 half" src="{{med.url}}" width="48%">
           </ng-container>
 
-          <ng-container *ngIf="queja.media.length == 1 || queja.media.length > 2">
+          <ng-container *ngIf="med.format == 'IG' && (queja.media.length == 1 || queja.media.length > 2)">
             <img *ngIf="i == 0" class="mb-1 full" src="{{med.url}}" width="100%">
             <img *ngIf="i >= 1 && i <= 2" [ngClass]="{'mr-1': i % 2 != 0}" class="mb-1 half" src="{{med.url}}" width="48%">
           </ng-container>

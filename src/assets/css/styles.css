@@ -1267,8 +1267,8 @@ p, label, div {
   .focused-btn fa, .focused-btn span {
     color: #fff; }
 
-.focused-btn.unable {
-  background: #848b76 !important;
+.focused-btn.play {
+  background: #5dbeb6 !important;
   animation: unset; }
 
 .animated-btn-h {

@@ -373,7 +373,7 @@ export class QuejaService {
     pub = new Publication(pubJson.id_publication, pubJson.latitude, pubJson.length, pubJson.detail, pubJson.date_publication, pubJson.priority_publication, pubJson.active, type, usr, pubJson.location, pubJson.count_relevance, pubJson.user_relevance, pubJson.address, pubJson.is_trans, pubJson.trans_done);
     for (let med of pubJson.medios) {
       //PREPPENDING THE BACKEND SERVER IP/DOMAIN:
-      med.media_path = (med.media_path.indexOf("http") !== -1 || med.media_path.indexOf("https") !== -1 ? "" : REST_SERV.mediaBack) + med.media_path;
+      med.media_path = (med.format_multimedia == 'VD' || med.media_path.indexOf("http") !== -1 || med.media_path.indexOf("https") !== -1 ? "" : REST_SERV.mediaBack) + med.media_path;
       ////
       pub.media.push(new Media(med.id_multimedia, med.format_multimedia, med.media_path));
     }
@@ -634,6 +634,7 @@ export class QuejaService {
    * @param action THIS CAN BE CREATE, UPDATE OR DELETE:
    */
   updatePubList(pubJson: any, action: string) {
+    console.log("action y data :" + action , pubJson);
     let lastPub: Publication, newPub: Publication;
     let isDeleted: boolean = false;
 
@@ -700,5 +701,24 @@ export class QuejaService {
       });
     }
 
+  }
+
+  /**
+   * METODO PARA ACTUALIZAR LOS ARCHIVOS MULTIMEDIA DE TIPO VIDEO UNA VEZ YA GRABADOS.
+   * @param media data multimedia a insertar
+   * @param action action que se realizo (create, update, delete)
+   */
+  updateMediaVideo(media:any, action:any){
+    if(media.format_multimedia === 'VD'){
+      let indexAddMedia = this.pubList.findIndex(pub => pub.id_publication === media.id_publication);
+      let mediaFilter = lodash.find(this.pubList[indexAddMedia].media, function(obj) {
+        return obj.id_multimedia === media.id_multimedia;
+      });
+
+      if(!mediaFilter && ArrayManager.CREATE === action){
+        console.log("this.pubList[indexAddMedia]", this.pubList[indexAddMedia]);
+        this.pubList[indexAddMedia].media.push(new Media(media.id_multimedia, media.format_multimedia, media.media_path));
+      }
+    }
   }
 }
