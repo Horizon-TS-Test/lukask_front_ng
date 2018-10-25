@@ -1,6 +1,5 @@
 import { Component, OnInit, OnDestroy, Input, SimpleChanges, OnChanges, Output, EventEmitter } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { NotifierService } from '../../services/notifier.service';
 import { CONTENT_TYPES } from '../../config/content-type';
 import { CameraService } from '../../services/camera.service';
 import { MediaFile } from '../../interfaces/media-file.interface';
@@ -8,13 +7,14 @@ import { DomSanitizer } from '../../../../node_modules/@angular/platform-browser
 import { ACTION_TYPES } from '../../config/action-types';
 import { OnSubmit } from '../../interfaces/on-submit.interface';
 import * as Snackbar from 'node-snackbar';
+import { DynaContentService } from 'src/app/services/dyna-content.service';
 
 @Component({
   selector: 'edit-queja',
   templateUrl: './edit-queja.component.html',
   styleUrls: ['./edit-queja.component.css'],
 })
-export class EditQuejaComponent implements OnInit, OnDestroy, OnChanges {
+export class EditQuejaComponent implements OnDestroy, OnChanges {
   @Input() submit: number;
   @Input() isStreamPub: number;
   @Output() afterSubmit = new EventEmitter<OnSubmit>();
@@ -28,7 +28,7 @@ export class EditQuejaComponent implements OnInit, OnDestroy, OnChanges {
   public filesToUpload: MediaFile[];
 
   constructor(
-    private _notifierService: NotifierService,
+    private _dynaContentService: DynaContentService,
     private _cameraService: CameraService,
     private _domSanitizer: DomSanitizer,
   ) {
@@ -45,10 +45,6 @@ export class EditQuejaComponent implements OnInit, OnDestroy, OnChanges {
     );
   }
 
-  ngOnInit() { }
-
-  ngAfterViewInit() { }
-
   private initMediaFiles() {
     this.filesToUpload = [
       {
@@ -63,7 +59,7 @@ export class EditQuejaComponent implements OnInit, OnDestroy, OnChanges {
    * MÉTODO PARA AÑADIR UNA IMAGEN EN LA SECCIÓN DE MEDIOS A PUBLICAR
    * @param media EL OBJETO DE TIPO MEDIA-FILE
    */
-  addQuejaSnapShot(media: MediaFile) {
+  public addQuejaSnapShot(media: MediaFile) {
     if (!this.filesToUpload[0].mediaFile) {
       this.filesToUpload.splice(0, 1);
     }
@@ -74,10 +70,10 @@ export class EditQuejaComponent implements OnInit, OnDestroy, OnChanges {
    * MÉTODO PARA ABRIR LA CÁMARA PARA TOMAR UNA FOTOGRAFÍA:
    * @param event 
    */
-  newMedia(event: any) {
+  public newMedia(event: any) {
     event.preventDefault();
     if (this.filesToUpload.length < this._initSnapShotsNumber) {
-      this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.new_media, contentData: { maxSnapShots: this._maxSnapShots, backCamera: true } });
+      this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.new_media, contentData: { maxSnapShots: this._maxSnapShots, backCamera: true } });
     }
     else {
       Snackbar.show({ text: "Ha llegado al límite de imágenes permitidas", pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#34b4db', customClass: "p-snackbar-layout" });
@@ -89,7 +85,7 @@ export class EditQuejaComponent implements OnInit, OnDestroy, OnChanges {
    * @param $event 
    * @param i POSICIÓN DEL ARRAY DE MEDIA A ELIMINAR
    */
-  removeMedia(event: any, media: MediaFile) {
+  public removeMedia(event: any, media: MediaFile) {
     event.preventDefault();
     this.filesToUpload.splice(this.filesToUpload.indexOf(media), 1);
     this._maxSnapShots = this._initSnapShotsNumber - this.filesToUpload.length;
@@ -129,7 +125,7 @@ export class EditQuejaComponent implements OnInit, OnDestroy, OnChanges {
    * MÉTODO PARA REALIZAR UN PROCESO EN LA INTERFAZ DESPUÉS DE RECIBIR LA RESPUESTA DEL POST DE UNA PUBLICACIÓN:
    * @param event VALOR INDICATIVO DE QUE EL SUBMIT HA SIDO PROCESADO. OBJETO EVENT EMITTER
    */
-  processAfterSubmit(event: OnSubmit) {
+  public processAfterSubmit(event: OnSubmit) {
     this.afterSubmit.emit(event);
   }
 

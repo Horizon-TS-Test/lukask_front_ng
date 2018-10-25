@@ -6,7 +6,7 @@ import { SocketService } from '../../services/socket.service';
 import { REST_SERV } from '../../rest-url/rest-servers';
 import { ArrayManager } from '../../tools/array-manager';
 import { Subscription } from 'rxjs';
-import { NotifierService } from '../../services/notifier.service';
+import { CommentFormService } from 'src/app/services/comment-form.service';
 
 declare var deleteItemData: any;
 declare var upgradeTableFieldDataArray: any;
@@ -37,7 +37,7 @@ export class ReplyListComponent implements OnInit, OnDestroy {
   constructor(
     private _actionService: ActionService,
     private _socketService: SocketService,
-    private _notifierService: NotifierService
+    private _commentFormService: CommentFormService
   ) {
     this.activeClass = this.LOADER_HIDE;
 
@@ -77,7 +77,7 @@ export class ReplyListComponent implements OnInit, OnDestroy {
    * EL NUEVO COMENTARIO QUE DEVUELVE EL COMPONENTE HIJO, PROVENIENTE DEL BACKEND:
    */
   onCommentResponse() {
-    this.subscriptor = this._notifierService._newCommentResp.subscribe((newRep: Comment) => {
+    this.subscriptor = this._commentFormService.newComment$.subscribe((newRep: Comment) => {
       if (newRep.commentParentId == this.parentComment.commentId) {
         if (newRep.isOffline) {
           this.replyList.splice(0, 0, newRep);

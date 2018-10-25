@@ -1,65 +1,63 @@
-import { Component, OnInit, OnDestroy, EventEmitter, Output, AfterViewInit } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output, AfterViewInit, ChangeDetectionStrategy, Input, OnChanges, SimpleChanges } from '@angular/core';
 
 import { QuejaService } from '../../services/queja.service';
 import { Publication } from '../../models/publications';
 import { Subscription } from 'rxjs';
-import { NotifierService } from '../../services/notifier.service';
 import { ACTION_TYPES } from '../../config/action-types';
 import { DynaContent } from '../../interfaces/dyna-content.interface';
 import { IntroData } from '../../interfaces/intro-data.interface';
 import IntroDataInterface from '../../data/intro-data';
 import { SliderManager } from '../../tools/slider-manger';
 import { DomSanitizer } from '../../../../node_modules/@angular/platform-browser';
+import { DynamicPubsService } from 'src/app/services/dynamic-pubs.service';
 
 declare var $: any;
 @Component({
   selector: 'app-quejas-list',
   templateUrl: './queja-list.component.html',
   styleUrls: ['./queja-list.component.css'],
+  changeDetection: ChangeDetectionStrategy.Default
 })
-export class QuejaListComponent implements OnInit, AfterViewInit, OnDestroy {
+export class QuejaListComponent implements OnInit {
   @Output() actionType = new EventEmitter<DynaContent>();
   private _sliderManager: SliderManager;
 
   private LOADER_HIDE: string = "hide";
   private LOADER_ON: string = "on";
 
-  private subscriptor: Subscription;
+  public subscriptor: Subscription;
+  public subMorePubs: Subscription;
   public styles: any;
-  public IntroList: IntroData[];
-  public pubList: Publication[];
-  public mainLoadingClass: string;
-  public mainActiveClass: string;
   public activeClass: string;
   public introDataList: IntroData[];
 
   constructor(
     private _domSanitizer: DomSanitizer,
     private _quejaService: QuejaService,
-    private _notifierService: NotifierService
+    private _dynamicPubsService: DynamicPubsService
   ) {
     this.introDataList = IntroDataInterface;
-    /**
-     * SUBSCRIPCIÓN PARA CAPTAR EL LLAMADO DEL COMPONENTE INICIO QUIEN SOLICITA 
-     * LA CARGA DE MAS COMPONENTES AL LLEGAR EL SCROLL DEL USUARIO AL FINAL DE LA PÁGINA
-     */
-    this.subscriptor = this._notifierService._morePubsRequest.subscribe((morePubs) => {
+
+    this.subMorePubs = this._dynamicPubsService.morePubs$.subscribe((morePubs) => {
       if (morePubs) {
-        this.getMorePubs();
+        this.waitingForMorePubs();
       }
+    });
+
+    /**
+     * PARA DETECTAR LA CARGA DE MAS PUBLICACIONES:
+     */
+    this.subscriptor = this._quejaService.pubs$.subscribe((morePubs) => {
+      if (!morePubs) {
+        this.defineSlider();
+      }
+      this.morePubsHasCome();
     });
     /*** */
   }
 
   ngOnInit() {
-    this.loadingAnimation();
     this.defineImageStyle();
-  }
-
-  ngAfterViewInit() {
-    setTimeout(() => {
-      this.getPubList();
-    }, 2000);
   }
 
   private defineSlider() {
@@ -81,66 +79,23 @@ export class QuejaListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ACTIVAR EL EECTO DE CARGANDO:
-   */
-  private loadingAnimation(hide: boolean = false) {
-    if (hide) {
-      this.mainLoadingClass = "";
-      this.mainActiveClass = "";
-    }
-    else {
-      this.mainLoadingClass = "on";
-      this.mainActiveClass = "active";
-    }
-  }
-
-  /**
-   * FUNCIÓN PARA OBTENER UN NÚMERO INICIAL DE PUBLICACIONES, PARA DESPUÉS CARGAR MAS PUBLICACIONES BAJO DEMANDA
-   */
-  private getPubList() {
-    this._quejaService.getPubList().then((pubs: Publication[]) => {
-      this.pubList = pubs;
-      this.activeClass = this.LOADER_HIDE;
-      this.loadingAnimation(true);
-      setTimeout(() => {
-        this.defineSlider();
-      }, 500);
-    }).catch(err => {
-      console.log(err);
-      this.activeClass = this.LOADER_HIDE;
-      this.loadingAnimation(true);
-    });
-  }
-
-  /**
    * FUNCIÓN PARA OBTENER PUBLICACIONES BAJO DEMANDA A TRAVÉS DE UN PATTERN DE PAGINACIÓN:
    */
-  private getMorePubs() {
-    if (this.pubList && this.activeClass != this.LOADER_ON) {
+  private waitingForMorePubs() {
+    if (this.activeClass != this.LOADER_ON) {
       this.activeClass = this.LOADER_ON;
-      this._quejaService.getMorePubs().then((morePubs: Publication[]) => {
-        setTimeout(() => {
-          this.activeClass = "";
-
-          setTimeout(() => {
-            this.activeClass = this.LOADER_HIDE;
-            this.pubList = morePubs;
-          }, 800);
-
-        }, 1000);
-      }).catch(err => {
-        console.log(err);
-
-        setTimeout(() => {
-          this.activeClass = "";
-
-          setTimeout(() => {
-            this.activeClass = this.LOADER_HIDE;
-          }, 800);
-
-        }, 1000)
-      });
     }
+  }
+
+  /**
+   * MÉTODO PARA QUITAR EL ESTILO DE CARGANDO UEV
+   */
+  private morePubsHasCome() {
+    this.activeClass = "";
+
+    setTimeout(() => {
+      this.activeClass = this.LOADER_HIDE;
+    }, 800);
   }
 
   /**
@@ -169,9 +124,5 @@ export class QuejaListComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   public cancelPub(pub: Publication) {
     this._quejaService.deleteOfflinePub(pub);
-  }
-
-  ngOnDestroy() {
-    this.subscriptor.unsubscribe();
   }
 }

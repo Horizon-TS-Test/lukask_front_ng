@@ -1,4 +1,4 @@
-import { Injectable, ComponentFactoryResolver, ViewContainerRef, ViewChild } from '@angular/core';
+import { Injectable, ComponentFactoryResolver, ViewContainerRef } from '@angular/core';
 import { DynaContent } from '../interfaces/dyna-content.interface';
 import { CONTENT_TYPES } from '../config/content-type';
 
@@ -8,7 +8,6 @@ declare var $: any;
   providedIn: 'root'
 })
 export class ContentService {
-  private counter: number;
   private VERTICAL_SCROLL: number = 0;
   private HORIZONTAL_SCROLL: number = 1;
 
@@ -42,32 +41,6 @@ export class ContentService {
       }
     }, 0);
   }
-
-  /**
-   * MÉTODO PARA AÑADIR DINÁMICAMENTE UN COMPONENTE E INCRUSTARLO EN EL DOM A TRAVÉS DE CÓDIGO TYPESCRIPT:
-   */
-  addComponent(ChildComponent: any, cfr: ComponentFactoryResolver, compContainer: ViewContainerRef, dynaContent: DynaContent = null) {
-    // check and resolve the component
-    let component = cfr.resolveComponentFactory(ChildComponent);
-    // Create component inside container
-    let expComp: any = compContainer.createComponent(component);
-    let compInstance: any = expComp.instance;
-    compInstance._ref = expComp;
-
-    switch (dynaContent.contentType) {
-      case CONTENT_TYPES.alert:
-        compInstance._id = this.counter;
-        compInstance.alertData = dynaContent.contentData;
-        this.counter++;
-        break;
-      default:
-        compInstance._dynaContent = dynaContent;
-        break;
-    }
-
-    return compInstance;
-  }
-  ////
 
   /**
    * MÉTODO PARA CENTRAR HORIZONTALMENTE CUALQUIER ELEMENTO DEL DOM
@@ -143,6 +116,30 @@ export class ContentService {
         break;
     }
   }
+
+  /**
+   * MÉTODO PARA AÑADIR DINÁMICAMENTE UN COMPONENTE E INCRUSTARLO EN EL DOM A TRAVÉS DE CÓDIGO TYPESCRIPT:
+   */
+  addComponent(ChildComponent: any, cfr: ComponentFactoryResolver, compContainer: ViewContainerRef, dynaContent: DynaContent = null) {
+    // check and resolve the component
+    let component = cfr.resolveComponentFactory(ChildComponent);
+    // Create component inside container
+    let expComp: any = compContainer.createComponent(component);
+    let compInstance: any = expComp.instance;
+    compInstance._ref = expComp;
+
+    switch (dynaContent.contentType) {
+      case CONTENT_TYPES.alert:
+        compInstance.alertData = dynaContent.contentData;
+        break;
+      default:
+        compInstance._dynaContent = dynaContent;
+        break;
+    }
+
+    return compInstance;
+  }
+  ////
 
   /**
    * MÉTODO PARA DAR FOCUS A UNA OPCIÓN DE UN MENÚ

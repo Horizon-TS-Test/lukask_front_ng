@@ -2,7 +2,6 @@ import { Component, OnInit, Input, EventEmitter, Output, SimpleChanges, OnChange
 import { ActionService } from '../../services/action.service';
 import { Publication } from '../../models/publications';
 import { ContentService } from '../../services/content.service';
-import { NotifierService } from '../../services/notifier.service';
 import { CONTENT_TYPES } from '../../config/content-type';
 import { ACTION_TYPES } from '../../config/action-types';
 import { Alert } from '../../models/alert';
@@ -10,6 +9,7 @@ import { ALERT_TYPES } from '../../config/alert-types';
 import * as Snackbar from 'node-snackbar';
 import { Router } from '@angular/router';
 import { UserService } from 'src/app/services/user.service';
+import { DynaContentService } from 'src/app/services/dyna-content.service';
 
 declare var $: any;
 
@@ -23,13 +23,12 @@ export class TaskListComponent implements OnInit {
   @Input() isModal: boolean;
   @Output() actionType = new EventEmitter<number>();
 
-  private alertData: Alert;
   private relevanceProc: boolean;
 
   constructor(
     private _actionService: ActionService,
     private _contentService: ContentService,
-    private _notifierService: NotifierService,
+    private _dynaContentService: DynaContentService,
     private _userService: UserService,
     private _router: Router
   ) {
@@ -37,13 +36,6 @@ export class TaskListComponent implements OnInit {
   }
 
   ngOnInit() {
-  }
-
-  /**
-   * MÉTODO PARA MOSTRAR UN ALERTA EN EL DOM:
-   */
-  private setAlert() {
-    this._notifierService.sendAlert(this.alertData);
   }
 
   /**
@@ -66,8 +58,8 @@ export class TaskListComponent implements OnInit {
           this.relevanceProc = true;
         })
         .catch((error) => {
-          this.alertData = new Alert({ title: 'Proceso Fallido', message: 'No se ha podido procesar la petición', type: ALERT_TYPES.danger });
-          this.setAlert();
+          let alertData = new Alert({ title: 'Proceso Fallido', message: 'No se ha podido procesar la petición', type: ALERT_TYPES.danger });
+          this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.alert, contentData: alertData });
           this.relevanceProc = true;
         });
     }
@@ -107,7 +99,7 @@ export class TaskListComponent implements OnInit {
   public viewSupport(event: any) {
     event.preventDefault();
     if (!this.queja.isOffline) {
-      this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.support_list, contentData: { pubId: this.queja.id_publication, pubOwner: this.queja.user.person.name } });
+      this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.support_list, contentData: { pubId: this.queja.id_publication, pubOwner: this.queja.user.person.name } });
     }
   }
 

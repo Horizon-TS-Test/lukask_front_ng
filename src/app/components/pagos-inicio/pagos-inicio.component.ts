@@ -1,11 +1,11 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { NotifierService } from '../../services/notifier.service';
 import { CONTENT_TYPES } from '../../config/content-type';
 import { PaymentsIntro } from '../../interfaces/payments-intro.interface';
 import PaymentsIntroData from '../../data/payments-intro';
 import { DomSanitizer } from '../../../../node_modules/@angular/platform-browser';
 import { ContentService } from '../../services/content.service';
 import { SliderManager } from '../../tools/slider-manger';
+import { DynaContentService } from 'src/app/services/dyna-content.service';
 
 declare var $: any;
 @Component({
@@ -21,7 +21,7 @@ export class PagosInicioComponent implements OnInit, AfterViewInit {
   public payIntroList: PaymentsIntro[];
 
   constructor(
-    private _notifierService: NotifierService,
+    private _dynaContentService: DynaContentService,
     private _domSanitizer: DomSanitizer,
     private _contentService: ContentService
   ) {
@@ -43,7 +43,7 @@ export class PagosInicioComponent implements OnInit, AfterViewInit {
   /**
    * MÉTODO PARA DEFINIR EL STILO USANDO URL'S SEGURAS PARA LAS IMÁGENES DEL SLIDER:
    */
-  defineImageStyle() {
+  private defineImageStyle() {
     this.styles = [];
     //REF: https://angular.io/guide/security#xss
     for (let intro of this.payIntroList) {
@@ -57,12 +57,12 @@ export class PagosInicioComponent implements OnInit, AfterViewInit {
  * @param event EVENTO CLICK DEL ELEMENTO <a href="#">
  * @param contType TIPO DE CONTENIDO A MOSTRAR DENTRO DEL HORIZON MODAL
  **/
-  openLayer(event: any) {
+  public openLayer(event: any) {
     event.preventDefault();
-    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.find_accounts, contentData: "" });
+    this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.find_accounts, contentData: "" });
   }
 
-  nextPrev(event: any, next: boolean) {
+  public nextPrev(event: any, next: boolean) {
     event.preventDefault();
     this._sliderManager.goPrevNext(next);
   }
@@ -71,7 +71,7 @@ export class PagosInicioComponent implements OnInit, AfterViewInit {
    * @param event 
    * @param pause 
    */
-  playPause(event: any, pause: boolean) {
+  public playPause(event: any, pause: boolean) {
     event.preventDefault();
     this._sliderManager.playPause(pause);
   }

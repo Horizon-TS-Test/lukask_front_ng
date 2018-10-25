@@ -9,10 +9,11 @@ import { ACTION_TYPES } from '../../config/action-types';
 import { Gps } from '../../interfaces/gps.interface';
 import { Media } from '../../models/media';
 import { Alert } from '../../models/alert';
-import { NotifierService } from '../../services/notifier.service';
 import { ALERT_TYPES } from '../../config/alert-types';
 import { MediaFile } from '../../interfaces/media-file.interface';
 import { OnSubmit } from '../../interfaces/on-submit.interface';
+import { DynaContentService } from 'src/app/services/dyna-content.service';
+import { CONTENT_TYPES } from 'src/app/config/content-type';
 
 declare var google: any;
 declare var $: any;
@@ -34,7 +35,6 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges {
   private _gps: Gps;
   private map: any;
   private pubFilterList: Publication[];
-  private alertData: Alert;
 
   public tipoQuejaSelect: Select2[];
   public quejaTypeList: QuejaType[];
@@ -43,7 +43,7 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges {
   public _locationAdress: string;
 
   constructor(
-    private _notifierService: NotifierService,
+    private _dynaContentService: DynaContentService,
     private _quejaService: QuejaService,
     private formBuilder: FormBuilder
   ) {
@@ -237,13 +237,6 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   /**
-   * METODO ACTIVA EL MODAL DE AVISOS EN LA PANTALLA
-   */
-  setAlert() {
-    this._notifierService.sendAlert(this.alertData);
-  }
-
-  /**
    * MÈTODO QUE VALIDA SI LA PUBLICACION CUMPLE ESTA DENTRO DEL AREA ESTABLECIDA
    */
   validateQuejaRepeat() {
@@ -254,8 +247,8 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges {
       }
     }
     if (band == true) {
-      this.alertData = new Alert({ title: 'Proceso Fallido', message: 'No es posible ejecutar la petición', type: ALERT_TYPES.danger });
-      this.setAlert();
+      let alertData = new Alert({ title: 'Proceso Fallido', message: 'No es posible ejecutar la petición', type: ALERT_TYPES.danger });
+      this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.alert, contentData: alertData });
     }
   }
 

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Comment } from '../models/comment';
 import { Headers, Http, Response } from '@angular/http';
 import { REST_SERV } from '../rest-url/rest-servers';
-import { throwError } from 'rxjs';
+import { throwError, Observable, BehaviorSubject } from 'rxjs';
 import { UserService } from './user.service';
 import { BackSyncService } from './back-sync.service';
 import { DateManager } from '../tools/date-manager';
@@ -24,6 +24,9 @@ export class ActionService {
   public MOBILE_LIMIT: number = 5;
   public pageLimit: number;
 
+  private commSubject = new BehaviorSubject<{ comments: Comment[]; pagePattern: string }>(null);
+  comms$: Observable<{ comments: Comment[]; pagePattern: string }> = this.commSubject.asObservable();
+
   constructor(
     private _http: Http,
     private _userService: UserService,
@@ -33,6 +36,14 @@ export class ActionService {
     this.isPostedComment = false;
     this.isPostedRelevance = false;
     this.pageLimit = this.DEFAULT_LIMIT;
+  }
+
+  /**
+   * MÉTODO PARA ENVIAR LA ACTUALIZACIÓN DE LA LISTA DE COMENTARIOS:
+   * @param comList
+   */
+  public loadComments(comList: { comments: Comment[]; pagePattern: string }) {
+    this.commSubject.next(comList);
   }
 
   /**

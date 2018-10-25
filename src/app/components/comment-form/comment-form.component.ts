@@ -4,12 +4,14 @@ import { ActionService } from '../../services/action.service';
 import { PatternManager } from '../../tools/pattern-manager';
 import { Comment } from '../../models/comment';
 import { UserService } from '../../services/user.service';
-import { NotifierService } from '../../services/notifier.service';
 import { Subscription } from 'rxjs';
 import { DateManager } from '../../tools/date-manager';
 import { Alert } from '../../models/alert';
 import { ALERT_TYPES } from '../../config/alert-types';
 import * as Snackbar from 'node-snackbar';
+import { DynaContentService } from 'src/app/services/dyna-content.service';
+import { CONTENT_TYPES } from 'src/app/config/content-type';
+import { CommentFormService } from 'src/app/services/comment-form.service';
 
 @Component({
   selector: 'comment-form',
@@ -20,8 +22,6 @@ export class CommentFormComponent implements OnInit, OnDestroy {
   @Input() commentModel: Comment;
   @Output() closeModal = new EventEmitter<boolean>();
 
-  private alertData: Alert;
-
   public maxChars: number;
   public restChars: number;
   public subscription: Subscription;
@@ -31,7 +31,8 @@ export class CommentFormComponent implements OnInit, OnDestroy {
     public _domSanitizer: DomSanitizer,
     private _actionService: ActionService,
     private _userService: UserService,
-    private _notifierService: NotifierService,
+    private _dynaContentService: DynaContentService,
+    private _commentFormService: CommentFormService,
     private _ngZone: NgZone
   ) {
     this.maxChars = 200;
@@ -55,7 +56,7 @@ export class CommentFormComponent implements OnInit, OnDestroy {
   /**
    * MÉTODO PARA ASIGNAR UN VALOR AL PERFIL DE USUARIO A MOSTRAR EN EL FORMULARIO DE COMENTARIO:
    */
-  setUser() {
+  private setUser() {
     this.commentModel.user = this._userService.getUserProfile();
   }
 
@@ -64,14 +65,12 @@ export class CommentFormComponent implements OnInit, OnDestroy {
    * EN UN COMENTARIO O RESPUESTA, FUERA DEL CONTEXTO DE ANGULAR
    * @param event EVENTO DE KEYPRESS
    */
-  validateLettersNumber(event: KeyboardEvent) {
+  public validateLettersNumber(event: KeyboardEvent) {
     //REF: https://github.com/angular/angular/issues/20970
     this._ngZone.runOutsideAngular(() => {
       setTimeout(() => {
-        this._ngZone.run(() => {
-          this.restChars = PatternManager.limitWords(this.maxChars, this.commentModel.description.length);
-          console.log("[COMMENT FORM]: Running outside the angular context");
-        });
+        this.restChars = PatternManager.limitWords(this.maxChars, this.commentModel.description.length);
+        console.log("[COMMENT FORM]: Running outside the angular context");
       });
     });
   }
@@ -79,21 +78,14 @@ export class CommentFormComponent implements OnInit, OnDestroy {
   /**
    * MÉTODO PARA RESETEAR EL CAMPO DE TEXTO DEL TEMPLATE DRIVEN FORM:
    */
-  resetComment() {
+  private resetComment() {
     this.commentModel.description = "";
-  }
-
-  /**
-   * MÉTODO PARA MOSTRAR UN ALERTA EN EL DOM:
-   */
-  setAlert() {
-    this._notifierService.sendAlert(this.alertData);
   }
 
   /**
    * MÉTODO PARA ENVIAR UN COMENTARIO AL BACKEND:
    */
-  publishComment() {
+  public publishComment() {
     this.commentSent = true;
 
     this._actionService.saveComment(this.commentModel)
@@ -104,10 +96,10 @@ export class CommentFormComponent implements OnInit, OnDestroy {
           Snackbar.show({ text: 'Tu ' + (this.commentModel.commentParentId ? 'respuesta' : 'comentario') + ' se enviará en la próxima conexión', pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#34b4db', customClass: "p-snackbar-layout" });
 
           let offComment = new Comment(this.commentModel.commentId, this.commentModel.description, this.commentModel.publicationId, this._userService.getUserProfile(), this.commentModel.commentParentId, this.commentModel.active, this.commentModel.dateRegister, null, null, true);
-          this._notifierService.notifyNewCommentResp(offComment);
+          this._commentFormService.newCommentInserted(offComment);
         }
         else {
-          this._notifierService.notifyNewCommentResp(this._actionService.extractCommentJson(response));
+          this._commentFormService.newCommentInserted(this._actionService.extractCommentJson(response));
         }
 
         this.resetComment();
@@ -118,8 +110,8 @@ export class CommentFormComponent implements OnInit, OnDestroy {
       .catch(err => {
         console.log(err);
         this.commentSent = false;
-        this.alertData = new Alert({ title: 'Proceso Fallido', message: 'No se pudo procesar la petición', type: ALERT_TYPES.danger });
-        this.setAlert();
+        let alertData = new Alert({ title: 'Proceso Fallido', message: 'No se pudo procesar la petición', type: ALERT_TYPES.danger });
+        this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.alert, contentData: alertData });
       });
   }
 

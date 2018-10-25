@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs';
 import { RouterService } from '../../services/router.service';
 import { NotificationService } from '../../services/notification.service';
 import { UserService } from '../../services/user.service';
-import { NotifierService } from '../../services/notifier.service';
+import { InstallPromptService } from 'src/app/services/install-prompt.service';
 
 declare var $: any;
 
@@ -26,7 +26,7 @@ export class MainNavComponent implements OnInit {
     private _userService: UserService,
     private _routerService: RouterService,
     private _notificationService: NotificationService,
-    private _notifierService: NotifierService
+    private _installPromptService: InstallPromptService
   ) {
     this._enableMainMenu = false;
     this.newEntries = true;
@@ -69,7 +69,7 @@ export class MainNavComponent implements OnInit {
   public openPanel(event: any) {
     event.preventDefault();
 
-    this._notifierService.requestInstallation();
+    this._installPromptService.openInstallPrompt();
 
     $('#menu-nav').toggleClass('menu-is-open');
     if (!$(".top-panel").hasClass("slide-in")) {

@@ -1,5 +1,4 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { NotifierService } from '../../services/notifier.service';
 import { HorizonButton } from '../../interfaces/horizon-button.interface';
 import { Alert } from '../../models/alert';
 import { PaymentsService } from '../../services/payments.service';
@@ -7,6 +6,8 @@ import { ALERT_TYPES } from '../../config/alert-types';
 import { Planilla } from '../../interfaces/planilla-interface';
 import { ACTION_TYPES } from '../../config/action-types';
 import { PaymentCard } from '../../models/payment-card';
+import { CONTENT_TYPES } from 'src/app/config/content-type';
+import { DynaContentService } from 'src/app/services/dyna-content.service';
 
 @Component({
   selector: 'payments-card',
@@ -21,13 +22,12 @@ export class PaymentsCardComponent implements OnInit {
 
   public paymentCard: PaymentCard;
   public matButtons: HorizonButton[];
-  private alertData: Alert;
   public loadingClass: string;
   public activeClass: string;
 
   constructor(
     private _paymentsService: PaymentsService,
-    private _notifierService: NotifierService
+    private _dynaContentService: DynaContentService
   ) {
     this.closePop = new EventEmitter<boolean>();
     this.initPayObj();
@@ -63,37 +63,33 @@ export class PaymentsCardComponent implements OnInit {
    * MÉTODO PARA CAPTAR EL EVENTO CLICK DEL BOTON DEL COMPONENTE PARA PAGAR CON TARJETA
    * @param event
    */
-  payWithCard(event: any, isValidForm: boolean) {
+  public payWithCard(event: any, isValidForm: boolean) {
     event.preventDefault();
     if (isValidForm) {
-      console.log("[DATOS PAGOS]", this.planilla);
-      console.log("[DATOS TARJETA]", this.paymentCard);
-
+      let alertData: Alert;
       this.loadingAnimation();
       this._paymentsService.postPagosCards(this.planilla, this.paymentCard).then((data) => {
         console.log("[DATOS DE RESPUESTA DE PAYPAL A PAGAR]", data);
         const mensaje = "CONSUMIDOR:" + data.data.data.email;
-        this.alertData = new Alert({ title: "Su pago realizado con tarjeta fue exitoso", message: mensaje, type: ALERT_TYPES.success });
-        this.setAlert();
+        alertData = new Alert({ title: "Su pago realizado con tarjeta fue exitoso", message: mensaje, type: ALERT_TYPES.success });
+        this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.alert, contentData: alertData });
+
         this.closePop.emit(true);
       }, (err) => {
         console.log("[ERROR DE LA RESPUESTA A PAGAR]", err);
-        this.alertData = new Alert({ title: "Proceso Fallido", message: "Verifique los datos ingresados", type: ALERT_TYPES.danger });
-        this.setAlert();
+        alertData = new Alert({ title: "Proceso Fallido", message: "Verifique los datos ingresados", type: ALERT_TYPES.danger });
+        this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.alert, contentData: alertData });
+        
         this.closePop.emit(true);
       });
     }
   }
 
   /**
-   * MÉTODO PARA 
+   * MÉTODO PARA CERRAR LOS POP OVER ABIERTOS:
    */
-  requestClosePop(event: any) {
+  public requestClosePop(event: any) {
     event.preventDefault();
     this.closePop.emit(true);
-  }
-
-  setAlert() {
-    this._notifierService.sendAlert(this.alertData);
   }
 }

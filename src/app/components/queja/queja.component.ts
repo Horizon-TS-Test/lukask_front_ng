@@ -1,13 +1,14 @@
 import { Component, OnInit, Input, OnDestroy, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Publication } from '../../models/publications';
-import { NotifierService } from '../../services/notifier.service';
 import { CONTENT_TYPES } from '../../config/content-type';
 import { ActionService } from '../../services/action.service';
 import { UserService } from '../../services/user.service';
 import { User } from '../../models/user';
 import { Subscription } from 'rxjs';
 import { ACTION_TYPES } from '../../config/action-types';
+import { DynaContentService } from 'src/app/services/dyna-content.service';
+import { Comment } from 'src/app/models/comment';
 
 @Component({
   selector: 'app-queja',
@@ -21,21 +22,30 @@ export class QuejaComponent implements OnInit, OnDestroy {
   @Output() onCancelPub = new EventEmitter<Publication>();
 
   private subscription: Subscription;
+  private commentList: Comment[];
+
   public userProfile: User;
+  public firstPattern: string;
+  public pagePattern: string;
 
   constructor(
     public _domSanitizer: DomSanitizer,
-    private _notifierService: NotifierService,
-    private _userService: UserService
+    private _DynaContentService: DynaContentService,
+    private _userService: UserService,
+    private _actionService: ActionService,
   ) {
     this.subscription = this._userService._userUpdate.subscribe((update: boolean) => {
       if (update) {
         this.setOwnUserProfile();
       }
     });
+
+    this.commentList = [];
   }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.getComments();
+  }
 
   /**
    * MÉTODO QUE ESCUCHA LA ACTUALIZACIÓN DE LOS DATOS DE PERFIL DEL USUARIO LOGEADO 
@@ -55,7 +65,7 @@ export class QuejaComponent implements OnInit, OnDestroy {
   public viewQuejaDetail(event: any) {
     event.preventDefault();
     if (!this.queja.isOffline) {
-      this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_queja, contentData: this.queja.id_publication });
+      this._DynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.view_queja, contentData: this.queja.id_publication });
     }
   }
 
@@ -76,6 +86,51 @@ export class QuejaComponent implements OnInit, OnDestroy {
   public cancelPub(event: any) {
     event.preventDefault();
     this.onCancelPub.emit(this.queja);
+  }
+
+  /**
+   * MÉTODO PARA CARGAR LOS COMENTARIOS DESDE EL BACKEND:
+   */
+  private getComments() {
+    this._actionService.getCommentByPub(this.queja.id_publication, false)
+      .then((commentsData: any) => {
+        /*this.defineMainComments();
+        this.getOfflineComRelevances(this.commentList);
+        this.getOfflineComments();*/
+
+        this.firstPattern = commentsData.pagePattern;
+        this.pagePattern = commentsData.pagePattern;
+        this.commentList = commentsData.comments;
+        this._actionService.loadComments(commentsData);
+      });
+  }
+
+  /**
+   * MÉTODO PARA CARGAR MAS COMENTARIOS BAJO PETICIÓN
+   */
+  public getMoreComments() {
+    this._actionService.getMoreCommentByPub(this.queja.id_publication, false, this.pagePattern)
+      .then((commentsData: any) => {
+        //this.getOfflineComRelevances(commentsData.comments);
+        this.pagePattern = commentsData.pagePattern;
+        this.commentList = this.commentList.concat(commentsData.comments);
+        this._actionService.loadComments({ comments: this.commentList, pagePattern: this.pagePattern });
+      });
+  }
+
+  /**
+   * MÉTODO PARA ESCUCHAR EL EVENTO PARA SOLICITAR MAS COMENTARIOS:
+   * @param event 
+   */
+  public askForMore(event: boolean) {
+    if (event) {
+      this.getMoreComments();
+    }
+    else {
+      this.pagePattern = this.firstPattern;
+      this.commentList.splice(this._actionService.pageLimit, this.commentList.length - this._actionService.pageLimit);
+      this._actionService.loadComments({ comments: this.commentList, pagePattern: this.pagePattern });
+    }
   }
 
   ngOnDestroy() {

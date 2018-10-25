@@ -1,11 +1,11 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { HorizonNotification } from '../models/horizon-notification';
 import { UserService } from './user.service';
-import { NotifierService } from './notifier.service';
 import { CONTENT_TYPES } from '../config/content-type';
 import { Http, Headers, Response } from '@angular/http';
 import { REST_SERV } from '../rest-url/rest-servers';
 import { throwError } from 'rxjs';
+import { DynaContentService } from './dyna-content.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +17,7 @@ export class NotificationService {
   public pageLimit: number;
 
   constructor(
-    private _notifierService: NotifierService,
+    private _dynaContentService: DynaContentService,
     private _userService: UserService,
     private _http: Http
   ) {
@@ -29,7 +29,7 @@ export class NotificationService {
    */
   public showNotification(notif: HorizonNotification, noShow: boolean = false) {
     if (noShow == false) {
-      this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.new_notification, contentData: notif });
+      this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.new_notification, contentData: notif });
     }
     this._newNotif.emit(notif);
   }

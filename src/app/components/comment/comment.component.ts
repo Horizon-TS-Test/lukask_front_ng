@@ -1,7 +1,6 @@
 import { Component, OnInit, Input, OnDestroy, OnChanges, SimpleChanges, EventEmitter, Output } from '@angular/core';
 import { Comment } from '../../models/comment';
 import { DomSanitizer } from '@angular/platform-browser';
-import { NotifierService } from '../../services/notifier.service';
 import { CONTENT_TYPES } from '../../config/content-type';
 import { Subscription } from 'rxjs';
 import { UserService } from '../../services/user.service';
@@ -10,6 +9,7 @@ import { ActionService } from '../../services/action.service';
 import { Alert } from '../../models/alert';
 import { ALERT_TYPES } from '../../config/alert-types';
 import * as Snackbar from 'node-snackbar';
+import { DynaContentService } from 'src/app/services/dyna-content.service';
 
 @Component({
   selector: 'comment',
@@ -26,14 +26,13 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
   @Output() onCancelComment = new EventEmitter<Comment>();
 
   private subscription: Subscription;
-  private alertData: Alert;
   private relevanceProc: boolean;
 
   public userProfile: User;
 
   constructor(
     public _domSanitizer: DomSanitizer,
-    private _notifierService: NotifierService,
+    private _dynaContentService: DynaContentService,
     private _actionService: ActionService,
     private _userService: UserService
   ) {
@@ -55,13 +54,6 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   /**
-   * MÉTODO PARA MOSTRAR UN ALERTA EN EL DOM:
-   */
-  setAlert() {
-    this._notifierService.sendAlert(this.alertData);
-  }
-
-  /**
    * MÉTODO PARA ACTUALIZAR EL OBJETO USUARIO DE LOS COMENTARIOS DEL 
    * USUARIOS LOGEADOAL MOMENTO DE ACTUALIZAR EL PERFIL DE USUARIO:
    */
@@ -80,7 +72,7 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
     if (event) {
       event.preventDefault();
     }
-    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_replies, contentData: { parentComment: this.commentModel, replyId: this.focusReplyId } });
+    this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.view_replies, contentData: { parentComment: this.commentModel, replyId: this.focusReplyId } });
   }
 
   /**
@@ -89,7 +81,7 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
    */
   public openSupportList(event: any) {
     event.preventDefault();
-    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.support_list, contentData: { commentId: this.commentModel.commentId, commentOwner: this.commentModel.user.person.name } });
+    this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.support_list, contentData: { commentId: this.commentModel.commentId, commentOwner: this.commentModel.user.person.name } });
   }
 
   /**
@@ -112,8 +104,9 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
           this.relevanceProc = true;
         })
         .catch((error) => {
-          this.alertData = new Alert({ title: 'Proceso Fallido', message: 'No se ha podido procesar la petición', type: ALERT_TYPES.danger });
-          this.setAlert();
+          let alertData = new Alert({ title: 'Proceso Fallido', message: 'No se ha podido procesar la petición', type: ALERT_TYPES.danger });
+          this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.alert, contentData: alertData });
+
           this.relevanceProc = true;
         });
     }

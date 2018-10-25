@@ -6,9 +6,9 @@ import { HorizonButton } from '../../interfaces/horizon-button.interface';
 import { ContentService } from '../../services/content.service';
 import { SingleMapComponent } from '../single-map/single-map.component';
 import { CONTENT_TYPES } from '../../config/content-type';
-import { NotifierService } from '../../services/notifier.service';
 import { ACTION_TYPES } from '../../config/action-types';
 import { Subscription } from '../../../../node_modules/rxjs';
+import { DynaContentService } from 'src/app/services/dyna-content.service';
 
 @Component({
   selector: 'queja-detail',
@@ -35,7 +35,7 @@ export class QuejaDetailComponent implements OnInit, OnChanges, OnDestroy {
     private _quejaService: QuejaService,
     private _cfr: ComponentFactoryResolver,
     private _contentService: ContentService,
-    private _notifierService: NotifierService,
+    private _dynaContentService: DynaContentService,
     public _domSanitizer: DomSanitizer
   ) {
     this.closeModal = new EventEmitter<boolean>();
@@ -98,26 +98,26 @@ export class QuejaDetailComponent implements OnInit, OnChanges, OnDestroy {
    * MÉTODO PARA VER UNA IMAGEN EN PRIMER PLANO
    * @param event EVENTO DE CLICK
    */
-  viewImg(event: any) {
+  public viewImg(event: any) {
     event.preventDefault();
-    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_img, contentData: this.quejaDetail.media });
+    this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.view_img, contentData: this.quejaDetail.media });
   }
 
   /**
    * MÉTODO PARA VER EL MODAL DE COMENTARIOS DE UNA PUBLICACIÓN ESPECÍFICA:
    * @param event EVENTO DE CLICK DEL ELEMENTO <a href="#">
    */
-  viewComments(event: any = null) {
+  public viewComments(event: any = null) {
     if (event) {
       event.preventDefault();
     }
-    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_comments, contentData: { pubId: this.quejaDetail.id_publication, comId: this.commentId, replyId: this.replyId, hideBtn: (this.quejaDetail.isTrans == true && this.quejaDetail.transDone == false) } });
+    this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.view_comments, contentData: { pubId: this.quejaDetail.id_publication, comId: this.commentId, replyId: this.replyId, hideBtn: (this.quejaDetail.isTrans == true && this.quejaDetail.transDone == false) } });
   }
 
   /**
    * MÉTODO PARA ESCUCHAR LA ACCIÓN DEL EVENTO DE CLICK DE UN BOTÓN DINÁMICO:
    */
-  getButtonAction(actionEvent: number) {
+  public getButtonAction(actionEvent: number) {
     switch (actionEvent) {
       case ACTION_TYPES.close:
         this.closeModal.emit(true);

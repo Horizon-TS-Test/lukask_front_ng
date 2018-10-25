@@ -2,11 +2,12 @@ import { Component, OnInit, EventEmitter, Output, Input, OnChanges, SimpleChange
 import { HorizonButton } from '../../interfaces/horizon-button.interface';
 import { ACTION_TYPES } from '../../config/action-types';
 import { OnSubmit } from '../../interfaces/on-submit.interface';
-import { NotifierService } from '../../services/notifier.service';
 import { Alert } from '../../models/alert';
 import { ALERT_TYPES } from '../../config/alert-types';
 import * as Snackbar from 'node-snackbar';
 import { Router } from '@angular/router';
+import { CONTENT_TYPES } from 'src/app/config/content-type';
+import { DynaContentService } from 'src/app/services/dyna-content.service';
 
 @Component({
   selector: 'new-pub',
@@ -16,8 +17,6 @@ import { Router } from '@angular/router';
 export class NewPubComponent implements OnInit, OnChanges {
   @Input() showClass: string;
   @Output() closeModal = new EventEmitter<boolean>();
-
-  private alertData: Alert;
 
   public initStream: boolean;
   public matButtons: HorizonButton[];
@@ -29,7 +28,7 @@ export class NewPubComponent implements OnInit, OnChanges {
   public activeClass: string;
 
   constructor(
-    private _notifierService: NotifierService,
+    private _dynaContentService: DynaContentService,
     public _router: Router
   ) {
     this.initStream = false;
@@ -97,17 +96,10 @@ export class NewPubComponent implements OnInit, OnChanges {
   }
 
   /**
-   * MÉTODO PARA MOSTRAR UN ALERTA EN EL DOM:
-   */
-  private setAlert() {
-    this._notifierService.sendAlert(this.alertData);
-  }
-
-  /**
    * MÉTODO PARA ABRIR EL RECURSO QUE LLEGA JUNTO CON LA NOTIFICACIÓN:
    */
   private openStreaming() {
-    this._notifierService.notifyCloseModal();
+    this._dynaContentService.removeDynaContent(true);
     this._router.navigateByUrl('/streaming?pub=' + this.newPubId);
   }
 
@@ -116,6 +108,7 @@ export class NewPubComponent implements OnInit, OnChanges {
    * @param event OBJETO DE TIPO INTERFACE ON-SUBMIT QUE LLEGA DESDE EL EVENT EMITTER
    */
   public onSubmitForm(event: OnSubmit) {
+    let alertData: Alert;
     if (event.finished == true && event.hasError == false) {
       switch (this.actionType) {
         case ACTION_TYPES.submitPub:
@@ -125,7 +118,7 @@ export class NewPubComponent implements OnInit, OnChanges {
             Snackbar.show({ text: event.message, pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#34b4db', customClass: "p-snackbar-layout" });
           }
           else {
-            this.alertData = new Alert({ title: 'Proceso Correcto', message: event.message, type: ALERT_TYPES.success });
+            alertData = new Alert({ title: 'Proceso Correcto', message: event.message, type: ALERT_TYPES.success });
           }
           break;
         case ACTION_TYPES.pubStream:
@@ -137,12 +130,12 @@ export class NewPubComponent implements OnInit, OnChanges {
     }
     else {
       this.showClass = "show";
-      this.alertData = new Alert({ title: 'Proceso Fallido', message: event.message, type: ALERT_TYPES.danger });
+      alertData = new Alert({ title: 'Proceso Fallido', message: event.message, type: ALERT_TYPES.danger });
     }
     setTimeout(() => {
       this.showLoadingContent(!event.finished);
       if (event.backSync != true) {
-        this.setAlert();
+        this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.alert, contentData: alertData });
       }
     }, 200);
   }

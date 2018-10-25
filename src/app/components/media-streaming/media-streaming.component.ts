@@ -1,6 +1,5 @@
 import { Component, OnInit, Output, EventEmitter, OnChanges, SimpleChanges, Input, OnDestroy } from '@angular/core';
 import { HorizonButton } from '../../interfaces/horizon-button.interface';
-import { NotifierService } from '../../services/notifier.service';
 import { CAMERA_ACTIONS } from '../../config/camera-actions';
 import { MediaFile } from '../../interfaces/media-file.interface';
 import { ACTION_TYPES } from '../../config/action-types';
@@ -9,6 +8,9 @@ import { Subscription } from '../../../../node_modules/rxjs';
 import { UserService } from '../../services/user.service';
 import { SocketService } from '../../services/socket.service';
 import { Router } from '@angular/router';
+import { DynaContentService } from 'src/app/services/dyna-content.service';
+import { CommentModalService } from 'src/app/services/comment-modal.service';
+import { CameraActionService } from 'src/app/services/camera-action.service';
 
 @Component({
   selector: 'media-streaming',
@@ -38,8 +40,10 @@ export class MediaStreamingComponent implements OnInit, OnChanges, OnDestroy {
   public upcomingAction: number;
 
   constructor(
-    private _notifierService: NotifierService,
+    private _dynaContentService: DynaContentService,
     private _userService: UserService,
+    private _commentModalService: CommentModalService,
+    private _cameraActionService: CameraActionService,
     private _socketService: SocketService,
     private _router: Router
   ) {
@@ -52,7 +56,7 @@ export class MediaStreamingComponent implements OnInit, OnChanges, OnDestroy {
     this.initCarousel();
     this.initButtons();
     this.listenToNewComment()
-    this.subscribeBtnEmitter();
+    this.subscribeCommentsModal();
   }
 
   ngAfterViewInit() { }
@@ -102,17 +106,17 @@ export class MediaStreamingComponent implements OnInit, OnChanges, OnDestroy {
   /**
    * MÉTODO PARA ESCUCHAR CUANDO SE ABRE EL MODAL DE COMENTARIOS DENTRO DEL STREAMING:
    */
-  private subscribeBtnEmitter() {
-    this._notifierService.initShowBtnEmitter();
-    this.subscriber = this._notifierService._showHorizonMaterialBtn
+  private subscribeCommentsModal() {
+    this.subscriber = this._commentModalService.openModal$
       .subscribe((showBtn: boolean) => {
-        if (showBtn == true) {
+        if (showBtn == false) {
           this.animatedClass = this.ANIMATE_BTN_H + " " + this.ANIMATE_IN;
+          this.initButtons();
         }
-        else {
+        else if (showBtn == true) {
           this.animatedClass = this.ANIMATE_BTN_V + " " + this.ANIMATE_OUT;
+          this.initButtons();
         }
-        this.initButtons();
       });
   }
 
@@ -130,7 +134,7 @@ export class MediaStreamingComponent implements OnInit, OnChanges, OnDestroy {
       this.closeModal.emit(ACTION_TYPES.close);
     }
     else {
-      this._notifierService.notifyCameraAction(action);
+      this._cameraActionService.sendCameraAction(action);
     }
   }
 
@@ -170,7 +174,7 @@ export class MediaStreamingComponent implements OnInit, OnChanges, OnDestroy {
   public getButtonAction(actionEvent: number) {
     switch (actionEvent) {
       case ACTION_TYPES.viewComments:
-        this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_comments, contentData: { pubId: this.pubId, halfModal: true, hideBtn: true } });
+        this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.view_comments, contentData: { pubId: this.pubId, halfModal: true, transparent: true, hideBtn: true } });
         this.upcomingAction = 0;
         this.initButtons();
         break;
@@ -183,7 +187,6 @@ export class MediaStreamingComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnDestroy() {
     this.subscriber.unsubscribe();
-    this.commentSubs.unsubscribe();
-    this._notifierService.closeShowBtnEmitter();
+    /*this.commentSubs.unsubscribe();*/
   }
 }

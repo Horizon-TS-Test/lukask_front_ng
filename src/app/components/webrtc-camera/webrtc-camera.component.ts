@@ -1,6 +1,5 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, Input, Output, EventEmitter, SimpleChanges, OnChanges, NgZone } from '@angular/core';
 import { Device } from '../../interfaces/device.interface';
-import { NotifierService } from '../../services/notifier.service';
 import { CAMERA_ACTIONS } from '../../config/camera-actions';
 import { Subscription } from 'rxjs';
 import { CameraService } from '../../services/camera.service';
@@ -11,6 +10,7 @@ import { UserService } from '../../services/user.service';
 
 import * as Snackbar from 'node-snackbar';
 import * as loadImage from 'blueimp-load-image';
+import { CameraActionService } from 'src/app/services/camera-action.service';
 
 @Component({
   selector: 'app-webrtc-camera',
@@ -41,7 +41,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
   private transmissionOn: boolean;
 
   constructor(
-    private _notifierService: NotifierService,
+    private _cameraActionService: CameraActionService,
     private _cameraService: CameraService,
     private _webrtcSocketService: WebrtcSocketService,
     private _userService: UserService,
@@ -55,7 +55,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
     this.transmissionOn = false;
 
     //LISTEN FOR ANY CAMERA EVENT:
-    this.subscription = this._notifierService._cameraAction.subscribe(
+    this.subscription = this._cameraActionService.cameraAction$.subscribe(
       (cameraAction: number) => {
         switch (cameraAction) {
           case CAMERA_ACTIONS.start_camera:

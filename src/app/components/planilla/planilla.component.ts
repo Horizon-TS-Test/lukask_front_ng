@@ -1,8 +1,8 @@
 import { Component, OnInit, Input, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { NotifierService } from '../../services/notifier.service';
 import { CONTENT_TYPES } from '../../config/content-type';
 import { Planilla } from '../../interfaces/planilla-interface';
+import { DynaContentService } from 'src/app/services/dyna-content.service';
 
 @Component({
   selector: 'planilla',
@@ -15,7 +15,7 @@ export class PlanillaComponent implements OnInit {
 
   constructor(
     public _domSanitizer: DomSanitizer,
-    private _notifierService: NotifierService
+    private _dynaContentService: DynaContentService
   ) { }
 
   ngOnInit() { }
@@ -28,7 +28,7 @@ export class PlanillaComponent implements OnInit {
     event.preventDefault();
     this.closePop.emit(true);
     setTimeout(() => {
-      this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.planilla_detail, contentData: this.userPlanilla });
+      this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.planilla_detail, contentData: this.userPlanilla });
     }, 400);
   }
 }

@@ -88,7 +88,9 @@ export class HomePanelComponent implements OnInit, OnChanges, OnDestroy {
    * @param event VALOR BOOLEANO DEL EVENT EMITTER DEL COMPONENTE HIJO
    */
   public getSwitchChanges(event: HorizonSwitchInputInterface) {
-    this.switchChange.emit(event);
+    setTimeout(() => {
+      this.switchChange.emit(event);
+    }, 200);
   }
 
   /**

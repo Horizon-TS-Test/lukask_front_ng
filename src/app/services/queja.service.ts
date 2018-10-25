@@ -1,6 +1,6 @@
 import { Injectable, EventEmitter, OnDestroy } from '@angular/core';
 import { Http, Response, Headers } from '@angular/http';
-import { throwError, Subscription } from 'rxjs';
+import { throwError, Subscription, BehaviorSubject, Observable } from 'rxjs';
 
 import { REST_SERV } from '../rest-url/rest-servers';
 import { QuejaType } from '../models/queja-type';
@@ -215,6 +215,16 @@ export class QuejaService implements OnDestroy {
       reject(null);
     });
   }
+
+
+  private subject = new BehaviorSubject<Publication[]>(null);
+  pubs$: Observable<Publication[]> = this.subject.asObservable();
+
+  public loadPubs(pubList: Publication[]) {
+    this.subject.next(pubList);
+  }
+
+
 
   /**
    * MÉTODO PARA CARGAR LA LISTA DE PUBLICACIONES SEA DESDE LA WEB O DE LA CACHÉ
@@ -627,7 +637,7 @@ export class QuejaService implements OnDestroy {
    * Y ACTUALIZAR LA LISTA GLOBAL DE PUBLICACIONES CON LOS NUEVOS CAMBIOS
    */
   private listenToSocket() {
-    this.subscriptor = this._socketService._publicationUpdate.subscribe(
+    /*this.subscriptor = this._socketService._publicationUpdate.subscribe(
       (socketPub: any) => {
         let stream = socketPub.stream;
         let action = socketPub.payload.action.toUpperCase();
@@ -642,7 +652,7 @@ export class QuejaService implements OnDestroy {
             break;
         }
       }
-    );
+    );*/
   }
 
   /**
@@ -655,7 +665,7 @@ export class QuejaService implements OnDestroy {
     let isDeleted: boolean = false;
 
     //PREPPENDING THE BACKEND SERVER IP/DOMAIN:
-    pubJson.user_register.media_profile = ((pubJson.user_register.media_profile.indexOf("http") == -1) ? REST_SERV.mediaBack : "") + pubJson.user_register.media_profile;
+    pubJson.user_register.profile_path = ((pubJson.user_register.profile_path.indexOf("http") == -1) ? REST_SERV.mediaBack : "") + pubJson.user_register.profile_path;
     ////
 
     //REF: https://stackoverflow.com/questions/39019808/angular-2-get-object-from-array-by-id
@@ -818,6 +828,6 @@ export class QuejaService implements OnDestroy {
   }
 
   ngOnDestroy() {
-    this.subscriptor.unsubscribe();
+    //this.subscriptor.unsubscribe();
   }
 }

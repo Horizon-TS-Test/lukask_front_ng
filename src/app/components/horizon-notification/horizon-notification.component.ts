@@ -3,8 +3,8 @@ import { HorizonNotification } from '../../models/horizon-notification';
 import { DynaContent } from '../../interfaces/dyna-content.interface';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NotificationService } from '../../services/notification.service';
-import { Router, ActivatedRoute } from '@angular/router';
-import { NotifierService } from '../../services/notifier.service';
+import { Router } from '@angular/router';
+import { DynaContentService } from 'src/app/services/dyna-content.service';
 
 declare var $: any;
 
@@ -25,14 +25,13 @@ export class HorizonNotificationComponent implements OnInit {
   constructor(
     public _domSanitizer: DomSanitizer,
     public _notificationService: NotificationService,
-    public _notifierService: NotifierService,
+    public _DynaContentService: DynaContentService,
     public _router: Router
   ) { }
 
   ngOnInit() {
     this._self = $(".p-notification").last();
     this.notification = (this._dynaContent) ? <HorizonNotification>this._dynaContent.contentData : this.inputNotification;
-    this.notification.beutifyDate();
   }
 
   ngAfterViewInit() {
@@ -78,7 +77,7 @@ export class HorizonNotificationComponent implements OnInit {
    */
   public openUrl(event: any) {
     event.preventDefault();
-    this._notifierService.notifyCloseModal();
+    this._DynaContentService.removeDynaContent(true);
     if (this._ref) {
       this.showHideNotif(false);
     }

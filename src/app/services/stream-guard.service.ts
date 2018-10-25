@@ -18,6 +18,7 @@ export class StreamGuardService implements CanActivate {
         return true;
       }
 
+      console.log("Not working properly");
       this._router.navigate(['/']);
     }
     else {

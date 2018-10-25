@@ -1,9 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ContentService } from '../../services/content.service';
 import { DynaContent } from '../../interfaces/dyna-content.interface';
 import { CONTENT_TYPES } from '../../config/content-type';
 import { Subscription } from 'rxjs';
-import { NotifierService } from '../../services/notifier.service';
+import { DynaContentService } from 'src/app/services/dyna-content.service';
 
 @Component({
   selector: 'app-horizon-modal',
@@ -21,12 +20,14 @@ export class HorizonModalComponent implements OnInit, OnDestroy {
   public showClass: string;
 
   constructor(
-    private _notifierService: NotifierService
+    private _DynaContentService: DynaContentService
   ) {
     this.contentTypes = CONTENT_TYPES;
 
-    this.subscriber = this._notifierService._closeModal.subscribe((closeIt: boolean) => {
-      this.close(closeIt);
+    this.subscriber = this._DynaContentService.removeDynaCont$.subscribe((closeIt: boolean) => {
+      if(closeIt) {
+        this.close(closeIt);
+      }
     });
   }
 
@@ -36,7 +37,7 @@ export class HorizonModalComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.backgroundClass = "on";
       this.showClass = "show";
-    }, 100);
+    }, 50);
   }
 
   /**

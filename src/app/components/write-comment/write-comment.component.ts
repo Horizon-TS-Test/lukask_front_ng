@@ -1,8 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { UserService } from 'src/app/services/user.service';
-import { NotifierService } from 'src/app/services/notifier.service';
 import { CONTENT_TYPES } from 'src/app/config/content-type';
+import { DynaContentService } from 'src/app/services/dyna-content.service';
 
 @Component({
   selector: 'write-comment',
@@ -17,7 +17,7 @@ export class WriteCommentComponent implements OnInit {
   constructor(
     public _domSanitizer: DomSanitizer,
     public _userService: UserService,
-    public _notifierService: NotifierService
+    public _DynaContentService: DynaContentService
   ) { }
 
   ngOnInit() {
@@ -31,7 +31,7 @@ export class WriteCommentComponent implements OnInit {
    */
   public writeComment(event: any) {
     event.preventDefault();
-    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.comment_input, contentData: this.commentModel });
+    this._DynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.comment_input, contentData: this.commentModel });
   }
 
 }
