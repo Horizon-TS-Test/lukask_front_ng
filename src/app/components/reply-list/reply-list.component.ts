@@ -3,6 +3,7 @@ import { HorizonButton } from '../../interfaces/horizon-button.interface';
 import { Comment } from '../../models/comment';
 import { ActionService } from '../../services/action.service';
 import { Subscription } from 'rxjs';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'reply-list',
@@ -32,12 +33,13 @@ export class ReplyListComponent implements OnInit, OnDestroy {
   public activeClass: string;
 
   constructor(
-    public _actionService: ActionService
+    public _actionService: ActionService,
+    public _userService: UserService
   ) { }
 
   ngOnInit() {
     this.repsContainer = this.replies.nativeElement;
-    this.commentForm = new Comment("", "", this.parentComment.publicationId, null, this.parentComment.commentId);
+    this.commentForm = new Comment("", "", this.parentComment.publicationId, this._userService.getUserProfile(), this.parentComment.commentId);
     this.listenToReplies();
   }
 
