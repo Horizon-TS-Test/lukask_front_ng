@@ -3,6 +3,7 @@ import { ActionService } from '../../services/action.service';
 import { Comment } from '../../models/comment';
 import { Subscription } from 'rxjs';
 import { ContentService } from '../../services/content.service';
+import { UserService } from 'src/app/services/user.service';
 
 declare var $: any;
 
@@ -40,6 +41,7 @@ export class CommentListComponent implements OnInit, OnDestroy {
 
   constructor(
     public _actionService: ActionService,
+    public _userService: UserService,
     private _contentService: ContentService
   ) {
     this.activeClass = this.LOADER_HIDE;
@@ -103,7 +105,7 @@ export class CommentListComponent implements OnInit, OnDestroy {
    * MÉTODO PARA INICIALIZAR EL OBJETO DE TIPO COMMENT PARA REGISTRAR UN NUEVO COMENTARIO:
    */
   private resetComment() {
-    this.newComment = new Comment("", "", this.pubId);
+    this.newComment = new Comment("", "", this.pubId, this._userService.getUserProfile());
   }
 
   /**

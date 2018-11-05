@@ -1,5 +1,5 @@
 <div class="d-flex justify-content-between align-items-stretch w-100 pb-0">
-  <div class="pers-profile-img-comen" [style.background-image]="secProfImg"></div>
+  <profile-link [userProfile]="commentModel.user" [isCommentProfile]="true"></profile-link>
 
   <a href="#" (click)="writeComment($event)" class="p-primary-text-color f-child-no-auto pl-3 pb-0 mb-0 d-flex align-items-center">
     Escribe {{ commentModel.commentParentId ? 'una respuesta...' : 'un comentario...' }}

@@ -1,10 +1,9 @@
 <div class='p-no-border-rad-card col-12 card p-2'>
   <form #frmComment="ngForm" class="d-flex justify-content-between w-100 pb-0" (ngSubmit)="publishComment()">
-    <div class="pers-profile-img-comen" [style.background-image]="_domSanitizer.bypassSecurityTrustStyle('url(' + commentModel.user.profileImg + ')')"></div>
+    <profile-link [userProfile]="commentModel.user" [isCommentProfile]="true"></profile-link>
 
     <div class="f-child-no-auto form-group pl-1 pb-0 mb-0" [ngClass]="{ 'has-danger': description.touched && restChars < 0 }">
-      <textarea #commentText name="description"
-        #description="ngModel" [(ngModel)]="commentModel.description" class="p-border-none form-control form-control-danger"
+      <textarea #commentText name="description" #description="ngModel" [(ngModel)]="commentModel.description" class="p-border-none form-control form-control-danger"
         cols="30" rows="4" placeholder="Escribe {{ (commentModel.commentParentId) ? 'una respuesta...' : 'un comentario...' }}"
         (keyup)="validateLettersNumber($event)"></textarea>
       <small class="pb-0 form-control-feedback">{{restChars}} caracteres restantes.</small>

@@ -1,5 +1,4 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
 import { UserService } from 'src/app/services/user.service';
 import { CONTENT_TYPES } from 'src/app/config/content-type';
 import { DynaContentService } from 'src/app/services/dyna-content.service';
@@ -16,13 +15,11 @@ export class WriteCommentComponent implements OnInit {
   public secProfImg: any;
 
   constructor(
-    public _domSanitizer: DomSanitizer,
     public _userService: UserService,
     public _DynaContentService: DynaContentService
   ) { }
 
   ngOnInit() {
-    this.secProfImg = this._domSanitizer.bypassSecurityTrustStyle('url(' + this._userService.getUserProfile().profileImg + ')');
   }
 
   /**

@@ -19,8 +19,7 @@
         {{queja.user.person.name}} {{queja.user.person.last_name}}
         <small>{{queja.coolDate}}</small>
       </div>
-      <div class="ml-2 my-0 personal-profile-img" [style.background-image]="_domSanitizer.bypassSecurityTrustStyle('url(' + queja.user.profileImg + ')')">
-      </div>
+      <profile-link [userProfile]="queja.user" [isCommentProfile]="false" [profileClass]="'ml-2 my-0'"></profile-link>
     </div>
     <a href="#" (click)="viewQuejaDetail($event)">
       <div class="card-img-top d-flex flex-wrap justify-content-center align-items-center">

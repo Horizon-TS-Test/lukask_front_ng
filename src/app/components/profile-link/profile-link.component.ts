@@ -8,8 +8,9 @@ import { User } from '../../models/user';
   styleUrls: ['./profile-link.component.css']
 })
 export class ProfileLinkComponent implements OnInit {
-  @Input() suporterProfile: User;
+  @Input() userProfile: User;
   @Input() isCommentProfile: boolean;
+  @Input() profileClass: string;
 
   public secProfileImg: any;
 
@@ -18,7 +19,7 @@ export class ProfileLinkComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.secProfileImg = this._domSanitizer.bypassSecurityTrustStyle('url(' + this.suporterProfile.profileImg + ')');
+    this.secProfileImg = this._domSanitizer.bypassSecurityTrustStyle('url(' + this.userProfile.profileImg + ')');
   }
 
   /**

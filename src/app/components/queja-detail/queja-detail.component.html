@@ -5,8 +5,7 @@
     </div>
     <div class="personal-usr-queja py-0 card-block d-flex justify-content-end align-items-center">
       {{ quejaDetail.user.person.name }} {{ quejaDetail.user.person.last_name }}
-      <div class="ml-2 my-0 personal-profile-img" [style.background-image]="_domSanitizer.bypassSecurityTrustStyle('url(' + quejaDetail.user.profileImg + ')')">
-      </div>
+      <profile-link [userProfile]="quejaDetail.user" [isCommentProfile]="false" [profileClass]="'ml-2 my-0'"></profile-link>
     </div>
     <div class="personal-content relative-background">
       <owl-carousel id="corousel-detail-q" class="personal-owl-nav" [options]="carouselOptions" [carouselClasses]="['owl-theme']">

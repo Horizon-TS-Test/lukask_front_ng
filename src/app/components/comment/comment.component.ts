@@ -1,6 +1,5 @@
 import { Component, OnInit, Input, OnDestroy, OnChanges, SimpleChanges, EventEmitter, Output } from '@angular/core';
 import { Comment } from '../../models/comment';
-import { DomSanitizer } from '@angular/platform-browser';
 import { CONTENT_TYPES } from '../../config/content-type';
 import { Subscription } from 'rxjs';
 import { UserService } from '../../services/user.service';
@@ -32,7 +31,6 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
   public userProfile: User;
 
   constructor(
-    public _domSanitizer: DomSanitizer,
     private _dynaContentService: DynaContentService,
     private _actionService: ActionService,
     private _userService: UserService
