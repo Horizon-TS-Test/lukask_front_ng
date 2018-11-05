@@ -448,7 +448,6 @@ export class ActionService {
     }
 
     return new Promise((resolve, reject) => {
-      this.isFetchedComments = true;
       resolve(null);
     });
   }

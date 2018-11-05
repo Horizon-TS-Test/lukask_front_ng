@@ -193,12 +193,12 @@ export class CommentModalComponent implements OnInit, OnDestroy {
 
   /**
    * MÉTODO PARA CANCELAR UN COMENTARIO OFFLINE
-   * @param comment 
+   * @param comment
    */
   public onCancelComment(comment: Comment) {
     this.commentList.splice(this.commentList.indexOf(comment), 1);
     this._actionService.loadComments({ comments: this.commentList, pagePattern: this.pagePattern });
-    this._commentFormService.deleteOffComent(comment);
+    this._commentFormService.deleteOffComent(comment.commentId);
 
     deleteItemData("sync-comment", comment.commentId);
   }

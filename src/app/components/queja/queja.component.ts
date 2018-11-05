@@ -252,9 +252,11 @@ export class QuejaComponent implements OnInit, OnDestroy {
    * MÉTODO PARA ESCUCHAR CUANDO UN COMENTARIO OFFLINE HA SIDO ELIMINADO:
    */
   public listenToDelOffCom() {
-    this.delOffComSubscriptor = this._commentFormService.delOffComment$.subscribe((delComment: Comment) => {
-      if (delComment) {
-        this.commentList.splice(this.commentList.indexOf(delComment), 1);
+    this.delOffComSubscriptor = this._commentFormService.delOffCommentId$.subscribe((delCommentId: string) => {
+      if (delCommentId) {
+        let deletedComment = this.commentList.find(com => com.commentId == delCommentId);
+        this.commentList.splice(this.commentList.indexOf(deletedComment), 1);
+
         this._actionService.loadComments({ comments: this.commentList, pagePattern: this.pagePattern });
       }
     });

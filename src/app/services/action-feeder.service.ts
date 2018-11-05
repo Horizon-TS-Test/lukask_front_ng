@@ -21,39 +21,6 @@ export class ActionFeederService {
   ) { }
 
   /**
-   * MÉTODO PARA OBTENER LAS RELEVANCIAS OFFLINE DESDE LA CACHÉ, PARA AÑADIR ESTILOS A LOS COMENTARIOS,
-   * AL MOMENTO DE RECARGAR LA PÁGIN ESTANDO EN MODO OFFLINE:
-   */
-  private getOfflineComRelevances(comList: Comment[]) {
-    if ('indexedDB' in window) {
-      readAllData('sync-relevance')
-        .then((offPubRelevances) => {
-          for (let pubRel of offPubRelevances) {
-            if (pubRel.action_parent) {
-              for (let i = 0; i < comList.length; i++) {
-                if (comList[i].commentId == pubRel.action_parent) {
-                  comList[i].offRelevance = true;
-                }
-              }
-            }
-          }
-        });
-    }
-  }
-
-  /**
-   * MÉTODO PARA OBTENER LOS COMENTARIOS OFFLINE, PENDIENTES DE ENVÍO:
-   */
-  private getOfflineComments(pubId: string, commentList: Comment[]) {
-    this._actionService.getOffCommentsByPub(pubId).then((dataResponse: any) => {
-      let offComments: Comment[] = <Comment[]>dataResponse;
-      for (let comment of offComments) {
-        commentList.splice(0, 0, comment);
-      }
-    });
-  }
-
-  /**
    * MÉTODO PARA CARGAR LOS COMENTARIOS DESDE EL BACKEND:
    */
   public getComments(pubId: string, halfModal: boolean = false) {
@@ -67,10 +34,32 @@ export class ActionFeederService {
       .then((commentsData: any) => {
         this.firstPattern = commentsData.pagePattern;
         let commentList = commentsData.comments;
-        this.getOfflineComRelevances(commentList);
-        this.getOfflineComments(pubId, commentList);
 
-        return { comments: commentList, pagePattern: this.firstPattern };
+        /****************************************OBTENIENDO COMENTARIOS OFFLINE***************************************/
+        return this._actionService.getOffCommentsByPub(pubId).then((dataResponse: any) => {
+          let offComments: Comment[] = <Comment[]>dataResponse;
+          for (let comment of offComments) {
+            commentList.splice(0, 0, comment);
+          }
+
+          /**************************************OBTENIENDO RELEVANCIAS OFFLINE***************************************/
+          if ('indexedDB' in window) {
+            return readAllData('sync-relevance')
+              .then((offPubRelevances) => {
+                for (let pubRel of offPubRelevances) {
+                  if (pubRel.action_parent) {
+                    for (let i = 0; i < commentList.length; i++) {
+                      if (commentList[i].commentId == pubRel.action_parent) {
+                        commentList[i].offRelevance = true;
+                      }
+                    }
+                  }
+                }
+                return { comments: commentList, pagePattern: this.firstPattern };
+              });
+          }
+          return { comments: commentList, pagePattern: this.firstPattern };
+        });
       });
   }
 
@@ -80,8 +69,24 @@ export class ActionFeederService {
   private getMoreComments(pubId: string, currentPattern: string, commentList: Comment[]) {
     return this._actionService.getMoreCommentByPub(pubId, false, currentPattern)
       .then((commentsData: any) => {
-        this.getOfflineComRelevances(commentsData.comments);
         commentList = commentList.concat(commentsData.comments);
+
+        /**************************************OBTENIENDO RELEVANCIAS OFFLINE***************************************/
+        if ('indexedDB' in window) {
+          return readAllData('sync-relevance')
+            .then((offPubRelevances) => {
+              for (let pubRel of offPubRelevances) {
+                if (pubRel.action_parent) {
+                  for (let i = 0; i < commentList.length; i++) {
+                    if (commentList[i].commentId == pubRel.action_parent) {
+                      commentList[i].offRelevance = true;
+                    }
+                  }
+                }
+              }
+              return { comments: commentList, pagePattern: commentsData.pagePattern };
+            });
+        }
         return { comments: commentList, pagePattern: commentsData.pagePattern };
       });
   }

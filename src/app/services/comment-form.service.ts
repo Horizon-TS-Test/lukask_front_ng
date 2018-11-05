@@ -9,8 +9,8 @@ export class CommentFormService {
   private newComSubject = new BehaviorSubject<Comment>(null);
   newComment$: Observable<Comment> = this.newComSubject.asObservable();
   
-  private delOffComSubject = new BehaviorSubject<Comment>(null);
-  delOffComment$: Observable<Comment> = this.delOffComSubject.asObservable();
+  private delOffComSubject = new BehaviorSubject<string>(null);
+  delOffCommentId$: Observable<string> = this.delOffComSubject.asObservable();
   
   constructor() { }
 
@@ -25,7 +25,7 @@ export class CommentFormService {
    * MÉTODO PARA ELIMINAR UN COMENTARIO GUARDADO DE FORMA OFFLINE:
    * @param offCom 
    */
-  public deleteOffComent(offCom: Comment) {
-    this.delOffComSubject.next(offCom);
+  public deleteOffComent(offComId: string) {
+    this.delOffComSubject.next(offComId);
   }
 }

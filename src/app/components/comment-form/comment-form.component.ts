@@ -43,6 +43,7 @@ export class CommentFormComponent implements OnInit, OnDestroy {
     this.commentModel.commentId = new Date().toISOString();;
     this.commentModel.active = true;
     this.commentModel.dateRegister = DateManager.getFormattedDate();
+    this.setUser();
     this.listenToProfileUp();
   }
 

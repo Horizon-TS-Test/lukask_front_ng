@@ -35,7 +35,7 @@ export class UserService {
     private _http: Http,
     private _backSyncService: BackSyncService,
   ) {
-    this.pageLimit = 1;
+    this.pageLimit = 5;
     this.isFetchedProvince = false;
     this.isFetchedCanton = false;
     this.isFetchedParroquia = false;

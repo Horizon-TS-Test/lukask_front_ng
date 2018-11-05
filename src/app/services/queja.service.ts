@@ -67,6 +67,7 @@ export class QuejaService implements OnDestroy {
    * @param pubList 
    */
   public loadPubs(pubList: Publication[]) {
+    console.log("Enviando nuevas quejas :D");
     this.subject.next(pubList);
   }
 
@@ -371,6 +372,7 @@ export class QuejaService implements OnDestroy {
           pub.isOffline = true;
           pub.user = this._userService.getUserProfile();
           this.pubList.splice(0, 0, pub);
+          this.loadPubs(this.pubList);
           return true;
         }
       }
@@ -559,51 +561,6 @@ export class QuejaService implements OnDestroy {
       return throwError(error.json());
     });
   }
-
-  /***************DEPRECATED **********************/
-  getPubsFilterWeb(city: string) {
-    const pubHeaders = new Headers({ 'Content-Type': 'application/json', 'X-Access-Token': this._userService.getUserKey() });
-
-    return this._http.get(REST_SERV.pubFilterUrl + "/" + city, { headers: pubHeaders, withCredentials: true }).toPromise()
-      .then((response: Response) => {
-        const pubs = response.json().data.results;
-        let transformedPubs: Publication[] = [];
-        for (let i = 0; i < pubs.length; i++) {
-          transformedPubs.push(this.extractPubJson(pubs[i]));
-        }
-
-        this.isFetchedPubs = true;
-        console.log("[LUKASK QUEJA SERVICE] - PUBLICATIONS FROM WEB WITH FILTER", transformedPubs);
-        return transformedPubs;
-      }).catch((error: Response) => {
-        if (error.json().code == 401) {
-          localStorage.clear();
-        }
-        return throwError(error.json());
-      });
-  }
-
-  /***********DEPRECATED***********/
-  getPubListFilter(city: string) {
-    /**
-     * IMPLEMENTING NETWORK FIRST STRATEGY
-    */
-    let returnedPubs: Publication[];
-    return this.getPubsFilterWeb(city).then((webPubs: Publication[]) => {
-      returnedPubs = webPubs;
-      /*if (!this.isFetchedPubs) {
-        returnedPubs = this.getPubsCache();
-      }*/
-      this.pubFilterList = returnedPubs;
-      return returnedPubs;
-    }).catch((error: Response) => {
-      if (error.json().code == 401) {
-        localStorage.clear();
-      }
-      return throwError(error.json());
-    });
-  }
-  /************************************************/
 
   /**
    * MÉTODO PARA GUARDAR UN NUEVO COMENTARIO O RESPUESTA EN EL BACKEND O EN SU DEFECTO PARA BACK SYNC:
@@ -807,7 +764,7 @@ export class QuejaService implements OnDestroy {
    * VENGA COMO RESPUESTA EN EL SOCKET.IO
    * @param newPub 
    */
-  private deleteOffPubAsoc(newPub: any) {
+  private deleteOffPubAsoc(newPub: Publication) {
     //PARA PODER ELIMINAR UNA PUB OFFLINE, LUEGO DE SER GUARDAR:
     for (let i = 0; i < this.pubList.length; i++) {
       if (this.pubList[i].isOffline) {
