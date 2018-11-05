@@ -1,34 +1,26 @@
-import { Component, OnInit, Output, EventEmitter, OnDestroy } from '@angular/core';
-import { HorizonNotification } from '../../models/horizon-notification';
-import { HorizonButton } from '../../interfaces/horizon-button.interface';
+import { Component, OnInit, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { NotificationService } from '../../services/notification.service';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'notification-list',
   templateUrl: './notification-list.component.html',
-  styleUrls: ['./notification-list.component.css']
+  styleUrls: ['./notification-list.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class NotificationListComponent implements OnInit, OnDestroy {
+export class NotificationListComponent implements OnInit {
+  @Output() askForMore = new EventEmitter<boolean>();
+
   private LOADER_HIDE: string = "hide";
   private LOADER_ON: string = "on";
-  private subscription: Subscription;
 
   public firstPattern: string;
   public pagePattern: string;
   public activeClass: string;
 
-  public notificationList: HorizonNotification[];
-
   constructor(
-    private _notificationService: NotificationService
+    public _notificationService: NotificationService
   ) {
-    this.activeClass = this.LOADER_HIDE;
-    this.getNotifs();
-
-    this.subscription = this._notificationService._newNotif.subscribe((newNotif: HorizonNotification) => {
-      this.notificationList.splice(0, 0, newNotif);
-    });
+    this.listenNotif();
   }
 
   ngOnInit() { }
@@ -36,76 +28,55 @@ export class NotificationListComponent implements OnInit, OnDestroy {
   /**
    * MÉTODO PARA OBTENER LAS RESPUESTAS DE UN COMENTARIO SEA DE LA WEB O DE LA CACHÉ:
    */
-  getNotifs() {
-    this._notificationService.getUserNotifications()
-      .then((notifData: any) => {
-        this.notificationList = notifData.notifs;
-        this.firstPattern = notifData.pagePattern;
+  private listenNotif() {
+    this._notificationService.notifList$.subscribe((notifData) => {
+      if (notifData) {
+        let loader = document.querySelector('.bottom-loader');
+        let classList = (loader) ? loader.classList : null;
+        if (!this.firstPattern) {
+          this.firstPattern = notifData.pagePattern;
+        }
         this.pagePattern = notifData.pagePattern;
-      });
+
+        setTimeout(() => {
+          this.activeClass = "";
+          classList.remove(this.LOADER_ON);
+
+          setTimeout(() => {
+            this.activeClass = this.LOADER_HIDE;
+            classList.add(this.LOADER_HIDE);
+          }, 800);
+        }, 1000);
+      }
+    });
   }
 
   /**
-   * MÉTODO PARA ACTUALIZAR EL PATTERN QUE VIENE DEL BACKEND PARA NO COMPROMETER LA SECUENCIA 
-   * DE REGISTRO A TRAER DEL BACKEND BAJO DEMANDA, CUANDO SE REGISTRE UNA NUEVA RESPUESTA:
+   * MÉTODO PARA CARGAR MAS RESPUESTAS
+   * @param event EVENTO DE CLICK DEL ELEMENTO <a href="#">
    */
-  updatePattern() {
-    if (this.pagePattern) {
-      let offsetPos = this.pagePattern.indexOf("=", this.pagePattern.indexOf("offset")) + 1;
-      let newOffset = parseInt(this.pagePattern.substring(offsetPos)) + 1;
-      this.pagePattern = this.pagePattern.substring(0, offsetPos) + newOffset;
+  public requestForMore(event: any) {
+    if (event) {
+      event.preventDefault();
     }
-  }
 
-  /**
-   * MÉTODO PARA CARGAR MAS COMENTARIOS
-   * @param event EVENTO DEL ELEMENTO <a href="#">
-   */
-  askForMore(event: any) {
-    event.preventDefault();
+    //REF: https://www.developeracademy.io/blog/add-remove-css-classes-using-javascript/
+    let classList = document.querySelector('.bottom-loader').classList;
     if (this.activeClass != this.LOADER_ON) {
       this.activeClass = this.LOADER_ON;
+      classList.remove(this.LOADER_HIDE);
+      classList.add(this.LOADER_ON);
+
       if (this.pagePattern) {
-        this._notificationService.getUserNotifications(this.pagePattern, true)
-          .then((notifData: any) => {
-            setTimeout(() => {
-              this.activeClass = "";
-
-              setTimeout(() => {
-                this.activeClass = this.LOADER_HIDE;
-                this.notificationList = this.notificationList.concat(notifData.notifs);
-                this.pagePattern = notifData.pagePattern;
-              }, 800);
-
-            }, 1000)
-          })
-          .catch(err => {
-            console.log(err);
-
-            setTimeout(() => {
-              this.activeClass = "";
-
-              setTimeout(() => {
-                this.activeClass = this.LOADER_HIDE;
-              }, 800);
-            }, 1000)
-          });
+        setTimeout(() => {
+          this.askForMore.emit(true);
+        }, 500);
       }
       else {
         setTimeout(() => {
-          this.activeClass = "";
-
-          setTimeout(() => {
-            this.pagePattern = this.firstPattern;
-            this.activeClass = this.LOADER_HIDE;
-            this.notificationList.splice(this._notificationService.pageLimit, this.notificationList.length - this._notificationService.pageLimit);
-          }, 800);
-        }, 1000)
+          this.askForMore.emit(false);
+        }, 500);
       }
     }
-  }
-
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
   }
 }

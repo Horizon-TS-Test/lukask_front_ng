@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, Input, SimpleChanges, OnChanges } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input, SimpleChanges, OnChanges, OnDestroy } from '@angular/core';
 import { CAMERA_ACTIONS } from '../../config/camera-actions';
 import { HorizonButton } from '../../interfaces/horizon-button.interface';
 import { ACTION_TYPES } from '../../config/action-types';
@@ -9,7 +9,7 @@ import { CameraActionService } from 'src/app/services/camera-action.service';
   templateUrl: './new-media.component.html',
   styleUrls: ['./new-media.component.css'],
 })
-export class NewMediaComponent implements OnInit, OnChanges {
+export class NewMediaComponent implements OnInit, OnChanges, OnDestroy {
   @Input() maxSnapShots: number;
   @Input() showClass: string;
   @Input() backCamera: boolean;
@@ -102,4 +102,7 @@ export class NewMediaComponent implements OnInit, OnChanges {
     }
   }
 
+  ngOnDestroy() {
+    this._cameraActionService.sendCameraAction(null);
+  }
 }

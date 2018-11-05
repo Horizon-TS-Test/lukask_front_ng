@@ -30,7 +30,7 @@ export class EditQuejaComponent implements OnDestroy, OnChanges {
   constructor(
     private _dynaContentService: DynaContentService,
     private _cameraService: CameraService,
-    private _domSanitizer: DomSanitizer,
+    private _domSanitizer: DomSanitizer
   ) {
     this._initSnapShotsNumber = 5;
     this._maxSnapShots = this._initSnapShotsNumber;
@@ -38,11 +38,11 @@ export class EditQuejaComponent implements OnDestroy, OnChanges {
     this.initMediaFiles();
 
     //LISTEN TO NEW SNAPSHOT SENT BY NEW MEDIA CONTENT:
-    this.subscription = this._cameraService._snapShot.subscribe(
-      (snapShot: MediaFile) => {
+    this.subscription = this._cameraService.snapShot$.subscribe((snapShot: MediaFile) => {
+      if (snapShot) {
         this.addQuejaSnapShot(snapShot);
       }
-    );
+    });
   }
 
   private initMediaFiles() {
@@ -130,6 +130,7 @@ export class EditQuejaComponent implements OnDestroy, OnChanges {
   }
 
   ngOnDestroy() {
+    this._dynaContentService.loadDynaContent(null);
     this.subscription.unsubscribe();
   }
 

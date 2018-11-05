@@ -67,7 +67,7 @@ export class HomePanelComponent implements OnInit, OnChanges, OnDestroy {
    * MÉTODO PARA ESCUCHAR SI EL DISPOSITIVO ESTÁ O NO SUSCRITO, PARA LUEGO CAMBIAR EL ESTILO:
    */
   private listenAfterSubscribe() {
-    this.subscriptor = this._subscribeService.afterSubscribe.subscribe((subscribed: boolean) => {
+    this.subscriptor = this._subscribeService.afterSubs$.subscribe((subscribed: boolean) => {
       this.subsStyle = subscribed ? "" : "secondary";
     });
   }

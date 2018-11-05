@@ -8,6 +8,8 @@ import * as Snackbar from 'node-snackbar';
 import { Router } from '@angular/router';
 import { CONTENT_TYPES } from 'src/app/config/content-type';
 import { DynaContentService } from 'src/app/services/dyna-content.service';
+import { User } from 'src/app/models/user';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'new-pub',
@@ -29,6 +31,7 @@ export class NewPubComponent implements OnInit, OnChanges {
 
   constructor(
     private _dynaContentService: DynaContentService,
+    private _userService: UserService,
     public _router: Router
   ) {
     this.initStream = false;
@@ -123,6 +126,7 @@ export class NewPubComponent implements OnInit, OnChanges {
           break;
         case ACTION_TYPES.pubStream:
           this.newPubId = event.dataAfterSubmit;
+          this._userService.onStreaming = true;
           this.openStreaming();
           break;
       }
@@ -132,12 +136,14 @@ export class NewPubComponent implements OnInit, OnChanges {
       this.showClass = "show";
       alertData = new Alert({ title: 'Proceso Fallido', message: event.message, type: ALERT_TYPES.danger });
     }
-    setTimeout(() => {
-      this.showLoadingContent(!event.finished);
-      if (event.backSync != true) {
-        this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.alert, contentData: alertData });
-      }
-    }, 200);
+    if (this.actionType != ACTION_TYPES.pubStream) {
+      setTimeout(() => {
+        this.showLoadingContent(!event.finished);
+        if (event.backSync != true) {
+          this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.alert, contentData: alertData });
+        }
+      }, 200);
+    }
   }
 
   /**

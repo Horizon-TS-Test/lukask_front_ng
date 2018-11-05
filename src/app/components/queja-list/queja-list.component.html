@@ -24,10 +24,9 @@
       <app-queja *ngFor="let queja of pubList" [queja]="queja" (onCancelPub)="cancelPub($event)" (actionType)="optionButtonAction($event, queja.id_publication)"></app-queja>
     </div>
 
-    <div id="morePubs" class="bottom-loader {{ activeClass }} col-12 d-flex justify-content-center align-items-center">
+    <div id="morePubs" class="bottom-loader pub-loader col-12 d-flex justify-content-center align-items-center">
       <img src="/assets/images/forms/preloader.gif" width="60px" class="p-owl-img">
     </div>
-
 
   </div>
 </ng-container>

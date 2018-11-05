@@ -1,4 +1,4 @@
-import { Injectable, EventEmitter, OnDestroy } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { Http, Response, Headers } from '@angular/http';
 import { throwError, Subscription, BehaviorSubject, Observable } from 'rxjs';
 
@@ -25,6 +25,15 @@ export class QuejaService implements OnDestroy {
 
   private subscriptor: Subscription;
 
+  private mapSubject = new BehaviorSubject<string>(null);
+  map$: Observable<string> = this.mapSubject.asObservable();
+
+  private pubDetailSub = new BehaviorSubject<Publication>(null);
+  pubDetail$: Observable<Publication> = this.pubDetailSub.asObservable();
+
+  private subject = new BehaviorSubject<Publication[]>(null);
+  pubs$: Observable<Publication[]> = this.subject.asObservable();
+
   private isFetchedQtype: boolean;
   private isFetchedPubs: boolean;
   private isFetchedPub: boolean;
@@ -37,8 +46,6 @@ export class QuejaService implements OnDestroy {
 
   public pubList: Publication[];
   public pubFilterList: Publication[];
-  public _mapEmitter: EventEmitter<string>;
-  public _pubDetailEmitter: EventEmitter<Publication>;
 
   constructor(
     private _http: Http,
@@ -52,10 +59,25 @@ export class QuejaService implements OnDestroy {
     this.isFetchedPub = false;
     this.isUpdatedTrans = false;
 
-    this._mapEmitter = new EventEmitter<string>();
-    this._pubDetailEmitter = new EventEmitter<Publication>();
-
     this.listenToSocket();
+  }
+
+  /**
+   * MÉTODO PARA NOTIFICAR A LOS OBSERVADORES LA LISTA DE PUBLICACIONES:
+   * @param pubList 
+   */
+  public loadPubs(pubList: Publication[]) {
+    this.subject.next(pubList);
+  }
+
+  /**
+   * MÉTODO PARA CAMBIAR EL ESTADO DE UNA PUBLICACIÓN CUANDO SE HA DADO APOYO EN MODO OFFLINE:
+   * @param pub 
+   */
+  public changePubOffRelevance(pub: Publication) {
+    let currentPub = this.pubList.find(currPub => currPub.id_publication === pub.id_publication);
+    ArrayManager.backendServerSays("UPDATE", this.pubList, currentPub, pub);
+    this.loadPubs(this.pubList);
   }
 
   /**
@@ -163,7 +185,6 @@ export class QuejaService implements OnDestroy {
           console.log("[LUKASK QUEJA SERVICE] - PUBLICATIONS FROM WEB", transformedPubs);
           return transformedPubs;
         }).catch((error: Response) => {
-          console.log(error);
           if (error.json().code == 401) {
             localStorage.clear();
           }
@@ -172,7 +193,7 @@ export class QuejaService implements OnDestroy {
     }
     return new Promise((resolve, reject) => {
       this.isFetchedPubs = true;
-      resolve(null);
+      resolve([]);
     });
   }
 
@@ -215,16 +236,6 @@ export class QuejaService implements OnDestroy {
       reject(null);
     });
   }
-
-
-  private subject = new BehaviorSubject<Publication[]>(null);
-  pubs$: Observable<Publication[]> = this.subject.asObservable();
-
-  public loadPubs(pubList: Publication[]) {
-    this.subject.next(pubList);
-  }
-
-
 
   /**
    * MÉTODO PARA CARGAR LA LISTA DE PUBLICACIONES SEA DESDE LA WEB O DE LA CACHÉ
@@ -287,6 +298,7 @@ export class QuejaService implements OnDestroy {
 
       return this.pubList;
     }).catch((error: Response) => {
+      console.log("error", error);
       if (error.json().code == 401) {
         localStorage.clear();
       }
@@ -637,22 +649,24 @@ export class QuejaService implements OnDestroy {
    * Y ACTUALIZAR LA LISTA GLOBAL DE PUBLICACIONES CON LOS NUEVOS CAMBIOS
    */
   private listenToSocket() {
-    /*this.subscriptor = this._socketService._publicationUpdate.subscribe(
-      (socketPub: any) => {
+    this.subscriptor = this._socketService.pubUpdate$.subscribe((socketPub: any) => {
+      if (socketPub && this.pubList) {
         let stream = socketPub.stream;
         let action = socketPub.payload.action.toUpperCase();
 
         switch (stream) {
           case "publication":
             this.updatePubList(socketPub.payload.data, action);
-            this._mapEmitter.emit(socketPub.payload.data.id_publication);
+            this.mapSubject.next(socketPub.payload.data.id_publication);
+            this.loadPubs(this.pubList);
             break;
           case "actions":
             this.updateRelevanceNumber(socketPub.payload.data);
             break;
         }
       }
-    );*/
+    }
+    );
   }
 
   /**
@@ -722,10 +736,12 @@ export class QuejaService implements OnDestroy {
       this.getPubById(actionData.publication).then((newPub: Publication) => {
         ArrayManager.backendServerSays("UPDATE", this.pubList, currentPub, newPub);
         //ACTUALIZACIÓN PARA LA VISTA QUEJA DETAIL:
-        this._pubDetailEmitter.emit(newPub);
+        this.pubDetailSub.next(newPub);
         ////
 
         this.updateRelNumberIndexDb(actionData.publication, newPub.relevance_counter, newPub.user.id);
+
+        this.loadPubs(this.pubList);
       });
     }
   }
@@ -828,6 +844,6 @@ export class QuejaService implements OnDestroy {
   }
 
   ngOnDestroy() {
-    //this.subscriptor.unsubscribe();
+    this.subscriptor.unsubscribe();
   }
 }

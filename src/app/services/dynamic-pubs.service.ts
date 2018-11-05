@@ -10,7 +10,7 @@ export class DynamicPubsService {
 
   constructor() { }
 
-  public askForMorePubs() {
-    this.morePubsSubject.next(true);
+  public askForMorePubs(more: boolean = true) {
+    this.morePubsSubject.next(more);
   }
 }

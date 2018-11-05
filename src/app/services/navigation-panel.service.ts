@@ -18,12 +18,10 @@ export class NavigationPanelService {
    * @param option 
    */
   public navigateMenu(option: number) {
-    console.log("changing the option nav", option);
     this.menuSubject.next(option);
   }
 
   public navigateContent(option: number) {
-    console.log("changing the option nav", option);
     this.contentSubject.next(option);
   }
 }

@@ -32,15 +32,17 @@ export class MainNavComponent implements OnInit {
     this.newEntries = true;
     this.initEntries(true);
 
-    this.menuSubscription = this._routerService._enableMainMenu.subscribe(
+    this.menuSubscription = this._routerService.enableMenu$.subscribe(
       (enable: boolean) => {
         this._enableMainMenu = enable && this._userService.isLoggedIn();
         this.forceClickMenu();
       }
     );
 
-    this.newEntrieSubscription = this._notificationService._newNotif.subscribe((entry) => {
-      this.entriesNumber = this.entriesNumber + 1;
+    this.newEntrieSubscription = this._notificationService.newNotif$.subscribe((entry) => {
+      if (entry) {
+        this.entriesNumber = this.entriesNumber + 1;
+      }
     });
   }
 

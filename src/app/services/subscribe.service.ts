@@ -1,9 +1,10 @@
-import { Injectable, EventEmitter } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
 import { REST_SERV } from '../rest-url/rest-servers';
 import { VAPID_KEY } from '../config/vapid';
 import { BrowserNotifierService } from './browser-notifier.service';
 import { UserService } from './user.service';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 declare var urlBase64ToUint8Array: any;
 
@@ -11,15 +12,14 @@ declare var urlBase64ToUint8Array: any;
   providedIn: 'root'
 })
 export class SubscribeService {
-  public afterSubscribe: EventEmitter<boolean>;
+  private afterSubsSubject = new BehaviorSubject<boolean>(null);
+  afterSubs$: Observable<boolean> = this.afterSubsSubject.asObservable();
 
   constructor(
     private _http: Http,
     private _browserNotifierService: BrowserNotifierService,
     private _userService: UserService
-  ) {
-    this.afterSubscribe = new EventEmitter<boolean>();
-  }
+  ) { }
 
   /**
    * NEXT METHOD IS NOT FUNCTIONAL ON MOBILE DEVICES:
@@ -103,7 +103,7 @@ export class SubscribeService {
             this._browserNotifierService.displayConfirmNotification();
             localStorage.setItem('user_subs', 'true');
             console.log("[LUKASK SUBSCRIBE SERVICE] - SUCCESSFULLY SUBSCRIBED");
-            this.afterSubscribe.emit(true);
+            this.afterSubsSubject.next(true);
             return true;
           }
         }).catch(function (err) {
@@ -118,7 +118,7 @@ export class SubscribeService {
         if (response.ok) {
           localStorage.setItem('user_subs', 'false');
           console.log("[LUKASK SUBSCRIBE SERVICE] - SUCCESSFULLY UNSUBSCRIBED");
-          this.afterSubscribe.emit(false);
+          this.afterSubsSubject.next(false);
           return true;
         }
       }).catch(function (err) {

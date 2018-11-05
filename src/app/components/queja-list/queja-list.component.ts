@@ -15,8 +15,8 @@ declare var $: any;
 @Component({
   selector: 'app-quejas-list',
   templateUrl: './queja-list.component.html',
-  styleUrls: ['./queja-list.component.css'],
-  changeDetection: ChangeDetectionStrategy.Default
+  styleUrls: ['./queja-list.component.css'],  
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class QuejaListComponent implements OnInit {
   @Output() actionType = new EventEmitter<DynaContent>();
@@ -33,8 +33,8 @@ export class QuejaListComponent implements OnInit {
 
   constructor(
     private _domSanitizer: DomSanitizer,
-    private _quejaService: QuejaService,
-    private _dynamicPubsService: DynamicPubsService
+    private _dynamicPubsService: DynamicPubsService,
+    public _quejaService: QuejaService
   ) {
     this.introDataList = IntroDataInterface;
 
@@ -84,6 +84,7 @@ export class QuejaListComponent implements OnInit {
   private waitingForMorePubs() {
     if (this.activeClass != this.LOADER_ON) {
       this.activeClass = this.LOADER_ON;
+      $("#morePubs").addClass(this.LOADER_ON);
     }
   }
 
@@ -91,11 +92,14 @@ export class QuejaListComponent implements OnInit {
    * MÉTODO PARA QUITAR EL ESTILO DE CARGANDO UEV
    */
   private morePubsHasCome() {
-    this.activeClass = "";
-
     setTimeout(() => {
-      this.activeClass = this.LOADER_HIDE;
-    }, 800);
+      $("#morePubs").removeClass(this.LOADER_ON);
+
+      setTimeout(() => {
+        $("#morePubs").removeClass(this.LOADER_HIDE);
+        this.activeClass = this.LOADER_HIDE;
+      }, 800);
+    }, 1000);
   }
 
   /**

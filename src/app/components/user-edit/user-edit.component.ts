@@ -56,9 +56,11 @@ export class UserEditComponent implements OnInit, OnDestroy, OnChanges, AfterVie
     /**
     * LISTEN TO NEW SNAPSHOT SENT BY NEW MEDIA CONTENT:
     */
-    this.subscription = this._cameraService._snapShot.subscribe(
+    this.subscription = this._cameraService.snapShot$.subscribe(
       (snapShot: MediaFile) => {
-        this.addUserSnapShot(snapShot);
+        if (snapShot) {
+          this.addUserSnapShot(snapShot);
+        }
       });
 
   }
@@ -159,6 +161,7 @@ export class UserEditComponent implements OnInit, OnDestroy, OnChanges, AfterVie
   }
 
   ngOnDestroy() {
+    this._dynaContentService.loadDynaContent(null);
     this.subscription.unsubscribe();
   }
 }

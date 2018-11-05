@@ -69,7 +69,7 @@ export class QuejaDetailComponent implements OnInit, OnChanges, OnDestroy {
         }
       }).catch(error => console.log(error));
 
-    this.subscriptor = this._quejaService._pubDetailEmitter.subscribe((newPub: Publication) => {
+    this.subscriptor = this._quejaService.pubDetail$.subscribe((newPub: Publication) => {
       this.quejaDetail = newPub;
     });
   }
@@ -142,6 +142,7 @@ export class QuejaDetailComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy() {
+    this._dynaContentService.loadDynaContent(null);
     this.subscriptor.unsubscribe();
   }
 }

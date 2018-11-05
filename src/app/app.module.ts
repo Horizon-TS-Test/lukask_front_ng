@@ -72,6 +72,8 @@ import { StreamingComponent } from './components/streaming/streaming.component';
 import { WriteCommentComponent } from './components/write-comment/write-comment.component';
 import { CommentModalComponent } from './components/comment-modal/comment-modal.component';
 import { ReplyModalComponent } from './components/reply-modal/reply-modal.component';
+import { NotificationModalComponent } from './components/notification-modal/notification-modal.component';
+import { SupportModalComponent } from './components/support-modal/support-modal.component';
 
 @NgModule({
   declarations: [
@@ -133,7 +135,9 @@ import { ReplyModalComponent } from './components/reply-modal/reply-modal.compon
     StreamingComponent,
     WriteCommentComponent,
     CommentModalComponent,
-    ReplyModalComponent
+    ReplyModalComponent,
+    NotificationModalComponent,
+    SupportModalComponent
   ],
   imports: [
     HttpModule,

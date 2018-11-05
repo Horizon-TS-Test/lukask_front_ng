@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, NgZone } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActionService } from '../../services/action.service';
 import { PatternManager } from '../../tools/pattern-manager';
@@ -32,25 +32,29 @@ export class CommentFormComponent implements OnInit, OnDestroy {
     private _actionService: ActionService,
     private _userService: UserService,
     private _dynaContentService: DynaContentService,
-    private _commentFormService: CommentFormService,
-    private _ngZone: NgZone
+    private _commentFormService: CommentFormService
   ) {
     this.maxChars = 200;
     this.restChars = this.maxChars;
     this.commentSent = false;
-
-    this.subscription = this._userService._userUpdate.subscribe((update: boolean) => {
-      if (update) {
-        this.setUser();
-      }
-    });
   }
 
   ngOnInit() {
     this.commentModel.commentId = new Date().toISOString();;
     this.commentModel.active = true;
     this.commentModel.dateRegister = DateManager.getFormattedDate();
-    this.setUser();
+    this.listenToProfileUp();
+  }
+
+  /**
+   * MÉTODO PARA ESCUCHAR LAS ACTUALIZACIONES DEL PERFIL DE USUARIO:
+   */
+  private listenToProfileUp() {
+    this.subscription = this._userService.updateUser$.subscribe((update: boolean) => {
+      if (update) {
+        this.setUser();
+      }
+    });
   }
 
   /**
@@ -66,13 +70,7 @@ export class CommentFormComponent implements OnInit, OnDestroy {
    * @param event EVENTO DE KEYPRESS
    */
   public validateLettersNumber(event: KeyboardEvent) {
-    //REF: https://github.com/angular/angular/issues/20970
-    this._ngZone.runOutsideAngular(() => {
-      setTimeout(() => {
-        this.restChars = PatternManager.limitWords(this.maxChars, this.commentModel.description.length);
-        console.log("[COMMENT FORM]: Running outside the angular context");
-      });
-    });
+    this.restChars = PatternManager.limitWords(this.maxChars, this.commentModel.description.length);
   }
 
   /**
@@ -116,6 +114,8 @@ export class CommentFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this._commentFormService.newCommentInserted(null);
+    this._dynaContentService.loadDynaContent(null);
     this.subscription.unsubscribe();
   }
 }

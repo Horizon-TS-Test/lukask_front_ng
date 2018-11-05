@@ -8,7 +8,10 @@ import { Comment } from '../models/comment';
 export class CommentFormService {
   private newComSubject = new BehaviorSubject<Comment>(null);
   newComment$: Observable<Comment> = this.newComSubject.asObservable();
-
+  
+  private delOffComSubject = new BehaviorSubject<Comment>(null);
+  delOffComment$: Observable<Comment> = this.delOffComSubject.asObservable();
+  
   constructor() { }
 
   /**
@@ -16,5 +19,13 @@ export class CommentFormService {
    */
   public newCommentInserted(com: Comment) {
     this.newComSubject.next(com);
+  }
+
+  /**
+   * MÉTODO PARA ELIMINAR UN COMENTARIO GUARDADO DE FORMA OFFLINE:
+   * @param offCom 
+   */
+  public deleteOffComent(offCom: Comment) {
+    this.delOffComSubject.next(offCom);
   }
 }

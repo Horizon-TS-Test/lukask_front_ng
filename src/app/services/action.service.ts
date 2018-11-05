@@ -7,6 +7,7 @@ import { UserService } from './user.service';
 import { BackSyncService } from './back-sync.service';
 import { DateManager } from '../tools/date-manager';
 import * as lodash from 'lodash';
+import { ArrayManager } from '../tools/array-manager';
 
 declare var readAllData: any;
 declare var deleteItemData: any;
@@ -20,12 +21,14 @@ export class ActionService {
   private isPostedComment: boolean;
   private isPostedRelevance: boolean;
 
-  private DEFAULT_LIMIT: number = 2;
+  public DEFAULT_LIMIT: number = 2;
   public MOBILE_LIMIT: number = 5;
-  public pageLimit: number;
 
   private commSubject = new BehaviorSubject<{ comments: Comment[]; pagePattern: string }>(null);
   comms$: Observable<{ comments: Comment[]; pagePattern: string }> = this.commSubject.asObservable();
+
+  private replySubject = new BehaviorSubject<{ comments: Comment[]; pagePattern: string }>(null);
+  replies$: Observable<{ comments: Comment[]; pagePattern: string }> = this.replySubject.asObservable();
 
   constructor(
     private _http: Http,
@@ -35,7 +38,6 @@ export class ActionService {
     this.isFetchedComments = false;
     this.isPostedComment = false;
     this.isPostedRelevance = false;
-    this.pageLimit = this.DEFAULT_LIMIT;
   }
 
   /**
@@ -47,6 +49,23 @@ export class ActionService {
   }
 
   /**
+   * MÉTODO PARA CAMBIAR EL ESTADO DE UN COMENTARIO CUANDO SE HA DADO APOYO EN MODO OFFLINE:
+   */
+  public changeComOffRelevance(offRelCom: Comment, commList: Comment[], pagePattern: string) {
+    let currentCom = commList.find(currCom => currCom.commentId === offRelCom.commentId);
+    ArrayManager.backendServerSays("UPDATE", commList, currentCom, offRelCom);
+    this.loadComments({ comments: commList, pagePattern: pagePattern });
+  }
+
+  /**
+   * MÉTODO PARA ENVIAR LA ACTUALIZACIÓN DE LA LISTA DE COMENTARIOS:
+   * @param comList
+   */
+  public loadReplies(replyList: { comments: Comment[]; pagePattern: string }) {
+    this.replySubject.next(replyList);
+  }
+
+  /**
    * MÉTODO PARA OBTENER LOS COMENTARIOS DE UNA PUBLICACIÓN CON FILTRO DE PÁGINA DE LA WEB.
    * MÉTODO PARA OBTENER LAS RESPUESTAS DE UN COMENTARIO CON FILTRO DE PÁGINA DE LA WEB.
    * @param parentId ID DE PUBLICACIÓN / COMENTARIO
@@ -54,7 +73,7 @@ export class ActionService {
    * @param pagePattern PATTERN DE PAGINACIÓN
    * @param moreComments PETICIÓN BAJO DEMANDA
    */
-  private getCommentsWebByPub(parentId: string, isReplies: boolean, pagePattern: string = null, moreComments: boolean = false) {
+  private getCommentsWebByPub(parentId: string, isReplies: boolean, pagePattern: string = null, pageLimit: number = this.DEFAULT_LIMIT, moreComments: boolean = false) {
     const requestHeaders = new Headers({
       "Content-Type": "application/json",
       'X-Access-Token': this._userService.getUserKey()
@@ -66,7 +85,7 @@ export class ActionService {
     }
 
     if (flag) {
-      let filter = ((!isReplies) ? "/?pub_id=" + parentId : "/?com_id=" + parentId) + ((pagePattern && moreComments == true) ? pagePattern : "&limit=" + this.pageLimit) + ((isReplies) ? "&replies=true" : "");
+      let filter = ((!isReplies) ? "/?pub_id=" + parentId : "/?com_id=" + parentId) + ((pagePattern && moreComments == true) ? pagePattern : "&limit=" + pageLimit) + ((isReplies) ? "&replies=true" : "");
 
       return this._http.get(REST_SERV.commentUrl + filter, {
         headers: requestHeaders,
@@ -112,7 +131,7 @@ export class ActionService {
    * @param pagePattern PATTERN DE PAGINACIÓN
    * @param moreComments PETICIÓN BAJO DEMANDA
    */
-  private getCommentsCacheByPub(parentId: string, isReplies: boolean, pagePattern: string = null) {
+  private getCommentsCacheByPub(parentId: string, isReplies: boolean, pageLimit: number = this.DEFAULT_LIMIT, pagePattern: string = null) {
     if ('indexedDB' in window) {
       return readAllData((isReplies) ? 'reply' : 'comment')
         .then((tableData) => {
@@ -130,14 +149,14 @@ export class ActionService {
               let sortedData = lodash.orderBy(((isReplies) ? tableData[i].replies : tableData[i].comments), ['date_register'], ['desc']);
               ////
               for (let d = 0; d < sortedData.length; d++) {
-                if (d >= offset && cont < this.pageLimit) {
+                if (d >= offset && cont < pageLimit) {
                   comments.push(this.extractCommentJson(sortedData[d]));
                   cont++;
                 }
               }
 
               let size = sortedData.length;
-              offset = (offset + this.pageLimit < size) ? offset + this.pageLimit : null;
+              offset = (offset + pageLimit < size) ? offset + pageLimit : null;
 
               i = tableData.length;
             }
@@ -150,7 +169,7 @@ export class ActionService {
             console.log("[LUKASK ACTION SERVICE] - COMMENTS OF A PUBLICATION WITH ID " + parentId + " FROM CACHE", comments);
           }
 
-          return { comments: comments, pagePattern: (offset) ? "&limit=" + this.pageLimit + "&offset=" + offset : null };
+          return { comments: comments, pagePattern: (offset) ? "&limit=" + pageLimit + "&offset=" + offset : null };
         });
     }
 
@@ -166,14 +185,14 @@ export class ActionService {
    * @param isReplies SI SE TRATA DE OBTENER RESPUESTAS DE UN COMENTARIO
    * @param pagePattern PATTERN DE PAGINACIÓN
    */
-  public getCommentByPub(parentId: string, isReplies: boolean, pagePattern: string = null) {
+  public getCommentByPub(parentId: string, isReplies: boolean, pageLimit: number = this.DEFAULT_LIMIT, pagePattern: string = null) {
     /**
      * IMPLEMENTING NETWORK FIRST STRATEGY
     */
-    return this.getCommentsWebByPub(parentId, isReplies, pagePattern).then((webComments: any) => {
+    return this.getCommentsWebByPub(parentId, isReplies, pagePattern, pageLimit).then((webComments: any) => {
 
       if (!this.isFetchedComments) {
-        return this.getCommentsCacheByPub(parentId, isReplies).then((cacheComments: any) => {
+        return this.getCommentsCacheByPub(parentId, isReplies, pageLimit).then((cacheComments: any) => {
           return cacheComments;
         });
       }
@@ -183,11 +202,11 @@ export class ActionService {
 
       return webComments;
     }).catch((error: Response) => {
-      /*if (error.json().code == 401) {
+      if (error.json().code == 401) {
         localStorage.clear();
-      }*/
-      //return throwError(error.json());
-      return throwError(error);
+      }
+      return throwError(error.json());
+      //return throwError(error);
     });
   }
 
@@ -197,14 +216,14 @@ export class ActionService {
    * @param isReplies SI SE TRATA DE OBTENER RESPUESTAS DE UN COMENTARIO
    * @param pagePattern PATTERN DE PAGINACIÓN
    */
-  public getMoreCommentByPub(parentId: string, isReplies: boolean, pagePattern: string) {
+  public getMoreCommentByPub(parentId: string, isReplies: boolean, pagePattern: string, pageLimit: number = this.DEFAULT_LIMIT) {
     /**
      * IMPLEMENTING NETWORK FIRST STRATEGY
     */
-    return this.getCommentsWebByPub(parentId, isReplies, pagePattern, true).then((webComments: Comment[]) => {
+    return this.getCommentsWebByPub(parentId, isReplies, pagePattern, pageLimit, true).then((webComments: Comment[]) => {
 
       if (!this.isFetchedComments) {
-        return this.getCommentsCacheByPub(parentId, isReplies, pagePattern).then((cacheComments: Comment[]) => {
+        return this.getCommentsCacheByPub(parentId, isReplies, pageLimit, pagePattern).then((cacheComments: Comment[]) => {
           return cacheComments;
         });
       }

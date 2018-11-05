@@ -1,6 +1,6 @@
-<div class="p-border-none card">
+<div class="p-border-none card" #comments>
   <div class="card-block">
-    <write-comment [commentModel]="newComment"></write-comment>
+    <write-comment *ngIf="newComment" [commentModel]="newComment"></write-comment>
   </div>
   <ng-container *ngIf="_actionService.comms$ | async as commentData else loadingContainer">
     <ul class="list-group list-group-flush pb-0" id="comentsBody" [ngClass]="{
@@ -13,31 +13,36 @@
         'f-child-full-space': transparent
       }">
         <comment class="col-12 p-0" [hideBtn]="hideBtn" [focusCommentId]="commentId" [focusReplyId]="replyId"
-          [commentModel]="comment" (onCancelComment)="cancelComment($event)"></comment>
+          [commentModel]="comment" (onCancelComment)="cancelComment($event)" (changeComOffRelev)="changeComOffRelevance($event)"></comment>
       </li>
     </ul>
+
+    <ng-container *ngIf="!transparent">
+      <div *ngIf="pagePattern || firstPattern" class="card-footer text-center d-flex p-0">
+        <a href="#" (click)="requestForMore($event)" class="p-dark-text-color col-12 py-2">
+          <small *ngIf="pagePattern">Ver comentarios anteriores</small>
+          <small *ngIf="!pagePattern && firstPattern">Ocultar comentarios anteriores</small>
+        </a>
+        <div class="bottom-loader comment-loader hide col-12 d-flex justify-content-center align-items-center">
+          <img src="/assets/images/forms/preloader.gif" width="50px" class="p-owl-img-sm">
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="transparent">
+      <div class="bottom-loader comment-loader col-12 d-flex justify-content-center align-items-center">
+        <img src="/assets/images/forms/preloader.gif" width="50px" class="p-owl-img-sm">
+      </div>
+    </ng-container>
+
   </ng-container>
 
   <ng-template #loadingContainer>
-    Loading comments....
-  </ng-template>
-
-  <ng-container *ngIf="!transparent">
-    <div *ngIf="pagePattern || firstPattern" class="card-footer text-center">
-      <a href="#" (click)="requestForMore($event)" class="p-dark-text-color">
-        <small *ngIf="pagePattern">Ver comentarios anteriores</small>
-        <small *ngIf="!pagePattern && firstPattern">Ocultar comentarios anteriores</small>
-      </a>
-      <div class="bottom-loader comment-loader {{ activeClass }} col-12 d-flex justify-content-center align-items-center">
-        <img src="/assets/images/forms/preloader.gif" width="50px" class="p-owl-img-sm">
+    <div class="col-12 d-flex justify-content-center align-items-center">
+      <div class="col-3">
+        <img src="/assets/images/forms/preloader.gif" width="100px">
       </div>
     </div>
-  </ng-container>
-
-  <ng-container *ngIf="transparent">
-    <div class="bottom-loader comment-loader {{ activeClass }} col-12 d-flex justify-content-center align-items-center">
-      <img src="/assets/images/forms/preloader.gif" width="50px" class="p-owl-img-sm">
-    </div>
-  </ng-container>
+  </ng-template>
 
 </div>

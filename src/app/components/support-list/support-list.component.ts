@@ -1,21 +1,23 @@
-import { Component, OnInit, Input, Output, EventEmitter, AfterViewInit } from '@angular/core';
-import { HorizonButton } from '../../interfaces/horizon-button.interface';
-import { ACTION_TYPES } from '../../config/action-types';
+import { Component, OnInit, Output, EventEmitter, ViewChild, ElementRef, ChangeDetectionStrategy, OnDestroy, Input } from '@angular/core';
 import { User } from '../../models/user';
-import { UserService } from '../../services/user.service';
+import { SupportersService } from 'src/app/services/supporters.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'support-list',
   templateUrl: './support-list.component.html',
-  styleUrls: ['./support-list.component.css']
+  styleUrls: ['./support-list.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SupportListComponent implements OnInit, AfterViewInit {
-  @Input() pubId: string;
-  @Input() commentId: string;
+export class SupportListComponent implements OnInit, OnDestroy {
+  @ViewChild("supporters") supporters: ElementRef;
+  private suppCotainer: any;
+
   @Input() pubOwner: string;
   @Input() commentOwner: string;
-  @Output() closeModal = new EventEmitter<boolean>();
+  @Output() askForMore = new EventEmitter<boolean>();
 
+  private subscriptor: Subscription;
   private LOADER_HIDE: string = "hide";
   private LOADER_ON: string = "on";
 
@@ -24,70 +26,72 @@ export class SupportListComponent implements OnInit, AfterViewInit {
 
   public supportList: User[];
   public activeClass: string;
-  public matButtons: HorizonButton[];
 
   constructor(
-    private _userService: UserService
+    public _supportersService: SupportersService
   ) { }
 
-  ngAfterViewInit() {
-    this._userService.getUserSupporters(this.pubId ? this.pubId : this.commentId, this.pubId ? false : true)
-      .then((supData: any) => {
-        this.supportList = supData.supporters;
-        this.firstPattern = supData.pagePattern;
-        this.pagePattern = supData.pagePattern;
-      });
+  ngOnInit() {
+    this.suppCotainer = this.supporters.nativeElement;
+    this.listenToSuppList();
+  }
+
+  /**
+   * MÉTODO PARA ESCUCHAR LA LLEGADA DE LA LISTA ACTUALIZADA DE USUARIOS QUE HAN APOYADO LA PUBLICACIÓN O COMENTARIO:
+   */
+  private listenToSuppList() {
+    this.subscriptor = this._supportersService.supportList$.subscribe((suppData) => {
+      if (suppData) {
+        let loader = this.suppCotainer.querySelector('.bottom-loader');
+        let classList = (loader) ? loader.classList : null;
+
+        if (!this.firstPattern) {
+          this.firstPattern = suppData.pagePattern
+        }
+        this.pagePattern = suppData.pagePattern
+
+        if (classList) {
+          setTimeout(() => {
+            this.activeClass = "";
+            classList.remove(this.LOADER_ON);
+
+            setTimeout(() => {
+              this.activeClass = this.LOADER_HIDE;
+              classList.add(this.LOADER_HIDE);
+            }, 800);
+
+          }, 1000)
+        }
+      }
+    });
   }
 
   /**
    * MÉTODO PARA CARGAR MAS USUARIOS QUEN HAN APOYADO LA PUBLICACIÓN
    * @param event EVENTO DE CLICK DEL ELEMENTO <a href="#">
    */
-  askForMore(event: any) {
+  public requestForMore(event: any) {
     event.preventDefault();
     if (this.activeClass != this.LOADER_ON) {
       this.activeClass = this.LOADER_ON;
+      let loader = this.suppCotainer.querySelector('.bottom-loader');
+      let classList = (loader) ? loader.classList : null;
+
+      if (classList) {
+        classList.remove(this.LOADER_HIDE);
+        classList.add(this.LOADER_ON);
+      }
+
       if (this.pagePattern) {
-        this._userService.getUserSupporters(this.pubId ? this.pubId : this.commentId, this.pubId ? false : true, this.pagePattern, true)
-          .then((supData: any) => {
-            setTimeout(() => {
-              this.activeClass = "";
-
-              setTimeout(() => {
-                this.activeClass = this.LOADER_HIDE;
-                this.supportList = this.supportList.concat(supData.supporters);
-                this.pagePattern = supData.pagePattern;
-              }, 800);
-
-            }, 1000)
-          })
-          .catch(err => {
-            console.log(err);
-
-            setTimeout(() => {
-              this.activeClass = "";
-
-              setTimeout(() => {
-                this.activeClass = this.LOADER_HIDE;
-              }, 800);
-            }, 1000)
-          });
+        this.askForMore.emit(true);
       }
       else {
-        setTimeout(() => {
-          this.activeClass = "";
-
-          setTimeout(() => {
-            this.pagePattern = this.firstPattern;
-            this.activeClass = this.LOADER_HIDE;
-            this.supportList.splice(this._userService.pageLimit, this.supportList.length - this._userService.pageLimit);
-          }, 800);
-        }, 1000)
+        this.askForMore.emit(false);
       }
     }
   }
 
-  ngOnInit() {
+  ngOnDestroy() {
+    this.subscriptor.unsubscribe();
   }
-
 }

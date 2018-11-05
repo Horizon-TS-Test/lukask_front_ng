@@ -3,23 +3,34 @@
     <b>Actividad Reciente</b>
     <small class="p-normal-text-color">(Sin ver 8)</small>
   </div>
-  <ul class="max-height-half p-overflow-auto list-group list-group-flush pb-0">
-    <li *ngIf="!notificationList || notificationList.length == 0" class="p-border-none list-group-item py-3 px-2">
-      No existen datos por mostrar.
-    </li>
-    <ng-container *ngIf="notificationList && notificationList.length > 0">
-      <li *ngFor="let notif of notificationList" class="f-child-full-space p-border-none list-group-item p-1">
-        <horizon-notification [inputNotification]="notif" class="w-100"></horizon-notification>
+
+  <ng-container *ngIf="_notificationService.notifList$ | async as notifData else loadingContainer">
+    <ul class="max-height-half p-overflow-auto list-group list-group-flush pb-0">
+      <li *ngIf="!notifData.notifs || notifData.notifs.length == 0" class="p-border-none list-group-item py-3 px-2">
+        No existen datos por mostrar
       </li>
-    </ng-container>
-  </ul>
-  <div *ngIf="pagePattern || firstPattern" class="card-footer text-center">
-    <a href="#" (click)="askForMore($event)" class="p-dark-text-color">
-      <small *ngIf="pagePattern">Ver actividad anterior</small>
-      <small *ngIf="!pagePattern && firstPattern">Ocultar actividad anterior</small>
-    </a>
-    <div class="bottom-loader {{ activeClass }} col-12 d-flex justify-content-center align-items-center">
-      <img src="/assets/images/forms/preloader.gif" width="50px">
+      <ng-container *ngIf="notifData.notifs && notifData.notifs.length > 0">
+        <li *ngFor="let notif of notifData.notifs" class="f-child-full-space p-border-none list-group-item p-1">
+          <horizon-notification [inputNotification]="notif" class="w-100"></horizon-notification>
+        </li>
+      </ng-container>
+    </ul>
+    <div *ngIf="pagePattern || firstPattern" class="card-footer text-center d-flex p-0">
+      <a href="#" (click)="requestForMore($event)" class="p-dark-text-color col-12 py-2">
+        <small *ngIf="pagePattern">Ver actividad anterior</small>
+        <small *ngIf="!pagePattern && firstPattern">Ocultar actividad anterior</small>
+      </a>
+      <div class="bottom-loader comment-loader hide col-12 d-flex justify-content-center align-items-center">
+        <img src="/assets/images/forms/preloader.gif" width="50px">
+      </div>
     </div>
-  </div>
+  </ng-container>
+
+  <ng-template #loadingContainer>
+    <div class="col-12 d-flex justify-content-center align-items-center">
+      <div class="col-3">
+        <img src="/assets/images/forms/preloader.gif" width="100px">
+      </div>
+    </div>
+  </ng-template>
 </div>

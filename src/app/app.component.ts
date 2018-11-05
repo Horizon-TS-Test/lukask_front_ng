@@ -168,14 +168,14 @@ export class AppComponent implements OnInit, OnDestroy {
    * MÉTODO PARA ESCUCHAR LAS NOTIFICACIONES ENTRANTES:
    */
   private listenNotifSocket() {
-    this.socketSubscription = this._socketService._notificationUpdate.subscribe(
-      (notifData: any) => {
+    this.socketSubscription = this._socketService.notifUpdate$.subscribe((notifData: any) => {
+      if (notifData) {
         if (notifData.payload.data.user_received == this._userService.getUserProfile().id) {
           let newNotif: HorizonNotification = this._notificationService.extractNotifJson(notifData.payload.data);
           this._notificationService.showNotification(newNotif, this._userService.onStreaming);
         }
       }
-    );
+    });
   }
 
   ngOnDestroy() {

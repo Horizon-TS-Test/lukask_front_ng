@@ -55,7 +55,7 @@ export class MapViewComponent implements OnInit, OnChanges {
      * PARA SUBSCRIBIRSE AL EVENTO DE ACTUALIZACIÓN DEL SOCKET, QUE TRAE 
      * LOS CAMBIOS DE UNA PUBLICACIÓN PARA LUEGO MOSTRARLA EN EL MAPA
     */
-    this.subscription = this._quejaService._mapEmitter.subscribe((newPubId: string) => {
+    this.subscription = this._quejaService.map$.subscribe((newPubId: string) => {
       this.fetchPub();
       this.focusPubId = newPubId;
       this.focusPubById();

@@ -235,7 +235,6 @@ p, label, div {
 }
 
 .bottom-loader {
-    position: fixed !important;
     left: 0;
     bottom: 0;
     opacity: 0;
@@ -247,6 +246,9 @@ p, label, div {
     }
     .p-owl-img-sm {
         width: 50px !important;
+    }
+    &.pub-loader {
+        position: fixed !important;
     }
     &.comment-loader {
         position: absolute !important;

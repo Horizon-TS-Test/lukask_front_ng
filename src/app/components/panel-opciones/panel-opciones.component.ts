@@ -26,10 +26,10 @@ export class PanelOpcionesComponent implements OnInit, OnChanges, OnDestroy {
 
   constructor(
     private _navigationPanelService: NavigationPanelService,
-    private _DynaContentService: DynaContentService,
+    private _dynaContentService: DynaContentService,
     private _contentService: ContentService,
     private _router: Router,
-    private _loginService: LoginService,
+    private _loginService: LoginService
   ) {
     this.contentTypes = CONTENT_TYPES;
     this.menuOptions = MENU_OPTIONS;
@@ -65,14 +65,14 @@ export class PanelOpcionesComponent implements OnInit, OnChanges, OnDestroy {
     if (contType === this.contentTypes.view_notifs) {
       this.seenEntries.emit(true);
     }
-    this._DynaContentService.loadDynaContent({ contentType: contType, contentData: "" });
+    this._dynaContentService.loadDynaContent({ contentType: contType, contentData: "" });
   }
 
   /**
    * MÉTODO PARA SOLICITAR QUE SE DE FOCUS A UNA OPCIÓN SELECCIONADA DEL MENÚ DE NAVEGACIÓN:
    * @param idContent ID HTML DE LA OPCIÓN SELECCIONADA
    */
-  private focusOption(event: any, idContent: string, menuOption: number, notify: boolean = true) {
+  public focusOption(event: any, idContent: string, menuOption: number, notify: boolean = true) {
     if (event) {
       event.preventDefault();
     }
@@ -113,6 +113,8 @@ export class PanelOpcionesComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy() {
+    this._dynaContentService.loadDynaContent(null);
+
     this.subscriber.unsubscribe();
   }
 }

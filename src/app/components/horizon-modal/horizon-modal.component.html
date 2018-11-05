@@ -28,7 +28,7 @@
       [isModal]="true" (closeModal)="close($event)"></queja-detail>
 
     <div class="personal-dyna-down {{ showClass }} col-12 p-0" *ngSwitchCase="contentTypes.view_replies">
-      <reply-list [parentComment]="_dynaContent.contentData.parentComment" [focusReplyId]="_dynaContent.contentData.parentComment.replyId"></reply-list>
+      <reply-modal [parentComment]="_dynaContent.contentData.parentComment" [focusReplyId]="_dynaContent.contentData.parentComment.replyId"></reply-modal>
     </div>
 
     <div class="personal-dyna-down {{ showClass }} col-12 p-0" *ngSwitchCase="contentTypes.comment_input">
@@ -51,12 +51,12 @@
     <user-edit *ngSwitchCase="contentTypes.edit_profile" [showClass]="showClass" (closeModal)="close($event)"></user-edit>
 
     <div class="personal-dyna-down {{ showClass }} col-12 p-0" *ngSwitchCase="contentTypes.view_notifs">
-      <notification-list></notification-list>
+      <notification-modal></notification-modal>
     </div>
 
     <div class="personal-dyna-up {{ showClass }} col-12 p-0" *ngSwitchCase="contentTypes.support_list">
-      <support-list [pubId]="_dynaContent.contentData.pubId" [pubOwner]="_dynaContent.contentData.pubOwner" [commentId]="_dynaContent.contentData.commentId"
-        [commentOwner]="_dynaContent.contentData.commentOwner"></support-list>
+      <support-modal [pubId]="_dynaContent.contentData.pubId" [pubOwner]="_dynaContent.contentData.pubOwner" [commentId]="_dynaContent.contentData.commentId"
+        [commentOwner]="_dynaContent.contentData.commentOwner"></support-modal>
     </div>
 
     <planilla-detail *ngSwitchCase="contentTypes.planilla_detail" [showClass]="showClass" [planilla]="_dynaContent.contentData"

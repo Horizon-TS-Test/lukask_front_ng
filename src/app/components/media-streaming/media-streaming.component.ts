@@ -80,15 +80,16 @@ export class MediaStreamingComponent implements OnInit, OnChanges, OnDestroy {
     ];
   }
 
-
   /**
    * MÉTODO PARA DETECTAR LA LLEGADA DE UN NUEVO COMENTARIO 
    */
-  listenToNewComment() {
-    this.commentSubs = this._socketService._commentUpdate.subscribe((socketComment) => {
-      if (socketComment.payload.data.publication == this.pubId && socketComment.payload.data.active == true) {
-        this.upcomingAction++;
-        this.initButtons();
+  private listenToNewComment() {
+    this.commentSubs = this._socketService.commUpdate$.subscribe((socketComment) => {
+      if (socketComment) {
+        if (socketComment.payload.data.publication == this.pubId && socketComment.payload.data.active == true) {
+          this.upcomingAction++;
+          this.initButtons();
+        }
       }
     });
   }
@@ -186,7 +187,10 @@ export class MediaStreamingComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy() {
+    this._cameraActionService.sendCameraAction(null);
+    this._dynaContentService.loadDynaContent(null);
+    
     this.subscriber.unsubscribe();
-    /*this.commentSubs.unsubscribe();*/
+    this.commentSubs.unsubscribe();
   }
 }

@@ -24,6 +24,7 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
   @Input() noReplyBtn: boolean;
   @Input() hideBtn: boolean;
   @Output() onCancelComment = new EventEmitter<Comment>();
+  @Output() changeComOffRelev = new EventEmitter<Comment>();
 
   private subscription: Subscription;
   private relevanceProc: boolean;
@@ -37,12 +38,6 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
     private _userService: UserService
   ) {
     this.relevanceProc = true;
-
-    this.subscription = this._userService._userUpdate.subscribe((update: boolean) => {
-      if (update) {
-        this.setOwnUserProfile();
-      }
-    });
   }
 
   ngOnInit() {
@@ -51,6 +46,19 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
         this.viewReplies();
       }, 500);
     }
+
+    this.listenToProfileUp();
+  }
+
+  /**
+   * MÉTODO PARA ESCUCHAR LA ACTUALIZACIÓN DEL PERFIL DE USUARIO:
+   */
+  private listenToProfileUp() {
+    this.subscription = this._userService.updateUser$.subscribe((update: boolean) => {
+      if (update) {
+        this.setOwnUserProfile();
+      }
+    });
   }
 
   /**
@@ -97,6 +105,7 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
           if (response == 'backSyncOk') {
             Snackbar.show({ text: 'Tu apoyo se enviará en la próxima conexión', pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#34b4db', customClass: "p-snackbar-layout" });
             this.commentModel.offRelevance = true;
+            this.changeComOffRelev.emit(this.commentModel);
           }
           else {
             this.commentModel.userRelevance = response;
@@ -149,6 +158,7 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnDestroy() {
+    this._dynaContentService.loadDynaContent(null);
     this.subscription.unsubscribe();
   }
 }

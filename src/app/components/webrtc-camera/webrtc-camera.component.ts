@@ -44,8 +44,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
     private _cameraActionService: CameraActionService,
     private _cameraService: CameraService,
     private _webrtcSocketService: WebrtcSocketService,
-    private _userService: UserService,
-    private _ngZone: NgZone
+    private _userService: UserService
   ) {
     this.snapShotCounter = 0;
 
@@ -152,15 +151,13 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
    * MÉTODO PARA ABRIR UNA CÁMARA POR DEFECTO
    * @param doneCallback RETORNA UN CALLBACK PARA CREAR UN PROCESO ASÍNCRONO FUERA DEL CONTEXTO DE ANGULAR
    */
-  openSomeCamera(doneCallback: () => void) {
+  openSomeCamera() {
     if (this.backCamera) {
       this.startBackLiveCam();
     }
     else {
       this.startFrontLiveCam();
     }
-
-    doneCallback();
   }
 
   /**
@@ -175,18 +172,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
       }
       counter++;
       if (counter == deviceInfos.length) {
-
-        /**
-         * PARA INICIAR LA TRASMISIÓN FUERA DEL CONTEXTO DE ANGULAR
-        */
-        //REF: https://github.com/angular/angular/issues/20970
-        this._ngZone.runOutsideAngular(() => {
-          this.openSomeCamera(() => {
-            this._ngZone.run(() => {
-              console.log("[WERTC-CAMERA COMPONENT]: Proceso ejecutado fuera del contexto de Angular");
-            });
-          });
-        });
+        this.openSomeCamera();
       }
     });
   }
@@ -294,10 +280,8 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
     return this._webrtcSocketService.connecToKurento(this._userService.userProfile.id, this.pubId, this._video);
   }
 
-  startTransmission(someCallBack: () => void) {
+  startTransmission() {
     if (this.pubId && !this.streamOwnerId && !this.transmissionOn) {
-      this._userService.onStreaming = true;
-
       this.connectToStreamingClient()
         .then((response: boolean) => {
           if (response) {
@@ -308,16 +292,12 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
           console.log("[WERTC-CAMERA COMPONENT]: NO SE HA PODIDO INICIAR LA TRANSMISIÓN, FALLO EN LA CONEXIÓN");
         });
     }
-
-    someCallBack();
   }
 
   /**
    * MÉTODO PARA UNIRSE A UNA TRANSMISIÓN
    */
-  joinTransmission(doSomeCallback: () => void) {
-    this._userService.onStreaming = true;
-
+  joinTransmission() {
     this.connectToStreamingClient()
       .then((response: boolean) => {
         if (response) {
@@ -327,36 +307,20 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
       .catch((response: boolean) => {
         console.log("[WERTC-CAMERA COMPONENT]: NO SE HA PODIDO CONECTAR A LA TRANSMISIÓN, FALLO EN LA CONEXIÓN");
       });
-
-    doSomeCallback();
   }
 
   /**
    * PARA INICIAR LA TRASMISIÓN FUERA DEL CONTEXTO DE ANGULAR
    */
   transmissionOutsideAngular() {
-    //REF: https://github.com/angular/angular/issues/20970
-    this._ngZone.runOutsideAngular(() => {
-      this.startTransmission(() => {
-        this._ngZone.run(() => {
-          console.log("[WERTC-CAMERA COMPONENT]: Proceso ejecutado fuera del contexto de Angular");
-        });
-      });
-    });
+    this.startTransmission();
   }
 
   /**
    * PARA UNIRSE A UNA TRASMISIÓN FUERA DEL CONTEXTO DE ANGULAR
    */
   joinOutsideAngular() {
-    //REF: https://github.com/angular/angular/issues/20970
-    this._ngZone.runOutsideAngular(() => {
-      this.joinTransmission(() => {
-        this._ngZone.run(() => {
-          console.log("[WERTC-CAMERA COMPONENT]: Proceso ejecutado fuera del contexto de Angular");
-        });
-      });
-    });
+    this.joinTransmission();
   }
 
   /**
@@ -384,6 +348,8 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
     else {
       this.stopStream();
     }
+
+    this._cameraService.notifySnapShot(null);
   }
 
   /**

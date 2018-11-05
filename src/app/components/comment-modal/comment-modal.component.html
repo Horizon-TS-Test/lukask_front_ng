@@ -2,14 +2,16 @@
 
   <div class='col-12 py-1 px-1'>
     <div class="p-no-border-rad-card p-shadow-card card">
-      <comment-list [pubId]="pubId" [commentId]="commentId" [replyId]="replyId"></comment-list>
+      <comment-list [pubId]="pubId" [commentId]="commentId" [replyId]="replyId" (askForMore)="askForMore($event)"
+        (cancelCom)="onCancelComment($event)" (changeComOffRelev)="changeComOffRelevance($event)"></comment-list>
     </div>
   </div>
 
 </div>
 
 <div *ngIf="halfModal" class="p-no-border-rad-card p-transparent-card card" [ngClass]="{'p-transparent-card': transparent}">
-  <comment-list [pubId]="pubId" [transparent]="transparent" [hideBtn]="hideBtn" [fromModal]="true"></comment-list>
+  <comment-list [pubId]="pubId" [transparent]="transparent" [hideBtn]="hideBtn" [fromModal]="true" (askForMore)="askForMore($event)"
+    (cancelCom)="onCancelComment($event)" (changeComOffRelev)="changeComOffRelevance($event)"></comment-list>
 </div>
 
 <material-btn-list *ngIf="!halfModal" [showClass]="showClass" [materialBtns]="matButtons" (someBtnAction)="getButtonAction($event)"></material-btn-list>

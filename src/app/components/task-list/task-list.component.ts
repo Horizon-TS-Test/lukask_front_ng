@@ -10,6 +10,7 @@ import * as Snackbar from 'node-snackbar';
 import { Router } from '@angular/router';
 import { UserService } from 'src/app/services/user.service';
 import { DynaContentService } from 'src/app/services/dyna-content.service';
+import { QuejaService } from 'src/app/services/queja.service';
 
 declare var $: any;
 
@@ -27,6 +28,7 @@ export class TaskListComponent implements OnInit {
 
   constructor(
     private _actionService: ActionService,
+    private _quejaService: QuejaService,
     private _contentService: ContentService,
     private _dynaContentService: DynaContentService,
     private _userService: UserService,
@@ -51,6 +53,7 @@ export class TaskListComponent implements OnInit {
           if (response == 'backSyncOk') {
             Snackbar.show({ text: 'Tu apoyo se enviará en la próxima conexión', pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#34b4db', customClass: "p-snackbar-layout" });
             this.queja.offRelevance = true;
+            this._quejaService.changePubOffRelevance(this.queja);
           }
           else {
             this.queja.user_relevance = response;

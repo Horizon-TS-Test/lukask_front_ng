@@ -47,6 +47,7 @@
         {{queja.detail}}
       </div>
     </a>
-    <comment-list *ngIf="!queja.isOffline" [pubId]="queja.id_publication" [hideBtn]="queja.isTrans == true && queja.transDone == false" (askForMore)="askForMore($event)"></comment-list>
+    <comment-list *ngIf="!queja.isOffline" [pubId]="queja.id_publication" [hideBtn]="queja.isTrans == true && queja.transDone == false"
+      (askForMore)="askForMore($event)" (cancelCom)="onCancelComment($event)" (changeComOffRelev)="changeComOffRelevance($event)"></comment-list>
   </div>
 </div>

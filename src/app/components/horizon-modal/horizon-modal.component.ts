@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs';
 import { DynaContentService } from 'src/app/services/dyna-content.service';
 
 @Component({
-  selector: 'app-horizon-modal',
+  selector: 'horizon-modal',
   templateUrl: './horizon-modal.component.html',
   styleUrls: ['./horizon-modal.component.css']
 })
@@ -20,11 +20,11 @@ export class HorizonModalComponent implements OnInit, OnDestroy {
   public showClass: string;
 
   constructor(
-    private _DynaContentService: DynaContentService
+    private _dynaContentService: DynaContentService
   ) {
     this.contentTypes = CONTENT_TYPES;
 
-    this.subscriber = this._DynaContentService.removeDynaCont$.subscribe((closeIt: boolean) => {
+    this.subscriber = this._dynaContentService.removeDynaCont$.subscribe((closeIt: boolean) => {
       if(closeIt) {
         this.close(closeIt);
       }

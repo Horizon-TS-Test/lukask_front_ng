@@ -1,11 +1,13 @@
-import { Injectable, EventEmitter } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Router, NavigationEnd, NavigationStart } from '@angular/router';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RouterService {
-  public _enableMainMenu = new EventEmitter<boolean>();
+  private enableMenuSub = new BehaviorSubject<boolean>(null);
+  enableMenu$: Observable<boolean> = this.enableMenuSub.asObservable();
 
   constructor(
     private _router: Router
@@ -19,10 +21,10 @@ export class RouterService {
       if (event instanceof NavigationStart) {
         let url = event.url;
         if (url.indexOf("activity") !== -1 || url.indexOf("login") !== -1 || url.indexOf("streaming") !== -1) {
-          this._enableMainMenu.emit(false);
+          this.enableMenuSub.next(false);
         }
         else {
-          this._enableMainMenu.emit(true);
+          this.enableMenuSub.next(true);
         }
         console.log("[ROUTER SERIVCE]: Route Change Start!");
       } else if (event instanceof NavigationEnd) {

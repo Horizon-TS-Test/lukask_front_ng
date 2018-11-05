@@ -107,8 +107,8 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
    * MÉTODO PARA ESCUCHAR LA RESPUESTA DEL PAGO DE SERVICIOS BÁSICOS:
    */
   private paymentSocketUpdate() {
-    this.paymentSubs = this._socket._paymentResponse.subscribe(
-      (socketPago: any) => {
+    this.paymentSubs = this._socket.payUpdate$.subscribe((socketPago: any) => {
+      if (socketPago) {
         const data = JSON.parse(socketPago);
         console.log("CORREO DEL USUARIO QUE PAGA EL SERVICO: ", data.data.email);
         if (data) {
@@ -117,7 +117,8 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
 
           this._socket.confimPayResp();
         }
-      });
+      }
+    });
   }
 
   /**
@@ -241,7 +242,7 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
     this._quejaService.getPubList().then((pubs: Publication[]) => {
       setTimeout(() => {
         this._quejaService.loadPubs(pubs);
-      }, 3000);
+      }, 4000);
     }).catch(err => {
       console.log(err);
     });
@@ -263,7 +264,12 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this._quejaService.loadPubs(null);
+    this._socket.loadPayConfirm(null);
+    this._dynaContentService.loadDynaContent(null);
+    this._dynamicPubsService.askForMorePubs(false);
+
     this.subscriptor.unsubscribe();
-    //this.paymentSubs.unsubscribe();
+    this.paymentSubs.unsubscribe();
   }
 }

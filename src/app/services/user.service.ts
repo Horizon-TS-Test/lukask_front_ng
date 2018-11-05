@@ -1,4 +1,4 @@
-import { Injectable, EventEmitter } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { User } from '../models/user';
 import { Person } from '../models/person';
 import { REST_SERV } from '../rest-url/rest-servers';
@@ -9,7 +9,7 @@ import { Province } from '../models/province';
 import { Canton } from '../models/canton';
 import { Parroquia } from '../models/parroquia';
 import { DateManager } from '../tools/date-manager';
-import { throwError } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 declare var writeData: any;
 declare var readAllData: any;
@@ -19,13 +19,15 @@ declare var deleteItemData: any;
   providedIn: 'root'
 })
 export class UserService {
+  private updateUserSub = new BehaviorSubject<boolean>(null)
+  updateUser$: Observable<boolean> = this.updateUserSub.asObservable();
+
   private isFetchedProvince: boolean;
   private isFetchedCanton: boolean;
   private isFetchedParroquia: boolean;
   private isPatchedUser: boolean;
 
   public userProfile: User;
-  public _userUpdate = new EventEmitter<boolean>();
   public pageLimit: number;
   public onStreaming: boolean;
 
@@ -33,7 +35,7 @@ export class UserService {
     private _http: Http,
     private _backSyncService: BackSyncService,
   ) {
-    this.pageLimit = 5;
+    this.pageLimit = 1;
     this.isFetchedProvince = false;
     this.isFetchedCanton = false;
     this.isFetchedParroquia = false;
@@ -149,7 +151,9 @@ export class UserService {
 
     this.storeUserIndexedTable(localStorage.getItem('user_key'), cryptoData);
     this.setUserProfile();
-    this._userUpdate.emit(true);
+    setTimeout(() => {
+      this.updateUserSub.next(true);
+    }, 500);
   }
 
   /**
@@ -167,7 +171,7 @@ export class UserService {
             return true;
           }
         }
-        
+
         this.isPatchedUser = false;
         throw err;
       });

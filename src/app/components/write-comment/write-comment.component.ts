@@ -3,6 +3,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { UserService } from 'src/app/services/user.service';
 import { CONTENT_TYPES } from 'src/app/config/content-type';
 import { DynaContentService } from 'src/app/services/dyna-content.service';
+import { Comment } from 'src/app/models/comment';
 
 @Component({
   selector: 'write-comment',

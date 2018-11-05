@@ -210,7 +210,7 @@ p, label, div {
   transition: opacity 0.5s ease; }
 
 .bottom-loader {
-  position: fixed !important;
+  position: fixed;
   left: 0;
   bottom: 0;
   opacity: 0;
@@ -220,6 +220,10 @@ p, label, div {
     width: 60px !important; }
   .bottom-loader .p-owl-img-sm {
     width: 50px !important; }
+  .bottom-loader.pub-loader {
+    position: fixed !important; }
+  .bottom-loader.comment-loader {
+    position: absolute !important; }
 
 .bottom-loader.hide {
   z-index: -1; }
