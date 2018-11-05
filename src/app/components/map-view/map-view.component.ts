@@ -56,9 +56,11 @@ export class MapViewComponent implements OnInit, OnChanges {
      * LOS CAMBIOS DE UNA PUBLICACIÓN PARA LUEGO MOSTRARLA EN EL MAPA
     */
     this.subscription = this._quejaService.map$.subscribe((newPubId: string) => {
-      this.fetchPub();
-      this.focusPubId = newPubId;
-      this.focusPubById();
+      if (newPubId) {
+        this.fetchPub();
+        this.focusPubId = newPubId;
+        this.focusPubById();
+      }
     });
     ////
 
@@ -145,8 +147,10 @@ export class MapViewComponent implements OnInit, OnChanges {
 
   private getPubs() {
     this.pubList = this._quejaService.getPubListObj();
+    console.log("this.pubList", this.pubList);
     if (!this.pubList) {
       this._quejaService.getPubList().then((pubs: Publication[]) => {
+        console.log("pubs", pubs);
         this.pubList = pubs;
         this.fetchPub();
         if (!this.focusPubId) {

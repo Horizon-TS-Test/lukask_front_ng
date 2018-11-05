@@ -202,6 +202,9 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   private changeOwlContent(option: number) {
     this.owlElement.to([option, 300, true]);
+    setTimeout(() => {
+      this._navigationPanelService.navigateMenu(option);
+    }, 400);
   }
 
   /**
