@@ -37,7 +37,7 @@ export class UserEditComponent implements OnInit, OnDestroy, OnChanges, AfterVie
     public _domSanitizer: DomSanitizer
   ) {
     this.fileToUpload = {
-      mediaFileUrl: ASSETS.pubDefaultImg,
+      mediaFileUrl: ASSETS.profDefaultImg,
       mediaFile: null,
       removeable: false
     };

@@ -29,7 +29,7 @@ export class WebrtcSocketService {
    * @param idUser 
    * @param _video 
    */
-  connecToKurento(idUser: string, pubId: string, _video: any) {
+  public connecToKurento(idUser: string, pubId: string, _video: any) {
     let websocketPromise = new Promise((resolve, reject) => {
       this.kurentoWs = new WebSocket(REST_SERV.webRtcSocketServerUrl);
 
@@ -61,7 +61,7 @@ export class WebrtcSocketService {
   /**
    * MÉTODO PARA RECIBIR LAS RESPUESTAS DEL SERVIDOR MIDDLEWARE DONDE SE EJECUTA EL KURENTO CLIENT:
    */
-  messageFromKurento() {
+  private messageFromKurento() {
     this.kurentoWs.onmessage = (message) => {
       var parsedMessage = JSON.parse(message.data);
       console.log("parsedMessage.keyWord", parsedMessage.keyWord);
@@ -89,7 +89,7 @@ export class WebrtcSocketService {
   /**
    * Proceso para presentar informacion del video.
    */
-  presenter(backCamera, frontCamera) {
+  public presenter(backCamera, frontCamera) {
     let idCamera = backCamera.id == "" ? frontCamera.id : backCamera.id;
     let constraints = {
       audio: true,
@@ -122,7 +122,7 @@ export class WebrtcSocketService {
   /**
    * Oferta del presentador del video.
    */
-  onOfferPresenter(error, offerSdp) {
+  private onOfferPresenter(error, offerSdp) {
 
     if (error) {
       console.log("error al ofertar", error)
@@ -139,7 +139,7 @@ export class WebrtcSocketService {
    * Presenta informacion, de candidato a la transmicion
    * @param candidate 
    */
-  onIceCandidate(candidate) {
+  private onIceCandidate(candidate) {
 
     console.log('candidato local' + JSON.stringify(candidate));
     let message = {
@@ -153,7 +153,7 @@ export class WebrtcSocketService {
   /**
    * Envia datos de informacion al servidor.
    */
-  sendMessage(message) {
+  private sendMessage(message) {
 
     var jsonMessage = JSON.stringify(message);
     this.kurentoWs.send(jsonMessage);
@@ -162,7 +162,7 @@ export class WebrtcSocketService {
   /**
    * Proceso de presentaacio de video para los clientes(viewer)
    */
-  startViewer(ownerId: string) {
+  public startViewer(ownerId: string) {
     if (!this.webRtcPeer) {
 
       let options = {
@@ -185,7 +185,7 @@ export class WebrtcSocketService {
    * @param offerSdp 
    * @param ownerId ID DEL USUARIO DUEÑO DE LA TRANSMISIÓN:
    */
-  onOfferViewer(error: any, offerSdp: any, ownerId: string) {
+  private onOfferViewer(error: any, offerSdp: any, ownerId: string) {
     if (error) {
       console.log(error);
       return error;
@@ -203,7 +203,7 @@ export class WebrtcSocketService {
   /**
    * Procese a detener la transmicion del presenter.
    */
-  closeTransmissionCnn() {
+  public closeTransmissionCnn() {
     if (this.webRtcPeer) {
       var messege = {
         keyWord: 'stop',
@@ -222,7 +222,7 @@ export class WebrtcSocketService {
   /**
    * respuesta del presenter 
    */
-  presenterResponse(message) {
+  private presenterResponse(message) {
     console.log("Respuesta desde middleware", message.sdpAnswer)
     if (message.response != 'accepted') {
       var errorMsg = message.message ? message.message : 'Unknow error';
@@ -236,7 +236,7 @@ export class WebrtcSocketService {
   /**
    * Respuesta de las clientes conectados a la transmicion
    */
-  viewerResponse(message) {
+  private viewerResponse(message) {
     console.log("respuesta desde servidor midd", message)
     if (message.response != 'accepted') {
       let errorMsg = message.message ? message.message : 'Unknow error';
@@ -250,7 +250,7 @@ export class WebrtcSocketService {
   /**
    * Liberamos el WebRtcPeer
    */
-  dispose() {
+  private dispose() {
     if (this.webRtcPeer) {
       this.webRtcPeer.dispose();
       this.webRtcPeer = null;

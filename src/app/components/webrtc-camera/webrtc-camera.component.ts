@@ -80,8 +80,9 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
           case CAMERA_ACTIONS.flash_off:
             break;
           case CAMERA_ACTIONS.init_transmision:
+            console.log("DESDE EL LISTENER!!!!");
             //MÉTODO UTILIZADO PARA EL STREAMING
-            this.transmissionOutsideAngular();
+            this.startTransmission();
             break;
           case CAMERA_ACTIONS.pause_transmision:
             //MÉTODO UTILIZADO PARA EL STREAMING
@@ -93,7 +94,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
           case CAMERA_ACTIONS.join_transmision:
             //MÉTODO UTILIZADO PARA EL STREAMING
             if (this.streamOwnerId) {
-              this.joinOutsideAngular();
+              this.joinTransmission();
             }
             break;
           case CAMERA_ACTIONS.stop_stream:
@@ -114,7 +115,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
     this.backCamera = (!this.backCamera) ? false : this.backCamera;
 
     if (this.streamOwnerId) {
-      this.joinOutsideAngular();
+      this.joinTransmission();
     }
     else {
       navigator.mediaDevices.enumerateDevices().then((data) => {
@@ -126,16 +127,18 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
   /**
    * MÉTODO PARA INICIAR VARIABLES
    */
-  initVariables() {
-    let videoArray = document.querySelectorAll(".video-camera");
-    this._video = videoArray.item(videoArray.length - 1);
+  private initVariables() {
+    if (!this._video) {
+      let videoArray = document.querySelectorAll(".video-camera");
+      this._video = videoArray.item(videoArray.length - 1);
+    }
   }
 
   /**
    * MÉTODO PARA ESCOGER ENTRE LAS CÁMARAS DE VIDEO ENCONTRADAS
    * @param device
    */
-  setCamera(device: any) {
+  private setCamera(device: any) {
     if (device.label.indexOf("back") > -1) {
       this._backCamera = { id: device.deviceId, description: "Posterior" }
       this.swapCamera = true;
@@ -151,7 +154,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
    * MÉTODO PARA ABRIR UNA CÁMARA POR DEFECTO
    * @param doneCallback RETORNA UN CALLBACK PARA CREAR UN PROCESO ASÍNCRONO FUERA DEL CONTEXTO DE ANGULAR
    */
-  openSomeCamera() {
+  private openSomeCamera() {
     if (this.backCamera) {
       this.startBackLiveCam();
     }
@@ -164,7 +167,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
    * MÉTODO PARA ENCONTRAR LOS DIFERENTES DISPOSITIVOS DE AUDIO Y VIDEO:
    * @param deviceInfos Información  de los dispositivos
    */
-  getDevices(deviceInfos: any) {
+  private getDevices(deviceInfos: any) {
     let counter = 0;
     deviceInfos.forEach((device) => {
       if (device.kind === "videoinput") {
@@ -180,7 +183,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
   /**
    * MÉTODO PARA INICIAR LA CAPTURA DE LA CÁMARA:
    */
-  startLiveCamp(infoCamp: Device) {
+  private startLiveCamp(infoCamp: Device) {
     if (this.startCamera != false) {
       this._navigator = <any>navigator;
       this._navigator.getUserMedia = (this._navigator.getUserMedia || this._navigator.webkitGetUserMedia || this._navigator.mozGetUserMedia || this._navigator.msGetUserMedia);
@@ -199,7 +202,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
   /**
    * MÉTODO PARA INICIAR LA CAPTURA DE IMAGEN DE LA CÁMARA FRONTAL:
    */
-  startFrontLiveCam() {
+  private startFrontLiveCam() {
     this.backCamera = false;
     this.stopStream();
     this.startLiveCamp(this._frontCamera);
@@ -208,7 +211,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
   /**
    * MÉTODO PARA INICIAR LA CAPTURA DE IMAGEN DE LA CÁMARA TRASERA:
    */
-  startBackLiveCam() {
+  private startBackLiveCam() {
     if (this.swapCamera) {
       this.backCamera = true;
       this.stopStream();
@@ -222,7 +225,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
   /**
    * MÉTODO PARA DETENER LA CAPTURA DE IMAGEN DE LA CÁMARA:
    */
-  stopStream() {
+  private stopStream() {
     if (this.localStream !== undefined) {
       const tracks = this.localStream.getTracks();
       tracks.forEach((tracks) => {
@@ -234,7 +237,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
   /**
    * MÉTODO PARA OBTENER UNA CAPTURA DE IMAGEN (SNAP SHOT) DEL STREAM
    */
-  takeSnapShot() {
+  private takeSnapShot() {
     if (this.imageCapture) {
       this.imageCapture.takePhoto().then((blob: any) => {
         let fixedBlob;
@@ -276,11 +279,12 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
   /**
    * MÉTODO PARA INCIAR LA CONEXIÓN AL SOCKET DE KURENTO CLIENT:
    */
-  connectToStreamingClient() {
+  private connectToStreamingClient() {
+    this.initVariables();
     return this._webrtcSocketService.connecToKurento(this._userService.userProfile.id, this.pubId, this._video);
   }
 
-  startTransmission() {
+  private startTransmission() {
     if (this.pubId && !this.streamOwnerId && !this.transmissionOn) {
       this.connectToStreamingClient()
         .then((response: boolean) => {
@@ -297,7 +301,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
   /**
    * MÉTODO PARA UNIRSE A UNA TRANSMISIÓN
    */
-  joinTransmission() {
+  private joinTransmission() {
     this.connectToStreamingClient()
       .then((response: boolean) => {
         if (response) {
@@ -310,20 +314,6 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
   }
 
   /**
-   * PARA INICIAR LA TRASMISIÓN FUERA DEL CONTEXTO DE ANGULAR
-   */
-  transmissionOutsideAngular() {
-    this.startTransmission();
-  }
-
-  /**
-   * PARA UNIRSE A UNA TRASMISIÓN FUERA DEL CONTEXTO DE ANGULAR
-   */
-  joinOutsideAngular() {
-    this.joinTransmission();
-  }
-
-  /**
    * MÉTODO PARA DETECTAR LOS CAMBIOS DE UNA PROPIEDAD INYECTADA DESDE EL COMPONENTE PADRE DE ESTE COMPONENTE:
    * @param changes LOS CAMBIOS GENERADOS
    */
@@ -333,7 +323,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
         case 'pubId':
           if (changes[property].currentValue) {
             this.pubId = changes[property].currentValue;
-            this.transmissionOutsideAngular();
+            this.startTransmission();
           }
           break;
       }
