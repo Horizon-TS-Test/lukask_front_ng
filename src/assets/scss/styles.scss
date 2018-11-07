@@ -1003,7 +1003,7 @@ p, label, div {
         }
     }
 
-    a, fa, span, small {
+    a, a:hover, fa, span, small {
         color: $secondary-text !important;
     }
 }

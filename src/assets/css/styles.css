@@ -761,7 +761,7 @@ p, label, div {
     background-color: transparent !important;
     border-color: #fff !important;
     color: #fff !important; }
-  .p-transparent-card a, .p-transparent-card fa, .p-transparent-card span, .p-transparent-card small {
+  .p-transparent-card a, .p-transparent-card a:hover, .p-transparent-card fa, .p-transparent-card span, .p-transparent-card small {
     color: #fff !important; }
 
 .personal-icon-btn {
