@@ -634,7 +634,6 @@ export class QuejaService {
    * @param action THIS CAN BE CREATE, UPDATE OR DELETE:
    */
   updatePubList(pubJson: any, action: string) {
-    console.log("action y data :" + action , pubJson);
     let lastPub: Publication, newPub: Publication;
     let isDeleted: boolean = false;
 
