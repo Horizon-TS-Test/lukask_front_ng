@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ContentService } from 'src/app/services/content.service';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ASSETS } from 'src/app/config/assets-url';
 
 declare var $: any;
 
@@ -16,7 +17,7 @@ export class OfflinePageComponent implements OnInit {
     private _contentService: ContentService,
     private _domSanitizer: DomSanitizer
   ) {
-    this.img = _domSanitizer.bypassSecurityTrustUrl("assets/images/offline/offline2.jpg");
+    this.img = _domSanitizer.bypassSecurityTrustUrl(ASSETS.offlineImg);
   }
 
   ngOnInit() {

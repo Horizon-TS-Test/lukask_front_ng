@@ -1,5 +1,6 @@
 import { Component, OnInit, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { NotificationService } from '../../services/notification.service';
+import { ASSETS } from 'src/app/config/assets-url';
 
 @Component({
   selector: 'notification-list',
@@ -16,10 +17,12 @@ export class NotificationListComponent implements OnInit {
   public firstPattern: string;
   public pagePattern: string;
   public activeClass: string;
+  public preloader: string;
 
   constructor(
     public _notificationService: NotificationService
   ) {
+    this.preloader = ASSETS.preloader;
     this.listenNotif();
   }
 

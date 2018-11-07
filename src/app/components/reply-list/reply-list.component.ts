@@ -4,6 +4,7 @@ import { Comment } from '../../models/comment';
 import { ActionService } from '../../services/action.service';
 import { Subscription } from 'rxjs';
 import { UserService } from 'src/app/services/user.service';
+import { ASSETS } from 'src/app/config/assets-url';
 
 @Component({
   selector: 'reply-list',
@@ -31,11 +32,14 @@ export class ReplyListComponent implements OnInit, OnDestroy {
   public matButtons: HorizonButton[];
   public commentForm: Comment;
   public activeClass: string;
+  public preloader: string;
 
   constructor(
     public _actionService: ActionService,
     public _userService: UserService
-  ) { }
+  ) {
+    this.preloader = ASSETS.preloader;
+  }
 
   ngOnInit() {
     this.repsContainer = this.replies.nativeElement;

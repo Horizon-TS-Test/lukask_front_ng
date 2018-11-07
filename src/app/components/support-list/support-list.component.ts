@@ -2,6 +2,7 @@ import { Component, OnInit, Output, EventEmitter, ViewChild, ElementRef, ChangeD
 import { User } from '../../models/user';
 import { SupportersService } from 'src/app/services/supporters.service';
 import { Subscription } from 'rxjs';
+import { ASSETS } from 'src/app/config/assets-url';
 
 @Component({
   selector: 'support-list',
@@ -26,10 +27,13 @@ export class SupportListComponent implements OnInit, OnDestroy {
 
   public supportList: User[];
   public activeClass: string;
+  public preloader: string;
 
   constructor(
     public _supportersService: SupportersService
-  ) { }
+  ) {
+    this.preloader = ASSETS.preloader;
+  }
 
   ngOnInit() {
     this.suppCotainer = this.supporters.nativeElement;

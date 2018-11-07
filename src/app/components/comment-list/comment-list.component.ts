@@ -4,6 +4,7 @@ import { Comment } from '../../models/comment';
 import { Subscription } from 'rxjs';
 import { ContentService } from '../../services/content.service';
 import { UserService } from 'src/app/services/user.service';
+import { ASSETS } from 'src/app/config/assets-url';
 
 declare var $: any;
 
@@ -38,6 +39,7 @@ export class CommentListComponent implements OnInit, OnDestroy {
 
   public newComment: Comment;
   public activeClass: string;
+  public preloader: string;
 
   constructor(
     public _actionService: ActionService,
@@ -45,6 +47,7 @@ export class CommentListComponent implements OnInit, OnDestroy {
     private _contentService: ContentService
   ) {
     this.activeClass = this.LOADER_HIDE;
+    this.preloader = ASSETS.preloader;
   }
 
   ngOnInit() {

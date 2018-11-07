@@ -210,7 +210,6 @@ p, label, div {
   transition: opacity 0.5s ease; }
 
 .bottom-loader {
-  position: fixed;
   left: 0;
   bottom: 0;
   opacity: 0;

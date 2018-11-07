@@ -67,7 +67,6 @@ export class QuejaService implements OnDestroy {
    * @param pubList 
    */
   public loadPubs(pubList: Publication[]) {
-    console.log("Enviando nuevas quejas :D");
     this.subject.next(pubList);
   }
 

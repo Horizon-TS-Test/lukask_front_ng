@@ -1,8 +1,10 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.2.0/workbox-sw.js");
 
+const baseURL = './';
+
 //NEXT ALLOWS US TO USE INDEX DB:
-importScripts('/assets/js/idb.min.js');
-importScripts('/assets/js/utility-db.min.js');
+importScripts(baseURL + 'assets/js/idb.min.js');
+importScripts(baseURL + 'assets/js/utility-db.min.js');
 ///////////
 
 //NEXT ALLOWS US TO MAKE NOTIFICATIONS BETWEEN SERVICE WORKER AND BROWSER CLIENTS:
@@ -568,7 +570,7 @@ self.addEventListener('push', function (event) {
         body: defaultNotifData.content,
         dir: 'rtl',
         icon: defaultNotifData.icon_image,
-        badge: '/assets/icons/badged.png',
+        badge: baseURL + 'assets/icons/badged.png',
         vibrate: [500, 200, 200, 100], //THIS IS FOR SOME DEVICES NOT FOR ALL
 
         "//": "Behavioural Options",
@@ -581,12 +583,12 @@ self.addEventListener('push', function (event) {
             /*{
                 action: '/',
                 title: "Mural",
-                //icon: '/assets/icons/lukask-96x96.png'
+                //icon: baseURL + 'assets/icons/lukask-96x96.png'
             },
             {
                 action: '/mapview',
                 title: "Mapa",
-                //icon: '/assets/icons/lukask-96x96.png'
+                //icon: baseURL + 'assets/icons/lukask-96x96.png'
             }*/
         ]
     };

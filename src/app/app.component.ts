@@ -7,6 +7,8 @@ import { NotificationService } from './services/notification.service';
 import { RouterService } from './services/router.service';
 import { InstallPromptService } from './services/install-prompt.service';
 
+declare var device;
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -51,6 +53,10 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    //THIS IS USED FOR DISPLAY AN ALERT WITH THE CURRENT PLATFORM AFTER BUILD THIS APP WITH CORDOVA
+    document.addEventListener("deviceready", function () {
+      alert(device.platform);
+    }, false);
   }
   /**
    * MÉTODO PARA EVITAR QUE EL NAVEGADOR DESPLIEGUE POR SI MISMO EL BANNER DE INSTALACIÓN DEL APP

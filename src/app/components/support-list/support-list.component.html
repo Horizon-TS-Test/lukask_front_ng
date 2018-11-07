@@ -20,13 +20,17 @@
         <small *ngIf="!pagePattern && firstPattern">Ver menos</small>
       </a>
       <div class="bottom-loader comment-loader hide col-12 d-flex justify-content-center align-items-center">
-        <img src="/assets/images/forms/preloader.gif" width="50px">
+        <img src="{{ preloader }}" width="50px">
       </div>
     </div>
 
   </ng-container>
 
   <ng-template #loading>
-
+    <div class="col-12 d-flex justify-content-center align-items-center">
+      <div class="col-3">
+        <img src="{{ preloader }}" width="100px">
+      </div>
+    </div>
   </ng-template>
 </div>

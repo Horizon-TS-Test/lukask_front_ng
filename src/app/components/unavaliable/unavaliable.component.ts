@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ContentService } from 'src/app/services/content.service';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ASSETS } from 'src/app/config/assets-url';
 
 declare var $: any;
 
@@ -16,7 +17,7 @@ export class UnavaliableComponent implements OnInit {
     private _contentService: ContentService,
     private _domSanitizer: DomSanitizer
   ) {
-    this.img = _domSanitizer.bypassSecurityTrustUrl("assets/images/unavaliable/not-found2.jpg");
+    this.img = _domSanitizer.bypassSecurityTrustUrl(ASSETS.unavaliableImg);
   }
 
   ngOnInit() {

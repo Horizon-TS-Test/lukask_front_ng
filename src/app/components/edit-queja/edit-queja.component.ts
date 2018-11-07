@@ -8,6 +8,7 @@ import { ACTION_TYPES } from '../../config/action-types';
 import { OnSubmit } from '../../interfaces/on-submit.interface';
 import * as Snackbar from 'node-snackbar';
 import { DynaContentService } from 'src/app/services/dyna-content.service';
+import { ASSETS } from 'src/app/config/assets-url';
 
 @Component({
   selector: 'edit-queja',
@@ -48,7 +49,7 @@ export class EditQuejaComponent implements OnDestroy, OnChanges {
   private initMediaFiles() {
     this.filesToUpload = [
       {
-        mediaFileUrl: "/assets/images/edit-queja/window-sm.jpg",
+        mediaFileUrl: ASSETS.pubDefaultImg,
         mediaFile: null,
         removeable: false
       }

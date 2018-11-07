@@ -9,6 +9,7 @@ import { DomSanitizer } from '../../../../node_modules/@angular/platform-browser
 import { ACTION_TYPES } from '../../config/action-types';
 import { UserService } from '../../services/user.service';
 import { DynaContentService } from 'src/app/services/dyna-content.service';
+import { ASSETS } from 'src/app/config/assets-url';
 
 @Component({
   selector: 'user-edit',
@@ -36,7 +37,7 @@ export class UserEditComponent implements OnInit, OnDestroy, OnChanges, AfterVie
     public _domSanitizer: DomSanitizer
   ) {
     this.fileToUpload = {
-      mediaFileUrl: '/assets/images/edit-queja/window-sm.jpg',
+      mediaFileUrl: ASSETS.pubDefaultImg,
       mediaFile: null,
       removeable: false
     };

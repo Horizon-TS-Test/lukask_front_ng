@@ -10,12 +10,13 @@ import IntroDataInterface from '../../data/intro-data';
 import { SliderManager } from '../../tools/slider-manger';
 import { DomSanitizer } from '../../../../node_modules/@angular/platform-browser';
 import { DynamicPubsService } from 'src/app/services/dynamic-pubs.service';
+import { ASSETS } from 'src/app/config/assets-url';
 
 declare var $: any;
 @Component({
   selector: 'app-quejas-list',
   templateUrl: './queja-list.component.html',
-  styleUrls: ['./queja-list.component.css'],  
+  styleUrls: ['./queja-list.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class QuejaListComponent implements OnInit {
@@ -30,12 +31,14 @@ export class QuejaListComponent implements OnInit {
   public styles: any;
   public activeClass: string;
   public introDataList: IntroData[];
+  public preloader: string;
 
   constructor(
     private _domSanitizer: DomSanitizer,
     private _dynamicPubsService: DynamicPubsService,
     public _quejaService: QuejaService
   ) {
+    this.preloader = ASSETS.preloader;
     this.introDataList = IntroDataInterface;
 
     this.subMorePubs = this._dynamicPubsService.morePubs$.subscribe((morePubs) => {

@@ -24,14 +24,14 @@
           <small *ngIf="!pagePattern && firstPattern">Ocultar comentarios anteriores</small>
         </a>
         <div class="bottom-loader comment-loader hide col-12 d-flex justify-content-center align-items-center">
-          <img src="/assets/images/forms/preloader.gif" width="50px" class="p-owl-img-sm">
+          <img src="{{ preloader }}" width="50px" class="p-owl-img-sm">
         </div>
       </div>
     </ng-container>
 
     <ng-container *ngIf="transparent">
       <div class="bottom-loader comment-loader col-12 d-flex justify-content-center align-items-center">
-        <img src="/assets/images/forms/preloader.gif" width="50px" class="p-owl-img-sm">
+        <img src="{{ preloader }}" width="50px" class="p-owl-img-sm">
       </div>
     </ng-container>
 
@@ -40,7 +40,7 @@
   <ng-template #loadingContainer>
     <div class="col-12 d-flex justify-content-center align-items-center">
       <div class="col-3">
-        <img src="/assets/images/forms/preloader.gif" width="100px">
+        <img src="{{ preloader }}" width="100px">
       </div>
     </div>
   </ng-template>
