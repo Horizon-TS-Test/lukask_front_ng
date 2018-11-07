@@ -1,6 +1,5 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
 import { ContentService } from '../../services/content.service';
-import { NotifierService } from '../../services/notifier.service';
 import { Subscription } from 'rxjs';
 import { MENU_OPTIONS } from '../../config/menu-option';
 import { ACTION_TYPES } from '../../config/action-types';
@@ -10,6 +9,12 @@ import { SocketService } from '../../services/socket.service';
 import { ALERT_TYPES } from '../../config/alert-types';
 import { OwlCarousel } from '../../../../node_modules/ngx-owl-carousel';
 import { DomSanitizer } from '../../../../node_modules/@angular/platform-browser';
+import { QuejaService } from 'src/app/services/queja.service';
+import { Publication } from 'src/app/models/publications';
+import { NavigationPanelService } from 'src/app/services/navigation-panel.service';
+import { CONTENT_TYPES } from 'src/app/config/content-type';
+import { DynaContentService } from 'src/app/services/dyna-content.service';
+import { DynamicPubsService } from 'src/app/services/dynamic-pubs.service';
 
 declare var $: any;
 
@@ -20,10 +25,11 @@ declare var $: any;
 })
 export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('owlElement') owlElement: OwlCarousel;
+
   private pubContainer: any;
   private customCarousel: any;
   private subscriptor: Subscription;
-  private alertData: Alert;
+  private paymentSubs: Subscription;
 
   public enableSecondOp: boolean;
   public enableThirdOp: boolean;
@@ -31,14 +37,19 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   public focusedPubId: string;
   public touchDrag: boolean;
   public webViewPort: boolean;
+  public askforMorePubs: boolean;
 
   constructor(
     private _domSanitizer: DomSanitizer,
     private _contentService: ContentService,
-    private _notifierService: NotifierService,
-    private _socket: SocketService
+    private _navigationPanelService: NavigationPanelService,
+    private _dynaContentService: DynaContentService,
+    private _dynamicPubsService: DynamicPubsService,
+    private _socket: SocketService,
+    public _quejaService: QuejaService,
   ) {
     this.touchDrag = true;
+    this.askforMorePubs = false;
   }
 
   ngOnInit() {
@@ -47,11 +58,13 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
     ////
     this._contentService.fadeInComponent($("#homeContainer"));
 
-    this._notifierService.notifyChangeMenuContent(MENU_OPTIONS.home);
+    this._navigationPanelService.navigateMenu(MENU_OPTIONS.home);
     this.listenToMenuChanges();
 
     this.initCarousel();
     this.paymentSocketUpdate();
+
+    this.getPubList();
   }
 
   /**
@@ -69,9 +82,11 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
    * MÉTODO PARA SUBSCRIBIRSE AL EVENTO DE CAMBIO DE MENU DE NAVEGACIÓN:
    */
   private listenToMenuChanges() {
-    this.subscriptor = this._notifierService._changeMenuOption.subscribe(
+    this.subscriptor = this._navigationPanelService.navigateContent$.subscribe(
       (menuOption: number) => {
-        this.changeOwlContent(menuOption);
+        if (menuOption != -1) {
+          this.changeOwlContent(menuOption);
+        }
       });
   }
 
@@ -80,10 +95,10 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   private onScrollPubContainer() {
     this.pubContainer = $('#pub-container');
-    console.log("this.pubContainer", this.pubContainer.attr("id"));
     this.pubContainer.scroll(() => {
       if (this._contentService.isBottomScroll(this.pubContainer)) {
-        this._notifierService.notifyMorePubsRequest(true);
+        this.getMorePubs();
+        this._dynamicPubsService.askForMorePubs();
       }
     });
   }
@@ -91,30 +106,25 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   /**
    * MÉTODO PARA ESCUCHAR LA RESPUESTA DEL PAGO DE SERVICIOS BÁSICOS:
    */
-  paymentSocketUpdate() {
-    this._socket._paymentResponse.subscribe(
-      (socketPago: any) => {
+  private paymentSocketUpdate() {
+    this.paymentSubs = this._socket.payUpdate$.subscribe((socketPago: any) => {
+      if (socketPago) {
         const data = JSON.parse(socketPago);
         console.log("CORREO DEL USUARIO QUE PAGA EL SERVICO: ", data.data.email);
         if (data) {
-          this.alertData = new Alert({ title: "Proceso Correcto", message: "Pago exitoso de servicios básicos de la cuenta de usuario: " + data.data.email, type: ALERT_TYPES.success });
-          this.setAlert();
+          let alertData = new Alert({ title: "Proceso Correcto", message: "Pago exitoso de servicios básicos de la cuenta de usuario: " + data.data.email, type: ALERT_TYPES.success });
+          this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.alert, contentData: alertData });
+
           this._socket.confimPayResp();
         }
-      });
-  }
-
-  /**
-   * MÉTODO PARA MOSTRAR UN MENSAJE DE ALERTA EN EL DOM
-   */
-  setAlert() {
-    this._notifierService.sendAlert(this.alertData);
+      }
+    });
   }
 
   /**
    * MÉTODO PARA DEFINIR LAS PROPIEDADES DEL CAROUSEL DE SECCIONES:
    */
-  initCarousel() {
+  private initCarousel() {
     this.carouselOptions = {
       items: 1, dots: false, loop: false, margin: 5,
       nav: false, stagePadding: 0, autoWidth: false,
@@ -130,7 +140,7 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   /**
    * HANDLE CAMERA STATUS ON DRAG THE CAROUSEL:
    */
-  handleMenuCarousel() {
+  private handleMenuCarousel() {
     this.customCarousel = $('#carousel-home');
 
     this.customCarousel.on('dragged.owl.carousel', (event) => {
@@ -140,14 +150,16 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
           break;
         case MENU_OPTIONS.mapview:
           this.enableSecondOp = true;
-          this.touchDrag = false;
-          this.reInitCarousel();
+          setTimeout(() => {
+            this.touchDrag = false;
+            this.reInitCarousel();
+          }, 250);
           break;
         case MENU_OPTIONS.payment:
           this.enableThirdOp = true;
           break;
       }
-      this._notifierService.notifyChangeMenuContent(menuIndex);
+      this._navigationPanelService.navigateMenu(menuIndex);
       console.log("CAROUSEL DRAGGED EVENT: ", event.item.index);
     });
 
@@ -162,20 +174,24 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
         case MENU_OPTIONS.mapview:
           this.enableSecondOp = true;
           if (this.touchDrag) {
-            this.touchDrag = false;
-            this.reInitCarousel();
+            setTimeout(() => {
+              this.touchDrag = false;
+              this.reInitCarousel();
+            }, 300);
           }
           break;
         case MENU_OPTIONS.payment:
           this.enableThirdOp = true;
           if (!this.touchDrag) {
-            this.touchDrag = true;
-            this.reInitCarousel();
+            setTimeout(() => {
+              this.touchDrag = true;
+              this.reInitCarousel();
+            }, 300);
           }
           break;
       }
       setTimeout(() => {
-        this._notifierService.notifyChangeMenuContent(menuIndex);
+        //this._navigationPanelService.navigate(menuIndex);
       }, 800);
       console.log("CAROUSEL 'TO' EVENT: ", menuIndex);
     });
@@ -184,14 +200,17 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   /**
    * MÉTODO PARA NAVEGAR EN CIERTA OPCIÓN DEL CAROUSEL:
    */
-  changeOwlContent(option: number) {
+  private changeOwlContent(option: number) {
     this.owlElement.to([option, 300, true]);
+    setTimeout(() => {
+      this._navigationPanelService.navigateMenu(option);
+    }, 400);
   }
 
   /**
    * MÉTODO PARA RE INICIALIZAR EL ELEMENTO OWL CAROUSEL:
    */
-  reInitCarousel() {
+  private reInitCarousel() {
     this.initCarousel();
     this.owlElement.reInit();
   }
@@ -200,7 +219,7 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
    * MÉTODO PARA CAPTAR LA ACCIÓN DE ALGÚN BOTÓN DEL LA LSITA DE BOTONES, COMPONENTE HIJO
    * @param $event VALOR DEL TIPO DE ACCIÓN QUE VIENE EN UN EVENT-EMITTER
    */
-  optionButtonAction(event: DynaContent) {
+  public optionButtonAction(event: DynaContent) {
     if (event.contentType === ACTION_TYPES.mapFocus) {
       this.focusedPubId = null;
       setTimeout(() => {
@@ -214,12 +233,46 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
    * MÉTODO PARA DETECTAR LOS CAMBIOS DEL SWITCH INPUT COMO COMPONENTE HIJO
    * @param event VALOR BOOLEANO DEL EVENT EMITTER DEL COMPONENTE HIJO
    */
-  getSwitchChanges(event: boolean) {
+  public getSwitchChanges(event: boolean) {
     this.touchDrag = event;
     this.reInitCarousel();
   }
 
+  /**
+   * FUNCIÓN PARA OBTENER UN NÚMERO INICIAL DE PUBLICACIONES, PARA DESPUÉS CARGAR MAS PUBLICACIONES BAJO DEMANDA
+   */
+  private getPubList() {
+    this._quejaService.getPubList().then((pubs: Publication[]) => {
+      setTimeout(() => {
+        this._quejaService.loadPubs(pubs);
+      }, 4000);
+    }).catch(err => {
+      console.log(err);
+    });
+  }
+
+  /**
+   * FUNCIÓN PARA OBTENER PUBLICACIONES BAJO DEMANDA A TRAVÉS DE UN PATTERN DE PAGINACIÓN:
+   */
+  private getMorePubs() {
+    if (!this.askforMorePubs) {
+      this.askforMorePubs = true;
+      this._quejaService.getMorePubs().then((morePubs: Publication[]) => {
+        this.askforMorePubs = false;
+        setTimeout(() => {
+          this._quejaService.loadPubs(morePubs);
+        }, 1000);
+      });
+    }
+  }
+
   ngOnDestroy() {
+    this._quejaService.loadPubs(null);
+    this._socket.loadPayConfirm(null);
+    this._dynaContentService.loadDynaContent(null);
+    this._dynamicPubsService.askForMorePubs(false);
+
     this.subscriptor.unsubscribe();
+    this.paymentSubs.unsubscribe();
   }
 }

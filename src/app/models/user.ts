@@ -1,5 +1,4 @@
 import { Person } from "./person";
-import { Parroquia } from "./parroquia";
 
 export class User {
     public person: Person;
@@ -11,7 +10,7 @@ export class User {
         public isActive?: boolean,
         public file?: any,
         public fileName?: string,
-        public id?: string,
+        public id?: string
     ) {
         this.person = new Person();
     }

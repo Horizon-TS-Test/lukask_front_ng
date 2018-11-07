@@ -1,4 +1,4 @@
-import { Injectable, EventEmitter } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { User } from '../models/user';
 import { Person } from '../models/person';
 import { REST_SERV } from '../rest-url/rest-servers';
@@ -9,7 +9,7 @@ import { Province } from '../models/province';
 import { Canton } from '../models/canton';
 import { Parroquia } from '../models/parroquia';
 import { DateManager } from '../tools/date-manager';
-import { throwError } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 declare var writeData: any;
 declare var readAllData: any;
@@ -19,14 +19,17 @@ declare var deleteItemData: any;
   providedIn: 'root'
 })
 export class UserService {
+  private updateUserSub = new BehaviorSubject<boolean>(null)
+  updateUser$: Observable<boolean> = this.updateUserSub.asObservable();
+
   private isFetchedProvince: boolean;
   private isFetchedCanton: boolean;
   private isFetchedParroquia: boolean;
   private isPatchedUser: boolean;
 
   public userProfile: User;
-  public _userUpdate = new EventEmitter<boolean>();
   public pageLimit: number;
+  public onStreaming: boolean;
 
   constructor(
     private _http: Http,
@@ -37,6 +40,7 @@ export class UserService {
     this.isFetchedCanton = false;
     this.isFetchedParroquia = false;
     this.isPatchedUser = false;
+    this.onStreaming = false;
   }
 
   /**
@@ -147,7 +151,9 @@ export class UserService {
 
     this.storeUserIndexedTable(localStorage.getItem('user_key'), cryptoData);
     this.setUserProfile();
-    this._userUpdate.emit(true);
+    setTimeout(() => {
+      this.updateUserSub.next(true);
+    }, 500);
   }
 
   /**
@@ -165,7 +171,7 @@ export class UserService {
             return true;
           }
         }
-        
+
         this.isPatchedUser = false;
         throw err;
       });
@@ -284,14 +290,14 @@ export class UserService {
     user.person = new Person(jsonUser.person.id_person, jsonUser.person.age, jsonUser.person.identification_card, jsonUser.person.name, jsonUser.person.last_name, jsonUser.person.telephone, jsonUser.person.address, jsonUser.person.active, jsonUser.person.birthdate, jsonUser.person.cell_phone, null, DateManager.convertStringToDate(jsonUser.person.birthdate));
 
     //PROVISIONAL
-    user.person.parroquia.id_parroquia = jsonUser.person.location.parish.id;
+    /*user.person.parroquia.id_parroquia = jsonUser.person.location.parish.id;
     user.person.parroquia.name = jsonUser.person.location.parish.description;
 
     user.person.parroquia.canton.id_canton = jsonUser.person.location.canton.id;
     user.person.parroquia.canton.name = jsonUser.person.location.canton.description;
 
     user.person.parroquia.canton.province.id_province = jsonUser.person.location.province.id;
-    user.person.parroquia.canton.province.name = jsonUser.person.location.province.description;
+    user.person.parroquia.canton.province.name = jsonUser.person.location.province.description;*/
     ////
 
     return user;

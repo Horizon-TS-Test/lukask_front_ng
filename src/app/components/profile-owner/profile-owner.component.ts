@@ -7,7 +7,7 @@ import { User } from '../../models/user';
   styleUrls: ['./profile-owner.component.css']
 })
 export class ProfileOwnerComponent implements OnInit {
-  @Input() suporterProfile: User;
+  @Input() userProfile: User;
   @Input() isCommentProfile: boolean;
 
   constructor() { }

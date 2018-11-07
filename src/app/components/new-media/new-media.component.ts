@@ -1,16 +1,15 @@
-import { Component, OnInit, Output, EventEmitter, Input, SimpleChanges, OnChanges } from '@angular/core';
-import { NotifierService } from '../../services/notifier.service';
+import { Component, OnInit, Output, EventEmitter, Input, SimpleChanges, OnChanges, OnDestroy } from '@angular/core';
 import { CAMERA_ACTIONS } from '../../config/camera-actions';
 import { HorizonButton } from '../../interfaces/horizon-button.interface';
 import { ACTION_TYPES } from '../../config/action-types';
+import { CameraActionService } from 'src/app/services/camera-action.service';
 
 @Component({
   selector: 'new-media',
   templateUrl: './new-media.component.html',
   styleUrls: ['./new-media.component.css'],
-  providers: [NotifierService]
 })
-export class NewMediaComponent implements OnInit, OnChanges {
+export class NewMediaComponent implements OnInit, OnChanges, OnDestroy {
   @Input() maxSnapShots: number;
   @Input() showClass: string;
   @Input() backCamera: boolean;
@@ -22,7 +21,7 @@ export class NewMediaComponent implements OnInit, OnChanges {
   public carouselOptions: any;
 
   constructor(
-    private _notifierService: NotifierService
+    private _cameraActionService: CameraActionService
   ) {
     this.cameraActions = CAMERA_ACTIONS;
 
@@ -44,7 +43,7 @@ export class NewMediaComponent implements OnInit, OnChanges {
   /**
    * MÉTODO PARA DEFINIR LAS PROPIEDADES DEL CAROUSEL DE SECCIONES:
    */
-  initCarousel() {
+  private initCarousel() {
     this.carouselOptions = {
       items: 1, dots: false, loop: false, margin: 5,
       nav: false, stagePadding: 0, autoWidth: false
@@ -57,12 +56,12 @@ export class NewMediaComponent implements OnInit, OnChanges {
    * @param event 
    * @param action EL TIPO DE ACCIÓN A REALIZAR. VER EL ARCHIVO ../../config/camera-actions.ts
    */
-  sendCameraAction(event: any, action: number) {
+  public sendCameraAction(event: any, action: number) {
     if (event) {
       event.preventDefault();
     }
 
-    this._notifierService.notifyCameraAction(action);
+    this._cameraActionService.sendCameraAction(action);
   }
 
   /**
@@ -85,7 +84,7 @@ export class NewMediaComponent implements OnInit, OnChanges {
    * MÉTODO PARA CAPTAR EL EVENTO DEL COMPONENTE HIJO
    * @param event 
    */
-  getChildEvent(event: boolean) {
+  public getChildEvent(event: boolean) {
     if (event) {
       this.closeModal.emit(true);
     }
@@ -94,7 +93,7 @@ export class NewMediaComponent implements OnInit, OnChanges {
   /**
    * MÉTODO PARA ESCUCHAR LA ACCIÓN DEL EVENTO DE CLICK DE UN BOTÓN DINÁMICO:
    */
-  getButtonAction(actionEvent: number) {
+  public getButtonAction(actionEvent: number) {
     switch (actionEvent) {
       case ACTION_TYPES.close:
         console.log("llamada a Proceso de cerrar camara ")
@@ -104,4 +103,7 @@ export class NewMediaComponent implements OnInit, OnChanges {
     }
   }
 
+  ngOnDestroy() {
+    this._cameraActionService.sendCameraAction(null);
+  }
 }

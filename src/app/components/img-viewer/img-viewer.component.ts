@@ -28,10 +28,7 @@ export class ImgViewerComponent implements OnInit {
   private videoRecPub : any;
 
   
-  constructor(
-    private _webRtcSocketService: WebrtcSocketService,
-    private _userService: UserService
-  ) {
+  constructor() {
     this.closeModal = new EventEmitter<boolean>();
     this._contentType = CONTENT_TYPES;
     this.materialBtn = [

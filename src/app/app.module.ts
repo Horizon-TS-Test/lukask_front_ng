@@ -29,14 +29,6 @@ import { QuejaListComponent } from './components/queja-list/queja-list.component
 import { Select2BootstrapComponent } from './components/select2-bootstrap/select2-bootstrap.component';
 import { WebrtcCameraComponent } from './components/webrtc-camera/webrtc-camera.component';
 
-import { ContentService } from './services/content.service';
-import { AuthGuardService } from './services/auth-guard.service';
-import { LoginGuardService } from './services/login-guard.service';
-import { NotifierService } from './services/notifier.service';
-import { CameraService } from './services/camera.service';
-import { SocketService } from './services/socket.service';
-import { BrowserNotifierService } from './services/browser-notifier.service';
-import { QuejaService } from './services/queja.service';
 import { HorizonModalComponent } from './components/horizon-modal/horizon-modal.component';
 import { MaterialButtonComponent } from './components/material-button/material-button.component';
 import { MaterialBtnListComponent } from './components/material-btn-list/material-btn-list.component';
@@ -50,11 +42,9 @@ import { SingleMapComponent } from './components/single-map/single-map.component
 import { ImgViewerComponent } from './components/img-viewer/img-viewer.component';
 import { CommentListComponent } from './components/comment-list/comment-list.component';
 import { HorizonNotificationComponent } from './components/horizon-notification/horizon-notification.component';
-import { NotificationService } from './services/notification.service';
 import { NotificationListComponent } from './components/notification-list/notification-list.component';
 import { MediaStreamingComponent } from './components/media-streaming/media-streaming.component';
 import { ActivityComponent } from './components/activity/activity.component';
-import { RouterService } from './services/router.service';
 import { HomePanelComponent } from './components/home-panel/home-panel.component';
 import { NewPubComponent } from './components/new-pub/new-pub.component';
 import { PubFormComponent } from './components/pub-form/pub-form.component';
@@ -76,6 +66,14 @@ import { InitComponent } from './components/init/init.component';
 import { InstallSliderComponent } from './components/install-slider/install-slider.component';
 import { PromptComponent } from './components/prompt/prompt.component';
 import { HorizonSwitchInListComponent } from './components/horizon-switch-in-list/horizon-switch-in-list.component';
+import { OfflinePageComponent } from './components/offline-page/offline-page.component';
+import { UnavaliableComponent } from './components/unavaliable/unavaliable.component';
+import { StreamingComponent } from './components/streaming/streaming.component';
+import { WriteCommentComponent } from './components/write-comment/write-comment.component';
+import { CommentModalComponent } from './components/comment-modal/comment-modal.component';
+import { ReplyModalComponent } from './components/reply-modal/reply-modal.component';
+import { NotificationModalComponent } from './components/notification-modal/notification-modal.component';
+import { SupportModalComponent } from './components/support-modal/support-modal.component';
 
 @NgModule({
   declarations: [
@@ -131,7 +129,15 @@ import { HorizonSwitchInListComponent } from './components/horizon-switch-in-lis
     InitComponent,
     InstallSliderComponent,
     PromptComponent,
-    HorizonSwitchInListComponent
+    HorizonSwitchInListComponent,
+    OfflinePageComponent,
+    UnavaliableComponent,
+    StreamingComponent,
+    WriteCommentComponent,
+    CommentModalComponent,
+    ReplyModalComponent,
+    NotificationModalComponent,
+    SupportModalComponent
   ],
   imports: [
     HttpModule,
@@ -143,7 +149,7 @@ import { HorizonSwitchInListComponent } from './components/horizon-switch-in-lis
     OwlModule,
     ServiceWorkerModule.register('/sw-workbox.js', { enabled: environment.production })
   ],
-  providers: [appRoutingProviders, ContentService, UserService, AuthGuardService, LoginGuardService, NotifierService, CameraService, SocketService, BrowserNotifierService, QuejaService, NotificationService, RouterService],
+  providers: [appRoutingProviders, UserService],
   bootstrap: [AppComponent],
   entryComponents: [AlertComponent, HorizonModalComponent, SingleMapComponent, HorizonNotificationComponent, HorizonPopOverComponent]
 })

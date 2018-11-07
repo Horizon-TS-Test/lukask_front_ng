@@ -1,11 +1,12 @@
 import { Component, OnInit, Input, Output, SimpleChanges, OnChanges, EventEmitter, OnDestroy } from '@angular/core';
-import { NotifierService } from '../../services/notifier.service';
 import { CONTENT_TYPES } from '../../config/content-type';
 import { ContentService } from '../../services/content.service';
 import { MENU_OPTIONS } from '../../config/menu-option';
 import { Subscription } from '../../../../node_modules/rxjs';
 import { Router } from '../../../../node_modules/@angular/router';
 import { LoginService } from '../../services/login.service';
+import { DynaContentService } from 'src/app/services/dyna-content.service';
+import { NavigationPanelService } from 'src/app/services/navigation-panel.service';
 
 declare var $: any;
 
@@ -24,15 +25,16 @@ export class PanelOpcionesComponent implements OnInit, OnChanges, OnDestroy {
   public menuOptions: any;
 
   constructor(
-    private _notifierService: NotifierService,
+    private _navigationPanelService: NavigationPanelService,
+    private _dynaContentService: DynaContentService,
     private _contentService: ContentService,
     private _router: Router,
-    private _loginService: LoginService,
+    private _loginService: LoginService
   ) {
     this.contentTypes = CONTENT_TYPES;
     this.menuOptions = MENU_OPTIONS;
 
-    this.subscriber = this._notifierService._changeMenuContent.subscribe((menuOption: number) => {
+    this.subscriber = this._navigationPanelService.navigateMenu$.subscribe((menuOption: number) => {
       let idOp;
       switch (menuOption) {
         case MENU_OPTIONS.home:
@@ -45,7 +47,9 @@ export class PanelOpcionesComponent implements OnInit, OnChanges, OnDestroy {
           idOp = 'top-option-2';
           break;
       }
-      this.focusOption(null, idOp, menuOption, false);
+      if (menuOption != -1) {
+        this.focusOption(null, idOp, menuOption, false);
+      }
     });
   }
 
@@ -56,26 +60,37 @@ export class PanelOpcionesComponent implements OnInit, OnChanges, OnDestroy {
    * @param event EVENTO CLICK DEL ELEMENTO <a href="#">
    * @param contType TIPO DE CONTENIDO A MOSTRAR DENTRO DEL HORIZON MODAL
    */
-  openLayer(event: any, contType: number) {
+  public openLayer(event: any, contType: number) {
     event.preventDefault();
     if (contType === this.contentTypes.view_notifs) {
       this.seenEntries.emit(true);
     }
-    this._notifierService.notifyNewContent({ contentType: contType, contentData: "" });
+    this._dynaContentService.loadDynaContent({ contentType: contType, contentData: "" });
   }
 
   /**
    * MÉTODO PARA SOLICITAR QUE SE DE FOCUS A UNA OPCIÓN SELECCIONADA DEL MENÚ DE NAVEGACIÓN:
    * @param idContent ID HTML DE LA OPCIÓN SELECCIONADA
    */
-  focusOption(event: any, idContent: string, menuOption: number, notify: boolean = true) {
+  public focusOption(event: any, idContent: string, menuOption: number, notify: boolean = true) {
     if (event) {
       event.preventDefault();
     }
     this._contentService.focusMenuOption($('#id-top-panel'), idContent);
     if (notify === true) {
-      this._notifierService.notifyChangeMenuOption(menuOption);
+      setTimeout(() => {
+        this._navigationPanelService.navigateContent(menuOption);
+      }, 300);
     }
+  }
+
+  /**
+  * MÉTODO PARA SALIR DE LA APP
+  **/
+  public logout(event: any) {
+    event.preventDefault();
+    this._loginService.logout();
+    this._router.navigate(['/login']);
   }
 
   /**
@@ -97,16 +112,9 @@ export class PanelOpcionesComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  /**
-  * MÉTODO PARA SALIR DE LA APP
-  **/
-  logout(event: any) {
-    event.preventDefault();
-    this._loginService.logout();
-    this._router.navigate(['/login']);
-  }
-
   ngOnDestroy() {
+    this._dynaContentService.loadDynaContent(null);
+
     this.subscriber.unsubscribe();
   }
 }

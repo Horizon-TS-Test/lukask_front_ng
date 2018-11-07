@@ -1,7 +1,5 @@
-import { Component, OnInit, Input, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, OnChanges, SimpleChanges, EventEmitter, Output } from '@angular/core';
 import { Comment } from '../../models/comment';
-import { DomSanitizer } from '@angular/platform-browser';
-import { NotifierService } from '../../services/notifier.service';
 import { CONTENT_TYPES } from '../../config/content-type';
 import { Subscription } from 'rxjs';
 import { UserService } from '../../services/user.service';
@@ -10,6 +8,7 @@ import { ActionService } from '../../services/action.service';
 import { Alert } from '../../models/alert';
 import { ALERT_TYPES } from '../../config/alert-types';
 import * as Snackbar from 'node-snackbar';
+import { DynaContentService } from 'src/app/services/dyna-content.service';
 
 @Component({
   selector: 'comment',
@@ -23,26 +22,20 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
   @Input() isReply: boolean;
   @Input() noReplyBtn: boolean;
   @Input() hideBtn: boolean;
+  @Output() onCancelComment = new EventEmitter<Comment>();
+  @Output() changeComOffRelev = new EventEmitter<Comment>();
 
   private subscription: Subscription;
-  private alertData: Alert;
   private relevanceProc: boolean;
 
   public userProfile: User;
 
   constructor(
-    public _domSanitizer: DomSanitizer,
-    private _notifierService: NotifierService,
+    private _dynaContentService: DynaContentService,
     private _actionService: ActionService,
     private _userService: UserService
   ) {
     this.relevanceProc = true;
-
-    this.subscription = this._userService._userUpdate.subscribe((update: boolean) => {
-      if (update) {
-        this.setOwnUserProfile();
-      }
-    });
   }
 
   ngOnInit() {
@@ -51,13 +44,19 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
         this.viewReplies();
       }, 500);
     }
+
+    this.listenToProfileUp();
   }
 
   /**
-   * MÉTODO PARA MOSTRAR UN ALERTA EN EL DOM:
+   * MÉTODO PARA ESCUCHAR LA ACTUALIZACIÓN DEL PERFIL DE USUARIO:
    */
-  setAlert() {
-    this._notifierService.sendAlert(this.alertData);
+  private listenToProfileUp() {
+    this.subscription = this._userService.updateUser$.subscribe((update: boolean) => {
+      if (update) {
+        this.setOwnUserProfile();
+      }
+    });
   }
 
   /**
@@ -79,7 +78,7 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
     if (event) {
       event.preventDefault();
     }
-    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_replies, contentData: { parentComment: this.commentModel, replyId: this.focusReplyId } });
+    this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.view_replies, contentData: { parentComment: this.commentModel, replyId: this.focusReplyId } });
   }
 
   /**
@@ -88,7 +87,7 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
    */
   public openSupportList(event: any) {
     event.preventDefault();
-    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.support_list, contentData: { commentId: this.commentModel.commentId, commentOwner: this.commentModel.user.person.name } });
+    this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.support_list, contentData: { commentId: this.commentModel.commentId, commentOwner: this.commentModel.user.person.name } });
   }
 
   /**
@@ -97,12 +96,14 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
    */
   public onRelevance(event: any) {
     event.preventDefault();
-    if (this.relevanceProc == true) {
+    if (this.relevanceProc == true && !this.commentModel.offRelevance) {
       this.relevanceProc = false;
       this._actionService.saveRelevance(this.commentModel.publicationId, this.commentModel.commentId, !this.commentModel.userRelevance)
         .then((response: any) => {
           if (response == 'backSyncOk') {
             Snackbar.show({ text: 'Tu apoyo se enviará en la próxima conexión', pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#34b4db', customClass: "p-snackbar-layout" });
+            this.commentModel.offRelevance = true;
+            this.changeComOffRelev.emit(this.commentModel);
           }
           else {
             this.commentModel.userRelevance = response;
@@ -110,11 +111,30 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
           this.relevanceProc = true;
         })
         .catch((error) => {
-          this.alertData = new Alert({ title: 'Proceso Fallido', message: 'No se ha podido procesar la petición', type: ALERT_TYPES.danger });
-          this.setAlert();
+          let alertData = new Alert({ title: 'Proceso Fallido', message: 'No se ha podido procesar la petición', type: ALERT_TYPES.danger });
+          this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.alert, contentData: alertData });
+
           this.relevanceProc = true;
         });
     }
+  }
+
+  /**
+   * MÉTODO PARA CANCELAR EL ENVÍO DE UN COMENTARIO PENDIENTE:
+   * @param $event 
+   */
+  public cancelComment(event: any) {
+    event.preventDefault();
+    this.onCancelComment.emit(this.commentModel);
+  }
+
+  /**
+   * MÉTODO PARA CANCELAR EL ENVÍO DE UNA RELEVANCIA OFFLINE AL SERVIDOR:
+   */
+  public cancelCommentRel(event: any) {
+    event.preventDefault();
+    this.commentModel.offRelevance = false;
+    this._actionService.deleteOffRel(this.commentModel.commentId, true);
   }
 
   /**
@@ -136,6 +156,7 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnDestroy() {
+    this._dynaContentService.loadDynaContent(null);
     this.subscription.unsubscribe();
   }
 }

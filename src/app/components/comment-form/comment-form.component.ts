@@ -4,13 +4,14 @@ import { ActionService } from '../../services/action.service';
 import { PatternManager } from '../../tools/pattern-manager';
 import { Comment } from '../../models/comment';
 import { UserService } from '../../services/user.service';
-import { NotifierService } from '../../services/notifier.service';
-import { CONTENT_TYPES } from '../../config/content-type';
 import { Subscription } from 'rxjs';
 import { DateManager } from '../../tools/date-manager';
 import { Alert } from '../../models/alert';
 import { ALERT_TYPES } from '../../config/alert-types';
 import * as Snackbar from 'node-snackbar';
+import { DynaContentService } from 'src/app/services/dyna-content.service';
+import { CONTENT_TYPES } from 'src/app/config/content-type';
+import { CommentFormService } from 'src/app/services/comment-form.service';
 
 @Component({
   selector: 'comment-form',
@@ -19,10 +20,7 @@ import * as Snackbar from 'node-snackbar';
 })
 export class CommentFormComponent implements OnInit, OnDestroy {
   @Input() commentModel: Comment;
-  @Input() modalForm: boolean;
   @Output() closeModal = new EventEmitter<boolean>();
-
-  private alertData: Alert;
 
   public maxChars: number;
   public restChars: number;
@@ -33,60 +31,60 @@ export class CommentFormComponent implements OnInit, OnDestroy {
     public _domSanitizer: DomSanitizer,
     private _actionService: ActionService,
     private _userService: UserService,
-    private _notifierService: NotifierService
+    private _dynaContentService: DynaContentService,
+    private _commentFormService: CommentFormService
   ) {
     this.maxChars = 200;
     this.restChars = this.maxChars;
     this.commentSent = false;
+  }
 
-    this.subscription = this._userService._userUpdate.subscribe((update: boolean) => {
+  ngOnInit() {
+    this.commentModel.commentId = new Date().toISOString();;
+    this.commentModel.active = true;
+    this.commentModel.dateRegister = DateManager.getFormattedDate();
+    this.setUser();
+    this.listenToProfileUp();
+  }
+
+  /**
+   * MÉTODO PARA ESCUCHAR LAS ACTUALIZACIONES DEL PERFIL DE USUARIO:
+   */
+  private listenToProfileUp() {
+    this.subscription = this._userService.updateUser$.subscribe((update: boolean) => {
       if (update) {
         this.setUser();
       }
     });
   }
 
-  ngOnInit() {
-    this.commentModel.active = true;
-    this.commentModel.dateRegister = DateManager.getFormattedDate();
-    this.setUser();
-  }
-
   /**
    * MÉTODO PARA ASIGNAR UN VALOR AL PERFIL DE USUARIO A MOSTRAR EN EL FORMULARIO DE COMENTARIO:
    */
-  setUser() {
+  private setUser() {
     this.commentModel.user = this._userService.getUserProfile();
   }
 
   /**
-   * MÉTODO PARA CONTROLAR EL LÍMITE MÁXIMO DE CARACTERES A INGRESAR EN UN COMENTARIO O RESPUESTA:
+   * MÉTODO PARA CONTROLAR EL LÍMITE MÁXIMO DE CARACTERES A INGRESAR 
+   * EN UN COMENTARIO O RESPUESTA, FUERA DEL CONTEXTO DE ANGULAR
    * @param event EVENTO DE KEYPRESS
    */
-  validateLettersNumber(event: KeyboardEvent) {
-    setTimeout(() => {
-      this.restChars = PatternManager.limitWords(this.maxChars, this.commentModel.description.length);
-    })
+  public validateLettersNumber(event: KeyboardEvent) {
+    this.restChars = PatternManager.limitWords(this.maxChars, this.commentModel.description.length);
   }
 
   /**
    * MÉTODO PARA RESETEAR EL CAMPO DE TEXTO DEL TEMPLATE DRIVEN FORM:
    */
-  resetComment() {
+  private resetComment() {
     this.commentModel.description = "";
-  }
-
-  /**
-   * MÉTODO PARA MOSTRAR UN ALERTA EN EL DOM:
-   */
-  setAlert() {
-    this._notifierService.sendAlert(this.alertData);
   }
 
   /**
    * MÉTODO PARA ENVIAR UN COMENTARIO AL BACKEND:
    */
-  publishComment() {
+  public publishComment() {
     this.commentSent = true;
 
     this._actionService.saveComment(this.commentModel)
@@ -95,9 +93,12 @@ export class CommentFormComponent implements OnInit, OnDestroy {
 
         if (response == true) {
           Snackbar.show({ text: 'Tu ' + (this.commentModel.commentParentId ? 'respuesta' : 'comentario') + ' se enviará en la próxima conexión', pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#34b4db', customClass: "p-snackbar-layout" });
+
+          let offComment = new Comment(this.commentModel.commentId, this.commentModel.description, this.commentModel.publicationId, this._userService.getUserProfile(), this.commentModel.commentParentId, this.commentModel.active, this.commentModel.dateRegister, null, null, true);
+          this._commentFormService.newCommentInserted(offComment);
         }
         else {
-          this._notifierService.notifyNewCommentResp(this._actionService.extractCommentJson(response));
+          this._commentFormService.newCommentInserted(this._actionService.extractCommentJson(response));
         }
 
         this.resetComment();
@@ -108,24 +109,14 @@ export class CommentFormComponent implements OnInit, OnDestroy {
       .catch(err => {
         console.log(err);
         this.commentSent = false;
-        this.alertData = new Alert({ title: 'Proceso Fallido', message: 'No se pudo procesar la petición', type: ALERT_TYPES.danger });
-        this.setAlert();
+        let alertData = new Alert({ title: 'Proceso Fallido', message: 'No se pudo procesar la petición', type: ALERT_TYPES.danger });
+        this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.alert, contentData: alertData });
       });
   }
 
-  /**
-   * MÉTODO PARA SOLICITAR LA APERTURA DE UN HORIZON MODAL PARA MOSTRAR 
-   * EL CAMPO DE TEXTO PARA ESCRIBIR UN NUEVO COMENTARIO O RESPUESTA:
-   * @param event EVENTO CLICK DEL ELEMENTO <a href="#">
-   */
-  writeComment(event: any) {
-    event.preventDefault();
-    if (this.modalForm == false) {
-      this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.comment_input, contentData: this.commentModel });
-    }
-  }
-
   ngOnDestroy() {
+    this._commentFormService.newCommentInserted(null);
+    this._dynaContentService.loadDynaContent(null);
     this.subscription.unsubscribe();
   }
 }

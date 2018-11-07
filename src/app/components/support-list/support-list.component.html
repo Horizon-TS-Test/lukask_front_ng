@@ -1,23 +1,36 @@
-<div class="p-no-border-rad-card card">
+<div class="p-no-border-rad-card card" #supporters>
   <div class="card-header d-flex justify-content-between">
     <small>
-      <b>Apoyan {{ pubOwner ? 'a la publicación de' : 'al comentario de' }}  {{ pubOwner ? pubOwner : commentOwner }}</b>
+      <b>Apoyan {{ pubOwner ? 'a la publicación de' : 'al comentario de' }} {{ pubOwner ? pubOwner : commentOwner }}</b>
     </small>
   </div>
-  <ul class="max-height-half p-overflow-auto list-group list-group-flush pb-0">
-    <ng-container *ngIf="supportList && supportList.length > 0">
-      <li *ngFor="let sup of supportList" class="f-child-full-space list-group-item p-1">
-        <profile-owner [suporterProfile]="sup" [isCommentProfile]="true"></profile-owner>
-      </li>
-    </ng-container>
-  </ul>
-  <div *ngIf="pagePattern || firstPattern" class="card-footer text-center">
-    <a href="#" (click)="askForMore($event)" class="p-dark-text-color">
-      <small *ngIf="pagePattern">Ver mas</small>
-      <small *ngIf="!pagePattern && firstPattern">Ver menos</small>
-    </a>
-    <div class="bottom-loader {{ activeClass }} col-12 d-flex justify-content-center align-items-center">
-      <img src="/assets/images/forms/preloader.gif" width="50px">
+
+  <ng-container *ngIf="_supportersService.supportList$ | async as suppData else loading">
+
+    <ul class="max-height-half p-overflow-auto list-group list-group-flush pb-0">
+      <ng-container *ngIf="suppData.supporters && suppData.supporters.length > 0">
+        <li *ngFor="let sup of suppData.supporters" class="f-child-full-space list-group-item p-1">
+          <profile-owner [userProfile]="sup" [isCommentProfile]="true"></profile-owner>
+        </li>
+      </ng-container>
+    </ul>
+    <div *ngIf="pagePattern || firstPattern" class="card-footer text-center d-flex p-0">
+      <a href="#" (click)="requestForMore($event)" class="p-dark-text-color col-12 py-2">
+        <small *ngIf="pagePattern">Ver mas</small>
+        <small *ngIf="!pagePattern && firstPattern">Ver menos</small>
+      </a>
+      <div class="bottom-loader comment-loader hide col-12 d-flex justify-content-center align-items-center">
+        <img src="{{ preloader }}" width="50px">
+      </div>
     </div>
-  </div>
+
+  </ng-container>
+
+  <ng-template #loading>
+    <div class="col-12 d-flex justify-content-center align-items-center">
+      <div class="col-3">
+        <img src="{{ preloader }}" width="100px">
+      </div>
+    </div>
+  </ng-template>
 </div>

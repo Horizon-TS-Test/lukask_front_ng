@@ -6,4 +6,5 @@ export const ACTION_TYPES = {
     viewComments: 4,
     userRegister: 5,
     userEdition: 6,
+    goHome: 7
 }

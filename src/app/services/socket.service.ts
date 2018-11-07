@@ -1,57 +1,66 @@
-import { Injectable, EventEmitter } from '@angular/core';
+import { Injectable } from '@angular/core';
 
 ///////// SOCKET.IO-CLIENT FROM EXPRESS SERVER /////////
 import * as io from "socket.io-client";
 ////////////////////////////////////////////////////////
 
 import { REST_SERV } from './../rest-url/rest-servers';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SocketService {
   private socket;
-  public _publicationUpdate = new EventEmitter<any>();
-  public _commentUpdate = new EventEmitter<any>();
-  public _notificationUpdate = new EventEmitter<any>();
-  public _paymentResponse = new EventEmitter<any>();
+
+  private pubUpdateSubject = new BehaviorSubject<any>(null);
+  pubUpdate$: Observable<any> = this.pubUpdateSubject.asObservable();
+
+  private commUpdateSubject = new BehaviorSubject<any>(null);
+  commUpdate$: Observable<any> = this.commUpdateSubject.asObservable();
+
+  private notifUpdateSubject = new BehaviorSubject<any>(null);
+  notifUpdate$: Observable<any> = this.notifUpdateSubject.asObservable();
+
+  private payUpdateSubject = new BehaviorSubject<any>(null);
+  payUpdate$: Observable<any> = this.payUpdateSubject.asObservable();
 
   constructor() { }
 
   /**
    * MÉTODO PARA CONECTARSE AL SOCKET-SERVER Y ABRIR UNA INSTANCIA CLIENTE
    */
-  connectSocket() {
+  public connectSocket() {
     this.socket = io.connect(REST_SERV.socketServerUrl);
 
     this.socket.on('backend-rules', (backendData) => {
       console.log("[SOCKET SERVICE] - backend-rules: ", backendData);
       switch (backendData.stream) {
         case "publication":
-          this._publicationUpdate.emit(backendData);
+          this.pubUpdateSubject.next(backendData);
           break;
         case "actions":
           if (backendData.payload.data.description) {
-            this._commentUpdate.emit(backendData);
+            this.commUpdateSubject.next(backendData);
           }
           else {
             if (backendData.payload.data.action_parent) {
-              this._commentUpdate.emit(backendData);
+              this.commUpdateSubject.next(backendData);
             }
             else {
-              this._publicationUpdate.emit(backendData);
+              this.pubUpdateSubject.next(backendData);
             }
           }
           break;
         case "notification_received":
-          this._notificationUpdate.emit(backendData);
+          this.notifUpdateSubject.next(backendData);
           break;
       }
     });
 
     this.socket.on('response-payment', (paymentData) => {
       console.log("[SOCKET SERVICE] - response-payment: ", paymentData);
-      this._paymentResponse.emit(paymentData);
+      this.loadPayConfirm(paymentData);
     });
   }
 
@@ -67,5 +76,13 @@ export class SocketService {
    */
   public confimPayResp() {
     this.socket.emit('confirm-pay', true);
+  }
+
+  /**
+   * MÉTODO PARA CARGAR LOS DATOS DE LA CONFIRMACIÓN DEL PAGO:
+   * @param paymentData 
+   */
+  public loadPayConfirm(paymentData: any) {
+    this.payUpdateSubject.next(paymentData);
   }
 }

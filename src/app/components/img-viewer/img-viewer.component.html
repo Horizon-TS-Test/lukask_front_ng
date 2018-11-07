@@ -1,16 +1,18 @@
 <div class="min-height-full-modal d-flex justify-content-center align-items-center">
-  <div class="p-float-div w-100" *ngIf="opView === _contentType.view_img">
-    <owl-carousel class="personal-owl-nav"  [options]="carouselOptions" [carouselClasses]="['owl-theme']">
-      <img *ngFor="let med of media" src="{{ med.url }}" width="100%" />
-      <!--<video *ngFor="let med of media" src="{{ med.url }}" width="100%"></video>-->
+  <div class="p-float-div w-100">
+    <owl-carousel class="personal-owl-nav" [options]="carouselOptions" [carouselClasses]="['owl-theme']">
+      <ng-container [ngSwitch]="opView">
+        <ng-container *ngSwitchCase="_contentType.view_img">
+          <ng-container *ngFor="let med of media">
+            <img  *ngIf="med.format == 'IG'" src="{{ med.url }}" width="100%" />
+          </ng-container>  
+        </ng-container>
+
+        <video *ngSwitchCase="_contentType.view_video" id="videoPub" controls width="100%"></video>
+
+      </ng-container>
     </owl-carousel>
   </div>
-
-  <div class="p-float-div w-100" *ngIf="opView === _contentType.view_video">
-      <owl-carousel class="personal-owl-nav"  [options]="carouselOptions" [carouselClasses]="['owl-theme']">
-        <video id="videoPub" controls width="100%"></video>
-      </owl-carousel>
-    </div>
 </div>
 
 <material-btn-list [showClass]="showClass" [materialBtns]="materialBtn" (someBtnAction)="getButtonAction($event)"></material-btn-list>

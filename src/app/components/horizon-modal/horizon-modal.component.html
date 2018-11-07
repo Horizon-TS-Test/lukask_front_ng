@@ -1,70 +1,78 @@
 <div class="fixed-background {{ backgroundClass }}" [ngClass]="{
-  'opacity-light': _dynaContent.contentType == contentTypes.comment_input || _dynaContent.contentType == contentTypes.support_list,
-  'opacity-almost-null': _dynaContent.contentType == contentTypes.view_comments && _dynaContent.contentData.halfModal
-}"></div>
+    'opacity-light': _dynaContent.contentType == contentTypes.comment_input || _dynaContent.contentType == contentTypes.support_list,
+    'opacity-almost-null': _dynaContent.contentType == contentTypes.view_comments && _dynaContent.contentData.halfModal
+  }"></div>
 
 <div class="min-height-full-modal max-height-full-modal p-overflow-auto personal-dyna-cont horizon-modal {{ showClass }} col-12 p-0"
   [ngClass]="{
-  'personal-content': _dynaContent.contentType != contentTypes.view_replies && 
-  _dynaContent.contentType != contentTypes.view_notifs && 
-  _dynaContent.contentType != contentTypes.view_img && 
-  _dynaContent.contentType != contentTypes.comment_input &&
-  _dynaContent.contentType != contentTypes.new_media &&
-  _dynaContent.contentType != contentTypes.view_comments &&
-  !_dynaContent.contentData.halfModal &&
-  _dynaContent.contentType !== contentTypes.support_list
+    'personal-content': fullDisplay
 }">
 
   <a href="#" *ngIf="_dynaContent.contentType == contentTypes.view_replies || _dynaContent.contentType == contentTypes.view_notifs || _dynaContent.contentType == contentTypes.view_img || _dynaContent.contentType == contentTypes.comment_input || (_dynaContent.contentType == contentTypes.view_comments && _dynaContent.contentData.halfModal) || _dynaContent.contentType == contentTypes.support_list"
     (click)="onClickClose($event)" class="absolute-background"></a>
 
-  <ng-container [ngSwitch]="_dynaContent.contentType">
-    <new-pub *ngSwitchCase="contentTypes.new_pub" [showClass]="showClass" (closeModal)="close($event)"></new-pub>
+  <div class="{{ showClass }}" [ngClass]="{
+      'personal-dyna-down': _dynaContent.contentType == contentTypes.view_replies || _dynaContent.contentType == contentTypes.comment_input || _dynaContent.contentData.halfModal || _dynaContent.contentType == contentTypes.view_notifs,
+      'personal-dyna-up': _dynaContent.contentType == contentTypes.support_list,
+      'col-12 p-0': _dynaContent.contentType != contentTypes.view_img,
+      'personal-content': _dynaContent.contentType != contentTypes.view_img && !_dynaContent.contentData.transparent
+    }">
 
-    <new-media *ngSwitchCase="contentTypes.new_media" [maxSnapShots]="_dynaContent.contentData.maxSnapShots" [backCamera]="_dynaContent.contentData.backCamera" [showClass]="showClass" (closeModal)="close($event)"></new-media>
+    <ng-container *ngIf="modalReady; else loader">
 
-    <queja-detail *ngSwitchCase="contentTypes.view_queja" [showClass]="showClass" [idQueja]="_dynaContent.contentData" [isModal]="true"
-      (closeModal)="close($event)"></queja-detail>
+      <ng-container [ngSwitch]="_dynaContent.contentType">
 
-    <div class="personal-dyna-down {{ showClass }} col-12 p-0" *ngSwitchCase="contentTypes.view_replies">
-      <reply-list [parentComment]="_dynaContent.contentData.parentComment" [focusReplyId]="_dynaContent.contentData.parentComment.replyId"></reply-list>
-    </div>
+        <new-pub *ngSwitchCase="contentTypes.new_pub" [showClass]="showClass" (closeModal)="close($event)"></new-pub>
 
-    <div class="personal-dyna-down {{ showClass }} col-12 p-0" *ngSwitchCase="contentTypes.comment_input">
-      <comment-form [commentModel]="_dynaContent.contentData" [modalForm]="true" (closeModal)="close($event)"></comment-form>
-    </div>
+        <new-media *ngSwitchCase="contentTypes.new_media" [maxSnapShots]="_dynaContent.contentData.maxSnapShots"
+          [backCamera]="_dynaContent.contentData.backCamera" [showClass]="showClass" (closeModal)="close($event)"></new-media>
 
-    <img-viewer *ngSwitchCase="contentTypes.view_img" [showClass]="showClass" [media]="_dynaContent.contentData.media" [opView]= "_dynaContent.contentData.opView" (closeModal)="close($event)"></img-viewer>
+        <queja-detail *ngSwitchCase="contentTypes.view_queja" [showClass]="showClass" [idQueja]="_dynaContent.contentData"
+          [isModal]="true" (closeModal)="close($event)"></queja-detail>
 
-    <div [ngClass]="{'personal-dyna-down col-12 p-0': _dynaContent.contentData.halfModal}" class="{{ showClass }}" *ngSwitchCase="contentTypes.view_comments">
-      <comment-list *ngIf="!_dynaContent.contentData.halfModal" [showClass]="showClass" [pubId]="_dynaContent.contentData.pubId"
-        [hideBtn]="_dynaContent.contentData.hideBtn" [commentId]="_dynaContent.contentData.comId" [replyId]="_dynaContent.contentData.replyId"
-        [isModal]="true" (closeModal)="close($event)"></comment-list>
+        <reply-modal *ngSwitchCase="contentTypes.view_replies" [parentComment]="_dynaContent.contentData.parentComment"
+          [focusReplyId]="_dynaContent.contentData.parentComment.replyId"></reply-modal>
 
-      <comment-list *ngIf="_dynaContent.contentData.halfModal" [pubId]="_dynaContent.contentData.pubId" [hideBtn]="_dynaContent.contentData.hideBtn"
-        [halfModal]="_dynaContent.contentData.halfModal" [isModal]="true"></comment-list>
-    </div>
+        <comment-form *ngSwitchCase="contentTypes.comment_input" [commentModel]="_dynaContent.contentData" (closeModal)="close($event)"></comment-form>
 
-    <user-edit *ngSwitchCase="contentTypes.edit_profile" [showClass]="showClass" (closeModal)="close($event)"></user-edit>
+        <img-viewer *ngSwitchCase="contentTypes.view_img" [showClass]="showClass" [media]="_dynaContent.contentData.media" [opView]= "_dynaContent.contentData.opView"
+          (closeModal)="close($event)"></img-viewer>
+          
+        <ng-container *ngSwitchCase="contentTypes.view_comments">
+          <comment-modal *ngIf="!_dynaContent.contentData.halfModal" [showClass]="showClass" [pubId]="_dynaContent.contentData.pubId"
+            [hideBtn]="_dynaContent.contentData.hideBtn" [commentId]="_dynaContent.contentData.comId" [replyId]="_dynaContent.contentData.replyId"
+            (closeModal)="close($event)"></comment-modal>
 
-    <div class="personal-dyna-down {{ showClass }} col-12 p-0" *ngSwitchCase="contentTypes.view_notifs">
-      <notification-list></notification-list>
-    </div>
+          <comment-modal *ngIf="_dynaContent.contentData.halfModal" [pubId]="_dynaContent.contentData.pubId" [hideBtn]="_dynaContent.contentData.hideBtn"
+            [transparent]="_dynaContent.contentData.transparent" [halfModal]="_dynaContent.contentData.halfModal"></comment-modal>
+        </ng-container>
 
-    <media-streaming *ngSwitchCase="contentTypes.view_transmission" [showClass]="showClass" [streamOwnerId]="_dynaContent.contentData.userOwner"
-      [pubId]="_dynaContent.contentData.pubId" (closeModal)="close($event)"></media-streaming>
+        <user-edit *ngSwitchCase="contentTypes.edit_profile" [showClass]="showClass" (closeModal)="close($event)"></user-edit>
 
-    <div class="personal-dyna-up {{ showClass }} col-12 p-0" *ngSwitchCase="contentTypes.support_list">
-      <support-list [pubId]="_dynaContent.contentData.pubId" [pubOwner]="_dynaContent.contentData.pubOwner" [commentId]="_dynaContent.contentData.commentId"
-        [commentOwner]="_dynaContent.contentData.commentOwner"></support-list>
-    </div>
+        <notification-modal *ngSwitchCase="contentTypes.view_notifs"></notification-modal>
 
-    <planilla-detail *ngSwitchCase="contentTypes.planilla_detail" [showClass]="showClass" [planilla]="_dynaContent.contentData"
-      (closeModal)="close($event)"></planilla-detail>
+        <support-modal *ngSwitchCase="contentTypes.support_list" [pubId]="_dynaContent.contentData.pubId" [pubOwner]="_dynaContent.contentData.pubOwner"
+          [commentId]="_dynaContent.contentData.commentId" [commentOwner]="_dynaContent.contentData.commentOwner"></support-modal>
 
-    <app-paypal *ngSwitchCase="contentTypes.paypal" [showClass]="showClass" [paypalUrl]='_dynaContent.contentData'></app-paypal>
+        <planilla-detail *ngSwitchCase="contentTypes.planilla_detail" [showClass]="showClass" [planilla]="_dynaContent.contentData"
+          (closeModal)="close($event)"></planilla-detail>
 
-    <user-register *ngSwitchCase="contentTypes.register_user" [showClass]="showClass" (closeModal)="close($event)"></user-register>
+        <app-paypal *ngSwitchCase="contentTypes.paypal" [showClass]="showClass" [paypalUrl]='_dynaContent.contentData'></app-paypal>
 
-  </ng-container>
+        <user-register *ngSwitchCase="contentTypes.register_profile" [showClass]="showClass" (closeModal)="close($event)"></user-register>
+
+      </ng-container>
+    </ng-container>
+
+    <ng-template #loader>
+      <div class="col-12 py-2 d-flex justify-content-center align-items-center" [ngClass]="{ 'min-height-full-modal': fullLoader }">
+        <div [ngClass]="{
+          'col-5': fullLoader,
+          'col-3': !fullLoader
+        }">
+          <img src="{{ preloader }}" width="100px">
+        </div>
+      </div>
+    </ng-template>
+  </div>
 </div>

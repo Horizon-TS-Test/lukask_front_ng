@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { BASE_URL } from '../config/base-url';
 
 @Injectable({
   providedIn: 'root'
@@ -14,11 +15,11 @@ export class BrowserNotifierService {
     if ('serviceWorker' in navigator) {
       let options: any = {
         body: 'Te has subscrito a Lukask para recibir actualizaciones de otros usuarios',
-        icon: '/assets/icons/lukask-96x96.png',
+        icon: BASE_URL.iconsPath + '/lukask-96x96.png',
         dir: 'rtl',
         lang: 'es-US', //BCP 47
         vibrate: [500, 200, 200, 100], //THIS IS FOR SOME DEVICES NOT FOR ALL
-        badge: '/assets/icons/badged.png',
+        badge: BASE_URL.iconsPath + '/badged.png',
         //ADITIONAL OPTIONS:
         tag: 'confirm-notification', //TO ALLOW NOTIFICATIONS WILL STACK AND SHOW ONE GROUP OF NOTIFICATIONS
         renotify: false, //TO SPECIFY JUST ONE VIBRATION OF THE FIRST NOTIFICATION INCOMMING OF A GROUP OF NOTIFICATIONS
@@ -26,12 +27,12 @@ export class BrowserNotifierService {
           /*{
             action: 'confirm',
             title: "Oh yes!",
-            //icon: '/assets/icons/lukask-96x96.png'
+            //icon: BASE_URL.iconsPath+ '/lukask-96x96.png'
           },
           {
             action: 'cancel',
             title: "Oh crap!",
-            //icon: '/assets/icons/lukask-96x96.png'
+            //icon: BASE_URL.iconsPath+ '/lukask-96x96.png'
           }*/
         ]
       };

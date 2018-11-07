@@ -1,23 +1,25 @@
-<div class="col-12 pt-1 px-1">
-  <div *ngIf="quejaDetail" class="personal-queja p-shadow-card p-no-border-rad-card card mb-3 pb-0">
+<div *ngIf="quejaDetail" class="col-12 pt-1 px-1">
+  <div class="personal-queja p-shadow-card p-no-border-rad-card card mb-3 pb-0">
     <div class="px-2 card-header d-flex justify-content-center align-items-center">
       <task-list class="col-12 p-0" [queja]="quejaDetail" [isModal]="isModal"></task-list>
     </div>
     <div class="personal-usr-queja py-0 card-block d-flex justify-content-end align-items-center">
       {{ quejaDetail.user.person.name }} {{ quejaDetail.user.person.last_name }}
-      <div class="ml-2 my-0 personal-profile-img" [style.background-image]="_domSanitizer.bypassSecurityTrustStyle('url(' + quejaDetail.user.profileImg + ')')">
-      </div>
+      <profile-link [userProfile]="quejaDetail.user" [isCommentProfile]="false" [profileClass]="'ml-2 my-0'"></profile-link>
     </div>
     <div class="personal-content relative-background">
       <owl-carousel id="corousel-detail-q" class="personal-owl-nav" [options]="carouselOptions" [carouselClasses]="['owl-theme']">
-        <a href="#" *ngFor="let med of quejaDetail.media" (click)="viewImg($event)" class="card-img-top">
-          <img src="{{med.url}}" width="100%" class="mb-1">
-        </a>
+        <ng-container *ngFor="let med of quejaDetail.media">
+          <ng-container *ngIf="med.format == 'IG'">
+            <a href="#" (click)="viewImg($event)" class="card-img-top">
+              <img src="{{med.url}}" width="100%" class="mb-1">
+            </a>
+          </ng-container>
+        </ng-container>
       </owl-carousel>
     </div>
     <div class="relative-background card-block text-justify pb-4">
       {{ quejaDetail.detail }}
-
       <a href="#" (click)="viewComments($event)" class="p-float-link down-right-corner p-dark-text-color">
         <small>Ver comentarios</small>
       </a>
@@ -47,5 +49,7 @@
     </div>
   </div>
 </div>
+
+<unavaliable *ngIf="isUnavaliable"></unavaliable>
 
 <material-btn-list *ngIf="isModal" [showClass]="showClass" [materialBtns]="matButtons" (someBtnAction)="getButtonAction($event)"></material-btn-list>

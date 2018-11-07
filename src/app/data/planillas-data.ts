@@ -1,3 +1,5 @@
+import { BASE_URL } from "../config/base-url";
+
 export default [
     {
         factura: '001-639-019293070',
@@ -10,7 +12,7 @@ export default [
         fechaPago: '03/Julio/2018',
         subtotal: 15.16,
         total: 17.21,
-        icon: '/assets/images/payments/eer.png'
+        icon: BASE_URL.imgPath + '/payments/eer.png'
     },
     {
         factura: '001-001-000014964',
@@ -23,7 +25,7 @@ export default [
         fechaPago: '03/Julio/2018',
         subtotal: 25.75,
         total: 28.75,
-        icon: '/assets/images/payments/emp.jpg'
+        icon: BASE_URL.imgPath + '/payments/emp.jpg'
     },
     {
         factura: '001-001-016565070',
@@ -36,7 +38,7 @@ export default [
         fechaPago: '03/Julio/2018',
         subtotal: 5.94,
         total: 6.94,
-        icon: '/assets/images/payments/cnt.jpg'
+        icon: BASE_URL.imgPath + '/payments/cnt.jpg'
     },
     {
         factura: '001-639-019293070',
@@ -49,7 +51,7 @@ export default [
         fechaPago: '03/Julio/2018',
         subtotal: 15.16,
         total: 15.16,
-        icon: '/assets/images/payments/cpc.jpg'
+        icon: BASE_URL.imgPath + '/payments/cpc.jpg'
     },
     {
         factura: '001-639-019293070',
@@ -62,7 +64,7 @@ export default [
         fechaPago: '03/Julio/2018',
         subtotal: 55.16,
         total: 58.16,
-        icon: '/assets/images/payments/cpc.jpg'
+        icon: BASE_URL.imgPath + '/payments/cpc.jpg'
     },
     {
         factura: '001-639-023423243',
@@ -75,7 +77,7 @@ export default [
         fechaPago: '04/Septiembre/2018',
         subtotal: 11.16,
         total: 12.21,
-        icon: '/assets/images/payments/eer.png'
+        icon: BASE_URL.imgPath + '/payments/eer.png'
     },
     {
         factura: '001-001-00002423423',
@@ -88,7 +90,7 @@ export default [
         fechaPago: '04/Septiembre/2018',
         subtotal: 35.75,
         total: 37.75,
-        icon: '/assets/images/payments/emp.jpg'
+        icon: BASE_URL.imgPath + '/payments/emp.jpg'
     },
     {
         factura: '001-001-016565070',
@@ -101,7 +103,7 @@ export default [
         fechaPago: '04/Septiembre/2018',
         subtotal: 15.94,
         total: 16.94,
-        icon: '/assets/images/payments/cnt.jpg'
+        icon: BASE_URL.imgPath + '/payments/cnt.jpg'
     },
     {
         factura: '001-639-1214324234',
@@ -114,7 +116,7 @@ export default [
         fechaPago: '04/Septiembre/2018',
         subtotal: 25.16,
         total: 25.16,
-        icon: '/assets/images/payments/cpc.jpg'
+        icon: BASE_URL.imgPath + '/payments/cpc.jpg'
     },
     {
         factura: '001-639-019293070',
@@ -127,7 +129,7 @@ export default [
         fechaPago: '04/Septiembre/2018',
         subtotal: 5.16,
         total: 7.21,
-        icon: '/assets/images/payments/eer.png'
+        icon: BASE_URL.imgPath + '/payments/eer.png'
     },
     {
         factura: '001-001-000042546',
@@ -140,7 +142,7 @@ export default [
         fechaPago: '06/Septiembre/2018',
         subtotal: 5.75,
         total: 8.75,
-        icon: '/assets/images/payments/emp.jpg'
+        icon: BASE_URL.imgPath + '/payments/emp.jpg'
     },
     {
         factura: '001-001-0967856',
@@ -153,7 +155,7 @@ export default [
         fechaPago: '06/Septiembre/2018',
         subtotal: 5.94,
         total: 6.94,
-        icon: '/assets/images/payments/cnt.jpg'
+        icon: BASE_URL.imgPath + '/payments/cnt.jpg'
     },
     {
         factura: '001-639-019293070',
@@ -166,7 +168,7 @@ export default [
         fechaPago: '06/Septiembre/2018',
         subtotal: 15.16,
         total: 15.16,
-        icon: '/assets/images/payments/cpc.jpg'
+        icon: BASE_URL.imgPath + '/payments/cpc.jpg'
     },
     {
         factura: '001-639-019293070',
@@ -179,7 +181,7 @@ export default [
         fechaPago: '08/Septiembre/2018',
         subtotal: 13.16,
         total: 15.21,
-        icon: '/assets/images/payments/eer.png'
+        icon: BASE_URL.imgPath + '/payments/eer.png'
     },
     {
         factura: '001-001-000014964',
@@ -192,7 +194,7 @@ export default [
         fechaPago: '08/Septiembre/2018',
         subtotal: 25.75,
         total: 28.75,
-        icon: '/assets/images/payments/emp.jpg'
+        icon: BASE_URL.imgPath + '/payments/emp.jpg'
     },
     {
         factura: '001-001-016565070',
@@ -205,7 +207,7 @@ export default [
         fechaPago: '08/Septiembre/2018',
         subtotal: 25.94,
         total: 26.94,
-        icon: '/assets/images/payments/cnt.jpg'
+        icon: BASE_URL.imgPath + '/payments/cnt.jpg'
     },
     {
         factura: '001-639-019293535070',
@@ -218,7 +220,7 @@ export default [
         fechaPago: '19/Septiembre/2018',
         subtotal: 15.16,
         total: 17.21,
-        icon: '/assets/images/payments/eer.png'
+        icon: BASE_URL.imgPath + '/payments/eer.png'
     },
     {
         factura: '001-001-00001345344964',
@@ -231,7 +233,7 @@ export default [
         fechaPago: '19/Septiembre/2018',
         subtotal: 25.75,
         total: 28.75,
-        icon: '/assets/images/payments/emp.jpg'
+        icon: BASE_URL.imgPath + '/payments/emp.jpg'
     },
     {
         factura: '001-001-01653453465070',
@@ -244,7 +246,7 @@ export default [
         fechaPago: '19/Septiembre/2018',
         subtotal: 15.94,
         total: 16.94,
-        icon: '/assets/images/payments/cnt.jpg'
+        icon: BASE_URL.imgPath + '/payments/cnt.jpg'
     },
     {
         factura: '001-639-019293242343070',
@@ -257,7 +259,7 @@ export default [
         fechaPago: '19/Septiembre/2018',
         subtotal: 5.16,
         total: 6.16,
-        icon: '/assets/images/payments/cpc.jpg'
+        icon: BASE_URL.imgPath + '/payments/cpc.jpg'
     },
     {
         factura: '001-639-019293070',
@@ -270,7 +272,7 @@ export default [
         fechaPago: '19/Julio/2018',
         subtotal: 55.16,
         total: 58.16,
-        icon: '/assets/images/payments/cpc.jpg'
+        icon: BASE_URL.imgPath + '/payments/cpc.jpg'
     },
     {
         factura: '001-639-03453756',
@@ -283,7 +285,7 @@ export default [
         fechaPago: '25/Septiembre/2018',
         subtotal: 20.16,
         total: 21.21,
-        icon: '/assets/images/payments/eer.png'
+        icon: BASE_URL.imgPath + '/payments/eer.png'
     },
     {
         factura: '001-001-000014964',
@@ -296,7 +298,7 @@ export default [
         fechaPago: '25/Septiembre/2018',
         subtotal: 25.75,
         total: 28.75,
-        icon: '/assets/images/payments/emp.jpg'
+        icon: BASE_URL.imgPath + '/payments/emp.jpg'
     },
     {
         factura: '001-001-016565070',
@@ -309,7 +311,7 @@ export default [
         fechaPago: '25/Septiembre/2018',
         subtotal: 15.94,
         total: 16.94,
-        icon: '/assets/images/payments/cnt.jpg'
+        icon: BASE_URL.imgPath + '/payments/cnt.jpg'
     },
     {
         factura: '001-639-019293070',
@@ -322,7 +324,7 @@ export default [
         fechaPago: '25/Septiembre/2018',
         subtotal: 5.16,
         total: 5.16,
-        icon: '/assets/images/payments/cpc.jpg'
+        icon: BASE_URL.imgPath + '/payments/cpc.jpg'
     },
     {
         factura: '001-639-019293070',
@@ -335,6 +337,6 @@ export default [
         fechaPago: '25/Septiembre/2018',
         subtotal: 78.16,
         total: 88.16,
-        icon: '/assets/images/payments/cpc.jpg'
+        icon: BASE_URL.imgPath + '/payments/cpc.jpg'
     },
 ]

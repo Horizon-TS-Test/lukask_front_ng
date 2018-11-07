@@ -1,6 +1,5 @@
-import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, Input, Output, EventEmitter, SimpleChanges, OnChanges } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, Input, Output, EventEmitter, SimpleChanges, OnChanges, NgZone } from '@angular/core';
 import { Device } from '../../interfaces/device.interface';
-import { NotifierService } from '../../services/notifier.service';
 import { CAMERA_ACTIONS } from '../../config/camera-actions';
 import { Subscription } from 'rxjs';
 import { CameraService } from '../../services/camera.service';
@@ -11,6 +10,7 @@ import { UserService } from '../../services/user.service';
 
 import * as Snackbar from 'node-snackbar';
 import * as loadImage from 'blueimp-load-image';
+import { CameraActionService } from 'src/app/services/camera-action.service';
 
 @Component({
   selector: 'app-webrtc-camera',
@@ -41,10 +41,10 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
   private transmissionOn: boolean;
 
   constructor(
-    private _notifierService: NotifierService,
+    private _cameraActionService: CameraActionService,
     private _cameraService: CameraService,
     private _webrtcSocketService: WebrtcSocketService,
-    private _userService: UserService,
+    private _userService: UserService
   ) {
     this.snapShotCounter = 0;
 
@@ -54,7 +54,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
     this.transmissionOn = false;
 
     //LISTEN FOR ANY CAMERA EVENT:
-    this.subscription = this._notifierService._cameraAction.subscribe(
+    this.subscription = this._cameraActionService.cameraAction$.subscribe(
       (cameraAction: number) => {
         switch (cameraAction) {
           case CAMERA_ACTIONS.start_camera:
@@ -80,23 +80,24 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
           case CAMERA_ACTIONS.flash_off:
             break;
           case CAMERA_ACTIONS.init_transmision:
-            //AQUÍ DEBES LLAMAR A TUS MÉTODOS PARA LA TRANSMISIÓN DENNYS :D 
+            console.log("DESDE EL LISTENER!!!!");
+            //MÉTODO UTILIZADO PARA EL STREAMING
             this.startTransmission();
             break;
           case CAMERA_ACTIONS.pause_transmision:
-            //AQUÍ DEBES LLAMAR A TUS MÉTODOS PARA LA TRANSMISIÓN DENNYS :D
+            //MÉTODO UTILIZADO PARA EL STREAMING
             break;
           case CAMERA_ACTIONS.stop_transmision:
-            //AQUÍ DEBES LLAMAR A TUS MÉTODOS PARA LA TRANSMISIÓN DENNYS :D
+            //MÉTODO UTILIZADO PARA EL STREAMING
             this._webrtcSocketService.closeTransmissionCnn();
             break;
           case CAMERA_ACTIONS.join_transmision:
+            //MÉTODO UTILIZADO PARA EL STREAMING
             if (this.streamOwnerId) {
               this.joinTransmission();
             }
             break;
           case CAMERA_ACTIONS.stop_stream:
-            console.log("ecucha  Proceso de cerrar camara ")
             this.startCamera = false;
             this.stopStream();
             break;
@@ -116,26 +117,29 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
     if (this.streamOwnerId) {
       this.joinTransmission();
     }
-    else {
-      navigator.mediaDevices.enumerateDevices().then((data) => {
-        this.getDevices(data);
-      }).catch(this.handleError);
-    }
   }
 
   /**
    * MÉTODO PARA INICIAR VARIABLES
    */
-  initVariables() {
-    let videoArray = document.querySelectorAll(".video-camera");
-    this._video = videoArray.item(videoArray.length - 1);
+  private initVariables() {
+    
+    navigator.mediaDevices.enumerateDevices().then((data) => {
+      this.getDevices(data);
+    }).catch(this.handleError);
+  
+    if (!this._video) {
+      let videoArray = document.querySelectorAll(".video-camera");
+      this._video = videoArray.item(videoArray.length - 1);
+    }
   }
 
   /**
    * MÉTODO PARA ESCOGER ENTRE LAS CÁMARAS DE VIDEO ENCONTRADAS
    * @param device
    */
-  setCamera(device: any) {
+  private setCamera(device: any) {
+    console.log("establecer camara para transmicion");
     if (device.label.indexOf("back") > -1) {
       this._backCamera = { id: device.deviceId, description: "Posterior" }
       this.swapCamera = true;
@@ -149,8 +153,9 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
 
   /**
    * MÉTODO PARA ABRIR UNA CÁMARA POR DEFECTO
+   * @param doneCallback RETORNA UN CALLBACK PARA CREAR UN PROCESO ASÍNCRONO FUERA DEL CONTEXTO DE ANGULAR
    */
-  openSomeCamera() {
+  private openSomeCamera() {
     if (this.backCamera) {
       this.startBackLiveCam();
     }
@@ -163,7 +168,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
    * MÉTODO PARA ENCONTRAR LOS DIFERENTES DISPOSITIVOS DE AUDIO Y VIDEO:
    * @param deviceInfos Información  de los dispositivos
    */
-  getDevices(deviceInfos: any) {
+  private getDevices(deviceInfos: any) {
     let counter = 0;
     deviceInfos.forEach((device) => {
       if (device.kind === "videoinput") {
@@ -179,7 +184,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
   /**
    * MÉTODO PARA INICIAR LA CAPTURA DE LA CÁMARA:
    */
-  startLiveCamp(infoCamp: Device) {
+  private startLiveCamp(infoCamp: Device) {
     if (this.startCamera != false) {
       this._navigator = <any>navigator;
       this._navigator.getUserMedia = (this._navigator.getUserMedia || this._navigator.webkitGetUserMedia || this._navigator.mozGetUserMedia || this._navigator.msGetUserMedia);
@@ -198,7 +203,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
   /**
    * MÉTODO PARA INICIAR LA CAPTURA DE IMAGEN DE LA CÁMARA FRONTAL:
    */
-  startFrontLiveCam() {
+  private startFrontLiveCam() {
     this.backCamera = false;
     this.stopStream();
     this.startLiveCamp(this._frontCamera);
@@ -207,7 +212,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
   /**
    * MÉTODO PARA INICIAR LA CAPTURA DE IMAGEN DE LA CÁMARA TRASERA:
    */
-  startBackLiveCam() {
+  private startBackLiveCam() {
     if (this.swapCamera) {
       this.backCamera = true;
       this.stopStream();
@@ -221,7 +226,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
   /**
    * MÉTODO PARA DETENER LA CAPTURA DE IMAGEN DE LA CÁMARA:
    */
-  stopStream() {
+  private stopStream() {
     if (this.localStream !== undefined) {
       const tracks = this.localStream.getTracks();
       tracks.forEach((tracks) => {
@@ -233,7 +238,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
   /**
    * MÉTODO PARA OBTENER UNA CAPTURA DE IMAGEN (SNAP SHOT) DEL STREAM
    */
-  takeSnapShot() {
+  private takeSnapShot() {
     if (this.imageCapture) {
       this.imageCapture.takePhoto().then((blob: any) => {
         let fixedBlob;
@@ -275,11 +280,13 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
   /**
    * MÉTODO PARA INCIAR LA CONEXIÓN AL SOCKET DE KURENTO CLIENT:
    */
-  connectToStreamingClient() {
-    return this._webrtcSocketService.connecToKurento(this._userService, this.pubId, this._video);
+  private connectToStreamingClient() {
+    this.initVariables();
+    console.log("this._video", this._video)
+    return this._webrtcSocketService.connecToKurento(this.pubId, this._video);
   }
 
-  startTransmission() {
+  private startTransmission() {
     if (this.pubId && !this.streamOwnerId && !this.transmissionOn) {
       this.connectToStreamingClient()
         .then((response: boolean) => {
@@ -296,7 +303,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
   /**
    * MÉTODO PARA UNIRSE A UNA TRANSMISIÓN
    */
-  joinTransmission() {
+  private joinTransmission() {
     this.connectToStreamingClient()
       .then((response: boolean) => {
         if (response) {
@@ -333,6 +340,8 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
     else {
       this.stopStream();
     }
+
+    this._cameraService.notifySnapShot(null);
   }
 
   /**

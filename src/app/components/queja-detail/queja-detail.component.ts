@@ -6,9 +6,9 @@ import { HorizonButton } from '../../interfaces/horizon-button.interface';
 import { ContentService } from '../../services/content.service';
 import { SingleMapComponent } from '../single-map/single-map.component';
 import { CONTENT_TYPES } from '../../config/content-type';
-import { NotifierService } from '../../services/notifier.service';
 import { ACTION_TYPES } from '../../config/action-types';
 import { Subscription } from '../../../../node_modules/rxjs';
+import { DynaContentService } from 'src/app/services/dyna-content.service';
 
 @Component({
   selector: 'queja-detail',
@@ -29,12 +29,13 @@ export class QuejaDetailComponent implements OnInit, OnChanges, OnDestroy {
   public quejaDetail: Publication;
   public matButtons: HorizonButton[];
   public carouselOptions: any;
+  public isUnavaliable: boolean;
 
   constructor(
     private _quejaService: QuejaService,
     private _cfr: ComponentFactoryResolver,
     private _contentService: ContentService,
-    private _notifierService: NotifierService,
+    private _dynaContentService: DynaContentService,
     public _domSanitizer: DomSanitizer
   ) {
     this.closeModal = new EventEmitter<boolean>();
@@ -53,9 +54,14 @@ export class QuejaDetailComponent implements OnInit, OnChanges, OnDestroy {
         this.quejaDetail = pub;
         this.initCarousel();
         if (this.commentId) {
-          setTimeout(() => {
-            this.viewComments();
-          }, 100);
+          if (this.quejaDetail) {
+            setTimeout(() => {
+              this.viewComments();
+            }, 100);
+          }
+          else {
+            this.isUnavaliable = true;
+          }
         }
 
         if (this.isModal == true) {
@@ -63,7 +69,7 @@ export class QuejaDetailComponent implements OnInit, OnChanges, OnDestroy {
         }
       }).catch(error => console.log(error));
 
-    this.subscriptor = this._quejaService._pubDetailEmitter.subscribe((newPub: Publication) => {
+    this.subscriptor = this._quejaService.pubDetail$.subscribe((newPub: Publication) => {
       this.quejaDetail = newPub;
     });
   }
@@ -92,26 +98,27 @@ export class QuejaDetailComponent implements OnInit, OnChanges, OnDestroy {
    * MÉTODO PARA VER UNA IMAGEN EN PRIMER PLANO
    * @param event EVENTO DE CLICK
    */
-  viewImg(event: any) {
+  public viewImg(event: any) {
     event.preventDefault();
-    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_img, contentData: { media :this.quejaDetail.media, opView: CONTENT_TYPES.view_img}});
+    this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.view_img, contentData: {media :this.quejaDetail.media, opView: CONTENT_TYPES.view_img} });
+	  //this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_img, contentData: { media :this.quejaDetail.media, opView: CONTENT_TYPES.view_img}});
   }
 
   /**
    * MÉTODO PARA VER EL MODAL DE COMENTARIOS DE UNA PUBLICACIÓN ESPECÍFICA:
    * @param event EVENTO DE CLICK DEL ELEMENTO <a href="#">
    */
-  viewComments(event: any = null) {
+  public viewComments(event: any = null) {
     if (event) {
       event.preventDefault();
     }
-    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_comments, contentData: { pubId: this.quejaDetail.id_publication, comId: this.commentId, replyId: this.replyId, hideBtn: (this.quejaDetail.isTrans == true && this.quejaDetail.transDone == false) } });
+    this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.view_comments, contentData: { pubId: this.quejaDetail.id_publication, comId: this.commentId, replyId: this.replyId, hideBtn: (this.quejaDetail.isTrans == true && this.quejaDetail.transDone == false) } });
   }
 
   /**
    * MÉTODO PARA ESCUCHAR LA ACCIÓN DEL EVENTO DE CLICK DE UN BOTÓN DINÁMICO:
    */
-  getButtonAction(actionEvent: number) {
+  public getButtonAction(actionEvent: number) {
     switch (actionEvent) {
       case ACTION_TYPES.close:
         this.closeModal.emit(true);
@@ -136,6 +143,7 @@ export class QuejaDetailComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy() {
+    this._dynaContentService.loadDynaContent(null);
     this.subscriptor.unsubscribe();
   }
 }

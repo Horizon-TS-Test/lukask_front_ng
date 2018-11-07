@@ -1,8 +1,10 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.2.0/workbox-sw.js");
 
+const baseURL = './';
+
 //NEXT ALLOWS US TO USE INDEX DB:
-importScripts('/assets/js/idb.js');
-importScripts('/assets/js/utility-db.js');
+importScripts(baseURL + 'assets/js/idb.min.js');
+importScripts(baseURL + 'assets/js/utility-db.min.js');
 ///////////
 
 //NEXT ALLOWS US TO MAKE NOTIFICATIONS BETWEEN SERVICE WORKER AND BROWSER CLIENTS:
@@ -13,7 +15,7 @@ const channel = new BroadcastChannel('lsw-events');
 ///////////
 
 const SERVERS = {
-    middleWare: 'http://192.168.1.62:3001'
+    middleWare: 'http://192.168.1.37:3001'
 };
 
 const SYNC_TYPE = {
@@ -24,15 +26,15 @@ const SYNC_TYPE = {
 };
 
 const REST_URLS_PATTERN = {
-    medios: /http:\/\/192.168.1.62:3001\/images\/.*/,
-    firstPubs: /http:\/\/192.168.1.62:3001\/publication\/\?limit=[0-9]+$/,
-    morePubs: /http:\/\/192.168.1.62:3001\/publication\/\?limit=[0-9]+&offset=[0-9]+$/,
-    comments: /http:\/\/192.168.1.62:3001\/comment\/\?pub_id=[0-9|a-f|-]+\&(?:limit=[0-9]+|limit=[0-9]+\&offset=[0-9]+)$/,
-    replies: /http:\/\/192.168.1.62:3001\/comment\/\?com_id=[0-9|a-f|-]+\&(?:limit=[0-9]+|limit=[0-9]+\&offset=[0-9]+)\&replies=true$/,
+    medios: /http:\/\/192.168.1.37:3001\/images\/.*/,
+    firstPubs: /http:\/\/192.168.1.37:3001\/publication\/\?limit=[0-9]+$/,
+    morePubs: /http:\/\/192.168.1.37:3001\/publication\/\?limit=[0-9]+&offset=[0-9]+$/,
+    comments: /http:\/\/192.168.1.37:3001\/comment\/\?pub_id=[0-9|a-f|-]+\&(?:limit=[0-9]+|limit=[0-9]+\&offset=[0-9]+)$/,
+    replies: /http:\/\/192.168.1.37:3001\/comment\/\?com_id=[0-9|a-f|-]+\&(?:limit=[0-9]+|limit=[0-9]+\&offset=[0-9]+)\&replies=true$/,
     qtype: SERVERS.middleWare + '/qtype',
     province: SERVERS.middleWare + '/province',
-    canton: /http:\/\/192.168.1.62:3001\/canton\/\?province_id=[0-9|a-f|-]+$/,
-    parroq: /http:\/\/192.168.1.62:3001\/parroquia\/\?canton_id=[0-9|a-f|-]+$/
+    canton: /http:\/\/192.168.1.37:3001\/canton\/\?province_id=[0-9|a-f|-]+$/,
+    parroq: /http:\/\/192.168.1.37:3001\/parroquia\/\?canton_id=[0-9|a-f|-]+$/
 };
 
 const REST_URLS = {
@@ -377,6 +379,9 @@ function sendData(restUrl, data, indexedTable, syncTable, jsonDataType) {
                 }
             }).catch(function (err) {
                 console.log('Error while sending data', err);
+                //ALWAYS IT MUST BE "id" FOR GENERIC PURPOSES:
+                deleteItemData(syncTable, jsonDataType == true ? data.id : data.get('id'));
+                ////
             });
         });
 }
@@ -565,7 +570,7 @@ self.addEventListener('push', function (event) {
         body: defaultNotifData.content,
         dir: 'rtl',
         icon: defaultNotifData.icon_image,
-        badge: '/assets/icons/badged.png',
+        badge: baseURL + 'assets/icons/badged.png',
         vibrate: [500, 200, 200, 100], //THIS IS FOR SOME DEVICES NOT FOR ALL
 
         "//": "Behavioural Options",
@@ -578,12 +583,12 @@ self.addEventListener('push', function (event) {
             /*{
                 action: '/',
                 title: "Mural",
-                //icon: '/assets/icons/lukask-96x96.png'
+                //icon: baseURL + 'assets/icons/lukask-96x96.png'
             },
             {
                 action: '/mapview',
                 title: "Mapa",
-                //icon: '/assets/icons/lukask-96x96.png'
+                //icon: baseURL + 'assets/icons/lukask-96x96.png'
             }*/
         ]
     };

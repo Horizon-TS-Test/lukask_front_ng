@@ -210,7 +210,6 @@ p, label, div {
   transition: opacity 0.5s ease; }
 
 .bottom-loader {
-  position: absolute !important;
   left: 0;
   bottom: 0;
   opacity: 0;
@@ -220,12 +219,15 @@ p, label, div {
     width: 60px !important; }
   .bottom-loader .p-owl-img-sm {
     width: 50px !important; }
+  .bottom-loader.pub-loader {
+    position: fixed !important; }
+  .bottom-loader.comment-loader {
+    position: absolute !important; }
 
 .bottom-loader.hide {
   z-index: -1; }
 
 .bottom-loader.on {
-  position: absolute !important;
   bottom: 0;
   opacity: 1;
   z-index: 1;
@@ -437,6 +439,9 @@ p, label, div {
 
 .f-child-no-auto {
   flex: 1 0 !important; }
+
+.f-child-no-shrink {
+  flex-shrink: 0 !important; }
 
 .f-child-order-0 {
   order: 0; }
@@ -711,7 +716,7 @@ p, label, div {
     height: 100%;
     width: 30%;
     border-bottom: 2px solid #004360;
-    transition: all .5s ease; }
+    transition: all .3s ease; }
 
 .bot-panel {
   bottom: -1px;
@@ -1250,6 +1255,12 @@ p, label, div {
 .no-border-button.dark fa, .no-border-button.dark span {
   color: #004360; }
 
+.no-border-button.secondary-dark fa, .no-border-button.secondary-dark span {
+  color: #7fa4ad; }
+
+.no-border-button.light fa, .no-border-button.light span {
+  color: #c1e6ca; }
+
 .no-border-button.secondary fa, .no-border-button.secondary span {
   color: #848b76; }
 
@@ -1329,6 +1340,15 @@ p, label, div {
   -webkit-animation: cd-bounce-out 0.3s linear;
   -moz-animation: cd-bounce-out 0.3s linear;
   animation: cd-bounce-out 0.3s linear; }
+
+.p-outline-btn {
+  border-color: #5dbeb6 !important;
+  color: #5dbeb6 !important; }
+  .p-outline-btn.dark {
+    border-color: #004360 !important;
+    color: #004360 !important; }
+  .p-outline-btn.upper {
+    text-transform: uppercase; }
 
 .camera-content {
   position: absolute !important;
@@ -1429,15 +1449,16 @@ input[type=text], input[type=password], input[type=email], input[type=number], i
   justify-content: center;
   align-items: center;
   background: #004360; }
-
-.news-main {
-  position: fixed;
-  right: unset;
-  top: unset;
-  z-index: 10000000;
-  right: 3.2rem;
-  bottom: 3.1rem;
-  background: #5dbeb6; }
+  .news-number.news-main {
+    position: fixed;
+    top: unset;
+    z-index: 10000000;
+    right: 3.2rem;
+    bottom: 3.1rem;
+    background: #5dbeb6; }
+  .news-number.news-material-btn {
+    right: calc(35px - 5px);
+    top: -12px; }
 
 .personal-carousel.prev {
   position: absolute;
@@ -1819,5 +1840,43 @@ input[type=text], input[type=password], input[type=email], input[type=number], i
     width: 75%; }
   .p-home-web-view .pub-web {
     width: 25%; } }
+
+.offline-status {
+  background-color: #c1e6ca !important; }
+  .offline-status > div {
+    font-size: .9rem; }
+  .offline-status * {
+    color: #004360; }
+  .offline-status.status-float {
+    position: absolute;
+    z-index: 1;
+    top: 100%;
+    left: 0; }
+  .offline-status.status-float::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 14px;
+    width: 0;
+    height: 0;
+    border: 8px solid transparent;
+    border-bottom-color: #c1e6ca;
+    border-top: 0;
+    margin-left: -8px;
+    margin-top: -8px; }
+  .offline-status.status-rel-comment::before {
+    left: 12px; }
+
+.offline-tasks a fa, .offline-tasks a span {
+  color: #dee2e6 !important; }
+
+.p-unavaliable {
+  width: 230px;
+  height: 230px;
+  overflow: hidden;
+  border-radius: 50%;
+  -webkit-box-shadow: 4px 4px 7px 2px rgba(0, 0, 0, 0.2) !important;
+  -moz-box-shadow: 4px 4px 7px 2px rgba(0, 0, 0, 0.2) !important;
+  box-shadow: 4px 4px 7px 2px rgba(0, 0, 0, 0.2) !important; }
 
 /*# sourceMappingURL=styles.css.map */

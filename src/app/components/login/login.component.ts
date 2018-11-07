@@ -5,8 +5,9 @@ import { ContentService } from '../../services/content.service';
 import { Alert } from '../../models/alert';
 import { ALERT_TYPES } from '../../config/alert-types';
 import { Router } from '@angular/router';
-import { NotifierService } from '../../services/notifier.service';
 import { CONTENT_TYPES } from '../../config/content-type';
+import { DynaContentService } from 'src/app/services/dyna-content.service';
+import { InstallPromptService } from 'src/app/services/install-prompt.service';
 
 declare var $: any;
 
@@ -16,8 +17,6 @@ declare var $: any;
   styleUrls: ['./login.component.css'],
 })
 export class LoginComponent implements OnInit {
-  private alertData: Alert;
-
   public user: User;
   public contentTypes: any;
   public loadingClass: string;
@@ -26,7 +25,8 @@ export class LoginComponent implements OnInit {
   constructor(
     private _loginService: LoginService,
     private _contentService: ContentService,
-    private _notifierService: NotifierService,
+    private _dynaContentService: DynaContentService,
+    private _installPromptService: InstallPromptService,
     private _router: Router,
   ) {
     this.resetForm();
@@ -37,11 +37,18 @@ export class LoginComponent implements OnInit {
     this._contentService.fadeInComponent($("#loginContainer"));
   }
 
-  resetForm() {
+  /**
+   * MÉTODO PARA RESTABLECER EL OBJETO USUARIO QUE ES USADO EN EL FORMULARIO DE LOGIN:
+   */
+  private resetForm() {
     this.user = new User(null, null);
   }
 
-  activeLoadingContent(remove: boolean = false) {
+  /**
+   * MÉTODO PARA ACTIVAR LA ANIMACIÓN DE LOADING:
+   * @param remove 
+   */
+  private activeLoadingContent(remove: boolean = false) {
     if (remove) {
       this.loadingClass = "";
       this.activeClass = "";
@@ -52,9 +59,12 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  onLogin() {
-    this._notifierService.requestInstallation();
-    
+  /**
+   * MÉTODO PARA INICIAR SESIÓN EN EL APP:
+   */
+  public onLogin() {
+    this._installPromptService.openInstallPrompt();
+    let alertData: Alert;
     this.activeLoadingContent();
     this._loginService.restLogin(this.user)
       .then(response => {
@@ -62,10 +72,10 @@ export class LoginComponent implements OnInit {
         this.activeLoadingContent(true);
         this.resetForm();
 
-        this.alertData = new Alert({ title: 'Mensaje del Sistema', message: "Te damos la bienvenida a LUKASK", type: ALERT_TYPES.info });
-        this.setAlert();
+        alertData = new Alert({ title: 'Mensaje del Sistema', message: "Te damos la bienvenida a LUKASK", type: ALERT_TYPES.info });
+        this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.alert, contentData: alertData });
 
-        this._router.navigateByUrl('/inicio');
+        this._router.navigateByUrl('/');
       })
       .catch((error: Response) => {
         const respJson: any = error.json();
@@ -73,13 +83,13 @@ export class LoginComponent implements OnInit {
 
         switch (respJson.code) {
           case 400:
-            this.alertData = new Alert({ title: 'Proceso Fallido', message: "Las credenciales ingresadas son incorrectas", type: ALERT_TYPES.danger });
+            alertData = new Alert({ title: 'Proceso Fallido', message: "Las credenciales ingresadas son incorrectas", type: ALERT_TYPES.danger });
             break;
           case 500:
-            this.alertData = new Alert({ title: 'Proceso Fallido', message: "Error inesperado en el servidor, lamentamos los inconvenientes", type: ALERT_TYPES.warning });
+            alertData = new Alert({ title: 'Proceso Fallido', message: "Error inesperado en el servidor, lamentamos los inconvenientes", type: ALERT_TYPES.warning });
             break;
           case undefined:
-            this.alertData = new Alert({ title: 'Proceso Fallido', message: "Se ha perdido la conexión con el servidor", type: ALERT_TYPES.danger });
+            alertData = new Alert({ title: 'Proceso Fallido', message: "Se ha perdido la conexión con el servidor", type: ALERT_TYPES.danger });
             break;
         }
 
@@ -87,12 +97,8 @@ export class LoginComponent implements OnInit {
         this.activeLoadingContent(true);
         this.resetForm();
 
-        this.setAlert();
+        this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.alert, contentData: alertData });
       });
-  }
-
-  setAlert() {
-    this._notifierService.sendAlert(this.alertData);
   }
 
   /**
@@ -100,9 +106,9 @@ export class LoginComponent implements OnInit {
  * @param event EVENTO CLICK DEL ELEMENTO <a href="#">
  * @param contType TIPO DE CONTENIDO A MOSTRAR DENTRO DEL HORIZON MODAL
  */
-  openLayer(event: any, contType: number) {
+  public openLayer(event: any, contType: number) {
     event.preventDefault();
-    this._notifierService.requestInstallation();
-    this._notifierService.notifyNewContent({ contentType: contType, contentData: "" });
+    this._installPromptService.openInstallPrompt();
+    this._dynaContentService.loadDynaContent({ contentType: contType, contentData: "" });
   }
 }
