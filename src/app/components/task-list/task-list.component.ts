@@ -93,6 +93,9 @@ export class TaskListComponent implements OnInit {
       this._userService.onStreaming = true;
       this._router.navigateByUrl('/streaming?pub=' + this.queja.id_publication + '&owner=' + this.queja.user.id);
     }
+    else {
+      this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.view_img, contentData: { media: this.queja.media, opView: CONTENT_TYPES.view_video } });
+    }
   }
 
   /**

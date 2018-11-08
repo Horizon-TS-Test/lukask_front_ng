@@ -1,7 +1,16 @@
 <div class="min-height-full-modal d-flex justify-content-center align-items-center">
   <div class="p-float-div w-100">
     <owl-carousel class="personal-owl-nav" [options]="carouselOptions" [carouselClasses]="['owl-theme']">
-      <img *ngFor="let med of media" src="{{ med.url }}" width="100%">
+      <ng-container [ngSwitch]="opView">
+        <ng-container *ngSwitchCase="_contentType.view_img">
+          <ng-container *ngFor="let med of media">
+            <img  *ngIf="med.format == 'IG'" src="{{ med.url }}" width="100%" />
+          </ng-container>  
+        </ng-container>
+
+        <video *ngSwitchCase="_contentType.view_video" id="videoPub" controls width="100%"></video>
+
+      </ng-container>
     </owl-carousel>
   </div>
 </div>

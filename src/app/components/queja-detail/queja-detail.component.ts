@@ -100,7 +100,8 @@ export class QuejaDetailComponent implements OnInit, OnChanges, OnDestroy {
    */
   public viewImg(event: any) {
     event.preventDefault();
-    this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.view_img, contentData: this.quejaDetail.media });
+    this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.view_img, contentData: {media :this.quejaDetail.media, opView: CONTENT_TYPES.view_img} });
+	  //this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_img, contentData: { media :this.quejaDetail.media, opView: CONTENT_TYPES.view_img}});
   }
 
   /**

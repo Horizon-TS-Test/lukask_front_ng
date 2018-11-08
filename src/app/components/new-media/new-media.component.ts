@@ -96,6 +96,7 @@ export class NewMediaComponent implements OnInit, OnChanges, OnDestroy {
   public getButtonAction(actionEvent: number) {
     switch (actionEvent) {
       case ACTION_TYPES.close:
+        console.log("llamada a Proceso de cerrar camara ")
         this.sendCameraAction(event, this.cameraActions.stop_stream);
         this.closeModal.emit(true);
         break;
