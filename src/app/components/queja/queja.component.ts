@@ -35,8 +35,8 @@ export class QuejaComponent implements OnInit, OnDestroy {
   private delOffComSubscriptor: Subscription;
   private commentList: Comment[];
   private mainComments: any;
-  private mediosImg : Media[];
-
+  
+  public mediosImg : Media[];
   public userProfile: User;
   public firstPattern: string;
   public pagePattern: string;
