@@ -9,14 +9,17 @@
     </div>
     <div class="personal-content relative-background">
       <owl-carousel id="corousel-detail-q" class="personal-owl-nav" [options]="carouselOptions" [carouselClasses]="['owl-theme']">
-        <a href="#" *ngFor="let med of quejaDetail.media" (click)="viewImg($event)" class="card-img-top">
-          <img src="{{med.url}}" width="100%" class="mb-1">
-        </a>
+        <ng-container *ngFor="let med of quejaDetail.media">
+          <ng-container *ngIf="med.format == 'IG'">
+            <a href="#" (click)="viewImg($event)" class="card-img-top">
+              <img src="{{med.url}}" width="100%" class="mb-1">
+            </a>
+          </ng-container>
+        </ng-container>
       </owl-carousel>
     </div>
     <div class="relative-background card-block text-justify pb-4">
       {{ quejaDetail.detail }}
-
       <a href="#" (click)="viewComments($event)" class="p-float-link down-right-corner p-dark-text-color">
         <small>Ver comentarios</small>
       </a>

@@ -117,17 +117,17 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
     if (this.streamOwnerId) {
       this.joinTransmission();
     }
-    else {
-      navigator.mediaDevices.enumerateDevices().then((data) => {
-        this.getDevices(data);
-      }).catch(this.handleError);
-    }
   }
 
   /**
    * MÉTODO PARA INICIAR VARIABLES
    */
   private initVariables() {
+    
+    navigator.mediaDevices.enumerateDevices().then((data) => {
+      this.getDevices(data);
+    }).catch(this.handleError);
+  
     if (!this._video) {
       let videoArray = document.querySelectorAll(".video-camera");
       this._video = videoArray.item(videoArray.length - 1);
@@ -139,6 +139,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
    * @param device
    */
   private setCamera(device: any) {
+    console.log("establecer camara para transmicion");
     if (device.label.indexOf("back") > -1) {
       this._backCamera = { id: device.deviceId, description: "Posterior" }
       this.swapCamera = true;
@@ -283,7 +284,8 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
    */
   private connectToStreamingClient() {
     this.initVariables();
-    return this._webrtcSocketService.connecToKurento(this._userService.userProfile.id, this.pubId, this._video);
+    console.log("this._video", this._video)
+    return this._webrtcSocketService.connecToKurento(this.pubId, this._video);
   }
 
   private startTransmission() {

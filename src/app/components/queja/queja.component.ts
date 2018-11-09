@@ -13,6 +13,8 @@ import { ArrayManager } from 'src/app/tools/array-manager';
 import { CommentFormService } from 'src/app/services/comment-form.service';
 import { SocketService } from 'src/app/services/socket.service';
 import { ActionFeederService } from 'src/app/services/action-feeder.service';
+import { Media } from '../../models/media';
+import * as lodash from 'lodash';
 
 declare var deleteItemData: any;
 
@@ -33,6 +35,7 @@ export class QuejaComponent implements OnInit, OnDestroy {
   private delOffComSubscriptor: Subscription;
   private commentList: Comment[];
   private mainComments: any;
+  private mediosImg : Media[];
 
   public userProfile: User;
   public firstPattern: string;
@@ -52,6 +55,7 @@ export class QuejaComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.getMedioImgPub();
     this.defineMainComments();
     this.getComments();
     this.listenToProfileUp()
@@ -270,5 +274,14 @@ export class QuejaComponent implements OnInit, OnDestroy {
     this.newComSubscriptor.unsubscribe();
     this.commentSubs.unsubscribe();
     this.delOffComSubscriptor.unsubscribe();
+  }
+
+  /**
+   * METODO PARA OBTENER EL ARRAY DE MEDIOS DE TIPO IMAGEN
+   */
+  private getMedioImgPub(){
+    this.mediosImg = lodash.filter(this.queja.media, function(obj){
+      return obj.format =='IG';
+    });
   }
 }

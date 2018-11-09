@@ -18,5 +18,7 @@ export const CONTENT_TYPES = {
     planilla_detail: 16,
     payment_card: 17,
     paypal: 18,
-    register_profile: 19
+    register_profile: 19,
+    view_video:20, /**Opcion para mostrar pantalla de visualizacion de video */
+      
 }
