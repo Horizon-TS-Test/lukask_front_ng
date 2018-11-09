@@ -85,7 +85,8 @@ export class EditQuejaComponent implements OnDestroy, OnInit, OnChanges {
   }
 
   /**
-   * MÉTODO PARA ABRIR LA CÁMARA PARA TOMAR UNA FOTOGRAFÍA:
+   * MÉTODO PARA ABRIR LA CÁMARA SEA DESDE CÓRDOVA SIENDO UN APP MOVIL O DESDE 
+   * JAVASCRIPT COMO APP WEB / APP WEB PROGRESIVA PARA TOMAR UNA FOTOGRAFÍA
    * @param event 
    */
   public newMedia(event: any) {
@@ -93,9 +94,8 @@ export class EditQuejaComponent implements OnDestroy, OnInit, OnChanges {
     if (this.filesToUpload.length < this._initSnapShotsNumber) {
       if (this.isEnabledCordovaCamera) {
         this._cordovaCameraService.openCamera((imgUri: any) => {
-          this._cordovaCameraService.createNewFileEntry(imgUri, new Date().toISOString(), (fileEntry) => {
-            alert("fileEntry" + fileEntry);
-            this.addQuejaSnapShot({ mediaFileUrl: imgUri, mediaFile: fileEntry, removeable: true, active: true, hidden: false });
+          this._cordovaCameraService.getFileBlob(imgUri, (imgBlob) => {
+            this.addQuejaSnapShot({ mediaFileUrl: imgUri, mediaFile: imgBlob, removeable: true, active: true, hidden: false });
           });
         });
       }

@@ -59,8 +59,7 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnInit() {
     //THIS IS USED FOR DISPLAY AN ALERT WITH THE CURRENT PLATFORM AFTER BUILD THIS APP WITH CORDOVA
     document.addEventListener("deviceready", () => {
-      alert(device.platform);
-      alert(navigator.camera);
+      //alert(device.platform);
     }, false);
   }
   /**
