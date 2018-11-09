@@ -438,6 +438,7 @@ export class QuejaService implements OnDestroy {
     formData.append('userId', this._userService.getUserProfile().id);
 
     for (let med of queja.media) {
+      alert("med.fileName" + med.fileName);
       formData.append('media_files[]', med.file, med.fileName);
     }
 
@@ -713,7 +714,7 @@ export class QuejaService implements OnDestroy {
     usr = this._userService.getUserProfile();
     type = new QuejaType(offCachePub.type_publication, '');
 
-    pub = new Publication(offCachePub.id, offCachePub.latitude, offCachePub.longitude, offCachePub.detail, offCachePub.date_publication, '', true, type, usr, offCachePub.location, 0, false, offCachePub.address, offCachePub.is_trans, );
+    pub = new Publication(offCachePub.id, offCachePub.latitude, offCachePub.longitude, offCachePub.detail, offCachePub.date_publication, '', true, type, usr, offCachePub.location, 0, false, offCachePub.address, offCachePub.is_trans);
     for (let med of offCachePub.media_files) {
       pub.media.push(new Media('', '', med.fileUrl));
     }

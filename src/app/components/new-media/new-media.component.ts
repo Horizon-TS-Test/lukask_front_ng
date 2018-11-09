@@ -3,6 +3,7 @@ import { CAMERA_ACTIONS } from '../../config/camera-actions';
 import { HorizonButton } from '../../interfaces/horizon-button.interface';
 import { ACTION_TYPES } from '../../config/action-types';
 import { CameraActionService } from 'src/app/services/camera-action.service';
+import { CordovaCameraService } from 'src/app/services/cordova-camera.service';
 
 @Component({
   selector: 'new-media',
@@ -21,7 +22,7 @@ export class NewMediaComponent implements OnInit, OnChanges, OnDestroy {
   public carouselOptions: any;
 
   constructor(
-    private _cameraActionService: CameraActionService
+    private _cameraActionService: CameraActionService    
   ) {
     this.cameraActions = CAMERA_ACTIONS;
 

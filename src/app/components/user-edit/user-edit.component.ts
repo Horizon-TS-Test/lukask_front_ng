@@ -39,7 +39,9 @@ export class UserEditComponent implements OnInit, OnDestroy, OnChanges, AfterVie
     this.fileToUpload = {
       mediaFileUrl: ASSETS.profDefaultImg,
       mediaFile: null,
-      removeable: false
+      removeable: false,
+      active: true,
+      hidden: false
     };
 
     this.materialButtons = [

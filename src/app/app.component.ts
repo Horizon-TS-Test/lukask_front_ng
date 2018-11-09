@@ -8,6 +8,10 @@ import { RouterService } from './services/router.service';
 import { InstallPromptService } from './services/install-prompt.service';
 
 declare var device;
+declare var navigator: {
+  camera: any,
+  serviceWorker: any
+};
 
 @Component({
   selector: 'app-root',
@@ -54,8 +58,9 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     //THIS IS USED FOR DISPLAY AN ALERT WITH THE CURRENT PLATFORM AFTER BUILD THIS APP WITH CORDOVA
-    document.addEventListener("deviceready", function () {
+    document.addEventListener("deviceready", () => {
       alert(device.platform);
+      alert(navigator.camera);
     }, false);
   }
   /**

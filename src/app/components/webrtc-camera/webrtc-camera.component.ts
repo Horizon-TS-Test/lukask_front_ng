@@ -255,7 +255,9 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
               this.snapShot = {
                 mediaFileUrl: URL.createObjectURL(fixedBlob),
                 mediaFile: fixedBlob,
-                removeable: true
+                removeable: true,
+                active: true,
+                hidden: false
               }
               Snackbar.show({ text: "Imagen capturada correctamente", pos: 'bottom-center', actionText: 'Listo', actionTextColor: '#34b4db', customClass: "p-snackbar-layout" });
               this._cameraService.notifySnapShot(this.snapShot);

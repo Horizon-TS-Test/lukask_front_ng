@@ -9,13 +9,14 @@ import { OnSubmit } from '../../interfaces/on-submit.interface';
 import * as Snackbar from 'node-snackbar';
 import { DynaContentService } from 'src/app/services/dyna-content.service';
 import { ASSETS } from 'src/app/config/assets-url';
+import { CordovaCameraService } from 'src/app/services/cordova-camera.service';
 
 @Component({
   selector: 'edit-queja',
   templateUrl: './edit-queja.component.html',
   styleUrls: ['./edit-queja.component.css'],
 })
-export class EditQuejaComponent implements OnDestroy, OnChanges {
+export class EditQuejaComponent implements OnDestroy, OnInit, OnChanges {
   @Input() submit: number;
   @Input() isStreamPub: number;
   @Output() afterSubmit = new EventEmitter<OnSubmit>();
@@ -24,6 +25,7 @@ export class EditQuejaComponent implements OnDestroy, OnChanges {
 
   private _initSnapShotsNumber: number;
   private _maxSnapShots: number;
+  private isEnabledCordovaCamera: boolean;
 
   public carouselOptions: any;
   public filesToUpload: MediaFile[];
@@ -31,6 +33,7 @@ export class EditQuejaComponent implements OnDestroy, OnChanges {
   constructor(
     private _dynaContentService: DynaContentService,
     private _cameraService: CameraService,
+    private _cordovaCameraService: CordovaCameraService,
     private _domSanitizer: DomSanitizer
   ) {
     this._initSnapShotsNumber = 5;
@@ -46,12 +49,18 @@ export class EditQuejaComponent implements OnDestroy, OnChanges {
     });
   }
 
+  ngOnInit() {
+    this.isEnabledCordovaCamera = this._cordovaCameraService.isCameraEnabled();
+  }
+
   private initMediaFiles() {
     this.filesToUpload = [
       {
         mediaFileUrl: ASSETS.pubDefaultImg,
         mediaFile: null,
-        removeable: false
+        removeable: false,
+        active: true,
+        hidden: false
       }
     ];
   }
@@ -61,10 +70,18 @@ export class EditQuejaComponent implements OnDestroy, OnChanges {
    * @param media EL OBJETO DE TIPO MEDIA-FILE
    */
   public addQuejaSnapShot(media: MediaFile) {
-    if (!this.filesToUpload[0].mediaFile) {
-      this.filesToUpload.splice(0, 1);
+    if (this.filesToUpload[0].removeable == false) {
+      this.filesToUpload[0].hidden = true;
+      this.filesToUpload[0].active = false;
     }
-    this.filesToUpload.push(media);
+    else {
+      for (let i = 0; i < this.filesToUpload.length; i++) {
+        if (this.filesToUpload[i].active == true) {
+          this.filesToUpload[i].active = false;
+        }
+      }
+    }
+    this.filesToUpload.splice(0, 0, media);
   }
 
   /**
@@ -74,7 +91,17 @@ export class EditQuejaComponent implements OnDestroy, OnChanges {
   public newMedia(event: any) {
     event.preventDefault();
     if (this.filesToUpload.length < this._initSnapShotsNumber) {
-      this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.new_media, contentData: { maxSnapShots: this._maxSnapShots, backCamera: true } });
+      if (this.isEnabledCordovaCamera) {
+        this._cordovaCameraService.openCamera((imgUri: any) => {
+          this._cordovaCameraService.createNewFileEntry(imgUri, new Date().toISOString(), (fileEntry) => {
+            alert("fileEntry" + fileEntry);
+            this.addQuejaSnapShot({ mediaFileUrl: imgUri, mediaFile: fileEntry, removeable: true, active: true, hidden: false });
+          });
+        });
+      }
+      else {
+        this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.new_media, contentData: { maxSnapShots: this._maxSnapShots, backCamera: true } });
+      }
     }
     else {
       Snackbar.show({ text: "Ha llegado al límite de imágenes permitidas", pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#34b4db', customClass: "p-snackbar-layout" });
@@ -84,17 +111,66 @@ export class EditQuejaComponent implements OnDestroy, OnChanges {
   /**
    * MÉTODO PARA ELIMINAR UNA IMAGEN DEL GRUPO DE MEDIA
    * @param $event 
-   * @param i POSICIÓN DEL ARRAY DE MEDIA A ELIMINAR
+   * @param media MEDIO A SER ELIMINADO
    */
   public removeMedia(event: any, media: MediaFile) {
     event.preventDefault();
-    this.filesToUpload.splice(this.filesToUpload.indexOf(media), 1);
+
+    let index = this.filesToUpload.findIndex(file => file.mediaFileUrl == media.mediaFileUrl && file.removeable == media.removeable);
+    this.filesToUpload.splice(index, 1);
     this._maxSnapShots = this._initSnapShotsNumber - this.filesToUpload.length;
-    if (this.filesToUpload.length == 0) {
-      this.initMediaFiles();
+
+    if (this.filesToUpload.length == 1) {
+      this.filesToUpload[0].hidden = false;
+      this.filesToUpload[0].active = true;
+    }
+    else {
+      if (index >= this.filesToUpload.length - 1) {
+        this.filesToUpload[index - 1].active = true;
+      }
+      else {
+        this.filesToUpload[index].active = true;
+      }
     }
 
     Snackbar.show({ text: "El recurso se ha eliminado correctamente", pos: 'bottom-center', actionText: 'Listo', actionTextColor: '#34b4db', customClass: "p-snackbar-layout" });
+  }
+
+  /**
+   * MÉTODO PARA ACTUALIZAR DE LA LISTA DE FOTOS, LA QUE DEBE SER ACTUAL AL MOMENTO DE DAR NEXT O PREV:
+   * @param event 
+   * @param next 
+   */
+  public setNewActive(event, next) {
+    event.preventDefault();
+    let nextPrevTimeout;
+    clearTimeout(nextPrevTimeout);
+
+    nextPrevTimeout = setTimeout(() => {
+      let size = this.filesToUpload.length - 1;
+      for (let i = 0; i < size; i++) {
+        if (this.filesToUpload[i].active == true) {
+          this.filesToUpload[i].active = false;
+          if (next) {
+            if (i + 1 == size) {
+              this.filesToUpload[0].active = true;
+            }
+            else {
+              this.filesToUpload[i + 1].active = true;
+            }
+          }
+          else {
+            if (i - 1 == -1) {
+              this.filesToUpload[size - 1].active = true;
+            }
+            else {
+              this.filesToUpload[i - 1].active = true;
+            }
+          }
+          i = size;
+        }
+      }
+    }, 1100);
   }
 
   /**
