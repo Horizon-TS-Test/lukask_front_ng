@@ -10,8 +10,8 @@ import { routing, appRoutingProviders } from './app.routing';
 ////
 
 import { AppComponent } from './app.component';
-/*import { ServiceWorkerModule } from '@angular/service-worker';
-import { environment } from '../environments/environment';*/
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
 import { AlertComponent } from './components/alert/alert.component';
 import { ContentLayerComponent } from './components/content-layer/content-layer.component';
 import { EditQuejaComponent } from './components/edit-queja/edit-queja.component';
@@ -147,7 +147,7 @@ import { SupportModalComponent } from './components/support-modal/support-modal.
     routing,
     AngularFontAwesomeModule,
     OwlModule,
-    //ServiceWorkerModule.register('/sw-workbox.js', { enabled: environment.production })
+    ServiceWorkerModule.register('/sw-workbox.js', { enabled: environment.production })
   ],
   providers: [appRoutingProviders, UserService],
   bootstrap: [AppComponent],
