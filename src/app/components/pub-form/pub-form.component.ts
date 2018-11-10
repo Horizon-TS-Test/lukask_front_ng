@@ -10,8 +10,8 @@ import { Gps } from '../../interfaces/gps.interface';
 import { Media } from '../../models/media';
 import { MediaFile } from '../../interfaces/media-file.interface';
 import { OnSubmit } from '../../interfaces/on-submit.interface';
+import { GpsService } from 'src/app/services/gps.service';
 
-declare var google: any;
 declare var $: any;
 
 @Component({
@@ -36,8 +36,9 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges {
   public _locationAdress: string;
 
   constructor(
+    private formBuilder: FormBuilder,
     private _quejaService: QuejaService,
-    private formBuilder: FormBuilder
+    private _gpsService: GpsService
   ) {
     this._gps = {
       latitude: 0,
@@ -97,35 +98,21 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges {
    * MÉTODO QUE OBTIENE LA POSICIÓN DESDE DONDE SE EMITE LA QUEJA
    */
   private getGps() {
-    if (!('geolocation' in navigator)) {
-      return;
-    }
-
-    //ACCESS TO THE GPS:
-    navigator.geolocation.getCurrentPosition((position) => {
-      this._gps.latitude = position.coords.latitude;
-      this._gps.longitude = position.coords.longitude;
+    this._gpsService.getDeviceGeolocation((geoLocation) => {
+      this._gps.latitude = geoLocation.lat;
+      this._gps.longitude = geoLocation.long;
       this.getLocation();
-    }, function (err) {
-      console.log(err);
-      //EXCEDED THE TIMEOUT
-      return;
-    }, { timeout: 7000 });
+    });
   }
 
   /**
    * MÉTODO QUE TOMA LA CIUDAD Y DIRECCIÓN DE DONDE SE EMITE LA QUEJA
    */
-  getLocation() {
-    var geocoder = new google.maps.Geocoder;
-    geocoder.geocode({ 'latLng': { lat: this._gps.latitude, lng: this._gps.longitude } }, (results, status) => {
-      if (status === google.maps.GeocoderStatus.OK) {
-        var str = results[0].formatted_address;
-        var dir = str.split(",");
-        this._locationAdress = dir[0];
-        this._locationCity = dir[1];
-        $("#hidden-btn").click();
-      }
+  public getLocation() {
+    this._gpsService.getDeviceLocation(this._gps.latitude, this._gps.longitude, (deviceLocation) => {
+      this._locationAdress = deviceLocation.address;
+      this._locationCity = deviceLocation.city;
+      $("#hidden-btn").click();
     });
   }
 
