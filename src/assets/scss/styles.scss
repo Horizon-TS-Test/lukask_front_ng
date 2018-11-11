@@ -1700,6 +1700,10 @@ p, label, div {
     background: $primary-text !important;
     animation: unset;
 }
+.focused-btn.play {
+    background: $primary !important;
+    animation: unset;
+}
 
 .animated-btn-h {
     position: absolute;
