@@ -477,12 +477,12 @@ p, label, div {
   z-index: 2; }
 
 .portada-fixed {
-  position: absolute;
+  position: fixed;
   background: #222;
   z-index: 9999999998;
   width: 100%;
   height: 100%;
-  top: 0;
+  bottom: 0;
   left: 0;
   opacity: 1;
   transition: opacity .5s ease; }
@@ -495,8 +495,9 @@ p, label, div {
   z-index: -1; }
 
 #personal-portada {
-  position: absolute;
+  position: fixed;
   z-index: 9999999999;
+  bottom: 0px;
   transform: translateY(0);
   transition: transform 1.2s ease; }
   #personal-portada .personal-init .loading-bar {
@@ -1277,6 +1278,10 @@ p, label, div {
   animation: cd-bounce-infinit 1.2s infinite; }
   .focused-btn fa, .focused-btn span {
     color: #fff; }
+
+.focused-btn.unable {
+  background: #848b76 !important;
+  animation: unset; }
 
 .focused-btn.play {
   background: #5dbeb6 !important;
