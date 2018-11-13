@@ -2,13 +2,15 @@ import { Injectable } from '@angular/core';
 import { Comment } from '../models/comment';
 import { Headers, Http, Response } from '@angular/http';
 import { REST_SERV } from '../rest-url/rest-servers';
-import { throwError } from 'rxjs';
+import { throwError, Observable, BehaviorSubject } from 'rxjs';
 import { UserService } from './user.service';
-import * as lodash from 'lodash';
 import { BackSyncService } from './back-sync.service';
 import { DateManager } from '../tools/date-manager';
+import * as lodash from 'lodash';
+import { ArrayManager } from '../tools/array-manager';
 
 declare var readAllData: any;
+declare var deleteItemData: any;
 declare var upgradeTableFieldData: any;
 
 @Injectable({
@@ -19,9 +21,14 @@ export class ActionService {
   private isPostedComment: boolean;
   private isPostedRelevance: boolean;
 
-  private DEFAULT_LIMIT: number = 2;
+  public DEFAULT_LIMIT: number = 2;
   public MOBILE_LIMIT: number = 5;
-  public pageLimit: number;
+
+  private commSubject = new BehaviorSubject<{ comments: Comment[]; pagePattern: string }>(null);
+  comms$: Observable<{ comments: Comment[]; pagePattern: string }> = this.commSubject.asObservable();
+
+  private replySubject = new BehaviorSubject<{ comments: Comment[]; pagePattern: string }>(null);
+  replies$: Observable<{ comments: Comment[]; pagePattern: string }> = this.replySubject.asObservable();
 
   constructor(
     private _http: Http,
@@ -31,7 +38,31 @@ export class ActionService {
     this.isFetchedComments = false;
     this.isPostedComment = false;
     this.isPostedRelevance = false;
-    this.pageLimit = this.DEFAULT_LIMIT;
+  }
+
+  /**
+   * MÉTODO PARA ENVIAR LA ACTUALIZACIÓN DE LA LISTA DE COMENTARIOS:
+   * @param comList
+   */
+  public loadComments(comList: { comments: Comment[]; pagePattern: string }) {
+    this.commSubject.next(comList);
+  }
+
+  /**
+   * MÉTODO PARA CAMBIAR EL ESTADO DE UN COMENTARIO CUANDO SE HA DADO APOYO EN MODO OFFLINE:
+   */
+  public changeComOffRelevance(offRelCom: Comment, commList: Comment[], pagePattern: string) {
+    let currentCom = commList.find(currCom => currCom.commentId === offRelCom.commentId);
+    ArrayManager.backendServerSays("UPDATE", commList, currentCom, offRelCom);
+    this.loadComments({ comments: commList, pagePattern: pagePattern });
+  }
+
+  /**
+   * MÉTODO PARA ENVIAR LA ACTUALIZACIÓN DE LA LISTA DE COMENTARIOS:
+   * @param comList
+   */
+  public loadReplies(replyList: { comments: Comment[]; pagePattern: string }) {
+    this.replySubject.next(replyList);
   }
 
   /**
@@ -42,7 +73,7 @@ export class ActionService {
    * @param pagePattern PATTERN DE PAGINACIÓN
    * @param moreComments PETICIÓN BAJO DEMANDA
    */
-  private getCommentsWebByPub(parentId: string, isReplies: boolean, pagePattern: string = null, moreComments: boolean = false) {
+  private getCommentsWebByPub(parentId: string, isReplies: boolean, pagePattern: string = null, pageLimit: number = this.DEFAULT_LIMIT, moreComments: boolean = false) {
     const requestHeaders = new Headers({
       "Content-Type": "application/json",
       'X-Access-Token': this._userService.getUserKey()
@@ -54,7 +85,7 @@ export class ActionService {
     }
 
     if (flag) {
-      let filter = ((!isReplies) ? "/?pub_id=" + parentId : "/?com_id=" + parentId) + ((pagePattern && moreComments == true) ? pagePattern : "&limit=" + this.pageLimit) + ((isReplies) ? "&replies=true" : "");
+      let filter = ((!isReplies) ? "/?pub_id=" + parentId : "/?com_id=" + parentId) + ((pagePattern && moreComments == true) ? pagePattern : "&limit=" + pageLimit) + ((isReplies) ? "&replies=true" : "");
 
       return this._http.get(REST_SERV.commentUrl + filter, {
         headers: requestHeaders,
@@ -100,7 +131,7 @@ export class ActionService {
    * @param pagePattern PATTERN DE PAGINACIÓN
    * @param moreComments PETICIÓN BAJO DEMANDA
    */
-  private getCommentsCacheByPub(parentId: string, isReplies: boolean, pagePattern: string = null) {
+  private getCommentsCacheByPub(parentId: string, isReplies: boolean, pageLimit: number = this.DEFAULT_LIMIT, pagePattern: string = null) {
     if ('indexedDB' in window) {
       return readAllData((isReplies) ? 'reply' : 'comment')
         .then((tableData) => {
@@ -118,14 +149,14 @@ export class ActionService {
               let sortedData = lodash.orderBy(((isReplies) ? tableData[i].replies : tableData[i].comments), ['date_register'], ['desc']);
               ////
               for (let d = 0; d < sortedData.length; d++) {
-                if (d >= offset && cont < this.pageLimit) {
+                if (d >= offset && cont < pageLimit) {
                   comments.push(this.extractCommentJson(sortedData[d]));
                   cont++;
                 }
               }
 
               let size = sortedData.length;
-              offset = (offset + this.pageLimit < size) ? offset + this.pageLimit : null;
+              offset = (offset + pageLimit < size) ? offset + pageLimit : null;
 
               i = tableData.length;
             }
@@ -138,7 +169,7 @@ export class ActionService {
             console.log("[LUKASK ACTION SERVICE] - COMMENTS OF A PUBLICATION WITH ID " + parentId + " FROM CACHE", comments);
           }
 
-          return { comments: comments, pagePattern: (offset) ? "&limit=" + this.pageLimit + "&offset=" + offset : null };
+          return { comments: comments, pagePattern: (offset) ? "&limit=" + pageLimit + "&offset=" + offset : null };
         });
     }
 
@@ -154,14 +185,14 @@ export class ActionService {
    * @param isReplies SI SE TRATA DE OBTENER RESPUESTAS DE UN COMENTARIO
    * @param pagePattern PATTERN DE PAGINACIÓN
    */
-  public getCommentByPub(parentId: string, isReplies: boolean, pagePattern: string = null) {
+  public getCommentByPub(parentId: string, isReplies: boolean, pageLimit: number = this.DEFAULT_LIMIT, pagePattern: string = null) {
     /**
      * IMPLEMENTING NETWORK FIRST STRATEGY
     */
-    return this.getCommentsWebByPub(parentId, isReplies, pagePattern).then((webComments: any) => {
+    return this.getCommentsWebByPub(parentId, isReplies, pagePattern, pageLimit).then((webComments: any) => {
 
       if (!this.isFetchedComments) {
-        return this.getCommentsCacheByPub(parentId, isReplies).then((cacheComments: any) => {
+        return this.getCommentsCacheByPub(parentId, isReplies, pageLimit).then((cacheComments: any) => {
           return cacheComments;
         });
       }
@@ -171,11 +202,11 @@ export class ActionService {
 
       return webComments;
     }).catch((error: Response) => {
-      /*if (error.json().code == 401) {
+      if (error.json().code == 401) {
         localStorage.clear();
-      }*/
-      //return throwError(error.json());
-      return throwError(error);
+      }
+      return throwError(error.json());
+      //return throwError(error);
     });
   }
 
@@ -185,14 +216,14 @@ export class ActionService {
    * @param isReplies SI SE TRATA DE OBTENER RESPUESTAS DE UN COMENTARIO
    * @param pagePattern PATTERN DE PAGINACIÓN
    */
-  public getMoreCommentByPub(parentId: string, isReplies: boolean, pagePattern: string) {
+  public getMoreCommentByPub(parentId: string, isReplies: boolean, pagePattern: string, pageLimit: number = this.DEFAULT_LIMIT) {
     /**
      * IMPLEMENTING NETWORK FIRST STRATEGY
     */
-    return this.getCommentsWebByPub(parentId, isReplies, pagePattern, true).then((webComments: Comment[]) => {
+    return this.getCommentsWebByPub(parentId, isReplies, pagePattern, pageLimit, true).then((webComments: Comment[]) => {
 
       if (!this.isFetchedComments) {
-        return this.getCommentsCacheByPub(parentId, isReplies, pagePattern).then((cacheComments: Comment[]) => {
+        return this.getCommentsCacheByPub(parentId, isReplies, pageLimit, pagePattern).then((cacheComments: Comment[]) => {
           return cacheComments;
         });
       }
@@ -236,7 +267,6 @@ export class ActionService {
       .then((response: Response) => {
         let respJson = response.json().data;
 
-        console.log(respJson);
         upgradeTableFieldData(((comment.commentParentId) ? "reply" : "comment"), respJson, false);
 
         this.isPostedComment = true;
@@ -270,7 +300,7 @@ export class ActionService {
    */
   mergeJSONData(comment: Comment) {
     var json = {
-      id: new Date().toISOString(),
+      id: comment.commentId,
       description: comment.description,
       id_publication: comment.publicationId,
       action_parent: (comment.commentParentId) ? comment.commentParentId : "",
@@ -353,7 +383,7 @@ export class ActionService {
         if (response.status == 200) {
           let jsonComment = respJson.data;
           let comment: Comment = this.extractCommentJson(jsonComment);
-          
+
           console.log("[LUKASK ACTION SERVICE] - COMMENT BY ID FROM WEB", comment);
           return comment;
         }
@@ -374,5 +404,80 @@ export class ActionService {
     let usr = this._userService.extractUserJson(jsonComment.user_register);
 
     return new Comment(jsonComment.id_action, jsonComment.description, jsonComment.publication, usr, jsonComment.action_parent, jsonComment.active, jsonComment.date_register, jsonComment.user_relevance ? jsonComment.user_relevance : false, jsonComment.count_relevance);
+  }
+
+  private extractOffComments(jsonComment: any) {
+    let usr = this._userService.getUserProfile();
+
+    return new Comment(jsonComment.id, jsonComment.description, jsonComment.id_publication, usr, jsonComment.action_parent, jsonComment.active, jsonComment.date, false, 0, true);
+  }
+
+  /**
+   * MÉTODO PARA OBTENER COMENTARIOS Y RESPUESTAS OFFLINE:
+   * @param parentId 
+   * @param isReplies 
+   */
+  public getOffCommentsByPub(parentId: string, isReplies: boolean = false) {
+    if ('indexedDB' in window) {
+      return readAllData(!isReplies ? 'sync-comment' : 'sync-relevance')
+        .then((tableData) => {
+          let comments: Comment[] = [];
+
+          for (let i = 0; i < tableData.length; i++) {
+            if (!isReplies) {
+              if (parentId == tableData[i].id_publication) {
+                comments.push(this.extractOffComments(tableData[i]));
+              }
+            }
+            else {
+              if (parentId == tableData[i].action_parent) {
+                comments.push(this.extractOffComments(tableData[i]));
+              }
+            }
+          }
+
+          if (isReplies) {
+            console.log("[LUKASK ACTION SERVICE] - OFFLINE REPLIES OF A COMMENT WITH ID " + parentId + " FROM CACHE", comments);
+          }
+          else {
+            console.log("[LUKASK ACTION SERVICE] - OFFLINE COMMENTS OF A PUBLICATION WITH ID " + parentId + " FROM CACHE", comments);
+          }
+
+          return comments;
+        });
+    }
+
+    return new Promise((resolve, reject) => {
+      resolve(null);
+    });
+  }
+
+  /**
+   * MÉTODO PARA ELIMINAR UNA RELEVANCIA OFFLINE ANTES DE SER ENVIADA AL SERVIDOR:
+   * @param isCommentRel
+   */
+  public deleteOffRel(parentId: string, isCommentRel: boolean) {
+    if ('indexedDB' in window) {
+      return readAllData('sync-relevance')
+        .then((tableData) => {
+          for (let i = 0; i < tableData.length; i++) {
+            if (!isCommentRel) {
+              if (parentId == tableData[i].id_publication && !tableData[i].action_parent) {
+                deleteItemData("sync-relevance", tableData[i].id)
+              }
+            }
+            else {
+              if (parentId == tableData[i].action_parent) {
+                deleteItemData("sync-relevance", tableData[i].id)
+              }
+            }
+          }
+        });
+    }
+
+    return new Promise((resolve, reject) => {
+      this.isFetchedComments = true;
+      resolve(null);
+    });
   }
 }

@@ -16,6 +16,8 @@ export class Comment {
         public dateRegister?: string,
         public userRelevance?: boolean,
         public relevance_counter?: number,
+        public isOffline?: boolean,
+        public offRelevance?: boolean
     ) {
         if(this.dateRegister) {
             this.beutifyDate();       
@@ -23,17 +25,17 @@ export class Comment {
     }
 
     public beutifyDate() {
-        let currDate = moment();
+        let currDate = moment(new Date, "YYYY-MM-DD H:mm:ss").locale("es");
         let localDate = this.dateRegister.replace("Z", " ").replace("T", " ");
         
         this.coolDate = DateManager.makeDateCool(this.dateRegister);
         if (currDate.diff(localDate, 'minutes') < 60) {
             this.dateInterval = setInterval(() => {
-                currDate = moment();
+                currDate = moment(new Date, "YYYY-MM-DD H:mm:ss").locale("es");
                 if (currDate.diff(localDate, 'minutes') >= 60) {
                     clearInterval(this.dateInterval);
                     this.dateInterval = setInterval(() => {
-                        currDate = moment();
+                        currDate = moment(new Date, "YYYY-MM-DD H:mm:ss").locale("es");
                         if (currDate.diff(localDate, 'hours') > 24) {
                             clearInterval(this.dateInterval);
                         }
@@ -46,7 +48,7 @@ export class Comment {
 
         if (currDate.diff(localDate, 'hours') <= 24) {
             this.dateInterval = setInterval(() => {
-                currDate = moment();
+                currDate = moment(new Date, "YYYY-MM-DD H:mm:ss").locale("es");
                 if (currDate.diff(localDate, 'hours') > 24) {
                     clearInterval(this.dateInterval);
                 }

@@ -19,5 +19,6 @@ export const CONTENT_TYPES = {
     payment_card: 17,
     paypal: 18,
     register_profile: 19,
-    rew_claim: 20
+    view_video:20,
+    new_claim: 21
 }

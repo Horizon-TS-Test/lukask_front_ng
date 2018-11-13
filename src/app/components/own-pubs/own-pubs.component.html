@@ -1,11 +1,7 @@
-<div class="relative-background light-background {{ mainLoadingClass }} pt-1 pb-4">
-  <div class="loading-content {{ mainActiveClass }}"></div>
+<ng-container *ngIf="_quejaService.ownPubs$ | async as myPubList else loadingContainer">
+  <short-pub *ngFor="let pub of myPubList" [pub]="pub" (geoMap)="geolocatePub($event, pub.id_publication)"></short-pub>
+</ng-container>
 
-  <div *ngIf="myPubList && myPubList.length > 0">
-    <short-pub *ngFor="let pub of myPubList" [pub]="pub"></short-pub>
-
-    <div id="morePubs" class="bottom-loader {{ activeClass }} col-12 d-flex justify-content-center align-items-center">
-      <img src="/assets/images/forms/preloader.gif" width="60px" class="p-owl-img">
-    </div>
-  </div>
-</div>
+<ng-template #loadingContainer>
+  <div class="loading-content active"></div>
+</ng-template>

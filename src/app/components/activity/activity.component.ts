@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HorizonButton } from '../../interfaces/horizon-button.interface';
 import { ContentService } from '../../services/content.service';
@@ -10,29 +10,38 @@ declare var $: any;
   templateUrl: './activity.component.html',
   styleUrls: ['./activity.component.css']
 })
-export class ActivityComponent implements OnInit {
+export class ActivityComponent implements OnInit, AfterViewInit {
   private _BACK = 1;
 
   public focusPubId: string;
   public focusComId: string;
   public focusRepId: string;
   public matButtons: HorizonButton[];
+  public isOffline: boolean;
 
   constructor(
     private _router: Router,
     private _activatedRoute: ActivatedRoute,
     private _contentService: ContentService
   ) {
-    this.matButtons = [
-      {
-        action: this._BACK,
-        icon: "chevron-left"
-      }
-    ];
+    this.isOffline = navigator.onLine == false;
+
+    if (!this.isOffline) {
+      this.matButtons = [
+        {
+          action: this._BACK,
+          icon: 'chevron-left',
+          class: 'custom-btn-normal'
+        }
+      ];
+    }
   }
 
   ngOnInit() {
     this.getQueryParams();
+  }
+
+  ngAfterViewInit() {
     this._contentService.fadeInComponent($("#actContainer"));
   }
 

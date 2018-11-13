@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs';
 import { RouterService } from '../../services/router.service';
 import { NotificationService } from '../../services/notification.service';
 import { UserService } from '../../services/user.service';
-import { NotifierService } from '../../services/notifier.service';
+import { InstallPromptService } from 'src/app/services/install-prompt.service';
 
 declare var $: any;
 
@@ -26,27 +26,32 @@ export class MainNavComponent implements OnInit {
     private _userService: UserService,
     private _routerService: RouterService,
     private _notificationService: NotificationService,
-    private _notifierService: NotifierService
+    private _installPromptService: InstallPromptService
   ) {
     this._enableMainMenu = false;
     this.newEntries = true;
     this.initEntries(true);
 
-    this.menuSubscription = this._routerService._enableMainMenu.subscribe(
+    this.menuSubscription = this._routerService.enableMenu$.subscribe(
       (enable: boolean) => {
         this._enableMainMenu = enable && this._userService.isLoggedIn();
         this.forceClickMenu();
       }
     );
 
-    this.newEntrieSubscription = this._notificationService._newNotif.subscribe((entry) => {
-      this.entriesNumber = this.entriesNumber + 1;
+    this.newEntrieSubscription = this._notificationService.newNotif$.subscribe((entry) => {
+      if (entry) {
+        this.entriesNumber = this.entriesNumber + 1;
+      }
     });
   }
 
   ngOnInit() { }
 
-  forceClickMenu() {
+  /**
+   * MÉTODO PARA ABRIR LOS PANELES DE OPCIONES Y NAVEGACIÓN
+   */
+  private forceClickMenu() {
     if (this._enableMainMenu && this._userService.isLoggedIn()) {
       setTimeout(() => {
         let menu: HTMLElement = document.getElementById('menu-nav') as HTMLElement;
@@ -66,7 +71,7 @@ export class MainNavComponent implements OnInit {
   public openPanel(event: any) {
     event.preventDefault();
 
-    this._notifierService.requestInstallation();
+    this._installPromptService.openInstallPrompt();
 
     $('#menu-nav').toggleClass('menu-is-open');
     if (!$(".top-panel").hasClass("slide-in")) {

@@ -1,109 +1,47 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, EventEmitter, Output } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Publication } from '../../models/publications';
 import { QuejaService } from '../../services/queja.service';
-import { NotifierService } from '../../services/notifier.service';
+import { DynaContent } from 'src/app/interfaces/dyna-content.interface';
+import { ACTION_TYPES } from 'src/app/config/action-types';
 
 @Component({
   selector: 'app-own-pubs',
   templateUrl: './own-pubs.component.html',
-  styleUrls: ['./own-pubs.component.css']
+  styleUrls: ['./own-pubs.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OwnPubsComponent implements OnInit {
-  private LOADER_HIDE: string = "hide";
-  private LOADER_ON: string = "on";
+  @Output() geoMap = new EventEmitter<DynaContent>();
 
   private subscriptor: Subscription;
   public styles: any;
   public myPubList: Publication[];
-  public mainLoadingClass: string;
-  public mainActiveClass: string;
   public activeClass: string;
 
   constructor(
-    private _quejaService: QuejaService,
-    private _notifierService: NotifierService
+    private _quejaService: QuejaService
   ) {
-    /**
-     * SUBSCRIPCIÓN PARA CAPTAR EL LLAMADO DEL COMPONENTE INICIO QUIEN SOLICITA 
-     * LA CARGA DE MAS COMPONENTES AL LLEGAR EL SCROLL DEL USUARIO AL FINAL DE LA PÁGINA
-     */
-    this.subscriptor = this._notifierService._morePubsRequest.subscribe((morePubs) => {
-      if (morePubs) {
-        this.getMorePubs();
-      }
-    });
-    /*** */
   }
 
   ngOnInit() {
-    this.loadingAnimation();
-  }
-
-  ngAfterViewInit() {
-    setTimeout(() => {
-      this.getMyPubList();
-    }, 1000);
+    this.listenToOwnPubs();
   }
 
   /**
-   * MÉTODO PARA ACTIVAR EL EECTO DE CARGANDO:
+   * METODO PARA ESCUCHAR LAS ACTUALIZACIONES DE PUBS PROPIAS DEL USUARIO QUE LLEGAN BAJO DEMANDA
    */
-  private loadingAnimation(hide: boolean = false) {
-    if (hide) {
-      this.mainLoadingClass = "";
-      this.mainActiveClass = "";
-    }
-    else {
-      this.mainLoadingClass = "on";
-      this.mainActiveClass = "active";
-    }
-  }
-
-  /**
-   * FUNCIÓN PARA OBTENER UN NÚMERO INICIAL DE PUBLICACIONES, PARA DESPUÉS CARGAR MAS PUBLICACIONES BAJO DEMANDA
-   */
-  getMyPubList() {
-    this._quejaService.getPubList(true).then((pubs: Publication[]) => {
-      this.myPubList = pubs;
-      this.activeClass = this.LOADER_HIDE;
-      this.loadingAnimation(true);
-    }).catch(err => {
-      console.log(err);
-      this.activeClass = this.LOADER_HIDE;
-      this.loadingAnimation(true);
+  private listenToOwnPubs() {
+    this.subscriptor = this._quejaService.ownPubs$.subscribe((ownPubs) => {
     });
   }
 
   /**
-   * FUNCIÓN PARA OBTENER PUBLICACIONES BAJO DEMANDA A TRAVÉS DE UN PATTERN DE PAGINACIÓN:
+   * METODO PARA MOSTRAR LA QUEJA EN EL MAPA DADO EL VALO DEL EVENT EMITTER DEL COMPONENTE HIJO:
+   * @param $event 
    */
-  getMorePubs() {
-    if (this.myPubList && this.activeClass != this.LOADER_ON) {
-      this.activeClass = this.LOADER_ON;
-      this._quejaService.getMorePubs(true).then((morePubs: Publication[]) => {
-        setTimeout(() => {
-          this.activeClass = "";
-
-          setTimeout(() => {
-            this.activeClass = this.LOADER_HIDE;
-            this.myPubList = morePubs;
-          }, 800);
-
-        }, 1000);
-      }).catch(err => {
-        console.log(err);
-
-        setTimeout(() => {
-          this.activeClass = "";
-
-          setTimeout(() => {
-            this.activeClass = this.LOADER_HIDE;
-          }, 800);
-
-        }, 1000)
-      });
-    }
+  public geolocatePub(action: number, pubId: string) {
+    this.geoMap.emit({ contentType: action, contentData: pubId });
   }
 
   ngOnDestroy() {

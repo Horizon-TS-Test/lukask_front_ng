@@ -1,4 +1,4 @@
-import { Injectable, EventEmitter } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { User } from '../models/user';
 import { Person } from '../models/person';
 import { REST_SERV } from '../rest-url/rest-servers';
@@ -10,6 +10,7 @@ import { Canton } from '../models/canton';
 import { Parroquia } from '../models/parroquia';
 import { DateManager } from '../tools/date-manager';
 import { USER_PRIVILEGES } from '../config/user-privileges';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 declare var writeData: any;
 declare var readAllData: any;
@@ -19,15 +20,18 @@ declare var deleteItemData: any;
   providedIn: 'root'
 })
 export class UserService {
+  private updateUserSub = new BehaviorSubject<boolean>(null)
+  updateUser$: Observable<boolean> = this.updateUserSub.asObservable();
+
   private isFetchedProvince: boolean;
   private isFetchedCanton: boolean;
   private isFetchedParroquia: boolean;
   private isPatchedUser: boolean;
 
   public userProfile: User;
-  public _userUpdate = new EventEmitter<boolean>();
   public pageLimit: number;
   public isAdmin: boolean;
+  public onStreaming: boolean;
 
   constructor(
     private _http: Http,
@@ -39,6 +43,7 @@ export class UserService {
     this.isFetchedCanton = false;
     this.isFetchedParroquia = false;
     this.isPatchedUser = false;
+    this.onStreaming = false;
   }
 
   /**
@@ -141,6 +146,13 @@ export class UserService {
   }
 
   /**
+   * METODO PARA VISAR DE QUE EL OBJETO USER PROFILE ESTA LISTO
+   */
+  public userReady(value: boolean) {
+    this.updateUserSub.next(value);
+  }
+
+  /**
    * MÉTODO PARA ACTUALIZAR EN EL NAVEGADOR LA INFORMACIÓN DEL PERFIL DE USUARIO:
    */
   public updateUserData(jsonUser: any) {
@@ -149,7 +161,9 @@ export class UserService {
 
     this.storeUserIndexedTable(localStorage.getItem('user_key'), cryptoData);
     this.setUserProfile();
-    this._userUpdate.emit(true);
+    setTimeout(() => {
+      this.userReady(true);
+    }, 500);
   }
 
   /**
@@ -334,7 +348,6 @@ export class UserService {
   public setUserProfile() {
     this.userProfile = this.getStoredUserData();
     this.isAdmin = this.getUserProfile().id == USER_PRIVILEGES.admin;
-    console.log(this.isAdmin);
   }
 
   /**

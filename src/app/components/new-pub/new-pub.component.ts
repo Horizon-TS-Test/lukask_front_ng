@@ -1,28 +1,27 @@
-import { Component, OnInit, EventEmitter, Output, AfterViewInit, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { HorizonButton } from '../../interfaces/horizon-button.interface';
 import { ACTION_TYPES } from '../../config/action-types';
 import { OnSubmit } from '../../interfaces/on-submit.interface';
-import { NotifierService } from '../../services/notifier.service';
-import { CONTENT_TYPES } from '../../config/content-type';
 import { Alert } from '../../models/alert';
 import { ALERT_TYPES } from '../../config/alert-types';
 import * as Snackbar from 'node-snackbar';
-
-declare var $: any;
+import { Router } from '@angular/router';
+import { CONTENT_TYPES } from 'src/app/config/content-type';
+import { DynaContentService } from 'src/app/services/dyna-content.service';
+import { User } from 'src/app/models/user';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'new-pub',
   templateUrl: './new-pub.component.html',
   styleUrls: ['./new-pub.component.css']
 })
-export class NewPubComponent implements OnInit, AfterViewInit, OnChanges {
+export class NewPubComponent implements OnInit, OnChanges {
   @Input() showClass: string;
   @Input() isChildPub: boolean;
   @Input() reqSubmit: number;
   @Output() closeModal: EventEmitter<boolean>;
   @Output() streamPub: EventEmitter<boolean>;
-
-  private alertData: Alert;
 
   public initStream: boolean;
   public hideActionBtns: boolean;
@@ -35,7 +34,9 @@ export class NewPubComponent implements OnInit, AfterViewInit, OnChanges {
   public activeClass: string;
 
   constructor(
-    private _notifierService: NotifierService
+    private _dynaContentService: DynaContentService,
+    private _userService: UserService,
+    public _router: Router
   ) {
     this.closeModal = new EventEmitter<boolean>();
     this.streamPub = new EventEmitter<boolean>();
@@ -43,23 +44,27 @@ export class NewPubComponent implements OnInit, AfterViewInit, OnChanges {
     this.initStream = false;
     this.hideActionBtns = false;
     this.transmitStyle = "secondary";
+  }
+
+  ngOnInit() {
+    this.initButtons();
+  }
+
+  /**
+   * MÉTODO PARA INICIALIZAR LOS BOTONES A USAR:
+   */
+  private initButtons() {
     this.matButtons = [
       {
         action: ACTION_TYPES.submitPub,
         icon: 'check',
-        class: 'animated-btn-h animate-in'
+        class: 'custom-btn-normal animated-btn-h animate-in'
       },
       {
         action: ACTION_TYPES.pubStream,
         icon: 'f',
         customIcon: true,
-        class: 'animated-btn-h'
-      },
-      {
-        action: ACTION_TYPES.viewComments,
-        icon: 'v',
-        customIcon: true,
-        class: 'animated-btn-h'
+        class: 'custom-btn-normal animated-btn-h'
       },
       {
         action: ACTION_TYPES.close,
@@ -68,15 +73,11 @@ export class NewPubComponent implements OnInit, AfterViewInit, OnChanges {
     ];
   }
 
-  ngOnInit() { }
-
-  ngAfterViewInit() { }
-
   /**
    * MÉTODO PARA ACCEDER A LA OPCIÓN DE INICIAR STREAMING:
    * @param event
    */
-  initStreaming(event: any) {
+  public initStreaming(event: any) {
     event.preventDefault();
 
     if (this.initStream === false) {
@@ -96,17 +97,6 @@ export class NewPubComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   /**
-   * MÉTODO PARA DESLIZAR EN PRIMER PLANO LA INTERFAZ DE STREAMING:
-   */
-  private enableStream() {
-    const normalPub = $("#normalPub");
-    const streamingPub = $("#streamingPub");
-    streamingPub.removeClass("next");
-    normalPub.addClass("prev");
-    this.hideActionBtns = true;
-  }
-
-  /**
    * MÉTODO PARA OCULTAR O MOSTRAR EL FONDO DE CARGANDO
    */
   private showLoadingContent(show: boolean) {
@@ -121,10 +111,11 @@ export class NewPubComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   /**
-   * MÉTODO PARA MOSTRAR UN ALERTA EN EL DOM:
+   * MÉTODO PARA ABRIR EL RECURSO QUE LLEGA JUNTO CON LA NOTIFICACIÓN:
    */
-  setAlert() {
-    this._notifierService.sendAlert(this.alertData);
+  private openStreaming() {
+    this._dynaContentService.removeDynaContent(true);
+    this._router.navigateByUrl('/streaming?pub=' + this.newPubId);
   }
 
   /**
@@ -132,39 +123,39 @@ export class NewPubComponent implements OnInit, AfterViewInit, OnChanges {
    * @param event OBJETO DE TIPO INTERFACE ON-SUBMIT QUE LLEGA DESDE EL EVENT EMITTER
    */
   public onSubmitForm(event: OnSubmit) {
+    let alertData: Alert;
     if (event.finished == true && event.hasError == false) {
       switch (this.actionType) {
         case ACTION_TYPES.submitPub:
           this.closeModal.emit(true);
+
+          if (event.backSync == true) {
+            Snackbar.show({ text: event.message, pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#34b4db', customClass: "p-snackbar-layout" });
+          }
+          else {
+            alertData = new Alert({ title: 'Proceso Correcto', message: event.message, type: ALERT_TYPES.success });
+          }
           break;
         case ACTION_TYPES.pubStream:
-          this.showClass = "show";
           this.newPubId = event.dataAfterSubmit;
-          this.nextButton = null;
-          setTimeout(() => {
-            this.nextButton = true;
-          });
-          this.enableStream();
+          this._userService.onStreaming = true;
+          this.openStreaming();
           break;
       }
 
-      if (event.backSync == true) {
-        Snackbar.show({ text: event.message, pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#34b4db', customClass: "p-snackbar-layout" });
-      }
-      else {
-        this.alertData = new Alert({ title: 'Proceso Correcto', message: event.message, type: ALERT_TYPES.success });
-      }
     }
     else {
       this.showClass = "show";
-      this.alertData = new Alert({ title: 'Proceso Fallido', message: event.message, type: ALERT_TYPES.danger });
+      alertData = new Alert({ title: 'Proceso Fallido', message: event.message, type: ALERT_TYPES.danger });
     }
-    setTimeout(() => {
-      this.showLoadingContent(!event.finished);
-      if (event.backSync != true) {
-        this.setAlert();
-      }
-    }, 200);
+    if (this.actionType != ACTION_TYPES.pubStream) {
+      setTimeout(() => {
+        this.showLoadingContent(!event.finished);
+        if (event.backSync != true) {
+          this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.alert, contentData: alertData });
+        }
+      }, 200);
+    }
   }
 
   /**
@@ -208,9 +199,6 @@ export class NewPubComponent implements OnInit, AfterViewInit, OnChanges {
     switch (actionEvent) {
       default:
         this.requestSubmit(actionEvent);
-        break;
-      case ACTION_TYPES.viewComments:
-        this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_comments, contentData: { pubId: this.newPubId, halfModal: true, hideBtn: true } });
         break;
       case ACTION_TYPES.close:
         this.closeModal.emit(true);

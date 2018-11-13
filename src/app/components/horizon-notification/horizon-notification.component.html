@@ -14,7 +14,7 @@
         </div>
       </div>
 
-      <span class="personal-profile-img profile-img-notif" [style.background-image]="_domSanitizer.bypassSecurityTrustStyle('url(' + notification.user.profileImg + ')')"></span>
+      <profile-link [userProfile]="notification.user" [isCommentProfile]="false" [profileClass]="'profile-img-notif'"></profile-link>
     </div>
     <div class="card-footer d-flex justify-content-end py-1">
       <small>{{ notification.coolDate }}</small>

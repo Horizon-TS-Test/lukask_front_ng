@@ -94,7 +94,7 @@ function deleteItemData(tableName, id) {
             return tx.complete;
         })
         .then(function () {
-            console.log("Item deleted");
+            console.log("[UTILITY-DB]: ITEM DELETED");
         })
 }
 
@@ -194,7 +194,6 @@ function verifyStoredData(table, dataToSave, isDeleted) {
                 }
             }
             if (isDeleted == false) {
-                console.log("Guardando en teoría los datos que vienen del socket.Io");
                 writeData(table, dataToSave);
             }
         });
@@ -209,9 +208,9 @@ function upgradeTableFieldDataArray(table, dataToSave) {
     readAllData(table)
         .then(function (tableData) {
             for (var i = 0; i < dataToSave.length; i++) {
-                let upgradedData = null;
+                var upgradedData = null;
                 for (var t = 0; t < tableData.length; t++) {
-                    let flag = 0;
+                    var flag = 0;
                     switch (table) {
                         case "comment":
                             if (tableData[t].id == dataToSave[i].publication) {
@@ -223,7 +222,7 @@ function upgradeTableFieldDataArray(table, dataToSave) {
                                     }
                                 }
                                 if (flag == 0) {
-                                    let index = tableData[t].comments.length;
+                                    var index = tableData[t].comments.length;
                                     tableData[t].comments[index] = dataToSave[i];
                                     flag = 1;
                                 }
@@ -239,7 +238,7 @@ function upgradeTableFieldDataArray(table, dataToSave) {
                                     }
                                 }
                                 if (flag == 0) {
-                                    let index = tableData[t].replies.length;
+                                    var index = tableData[t].replies.length;
                                     tableData[t].replies[index] = dataToSave[i];
                                     flag = 1;
                                 }
@@ -289,9 +288,9 @@ function upgradeTableFieldDataArray(table, dataToSave) {
 function upgradeTableFieldData(table, dataToSave) {
     readAllData(table)
         .then(function (tableData) {
-            let upgradedData = null;
+            var upgradedData = null;
             for (var t = 0; t < tableData.length; t++) {
-                let flag = 0;
+                var flag = 0;
                 switch (table) {
                     case "comment":
                         if (tableData[t].id == dataToSave.publication) {
@@ -303,7 +302,7 @@ function upgradeTableFieldData(table, dataToSave) {
                                 }
                             }
                             if (flag == 0) {
-                                let index = tableData[t].comments.length;
+                                var index = tableData[t].comments.length;
                                 tableData[t].comments[index] = dataToSave;
                                 flag = 1;
                             }
@@ -319,7 +318,7 @@ function upgradeTableFieldData(table, dataToSave) {
                                 }
                             }
                             if (flag == 0) {
-                                let index = tableData[t].replies.length;
+                                var index = tableData[t].replies.length;
                                 tableData[t].replies[index] = dataToSave;
                                 flag = 1;
                             }

@@ -8,14 +8,6 @@
   <a href="#" class="opcion f-child-full-space text-center" id="top-option-1" (click)="focusOption($event, 'top-option-1', menuOptions.mapview)">
     <fa name="map-marker"></fa>
   </a>
-
-  <a href="#" class="opcion f-child-full-space text-center" id="top-option-2" (click)="focusOption($event, 'top-option-2', menuOptions.ownPubs)">
-    <span class="personal-site-icon">m</span>
-  </a>
-
-  <!--a href="#" class="opcion f-child-full-space text-center" id="top-option-2" (click)="focusOption($event, 'top-option-2', menuOptions.payment)">
-    <span class="personal-site-icon">m</span>
-  </a-->
 </div>
 
 <div class="bot-panel d-flex justify-content-start align-items-center">
@@ -23,7 +15,8 @@
     <a *ngIf="isAdmin" href="#" (click)="openLayer($event, contentTypes.new_pub)" class="ml-2 custom-panel-btn" title="Nueva publicación">
       <fa name="plus"></fa>
     </a>
-    <a *ngIf="!isAdmin" href="#" (click)="openLayer($event, contentTypes.rew_claim)" class="ml-2 custom-panel-btn" title="Nuevo reclamo">
+    <a *ngIf="!isAdmin" href="#" (click)="openLayer($event, contentTypes.new_claim)" class="ml-2 custom-panel-btn"
+      title="Nuevo reclamo">
       <fa name="bullhorn"></fa>
     </a>
     <a href="#" (click)="openLayer($event, contentTypes.view_notifs)" class="relative-background ml-2 custom-panel-btn">
@@ -33,7 +26,7 @@
     <a href="#" (click)="openLayer($event, contentTypes.edit_profile)" class="ml-2 custom-panel-btn">
       <fa name="cog"></fa>
     </a>
-    <a href="#"  (click)="logout($event)" class="ml-2 custom-panel-btn">
+    <a href="#" (click)="logout($event)" class="ml-2 custom-panel-btn">
       <fa name="sign-out"></fa>
     </a>
   </div>

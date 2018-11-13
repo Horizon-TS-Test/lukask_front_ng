@@ -1163,6 +1163,10 @@ p, label, div {
   top: 5px;
   right: 10px; }
 
+.top-right-outer-corner {
+  top: 0px;
+  right: 0px; }
+
 .down-right-corner {
   bottom: 3px;
   right: 20px; }
@@ -1816,8 +1820,7 @@ input[type=text], input[type=password], input[type=email], input[type=number], i
 
 .short-img-pub {
   position: relative;
-  width: 40%;
-  border: 1px solid rgba(0, 0, 0, 0.125);
+  width: 45%;
   object-fit: cover; }
   .short-img-pub span {
     position: absolute;

@@ -8,10 +8,11 @@ import { Parroquia } from '../../models/parroquia';
 import { ACTION_TYPES } from '../../config/action-types';
 import { MediaFile } from '../../interfaces/media-file.interface';
 import { DateManager } from '../../tools/date-manager';
-import { NotifierService } from '../../services/notifier.service';
 import { Alert } from '../../models/alert';
 import { ALERT_TYPES } from '../../config/alert-types';
 import * as Snackbar from 'node-snackbar';
+import { CONTENT_TYPES } from 'src/app/config/content-type';
+import { DynaContentService } from 'src/app/services/dyna-content.service';
 
 @Component({
   selector: 'user-form',
@@ -27,7 +28,6 @@ export class UserFormComponent implements OnInit, AfterViewInit, OnChanges {
   private province: string;
   private canton: string;
   private parroquia: string;
-  private alertData: Alert;
 
   public provinceList: Province[];
   public provinceSelect: Select2[];
@@ -38,7 +38,7 @@ export class UserFormComponent implements OnInit, AfterViewInit, OnChanges {
 
   constructor(
     private _userService: UserService,
-    private _notifierService: NotifierService
+    private _dynaContentService: DynaContentService
   ) {
     this.closeModal = new EventEmitter<boolean>();
   }
@@ -74,7 +74,6 @@ export class UserFormComponent implements OnInit, AfterViewInit, OnChanges {
         this.getCanton(this.province);
       }
     });
-
   }
 
   /**
@@ -175,13 +174,6 @@ export class UserFormComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   /**
-   * MÉTODO PARA MOSTRAR UN ALERTA EN EL DOM:
-   */
-  setAlert() {
-    this._notifierService.sendAlert(this.alertData);
-  }
-
-  /**
   * MÉTODO PARA REGISTRAR O EDITAR UN PERFIL DE USUARIO:
   */
   createUpdateProfile(update: boolean = false) {
@@ -191,6 +183,7 @@ export class UserFormComponent implements OnInit, AfterViewInit, OnChanges {
     }
 
     this.formmatSendDate();
+    let alertData: Alert;
     if (update) {
       this._userService.saveUser(this.userObj).then((resp: any) => {
         this.closeModal.emit(true);
@@ -199,20 +192,20 @@ export class UserFormComponent implements OnInit, AfterViewInit, OnChanges {
         }
         else {
           setTimeout(() => {
-            this.alertData = new Alert({ title: 'Proceso Correcto', message: "Su perfil se ha actualizado correctamente", type: ALERT_TYPES.success });
-            this.setAlert();
+            alertData = new Alert({ title: 'Proceso Correcto', message: "Su perfil se ha actualizado correctamente", type: ALERT_TYPES.success });
+            this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.alert, contentData: alertData });
           }, 200);
         }
       }).catch((err) => {
         if (err.code == 400) {
-          this.alertData = new Alert({ title: 'Proceso Fallido', message: "Verifique que los datos ingresados sean correctos", type: ALERT_TYPES.danger });
+          alertData = new Alert({ title: 'Proceso Fallido', message: "Verifique que los datos ingresados sean correctos", type: ALERT_TYPES.danger });
         }
         else {
-          this.alertData = new Alert({ title: 'Error Inesperado', message: "Lamentamos los inconvenientes, por favor intente más tarde", type: ALERT_TYPES.danger });
+          alertData = new Alert({ title: 'Error Inesperado', message: "Lamentamos los inconvenientes, por favor intente más tarde", type: ALERT_TYPES.danger });
         }
         this.closeModal.emit(true);
         setTimeout(() => {
-          this.setAlert();
+          this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.alert, contentData: alertData });
         }, 200);
       });
     }
@@ -220,20 +213,20 @@ export class UserFormComponent implements OnInit, AfterViewInit, OnChanges {
       this._userService.registerUser(this.userObj).then((resp: boolean) => {
         this.closeModal.emit(true);
         setTimeout(() => {
-          this.alertData = new Alert({ title: 'Proceso Correcto', message: "Usted se ha registrado correctamente a LUKASK", type: ALERT_TYPES.success });
-          this.setAlert();
+          alertData = new Alert({ title: 'Proceso Correcto', message: "Usted se ha registrado correctamente a LUKASK", type: ALERT_TYPES.success });
+          this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.alert, contentData: alertData });
         }, 200);
       }).catch((err) => {
         console.log(err);
         if (err.code == 400) {
-          this.alertData = new Alert({ title: 'Proceso Fallido', message: "Verifique que los datos ingresados sean correctos", type: ALERT_TYPES.danger });
+          alertData = new Alert({ title: 'Proceso Fallido', message: "Verifique que los datos ingresados sean correctos", type: ALERT_TYPES.danger });
         }
         else {
-          this.alertData = new Alert({ title: 'Error Inesperado', message: "Lamentamos los inconvenientes, por favor intente más tarde", type: ALERT_TYPES.danger });
+          alertData = new Alert({ title: 'Error Inesperado', message: "Lamentamos los inconvenientes, por favor intente más tarde", type: ALERT_TYPES.danger });
         }
         this.closeModal.emit(true);
         setTimeout(() => {
-          this.setAlert();
+          this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.alert, contentData: alertData });
         }, 200);
       });
     }

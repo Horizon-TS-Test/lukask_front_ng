@@ -1,0 +1,5 @@
+<div class="personal-content relative-background min-height-full-modal max-height-full-modal p-overflow-hidden light-background col-12 p-0"
+  id="streamingContainer">
+
+  <media-streaming *ngIf="pubId" [showClass]="showClass" [initTrans]="true" [pubId]="pubId" [streamOwnerId]="ownerId" (closeModal)="getButtonAction($event)"></media-streaming>
+</div>

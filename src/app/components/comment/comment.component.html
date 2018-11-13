@@ -1,8 +1,5 @@
 <div class="d-flex flex-row justify-content-between align-items-start" [ngClass]="{'pl-3': isReply}">
-  <div [ngClass]="{
-    'personal-profile-img': !isReply,
-    'pers-profile-img-comen': isReply
-  }" [style.background-image]="_domSanitizer.bypassSecurityTrustStyle('url(' + commentModel.user.profileImg + ')')"></div>
+  <profile-link [userProfile]="commentModel.user" [isCommentProfile]="isReply"></profile-link>
   <span class="f-child-no-auto text-justify d-flex flex-column" [ngClass]="{
     'pl-3': !isReply,
     'pl-4': isReply
@@ -10,17 +7,43 @@
     <div class="col-12 p-0 d-flex justify-content-between align-items-center">
       <strong>{{commentModel.user.person.name}}</strong>
       <a *ngIf="!isReply && commentModel.relevance_counter > 0" href="#" (click)="openSupportList($event)" class="p-normal-text-color">
-        <small>{{ commentModel.relevance_counter }} {{ commentModel.relevance_counter > 1 ? 'personas apoyan esto' : 'persona apoya
+        <small>{{ commentModel.relevance_counter }} {{ commentModel.relevance_counter > 1 ? 'personas apoyan esto' :
+          'persona apoya
           esto'}}
         </small>
       </a>
     </div>
     <div>
       {{ commentModel.description }}
+
+      <!-- NEXT IS FOR OFFLINE COMMENTS -->
+      <div *ngIf="commentModel.isOffline == true" class="offline-status p-border-none card flex-row justify-content-between align-items-center mt-1 pl-2 pr-0 py-0">
+        <small>
+          <fa name="spinner" animation="pulse"></fa>&nbsp;&nbsp;Esperando conexión
+        </small>
+        <a href="#" (click)="cancelComment($event)" class="no-border-button secondary ml-1" title="Cancel">
+          <fa name="close"></fa>
+        </a>
+      </div>
+      <!---------------------------------->
     </div>
-    <div class="col-12 p-0 mt-2 d-flex justify-content-between align-items-end">
+    <div *ngIf="commentModel.isOffline == undefined" class="relative-background col-12 p-0 mt-2 d-flex justify-content-between align-items-end">
+      <!-- NEXT IS FOR OFFLINE RELEVANCE -->
+      <div *ngIf="commentModel.offRelevance == true" class="offline-status status-rel-comment status-float p-border-none card flex-row justify-content-between align-items-center mt-1 pl-2 pr-0 py-0">
+        <small>
+          <fa name="spinner" animation="pulse"></fa>&nbsp;&nbsp;Esperando conexión
+        </small>
+        <a href="#" (click)="cancelCommentRel($event)" class="no-border-button secondary ml-1" title="Cancel">
+          <fa name="close"></fa>
+        </a>
+      </div>
+      <!---------------------------------->
+
       <div class="d-flex justify-content-start">
-        <a *ngIf="!isReply" href="#" (click)="onRelevance($event)" class="no-border-button small" [ngClass]="{'secondary': !commentModel.userRelevance}"
+        <a *ngIf="!isReply" href="#" (click)="onRelevance($event)" class="no-border-button small" [ngClass]="{
+          'secondary': !commentModel.userRelevance,
+          'secondary-dark': commentModel.offRelevance == true
+        }"
           title="Apoyo">
           <fa name="star"></fa>
         </a>

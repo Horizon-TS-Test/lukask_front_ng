@@ -24,7 +24,9 @@ export class Publication {
         public user_relevance?: boolean,
         public address?: string,
         public isTrans?: boolean,
-        public transDone?: boolean
+        public transDone?: boolean,
+        public isOffline?: boolean,
+        public offRelevance?: boolean
     ) {
         if (this.date_pub) {
             this.beutifyDate();
@@ -33,13 +35,13 @@ export class Publication {
     }
 
     public beutifyDate() {
-        let currDate = moment();
+        let currDate = moment(new Date, "YYYY-MM-DD H:mm:ss").locale("es");
         let localDate = this.date_pub.replace("Z", " ").replace("T", " ");
 
         this.coolDate = DateManager.makeDateCool(this.date_pub);
         if (currDate.diff(localDate, 'minutes') < 60) {
             this.dateInterval = setInterval(() => {
-                currDate = moment();
+                currDate = moment(new Date, "YYYY-MM-DD H:mm:ss").locale("es");
                 if (currDate.diff(localDate, 'minutes') >= 60) {
                     clearInterval(this.dateInterval);
                     this.dateInterval = setInterval(() => {
@@ -55,7 +57,7 @@ export class Publication {
 
         if (currDate.diff(localDate, 'hours') <= 24) {
             this.dateInterval = setInterval(() => {
-                currDate = moment();
+                currDate = moment(new Date, "YYYY-MM-DD H:mm:ss").locale("es");
                 if (currDate.diff(localDate, 'hours') > 24) {
                     clearInterval(this.dateInterval);
                 }

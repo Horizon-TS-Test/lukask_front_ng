@@ -1,4 +1,4 @@
-import { Component, OnInit, SimpleChanges, OnChanges, ViewChild, Input, AfterViewInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, SimpleChanges, OnChanges, Input, AfterViewInit, Output, EventEmitter } from '@angular/core';
 import { QuejaService } from '../../services/queja.service';
 import { FormBuilder, FormGroup, Validators } from '../../../../node_modules/@angular/forms';
 import { QuejaType } from '../../models/queja-type';
@@ -8,13 +8,10 @@ import { DateManager } from '../../tools/date-manager';
 import { ACTION_TYPES } from '../../config/action-types';
 import { Gps } from '../../interfaces/gps.interface';
 import { Media } from '../../models/media';
-import { Alert } from '../../models/alert';
-import { NotifierService } from '../../services/notifier.service';
-import { ALERT_TYPES } from '../../config/alert-types';
 import { MediaFile } from '../../interfaces/media-file.interface';
 import { OnSubmit } from '../../interfaces/on-submit.interface';
+import { GpsService } from 'src/app/services/gps.service';
 
-declare var google: any;
 declare var $: any;
 
 @Component({
@@ -27,14 +24,10 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() submit: number;
   @Input() isStreamPub: boolean;
   @Output() afterSubmit = new EventEmitter<OnSubmit>();
-  @ViewChild('gmap') gmapElement: any;
 
   private quejaType: string;
   private newPub: Publication;
   private _gps: Gps;
-  private map: any;
-  private pubFilterList: Publication[];
-  private alertData: Alert;
 
   public tipoQuejaSelect: Select2[];
   public quejaTypeList: QuejaType[];
@@ -43,9 +36,9 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges {
   public _locationAdress: string;
 
   constructor(
-    private _notifierService: NotifierService,
+    private formBuilder: FormBuilder,
     private _quejaService: QuejaService,
-    private formBuilder: FormBuilder
+    private _gpsService: GpsService
   ) {
     this._gps = {
       latitude: 0,
@@ -55,7 +48,6 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges {
 
   ngOnInit() {
     this.formPub = this.setFormGroup();
-    this.initMapa();
   }
 
   ngAfterViewInit() {
@@ -100,63 +92,27 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges {
    */
   getSelect2Value(event: string) {
     this.quejaType = event;
-    this.validateQuejaRepeat();
-  }
-
-  initMapa() {
-    //Inicalizacion del mapa
-    var mapProp = {
-      center: new google.maps.LatLng(this._gps.latitude, this._gps.longitude),
-      zoom: 15,
-      mapTypeId: google.maps.MapTypeId.ROADMAP
-    };
-    this.map = new google.maps.Map(this.gmapElement.nativeElement, mapProp);
   }
 
   /**
    * MÉTODO QUE OBTIENE LA POSICIÓN DESDE DONDE SE EMITE LA QUEJA
    */
   private getGps() {
-    if (!('geolocation' in navigator)) {
-      return;
-    }
-
-    //ACCESS TO THE GPS:
-    navigator.geolocation.getCurrentPosition((position) => {
-      this._gps.latitude = position.coords.latitude;
-      this._gps.longitude = position.coords.longitude;
+    this._gpsService.getDeviceGeolocation((geoLocation) => {
+      this._gps.latitude = geoLocation.lat;
+      this._gps.longitude = geoLocation.long;
       this.getLocation();
-    }, function (err) {
-      console.log(err);
-      //EXCEDED THE TIMEOUT
-      return;
-    }, { timeout: 7000 });
-  }
-
-  /**
-  * TOMANDO LA LISTA DE PUBLICACIONES CON FILTRO DESDE EL BACKEND:
-  */
-  callPubs() {
-    this._quejaService.getPubListFilter(this._locationCity)
-      .then((pubsFilter: Publication[]) => {
-        this.pubFilterList = pubsFilter;
-      });
+    });
   }
 
   /**
    * MÉTODO QUE TOMA LA CIUDAD Y DIRECCIÓN DE DONDE SE EMITE LA QUEJA
    */
-  getLocation() {
-    var geocoder = new google.maps.Geocoder;
-    geocoder.geocode({ 'latLng': { lat: this._gps.latitude, lng: this._gps.longitude } }, (results, status) => {
-      if (status === google.maps.GeocoderStatus.OK) {
-        var str = results[0].formatted_address;
-        var dir = str.split(",");
-        this._locationAdress = dir[0];
-        this._locationCity = dir[1];
-        $("#hidden-btn").click();
-        this.callPubs();
-      }
+  public getLocation() {
+    this._gpsService.getDeviceLocation(this._gps.latitude, this._gps.longitude, (deviceLocation) => {
+      this._locationAdress = deviceLocation.address;
+      this._locationCity = deviceLocation.city;
+      $("#hidden-btn").click();
     });
   }
 
@@ -176,9 +132,12 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges {
     }
 
     this.newPub = new Publication("", this._gps.latitude, this._gps.longitude, this.formPub.value.fcnDetail, DateManager.getFormattedDate(), null, null, new QuejaType(this.quejaType, null), null, this._locationCity, null, null, this._locationAdress, this.isStreamPub);
-    if (this.mediaFiles.length > 0) {
+
+    if (this.mediaFiles.length > 1) {
       for (let i = 0; i < this.mediaFiles.length; i++) {
-        this.newPub.media.push(new Media("", "", "", null, this.mediaFiles[i].mediaFile, i + "-" + new Date().toISOString() + ".png"));
+        if (this.mediaFiles[i].removeable == true) {
+          this.newPub.media.push(new Media("", "", this.mediaFiles[i].mediaFileUrl, true, this.mediaFiles[i].mediaFile, i + "-" + new Date().toISOString() + ".png"));
+        }
       }
     }
     this._quejaService.savePub(this.newPub).then((response: any) => {
@@ -190,7 +149,7 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges {
       }
       this.formPub.reset();
     }).catch((error) => {
-      if(error.code == 400) {
+      if (error.code == 400) {
         this.afterSubmit.emit({ finished: true, dataAfterSubmit: null, hasError: true, message: 'Verifique que la información ingresada sea correcta' });
       }
       else {
@@ -212,50 +171,6 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges {
       return bounds.contains(latLngA);
     } else {
       return bounds.contains(latLngA);
-    }
-  }
-
-  /**
-   * METODO QUE DIBUJA EL PERIMETRO ESTABLECIDO 
-   * @param pos = Posición desde la cual se esta emitiendo la queja
-   * @param pubType = Tipo de queja
-   */
-  drawCircle(pos: any, pubType: string) {
-    var cityCircle = new google.maps.Circle({
-      center: pos,
-      radius: 10
-    });
-
-    this.map.setCenter(pos);
-    this.map.setZoom(19);
-    var posi = new google.maps.LatLng(this._gps.latitude, this._gps.longitude);
-    if (this.validatePosition(cityCircle, posi) && this.quejaType == pubType) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  /**
-   * METODO ACTIVA EL MODAL DE AVISOS EN LA PANTALLA
-   */
-  setAlert() {
-    this._notifierService.sendAlert(this.alertData);
-  }
-
-  /**
-   * MÈTODO QUE VALIDA SI LA PUBLICACION CUMPLE ESTA DENTRO DEL AREA ESTABLECIDA
-   */
-  validateQuejaRepeat() {
-    let band = false;
-    for (let pub of this.pubFilterList) {
-      if (this.drawCircle({ lat: pub.latitude, lng: pub.longitude }, pub.type.id)) {
-        band = true;
-      }
-    }
-    if (band == true) {
-      this.alertData = new Alert({ title: 'Proceso Fallido', message: 'No es posible ejecutar la petición', type: ALERT_TYPES.danger });
-      this.setAlert();
     }
   }
 

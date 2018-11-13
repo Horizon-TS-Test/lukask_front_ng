@@ -1,22 +1,34 @@
-<div class="p-no-border-rad-card card">
+<div class="p-no-border-rad-card card" #replies>
     <div class="card-block">
         <comment [commentModel]="parentComment" [noReplyBtn]="true"></comment>
     </div>
     <div class="card-block">
-        <comment-form [commentModel]="commentForm" [modalForm]="false"></comment-form>
+        <write-comment [commentModel]="commentForm"></write-comment>
     </div>
-    <ul class="max-height-fourth p-overflow-auto list-group list-group-flush pb-0">
-        <li *ngFor="let reply of replyList" class="f-child-full-space list-group-item">
-            <comment [commentModel]="reply" class="w-100" [isReply]="true"></comment>
-        </li>
-    </ul>
-    <div *ngIf="pagePattern || firstPattern" class="card-footer text-center">
-        <a href="#" (click)="askForMore($event)" class="p-dark-text-color">
-            <small *ngIf="pagePattern">Ver respuestas anteriores</small>
-            <small *ngIf="!pagePattern && firstPattern">Ocultar respuestas anteriores</small>
-        </a>
-        <div class="bottom-loader {{ activeClass }} col-12 d-flex justify-content-center align-items-center">
-            <img src="/assets/images/forms/preloader.gif" width="50px">
+
+    <ng-container *ngIf="_actionService.replies$ | async as replyData else loadingContainer">
+        <ul class="max-height-fourth p-overflow-auto list-group list-group-flush pb-0">
+            <li *ngFor="let reply of replyData.comments" class="f-child-full-space list-group-item">
+                <comment [commentModel]="reply" class="w-100" [isReply]="true" (onCancelComment)="cancelReply($event)"></comment>
+            </li>
+        </ul>
+        <div *ngIf="pagePattern || firstPattern" class="card-footer text-center d-flex p-0">
+            <a href="#" (click)="requestForMore($event)" class="p-dark-text-color col-12 py-2">
+                <small *ngIf="pagePattern">Ver respuestas anteriores</small>
+                <small *ngIf="!pagePattern && firstPattern">Ocultar respuestas anteriores</small>
+            </a>
+            <div class="bottom-loader comment-loader hide col-12 d-flex justify-content-center align-items-center">
+                <img src="{{ preloader }}" width="50px">
+            </div>
         </div>
-    </div>
+    </ng-container>
+
+    <ng-template #loadingContainer>
+        <div class="col-12 d-flex justify-content-center align-items-center">
+            <div class="col-3">
+                <img src="{{ preloader }}" width="100px">
+            </div>
+        </div>
+    </ng-template>
+
 </div>

@@ -1,10 +1,10 @@
 import { Component, OnInit, EventEmitter, Output, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { User } from '../../models/user';
 import { HorizonButton } from '../../interfaces/horizon-button.interface';
-import { NotifierService } from '../../services/notifier.service';
 import { CONTENT_TYPES } from '../../config/content-type';
 import { ACTION_TYPES } from '../../config/action-types';
 import { DomSanitizer } from '../../../../node_modules/@angular/platform-browser';
+import { DynaContentService } from 'src/app/services/dyna-content.service';
 
 @Component({
   selector: 'user-register',
@@ -24,18 +24,19 @@ export class UserRegisterComponent implements OnInit, OnChanges {
   public activeClass: string;
 
   constructor(
-    private _notifierService: NotifierService,
+    private _dynaContentService: DynaContentService,
     public _domSanitizer: DomSanitizer
   ) {
     this.newUser = new User(null, null);
     this.materialButtons = [
       {
         action: ACTION_TYPES.userRegister,
-        icon: "check"
+        icon: 'check',
+        class: 'custom-btn-normal'
       },
       {
         action: ACTION_TYPES.close,
-        icon: "close"
+        icon: 'close'
       }
     ]
   }
@@ -58,24 +59,24 @@ export class UserRegisterComponent implements OnInit, OnChanges {
    * MÉTODO PARA ACTIVAR EL EECTO DE CARGANDO:
    */
   private loadingAnimation() {
-    this.loadingClass = "on";
-    this.activeClass = "active";
+    this.loadingClass = 'on';
+    this.activeClass = 'active';
   }
 
   /**
   * MÉTODO PARA MOSTRAR EL MODAL DE LA CAMARA
   * @param event = EVENTO DE LA CAMARA
   */
-  newMedia(event: any) {
+  public newMedia(event: any) {
     event.preventDefault();
-    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.new_media, contentData: null });
+    this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.new_media, contentData: null });
   }
 
   /**
    * MÉTODO PARA OBTENER EL EVENTO DEL COMPONENTE HIJO LUEGO DEL SUBMIT
    * @param event VALOR BOOLEANO DEL EVENT EMITTER
    */
-  childAfterSubmit(event: any) {
+  public childAfterSubmit(event: any) {
     if (event) {
       this.closeModal.emit(true);
     }
@@ -85,13 +86,13 @@ export class UserRegisterComponent implements OnInit, OnChanges {
   * MÉTODO PARA EJECUTAR LA FUNCION SEGUN LA ACCION DEL BOTON
   * @param event = EVENTO DE LA CAMARA
   */
-  actionBtn(event: number) {
+  public actionBtn(event: number) {
     switch (event) {
       case ACTION_TYPES.userRegister:
         this.actionType = null;
         setTimeout(() => {
           this.actionType = ACTION_TYPES.userRegister;
-          this.showClass = "";
+          this.showClass = '';
         });
         this.loadingAnimation();
         break;

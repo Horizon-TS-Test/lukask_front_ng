@@ -1,11 +1,11 @@
-import { Injectable, EventEmitter } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HorizonNotification } from '../models/horizon-notification';
 import { UserService } from './user.service';
-import { NotifierService } from './notifier.service';
 import { CONTENT_TYPES } from '../config/content-type';
 import { Http, Headers, Response } from '@angular/http';
 import { REST_SERV } from '../rest-url/rest-servers';
-import { throwError } from 'rxjs';
+import { throwError, BehaviorSubject, Observable } from 'rxjs';
+import { DynaContentService } from './dyna-content.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,11 +13,16 @@ import { throwError } from 'rxjs';
 export class NotificationService {
   private DEFAULT_LIMIT: number = 5;
 
-  public _newNotif = new EventEmitter<HorizonNotification>();
+  private newNotifSubject = new BehaviorSubject<HorizonNotification>(null);
+  newNotif$: Observable<HorizonNotification> = this.newNotifSubject.asObservable();
+
+  private notifListSubject = new BehaviorSubject<{ notifs: HorizonNotification[]; pagePattern: string }>(null);
+  notifList$: Observable<{ notifs: HorizonNotification[]; pagePattern: string }> = this.notifListSubject.asObservable();
+
   public pageLimit: number;
 
   constructor(
-    private _notifierService: NotifierService,
+    private _dynaContentService: DynaContentService,
     private _userService: UserService,
     private _http: Http
   ) {
@@ -25,11 +30,20 @@ export class NotificationService {
   }
 
   /**
+   * MÉTODO PARA ENVIAR A LOS SUBSCRIPTORES DE A LISTA DE NOTIFICACIONES
+   */
+  public loadNotifications(notifList: { notifs: HorizonNotification[]; pagePattern: string }) {
+    this.notifListSubject.next(notifList);
+  }
+
+  /**
    * MÉTODO PARA MOSTRAR NOTIFICACIÓN EN EL DOM:
    */
-  public showNotification(notif: HorizonNotification) {
-    this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.new_notification, contentData: notif });
-    this._newNotif.emit(notif);
+  public showNotification(notif: HorizonNotification, noShow: boolean = false) {
+    if (noShow == false) {
+      this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.new_notification, contentData: notif });
+    }
+    this.newNotifSubject.next(notif);
   }
 
   /**

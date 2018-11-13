@@ -1,44 +1,48 @@
-<div *ngIf="!halfModal" [ngClass]="{ 'personal-content min-height-full-modal max-height-full-modal p-overflow-auto': isModal == true }">
-  <div [ngClass]="{ 'col-12 py-1 px-1': isModal == true }">
-    <div class="p-no-border-rad-card card" [ngClass]="{
-      'p-shadow-card': isModal == true,
-      'p-border-none': isModal == false
+<div class="p-border-none card" #comments>
+  <div class="card-block">
+    <write-comment *ngIf="newComment" [commentModel]="newComment"></write-comment>
+  </div>
+  <ng-container *ngIf="_actionService.comms$ | async as commentData else loadingContainer">
+    <ul class="list-group list-group-flush pb-0" id="comentsBody" [ngClass]="{
+      'max-height-fourth p-overflow-auto': transparent
     }">
-      <div class="card-block">
-        <comment-form [commentModel]="newComment" [modalForm]="false"></comment-form>
-      </div>
-      <ul class="list-group list-group-flush pb-0">
-        <li *ngFor="let comment of commentList" class="pb-1 list-group-item">
-          <comment class="col-12 p-0" [hideBtn]="hideBtn" [focusCommentId]="commentId" [focusReplyId]="replyId" [commentModel]="comment"></comment>
-        </li>
-      </ul>
-      <div *ngIf="pagePattern || firstPattern" class="card-footer text-center">
-        <a href="#" (click)="askForMore($event)" class="p-dark-text-color">
+      <li *ngIf="fromModal && (!commentData.comments || commentData.comments.length == 0)" class="p-border-none list-group-item py-3 px-4">
+        No existen comentarios por mostrar
+      </li>
+      <li *ngFor="let comment of commentData.comments" class="pb-1 list-group-item" [ngClass]="{
+        'f-child-full-space': transparent
+      }">
+        <comment class="col-12 p-0" [hideBtn]="hideBtn" [focusCommentId]="commentId" [focusReplyId]="replyId"
+          [commentModel]="comment" (onCancelComment)="cancelComment($event)" (changeComOffRelev)="changeComOffRelevance($event)"></comment>
+      </li>
+    </ul>
+
+    <ng-container *ngIf="!transparent">
+      <div *ngIf="pagePattern || firstPattern" class="card-footer text-center d-flex p-0">
+        <a href="#" (click)="requestForMore($event)" class="p-dark-text-color col-12 py-2">
           <small *ngIf="pagePattern">Ver comentarios anteriores</small>
           <small *ngIf="!pagePattern && firstPattern">Ocultar comentarios anteriores</small>
         </a>
-        <div class="bottom-loader {{ activeClass }} col-12 d-flex justify-content-center align-items-center">
-          <img src="/assets/images/forms/preloader.gif" width="50px" class="p-owl-img-sm">
+        <div class="bottom-loader comment-loader hide col-12 d-flex justify-content-center align-items-center">
+          <img src="{{ preloader }}" width="50px" class="p-owl-img-sm">
         </div>
       </div>
-    </div>
-  </div>
-</div>
-
-<div *ngIf="halfModal" class="p-no-border-rad-card p-transparent-card card">
-  <div class="card-block">
-    <comment-form [commentModel]="newComment" [modalForm]="false"></comment-form>
-  </div>
-  <ul class="max-height-fourth p-overflow-auto list-group list-group-flush pb-0">
-    <li *ngIf="!commentList || commentList.length == 0" class="secondary-color p-border-none list-group-item py-3 px-4">
-      No existen comentarios por mostrar.
-    </li>
-    <ng-container *ngIf="commentList && commentList.length > 0">
-      <li *ngFor="let comment of commentList" class="f-child-full-space pb-1 list-group-item">
-        <comment class="col-12 p-0" [hideBtn]="hideBtn" [focusCommentId]="commentId" [focusReplyId]="replyId" [commentModel]="comment"></comment>
-      </li>
     </ng-container>
-  </ul>
-</div>
 
-<material-btn-list *ngIf="!halfModal" [showClass]="showClass" [materialBtns]="matButtons" (someBtnAction)="getButtonAction($event)"></material-btn-list>
+    <ng-container *ngIf="transparent">
+      <div class="bottom-loader comment-loader hide col-12 d-flex justify-content-center align-items-center">
+        <img src="{{ preloader }}" width="50px" class="p-owl-img-sm">
+      </div>
+    </ng-container>
+
+  </ng-container>
+
+  <ng-template #loadingContainer>
+    <div class="col-12 d-flex justify-content-center align-items-center">
+      <div class="col-3">
+        <img src="{{ preloader }}" width="100px">
+      </div>
+    </div>
+  </ng-template>
+
+</div>

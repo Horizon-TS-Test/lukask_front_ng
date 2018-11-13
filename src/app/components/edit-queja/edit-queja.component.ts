@@ -1,6 +1,5 @@
 import { Component, OnInit, OnDestroy, Input, SimpleChanges, OnChanges, Output, EventEmitter } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { NotifierService } from '../../services/notifier.service';
 import { CONTENT_TYPES } from '../../config/content-type';
 import { CameraService } from '../../services/camera.service';
 import { MediaFile } from '../../interfaces/media-file.interface';
@@ -8,13 +7,17 @@ import { DomSanitizer } from '../../../../node_modules/@angular/platform-browser
 import { ACTION_TYPES } from '../../config/action-types';
 import { OnSubmit } from '../../interfaces/on-submit.interface';
 import * as Snackbar from 'node-snackbar';
+import { DynaContentService } from 'src/app/services/dyna-content.service';
+import { ASSETS } from 'src/app/config/assets-url';
+import { CordovaCameraService } from 'src/app/services/cordova-camera.service';
 
 @Component({
   selector: 'edit-queja',
   templateUrl: './edit-queja.component.html',
   styleUrls: ['./edit-queja.component.css'],
 })
-export class EditQuejaComponent implements OnInit, OnDestroy, OnChanges {
+
+export class EditQuejaComponent implements OnDestroy, OnInit, OnChanges {
   @Input() isChildPub: boolean;
   @Input() submit: number;
   @Input() isStreamPub: number;
@@ -24,14 +27,16 @@ export class EditQuejaComponent implements OnInit, OnDestroy, OnChanges {
 
   private _initSnapShotsNumber: number;
   private _maxSnapShots: number;
+  private isEnabledCordovaCamera: boolean;
 
   public carouselOptions: any;
   public filesToUpload: MediaFile[];
 
   constructor(
-    private _notifierService: NotifierService,
+    private _dynaContentService: DynaContentService,
     private _cameraService: CameraService,
-    private _domSanitizer: DomSanitizer,
+    private _cordovaCameraService: CordovaCameraService,
+    private _domSanitizer: DomSanitizer
   ) {
     this._initSnapShotsNumber = 5;
     this._maxSnapShots = this._initSnapShotsNumber;
@@ -39,23 +44,25 @@ export class EditQuejaComponent implements OnInit, OnDestroy, OnChanges {
     this.initMediaFiles();
 
     //LISTEN TO NEW SNAPSHOT SENT BY NEW MEDIA CONTENT:
-    this.subscription = this._cameraService._snapShot.subscribe(
-      (snapShot: MediaFile) => {
+    this.subscription = this._cameraService.snapShot$.subscribe((snapShot: MediaFile) => {
+      if (snapShot) {
         this.addQuejaSnapShot(snapShot);
       }
-    );
+    });
   }
 
-  ngOnInit() { }
-
-  ngAfterViewInit() { }
+  ngOnInit() {
+    this.isEnabledCordovaCamera = this._cordovaCameraService.isCameraEnabled();
+  }
 
   private initMediaFiles() {
     this.filesToUpload = [
       {
-        mediaFileUrl: "/assets/images/edit-queja/window-sm.jpg",
+        mediaFileUrl: ASSETS.pubDefaultImg,
         mediaFile: null,
-        removeable: false
+        removeable: false,
+        active: true,
+        hidden: false
       }
     ];
   }
@@ -64,21 +71,39 @@ export class EditQuejaComponent implements OnInit, OnDestroy, OnChanges {
    * MÉTODO PARA AÑADIR UNA IMAGEN EN LA SECCIÓN DE MEDIOS A PUBLICAR
    * @param media EL OBJETO DE TIPO MEDIA-FILE
    */
-  addQuejaSnapShot(media: MediaFile) {
-    if (!this.filesToUpload[0].mediaFile) {
-      this.filesToUpload.splice(0, 1);
+  public addQuejaSnapShot(media: MediaFile) {
+    if (this.filesToUpload[0].removeable == false) {
+      this.filesToUpload[0].hidden = true;
+      this.filesToUpload[0].active = false;
     }
-    this.filesToUpload.push(media);
+    else {
+      for (let i = 0; i < this.filesToUpload.length; i++) {
+        if (this.filesToUpload[i].active == true) {
+          this.filesToUpload[i].active = false;
+        }
+      }
+    }
+    this.filesToUpload.splice(0, 0, media);
   }
 
   /**
-   * MÉTODO PARA ABRIR LA CÁMARA PARA TOMAR UNA FOTOGRAFÍA:
+   * MÉTODO PARA ABRIR LA CÁMARA SEA DESDE CÓRDOVA SIENDO UN APP MOVIL O DESDE 
+   * JAVASCRIPT COMO APP WEB / APP WEB PROGRESIVA PARA TOMAR UNA FOTOGRAFÍA
    * @param event 
    */
-  newMedia(event: any) {
+  public newMedia(event: any) {
     event.preventDefault();
     if (this.filesToUpload.length < this._initSnapShotsNumber) {
-      this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.new_media, contentData: { maxSnapShots: this._maxSnapShots, backCamera: true } });
+      if (this.isEnabledCordovaCamera) {
+        this._cordovaCameraService.openCamera((imgUri: any) => {
+          this._cordovaCameraService.getFileBlob(imgUri, (imgBlob) => {
+            this.addQuejaSnapShot({ mediaFileUrl: imgUri, mediaFile: imgBlob, removeable: true, active: true, hidden: false });
+          });
+        });
+      }
+      else {
+        this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.new_media, contentData: { maxSnapShots: this._maxSnapShots, backCamera: true } });
+      }
     }
     else {
       Snackbar.show({ text: "Ha llegado al límite de imágenes permitidas", pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#34b4db', customClass: "p-snackbar-layout" });
@@ -88,17 +113,66 @@ export class EditQuejaComponent implements OnInit, OnDestroy, OnChanges {
   /**
    * MÉTODO PARA ELIMINAR UNA IMAGEN DEL GRUPO DE MEDIA
    * @param $event 
-   * @param i POSICIÓN DEL ARRAY DE MEDIA A ELIMINAR
+   * @param media MEDIO A SER ELIMINADO
    */
-  removeMedia(event: any, media: MediaFile) {
+  public removeMedia(event: any, media: MediaFile) {
     event.preventDefault();
-    this.filesToUpload.splice(this.filesToUpload.indexOf(media), 1);
+
+    let index = this.filesToUpload.findIndex(file => file.mediaFileUrl == media.mediaFileUrl && file.removeable == media.removeable);
+    this.filesToUpload.splice(index, 1);
     this._maxSnapShots = this._initSnapShotsNumber - this.filesToUpload.length;
-    if (this.filesToUpload.length == 0) {
-      this.initMediaFiles();
+
+    if (this.filesToUpload.length == 1) {
+      this.filesToUpload[0].hidden = false;
+      this.filesToUpload[0].active = true;
+    }
+    else {
+      if (index >= this.filesToUpload.length - 1) {
+        this.filesToUpload[index - 1].active = true;
+      }
+      else {
+        this.filesToUpload[index].active = true;
+      }
     }
 
     Snackbar.show({ text: "El recurso se ha eliminado correctamente", pos: 'bottom-center', actionText: 'Listo', actionTextColor: '#34b4db', customClass: "p-snackbar-layout" });
+  }
+
+  /**
+   * MÉTODO PARA ACTUALIZAR DE LA LISTA DE FOTOS, LA QUE DEBE SER ACTUAL AL MOMENTO DE DAR NEXT O PREV:
+   * @param event 
+   * @param next 
+   */
+  public setNewActive(event, next) {
+    event.preventDefault();
+    let nextPrevTimeout;
+    clearTimeout(nextPrevTimeout);
+
+    nextPrevTimeout = setTimeout(() => {
+      let size = this.filesToUpload.length - 1;
+      for (let i = 0; i < size; i++) {
+        if (this.filesToUpload[i].active == true) {
+          this.filesToUpload[i].active = false;
+          if (next) {
+            if (i + 1 == size) {
+              this.filesToUpload[0].active = true;
+            }
+            else {
+              this.filesToUpload[i + 1].active = true;
+            }
+          }
+          else {
+            if (i - 1 == -1) {
+              this.filesToUpload[size - 1].active = true;
+            }
+            else {
+              this.filesToUpload[i - 1].active = true;
+            }
+          }
+          i = size;
+        }
+      }
+    }, 1100);
   }
 
   /**
@@ -130,11 +204,12 @@ export class EditQuejaComponent implements OnInit, OnDestroy, OnChanges {
    * MÉTODO PARA REALIZAR UN PROCESO EN LA INTERFAZ DESPUÉS DE RECIBIR LA RESPUESTA DEL POST DE UNA PUBLICACIÓN:
    * @param event VALOR INDICATIVO DE QUE EL SUBMIT HA SIDO PROCESADO. OBJETO EVENT EMITTER
    */
-  processAfterSubmit(event: OnSubmit) {
+  public processAfterSubmit(event: OnSubmit) {
     this.afterSubmit.emit(event);
   }
 
   ngOnDestroy() {
+    this._dynaContentService.loadDynaContent(null);
     this.subscription.unsubscribe();
   }
 

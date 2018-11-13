@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DynaContent } from '../../interfaces/dyna-content.interface';
 import { CONTENT_TYPES } from '../../config/content-type';
 import { Subscription } from '../../../../node_modules/rxjs';
-import { NotifierService } from '../../services/notifier.service';
+import { DynaContentService } from 'src/app/services/dyna-content.service';
 
 @Component({
   selector: 'app-horizon-pop-over',
@@ -20,10 +20,10 @@ export class HorizonPopOverComponent implements OnInit {
   public contentTypes: any;
 
   constructor(
-    private _notifierService: NotifierService
+    private _dynaContentService: DynaContentService
   ) {
     this.contentTypes = CONTENT_TYPES;
-    this.subscriber = this._notifierService._closeModal.subscribe((closeIt: boolean) => {
+    this.subscriber = this._dynaContentService.removeDynaCont$.subscribe((closeIt: boolean) => {
       if (closeIt) {
         this.closePopOver();
       }

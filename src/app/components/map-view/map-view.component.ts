@@ -6,9 +6,9 @@ import { QuejaService } from '../../services/queja.service';
 import pubIcons from '../../data/pub-icons';
 import pubIconsOver from '../../data/pub-icons-over';
 import styleMap from '../../data/map-style';
-import { NotifierService } from '../../services/notifier.service';
 import { CONTENT_TYPES } from '../../config/content-type';
 import { Subscription } from 'rxjs';
+import { DynaContentService } from 'src/app/services/dyna-content.service';
 
 declare var google: any;
 declare var $: any;
@@ -34,7 +34,7 @@ export class MapViewComponent implements OnInit, OnChanges {
   constructor(
     private _contentService: ContentService,
     private _quejaService: QuejaService,
-    private _notifierService: NotifierService,
+    private _dynaContentService: DynaContentService,
   ) {
     this.lat = -1.6709800;
     this.lng = -78.6471200;
@@ -55,15 +55,14 @@ export class MapViewComponent implements OnInit, OnChanges {
      * PARA SUBSCRIBIRSE AL EVENTO DE ACTUALIZACIÓN DEL SOCKET, QUE TRAE 
      * LOS CAMBIOS DE UNA PUBLICACIÓN PARA LUEGO MOSTRARLA EN EL MAPA
     */
-    this.subscription = this._quejaService._mapEmitter.subscribe((newPubId: string) => {
-      this.fetchPub();
-      this.focusPubId = newPubId;
-      this.focusPubById();
+    this.subscription = this._quejaService.map$.subscribe((newPubId: string) => {
+      if (newPubId) {
+        this.fetchPub();
+        this.focusPubId = newPubId;
+        this.focusPubById();
+      }
     });
     ////
-
-    //TOMANDO QUERY PARAMS, ESTO DEBE IR ANTES DE INTENTAR DAR FOCUS EN LOS MARKERS:
-    //this.getQueryParams();
 
     //Definición del mapa
     this.map = new google.maps.Map(this.gmapElement.nativeElement, mapProp);
@@ -78,7 +77,7 @@ export class MapViewComponent implements OnInit, OnChanges {
   /**
    * MÉTODO QUE OBTIENE LA POSICIÓN DESDE DONDE SE EMITE LA QUEJA
    */
-  getGps() {
+  private getGps() {
     if (!('geolocation' in navigator)) {
       return;
     }
@@ -95,20 +94,10 @@ export class MapViewComponent implements OnInit, OnChanges {
     }, { timeout: 7000 });
   }
 
-
-  /**
-   * MÉTODO PARA OBTENER LOS PARÁMETROS QUE LLEGAN EN EL URL:
-   */
-  /*getQueryParams() {
-    this._activatedRoute.queryParams.subscribe(params => {
-      this.focusPubId = params['pubId'];
-    });
-  }*/
-
   /**
    * MÉTODO QUE RECORRE LA LISTA DE QUEJAS Y CREA EL MARKER DE CADA UNA
    */
-  fetchPub() {
+  private fetchPub() {
     for (let pub of this.pubList) {
       this.crearMarker(pub.latitude, pub.longitude, this.defineTypeIcon(pub.type), pub.id_publication, pub.type, pub.type.description);
     }
@@ -123,7 +112,7 @@ export class MapViewComponent implements OnInit, OnChanges {
    * @param pubtype = tipo de queja
    * @param description = nombre de la entidad
    */
-  crearMarker(lat, lng, icon, pubId: string, pubtype, description) {
+  private crearMarker(lat, lng, icon, pubId: string, pubtype, description) {
     let marker = new google.maps.Marker({
       position: new google.maps.LatLng(lat, lng),
       map: this.map,
@@ -137,7 +126,7 @@ export class MapViewComponent implements OnInit, OnChanges {
     });
 
     marker.addListener('click', (event) => {
-      this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_queja, contentData: pubId });
+      this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.view_queja, contentData: pubId });
       $("#idviewPub").click(); //No tocar si no deja de funcionar ojo!!     
     });
 
@@ -156,10 +145,12 @@ export class MapViewComponent implements OnInit, OnChanges {
     });
   }
 
-  getPubs() {
+  private getPubs() {
     this.pubList = this._quejaService.getPubListObj();
+    console.log("this.pubList", this.pubList);
     if (!this.pubList) {
       this._quejaService.getPubList().then((pubs: Publication[]) => {
+        console.log("pubs", pubs);
         this.pubList = pubs;
         this.fetchPub();
         if (!this.focusPubId) {
@@ -182,9 +173,9 @@ export class MapViewComponent implements OnInit, OnChanges {
   /**
    * METODO QUE VALIDA SI HAY UN ID DE QUEJA PARA UBICARLO EN EL MAPA
    */
-  focusPubById() {
+  private focusPubById() {
     if (this.focusPubId) {
-      let focusZoom = 25;
+      let focusZoom = 15;
       for (let i = 0; i < this.pubList.length; i++) {
         if (this.focusPubId == this.pubList[i].id_publication) {
           this.map.setCenter({ lat: this.pubList[i].latitude, lng: this.pubList[i].longitude });
@@ -199,7 +190,7 @@ export class MapViewComponent implements OnInit, OnChanges {
    * METODO QUE SEGUN EL TIPO DE ENTIDAD ENVIA EL ICONO
    * @param typeId = TIPO DE ENTIDAD
    */
-  defineTypeIcon(typeId) {
+  private defineTypeIcon(typeId) {
     for (let typeIcon of pubIcons) {
       if (typeIcon.type_id == typeId.description) {
         return typeIcon.icon;
@@ -211,7 +202,7 @@ export class MapViewComponent implements OnInit, OnChanges {
    * MÉTODO PARA CAMBIAR DE ICONO CUANDO EL MOUSE SE ENCUENTRE ENCIMA
    * @param typeId = Identificador del marker en el que el mouse se encuentra encima 
    * */
-  defineTypeIconOver(typeId) {
+  private defineTypeIconOver(typeId) {
     for (let typeIconOver of pubIconsOver) {
       if (typeIconOver.type_id == typeId.description) {
         return typeIconOver.icon;
