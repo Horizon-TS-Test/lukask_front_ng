@@ -10,9 +10,10 @@ import { MediaFile } from '../../interfaces/media-file.interface';
 import { DateManager } from '../../tools/date-manager';
 import { Alert } from '../../models/alert';
 import { ALERT_TYPES } from '../../config/alert-types';
-import * as Snackbar from 'node-snackbar';
 import { CONTENT_TYPES } from 'src/app/config/content-type';
 import { DynaContentService } from 'src/app/services/dyna-content.service';
+import { LocationService } from 'src/app/services/location.service';
+import * as Snackbar from 'node-snackbar';
 
 @Component({
   selector: 'user-form',
@@ -38,6 +39,7 @@ export class UserFormComponent implements OnInit, AfterViewInit, OnChanges {
 
   constructor(
     private _userService: UserService,
+    private _locationService: LocationService,
     private _dynaContentService: DynaContentService
   ) {
     this.closeModal = new EventEmitter<boolean>();
@@ -59,7 +61,7 @@ export class UserFormComponent implements OnInit, AfterViewInit, OnChanges {
   getProvince() {
     this.provinceSelect = [];
 
-    this._userService.getProvinceList().then((qProvinces) => {
+    this._locationService.getProvinceList().then((qProvinces) => {
       this.provinceList = qProvinces;
       for (let type of this.provinceList) {
         if (!this.province) {
@@ -97,7 +99,7 @@ export class UserFormComponent implements OnInit, AfterViewInit, OnChanges {
   getCanton(id_provincia: any) {
     this.cantonSelect = [];
 
-    this._userService.getCantonList(id_provincia).then((qCantones) => {
+    this._locationService.getCantonList(id_provincia).then((qCantones) => {
       this.cantonList = qCantones;
 
       for (let type of this.cantonList) {
@@ -132,7 +134,7 @@ export class UserFormComponent implements OnInit, AfterViewInit, OnChanges {
    */
   getParroquia(id_canton: any) {
     this.parroquiaSelect = [];
-    this._userService.getParroquiaList(id_canton).then((qParroquia: Parroquia[]) => {
+    this._locationService.getParroquiaList(id_canton).then((qParroquia: Parroquia[]) => {
       this.parroquiaList = qParroquia;
 
       for (let parroq of this.parroquiaList) {
