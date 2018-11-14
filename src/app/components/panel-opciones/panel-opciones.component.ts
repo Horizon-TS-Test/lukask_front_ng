@@ -53,7 +53,6 @@ export class PanelOpcionesComponent implements OnInit, OnChanges, OnDestroy {
     this.adminSubscriber = this._userService.updateUser$.subscribe((resp) => {
       if (resp) {
         this.isAdmin = this._userService.verifyIsAdmin();
-        console.log("IS ADMIN: " + this.isAdmin);
       }
     });
   }

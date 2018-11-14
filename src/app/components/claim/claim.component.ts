@@ -14,12 +14,12 @@ export class ClaimComponent implements OnInit {
   @Input() showClass: string;
   @Output() closeModal = new EventEmitter<boolean>();
 
-  private aceptedTerms: boolean;
   private prevBtnColor: string;
   private nextBtnColor: string;
   private nextBtnIcon: string;
   private initStream: boolean;
-
+  
+  public aceptedTerms: boolean;
   public matButtons: HorizonButton[];
   public loadingClass: string;
   public activeClass: string;

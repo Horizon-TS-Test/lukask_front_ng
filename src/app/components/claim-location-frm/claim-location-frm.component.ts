@@ -18,13 +18,13 @@ import { LocationService } from 'src/app/services/location.service';
 })
 export class ClaimLocationFrmComponent implements OnInit {
 
-  private userObj: User;
   private selecTypeClaim: string;
   private province: string;
   private canton: string;
   private parroquia: string;
   private barrio: string;
-
+  
+  public userObj: User;
   public claimTypeList: claimType[];
   public claimTypeSelect: Select2[];
 

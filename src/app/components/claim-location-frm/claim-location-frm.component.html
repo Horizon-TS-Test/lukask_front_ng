@@ -64,7 +64,7 @@
 
       <div class="f-child-no-auto ml-2 form-group row pb-2" [ngClass]="{ 'has-danger': !address.valid && address.touched }">
         <div class="col-11">
-          <textarea name="reference" #address="ngModel" [(ngModel)]="userObj.person.address" class="form-control pb-0"
+          <textarea name="reference" #address="ngModel" [(ngModel)]="userObj.person.reference" class="form-control pb-0"
             cols="20" rows="5" required placeholder="Indique alguna referencia de su ubicación"></textarea>
           <small *ngIf="address.touched && !address.valid" class="form-control-feedback absolute-layer p-index-1">
             Por favor ingrese una referencia

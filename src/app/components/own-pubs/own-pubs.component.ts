@@ -20,7 +20,7 @@ export class OwnPubsComponent implements OnInit {
   public activeClass: string;
 
   constructor(
-    private _quejaService: QuejaService
+    public _quejaService: QuejaService
   ) {
   }
 
