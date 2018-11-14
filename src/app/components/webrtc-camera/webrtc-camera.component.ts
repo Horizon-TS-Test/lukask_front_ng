@@ -116,6 +116,8 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
 
     if (this.streamOwnerId) {
       this.joinTransmission();
+    }else if(this._backCamera.id == "" &&  this._frontCamera.id == ""){
+      this.setCamerasFromDevice();
     }
   }
 
@@ -123,11 +125,6 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
    * MÉTODO PARA INICIAR VARIABLES
    */
   private initVariables() {
-    
-    navigator.mediaDevices.enumerateDevices().then((data) => {
-      this.getDevices(data);
-    }).catch(this.handleError);
-  
     if (!this._video) {
       let videoArray = document.querySelectorAll(".video-camera");
       this._video = videoArray.item(videoArray.length - 1);
@@ -139,7 +136,6 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
    * @param device
    */
   private setCamera(device: any) {
-    console.log("establecer camara para transmicion");
     if (device.label.indexOf("back") > -1) {
       this._backCamera = { id: device.deviceId, description: "Posterior" }
       this.swapCamera = true;
@@ -284,10 +280,12 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
    */
   private connectToStreamingClient() {
     this.initVariables();
-    console.log("this._video", this._video)
     return this._webrtcSocketService.connecToKurento(this.pubId, this._video);
   }
 
+  /**
+   * Proceso para iniciar transmicion.
+   */
   private startTransmission() {
     if (this.pubId && !this.streamOwnerId && !this.transmissionOn) {
       this.connectToStreamingClient()
@@ -318,6 +316,22 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
   }
 
   /**
+   * Establece una camaras para realizar capturas de images o transmicion en vivo
+   */
+  private setCamerasFromDevice(){
+    let devices = new Promise((resolve, reject) =>{
+      navigator.mediaDevices.enumerateDevices().then((data) => {
+        this.getDevices(data);
+        resolve(true);
+      }).catch((err)=>{
+        this.handleError(err); 
+        reject(false)
+      });
+    });
+    return devices;
+  }
+
+  /**
    * MÉTODO PARA DETECTAR LOS CAMBIOS DE UNA PROPIEDAD INYECTADA DESDE EL COMPONENTE PADRE DE ESTE COMPONENTE:
    * @param changes LOS CAMBIOS GENERADOS
    */
@@ -327,7 +341,13 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
         case 'pubId':
           if (changes[property].currentValue) {
             this.pubId = changes[property].currentValue;
-            this.startTransmission();
+            this.setCamerasFromDevice().then((response:boolean) =>{
+              if(response && (this._backCamera.id != '' || this._frontCamera.id != '')){
+                this.startTransmission();
+              }
+            }).catch((response:boolean)=>{
+              console.log("error al obtener despositivos");
+            });
           }
           break;
       }
