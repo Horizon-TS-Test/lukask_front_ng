@@ -10,6 +10,7 @@ import { DynaContentService } from 'src/app/services/dyna-content.service';
 import { InstallPromptService } from 'src/app/services/install-prompt.service';
 
 declare var $: any;
+declare var device: any;
 
 @Component({
   selector: 'app-login',
@@ -21,6 +22,7 @@ export class LoginComponent implements OnInit {
   public contentTypes: any;
   public loadingClass: string;
   public activeClass: string;
+  public isNative: boolean;
 
   constructor(
     private _loginService: LoginService,
@@ -34,7 +36,17 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.isNativeApp();
     this._contentService.fadeInComponent($("#loginContainer"));
+  }
+
+  /**
+   * METODO PARA DETECTAR SI EL APP ESTA DESPLEGADA EN FORMA DE APP MOVIL NATIVA:
+   */
+  private isNativeApp() {
+    document.addEventListener("deviceready", () => {
+      this.isNative = device.platform ? true : false;
+    }, false);
   }
 
   /**

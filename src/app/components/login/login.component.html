@@ -1,5 +1,8 @@
-<div class="personal-content relative-background personal-fadeout min-height-full max-height-full p-overflow-hidden light-background {{ loadingClass }} container d-flex flex-column justify-content-center align-items-center w-100"
-  id="loginContainer">
+<div class="personal-content relative-background personal-fadeout max-height-full p-overflow-hidden light-background {{ loadingClass }} container d-flex flex-column justify-content-center align-items-center w-100"
+  id="loginContainer" [ngClass]="{
+    'min-height-full-modal': isNative,
+    'min-height-full': !isNative
+  }">
 
   <form #frmLogin="ngForm" class="f-child-full-space col-12 col-sm-7 col-md-6 py-2 d-flex flex-column justify-content-center align-items-center"
     id="frmL" (ngSubmit)="onLogin()">

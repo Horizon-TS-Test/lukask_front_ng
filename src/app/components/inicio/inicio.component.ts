@@ -17,6 +17,7 @@ import { DynaContentService } from 'src/app/services/dyna-content.service';
 import { DynamicPubsService } from 'src/app/services/dynamic-pubs.service';
 
 declare var $: any;
+declare var device: any;
 
 @Component({
   selector: 'app-inicio',
@@ -38,6 +39,7 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   public touchDrag: boolean;
   public webViewPort: boolean;
   public askforMorePubs: boolean;
+  public isNative: boolean;
 
   constructor(
     private _domSanitizer: DomSanitizer,
@@ -53,6 +55,8 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.isNativeApp();
+
     ////RESPONSIVE INDICATOR:
     this.manageResponsiveViewPort();
     ////
@@ -65,6 +69,15 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
     this.paymentSocketUpdate();
 
     this.getPubList();
+  }
+
+  /**
+   * METODO PARA DETECTAR SI EL APP ESTA DESPLEGADA EN FORMA DE APP MOVIL NATIVA:
+   */
+  private isNativeApp() {
+    document.addEventListener("deviceready", () => {
+      this.isNative = device.platform ? true : false;
+    }, false);
   }
 
   /**
