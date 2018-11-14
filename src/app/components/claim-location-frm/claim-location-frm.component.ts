@@ -9,6 +9,7 @@ import { claimType } from '../../interfaces/claim-type.interface';
 import claimTypes from '../../data/claim-type';
 import { BarrioInterface } from '../../interfaces/barrio-data.interface';
 import barrioData from '../../data/barrio-data';
+import { LocationService } from 'src/app/services/location.service';
 
 @Component({
   selector: 'claim-location-frm',
@@ -38,6 +39,7 @@ export class ClaimLocationFrmComponent implements OnInit {
 
   constructor(
     private _userService: UserService,
+    private _locationService: LocationService
   ) { }
 
   ngOnInit() {
@@ -70,7 +72,7 @@ export class ClaimLocationFrmComponent implements OnInit {
   getProvince() {
     this.provinceSelect = [];
 
-    this._userService.getProvinceList().then((qProvinces) => {
+    this._locationService.getProvinceList().then((qProvinces) => {
       this.provinceList = qProvinces;
       for (let type of this.provinceList) {
         if (!this.province) {
@@ -115,7 +117,7 @@ export class ClaimLocationFrmComponent implements OnInit {
   getCanton(id_provincia: any) {
     this.cantonSelect = [];
 
-    this._userService.getCantonList(id_provincia).then((qCantones) => {
+    this._locationService.getCantonList(id_provincia).then((qCantones) => {
       this.cantonList = qCantones;
 
       for (let type of this.cantonList) {
@@ -148,7 +150,7 @@ export class ClaimLocationFrmComponent implements OnInit {
    */
   getParroquia(id_canton: any) {
     this.parroquiaSelect = [];
-    this._userService.getParroquiaList(id_canton).then((qParroquia: Parroquia[]) => {
+    this._locationService.getParroquiaList(id_canton).then((qParroquia: Parroquia[]) => {
       this.parroquiaList = qParroquia;
 
       for (let parroq of this.parroquiaList) {

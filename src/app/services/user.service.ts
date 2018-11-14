@@ -406,4 +406,11 @@ export class UserService {
         return true;
       });
   }
+
+  /**
+   * MÉTODO PARA VERIFICAR SI UN USUARIO ES ADMIN O NO --------> PROVISIONAL
+   */
+  public verifyIsAdmin() {
+    return this.isAdmin;
+  }
 }
