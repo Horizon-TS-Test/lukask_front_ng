@@ -1425,7 +1425,7 @@ p, label, div {
     background-size: cover !important;
     background-position: center center !important;
     background-repeat: no-repeat !important;
-    background-image: url('/assets/images/edit-queja/window.jpg');
+    background-image: url($images-url + '/edit-queja/window.jpg');
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2168,48 +2168,48 @@ input[type=text], input[type=password], input[type=email], input[type=number], i
     }
 }
 .personal-nav-prev {
-    background: url('/assets/images/slider-nav/prev.png') center center no-repeat;
+    background: url($images-url + '/slider-nav/prev.png') center center no-repeat;
     right: calc(50% + 35px);
 
     @include MQ(L) {
-        cursor: url('/assets/images/slider-nav/prev.png');
-        cursor: url('/assets/images/slider-nav/prev.png'), auto;
-        cursor: url('/assets/images/slider-nav/cur/prev.cur');
+        cursor: url($images-url + '/slider-nav/prev.png');
+        cursor: url($images-url + '/slider-nav/prev.png'), auto;
+        cursor: url($images-url + '/slider-nav/cur/prev.cur');
         left: 0;
         right: auto;
     }
 }
 .personal-play {
     display: none;
-    background: url('/assets/images/slider-nav/play.png') center center no-repeat;
+    background: url($images-url + '/slider-nav/play.png') center center no-repeat;
     left: calc(50% - 35px);
 
     @include MQ(L) {
-        cursor: url('/assets/images/slider-nav/play.png');
-        cursor: url('/assets/images/slider-nav/play.png'), auto;
-        cursor: url('/assets/images/slider-nav/cur/play.cur');
+        cursor: url($images-url + '/slider-nav/play.png');
+        cursor: url($images-url + '/slider-nav/play.png'), auto;
+        cursor: url($images-url + '/slider-nav/cur/play.cur');
         left: calc(100% / 3);
     }
 }
 .personal-pause {
-    background: url('/assets/images/slider-nav/pause.png') center center no-repeat;
+    background: url($images-url + '/slider-nav/pause.png') center center no-repeat;
     left: calc(50% - 35px);
 
     @include MQ(L) {
-        cursor: url('/assets/images/slider-nav/pause.png');
-        cursor: url('/assets/images/slider-nav/pause.png'), auto;
-        cursor: url('/assets/images/slider-nav/cur/pause.cur');
+        cursor: url($images-url + '/slider-nav/pause.png');
+        cursor: url($images-url + '/slider-nav/pause.png'), auto;
+        cursor: url($images-url + '/slider-nav/cur/pause.cur');
         left: calc(100% / 3);
     }
 }
 .personal-nav-next {
-    background: url('/assets/images/slider-nav/next.png') center center no-repeat;
+    background: url($images-url + '/slider-nav/next.png') center center no-repeat;
     left: calc(50% + 35px);
 
     @include MQ(L) {
-        cursor: url('/assets/images/slider-nav/next.png');
-        cursor: url('/assets/images/slider-nav/next.png'), auto;
-        cursor: url('/assets/images/slider-nav/cur/next.cur');
+        cursor: url($images-url + '/slider-nav/next.png');
+        cursor: url($images-url + '/slider-nav/next.png'), auto;
+        cursor: url($images-url + '/slider-nav/cur/next.cur');
         right: 0;
         left: auto;
     }
