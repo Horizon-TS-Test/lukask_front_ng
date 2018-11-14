@@ -4,6 +4,7 @@ import { QuejaService } from 'src/app/services/queja.service';
 import { OwnPubsService } from 'src/app/services/own-pubs.service';
 import { ASSETS } from 'src/app/config/assets-url';
 import { DynaContent } from 'src/app/interfaces/dyna-content.interface';
+import { ArrayManager } from 'src/app/tools/array-manager';
 
 @Component({
   selector: 'ownpub-container',
@@ -46,6 +47,8 @@ export class OwnpubContainerComponent implements OnInit {
     setTimeout(() => {
       this.getMyPubList();
     }, 4000);
+
+    this.listenToOwnPubUpdate();
   }
 
   /**
@@ -84,5 +87,18 @@ export class OwnpubContainerComponent implements OnInit {
    */
   public geolocatePub(event: DynaContent) {
     this.geoMap.emit(event);
+  }
+
+  /**
+   * MÉTODO PARA ESCUCHAR LOS CAMBIOS DE LAS PUBLICACIONES PROPIAS DEL USUARIO QUE VIENEN TRAVES DEL SOCKET.IO CLIENT:
+   */
+  private listenToOwnPubUpdate() {
+    this._quejaService.updatedWwnPub$.subscribe((ownPubData: { lastPub: Publication, newPub: Publication, action: string }) => {
+      if (ownPubData) {
+        console.log("pubData: ", ownPubData);
+        ArrayManager.backendServerSays(ownPubData.action, this.myPubList, ownPubData.lastPub, ownPubData.newPub);
+        this._quejaService.loadOwnPubs(this.myPubList);
+      }
+    });
   }
 }

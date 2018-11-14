@@ -62,11 +62,11 @@
     <li class="p-border-trans list-group-item d-flex justify-content-between align-items-center pb-0">
       <fa name="home" class="icon-xs mr-1"></fa>
 
-      <div class="f-child-no-auto ml-2 form-group row pb-2" [ngClass]="{ 'has-danger': !address.valid && address.touched }">
+      <div class="f-child-no-auto ml-2 form-group row pb-2" [ngClass]="{ 'has-danger': !reference.valid && reference.touched }">
         <div class="col-11">
-          <textarea name="reference" #address="ngModel" [(ngModel)]="userObj.person.reference" class="form-control pb-0"
+          <textarea name="reference" #reference="ngModel" [(ngModel)]="userObj.person.reference" class="form-control pb-0"
             cols="20" rows="5" required placeholder="Indique alguna referencia de su ubicación"></textarea>
-          <small *ngIf="address.touched && !address.valid" class="form-control-feedback absolute-layer p-index-1">
+          <small *ngIf="reference.touched && !reference.valid" class="form-control-feedback absolute-layer p-index-1">
             Por favor ingrese una referencia
           </small>
         </div>
