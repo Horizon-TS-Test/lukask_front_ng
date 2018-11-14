@@ -2,6 +2,7 @@
 @import "_variables.scss";
 @import "_fonts.scss";
 @import "_switch-input.scss";
+@import "_main-path.scss";
 
 //////////////////////////////////////////////////////GENERIC STYLES////////////////////////////////////////////
 html {
@@ -34,7 +35,7 @@ img {
 }
 
 .personal-isologo {
-    background-image: url("/assets/images/logo/logo-1.svg");
+    background-image: url($images-url + "/logo/logo-1.svg");
     height: 200px;
 
     @include MQ(XS) {
@@ -48,7 +49,7 @@ img {
     }
 }
 .personal-logo {
-    background-image: url("/assets/images/logo/logo-2.svg");
+    background-image: url($images-url + "/logo/logo-2.svg");
     height: 80px;
 
     @include MQ(XS) {
@@ -64,7 +65,7 @@ img {
 .lukask-logo {
     position: absolute;
     left: 9px;
-    background-image: url("/assets/images/logo/logo-1.svg");
+    background-image: url($images-url + "/logo/logo-1.svg");
     width: 45px;
     height: 45px;
 }
@@ -191,12 +192,13 @@ p, label, div {
 
 //LOADING CONTENT:
 .loading-content {
-    position: fixed;
+    //position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100vh;
-    background: url("/assets/images/forms/preloader.gif") center center no-repeat;
+    background: url($images-url + "/forms/preloader.gif") center center no-repeat;
     opacity: 0;
     z-index: -1;
     transition: opacity .8s ease, z-index .6s ease;
@@ -213,7 +215,7 @@ p, label, div {
     left: 0;
     width: 100%;
     height: 100%;
-    background: url("/assets/images/forms/preloader.gif") center center no-repeat;
+    background: url($images-url + "/forms/preloader.gif") center center no-repeat;
     opacity: 0;
     z-index: -1;
     transition: opacity .8s ease, z-index .6s ease;
@@ -234,7 +236,6 @@ p, label, div {
 }
 
 .bottom-loader {
-    position: absolute !important;
     left: 0;
     bottom: 0;
     opacity: 0;
@@ -247,12 +248,17 @@ p, label, div {
     .p-owl-img-sm {
         width: 50px !important;
     }
+    &.pub-loader {
+        position: fixed !important;
+    }
+    &.comment-loader {
+        position: absolute !important;
+    }
 }
 .bottom-loader.hide {
     z-index: -1;
 }
 .bottom-loader.on {
-    position: absolute !important;
     bottom: 0;
     opacity: 1;
     z-index: 1;
@@ -563,6 +569,9 @@ p, label, div {
 .f-child-no-auto {
     flex: 1 0 !important;
 }
+.f-child-no-shrink {
+    flex-shrink: 0 !important;
+}
 //REF: https://medium.com/@stephenbunch/how-to-make-a-scrollable-container-with-dynamic-height-using-flexbox-5914a26ae336
 .f-scroll-child {
     flex-grow: 1;
@@ -616,12 +625,12 @@ p, label, div {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////PORTADA STYLES////////////////////////////////////////////
 .portada-fixed {
-    position: absolute;
+    position: fixed;
     background: #222;
     z-index: 9999999998;
     width: 100%;
     height: 100%;
-    top: 0;
+    bottom: 0;
     left: 0;
     opacity: 1;
     transition: opacity .5s ease;
@@ -635,8 +644,9 @@ p, label, div {
 }
 
 #personal-portada {
-    position: absolute;
+    position: fixed;
     z-index: 9999999999;
+    bottom: 0px;
     transform: translateY(0);
     transition: transform 1.2s ease;
 
@@ -671,7 +681,7 @@ p, label, div {
 ********************************/
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #menu-nav {
-    z-index: 4;
+    z-index: 12;
     right: $nav-x;
     bottom: $nav-menu-bottom;
     text-indent: 100%;
@@ -896,7 +906,7 @@ p, label, div {
 //////PANEL DE OPCIONES:
 .top-panel, .bot-panel, .p-home-panel {
     position: fixed;
-    z-index: 3;
+    z-index: 11;
     left: 0px;
     width: 100%;
     height: 55px;
@@ -946,7 +956,7 @@ p, label, div {
         height: 100%;
         width: 30%;
         border-bottom: 2px solid $primary-dark;
-        transition: all .5s ease;
+        transition: all .3s ease;
     }
 }
 .bot-panel {
@@ -1005,7 +1015,7 @@ p, label, div {
         }
     }
 
-    a, fa, span, small {
+    a, a:hover, fa, span, small {
         color: $secondary-text !important;
     }
 }
@@ -1426,7 +1436,7 @@ p, label, div {
     background-size: cover !important;
     background-position: center center !important;
     background-repeat: no-repeat !important;
-    background-image: url('/assets/images/edit-queja/window.jpg');
+    background-image: url($images-url + '/edit-queja/window.jpg');
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1539,13 +1549,13 @@ p, label, div {
     top: 0px;
     left: 0px;
 }
-.top-right-corner {
-    top: 5px;
-    right: 10px;
-}
 .top-right-outer-corner {
     top: 0px;
     right: 0px;
+}
+.top-right-corner {
+    top: 5px;
+    right: 10px;
 }
 .down-right-corner {
     bottom: 3px;
@@ -1573,11 +1583,11 @@ p, label, div {
     display: flex !important;
     justify-content: center;
     align-items: center;
-    border-color: $primary-dark !important;
-    width: 35px;
-    height: 35px;
+    border-color: $primary !important;
+    width: $material-btn-wh;
+    height: $material-btn-wh;
     border-radius: 50% !important;
-    background: $primary-dark !important;
+    background: $primary !important;
     -webkit-box-shadow: 1px 2px 4px 2px rgba(0,0,0,0.2) !important;
     -moz-box-shadow: 1px 2px 4px 2px rgba(0,0,0,0.2) !important;
     box-shadow: 1px 2px 4px 2px rgba(0,0,0,0.2) !important;
@@ -1585,11 +1595,14 @@ p, label, div {
     fa, span {
         color: $secondary-text !important;
     }
-
     &.custom-btn-normal {
         background: $primary !important;
         border-color: $primary !important;
     }
+}
+.p-sec-btn {
+    background: $primary-dark !important;
+    border-color: $primary-dark !important;
 }
 
 .custom-panel-btn {
@@ -1662,6 +1675,18 @@ p, label, div {
         color: $primary-dark;
     }
 }
+.no-border-button.secondary-dark {
+
+    fa, span {
+        color: $secondary-dark;
+    }
+}
+.no-border-button.light {
+
+    fa, span {
+        color: $primary-light;
+    }
+}
 .no-border-button.secondary {
 
     fa, span {
@@ -1689,6 +1714,10 @@ p, label, div {
 }
 .focused-btn.unable {
     background: $primary-text !important;
+    animation: unset;
+}
+.focused-btn.play {
+    background: $primary !important;
     animation: unset;
 }
 
@@ -1756,6 +1785,19 @@ p, label, div {
     -webkit-animation: cd-bounce-out 0.3s linear;
     -moz-animation: cd-bounce-out 0.3s linear;
     animation: cd-bounce-out 0.3s linear;
+}
+
+.p-outline-btn {
+    border-color: $primary !important;
+    color: $primary !important;
+    
+    &.dark {
+        border-color: $primary-dark !important;
+        color: $primary-dark !important;
+    }
+    &.upper {
+        text-transform: uppercase;
+    }
 }
 /////////////////////
 
@@ -1882,15 +1924,20 @@ input[type=text], input[type=password], input[type=email], input[type=number], i
     justify-content: center;
     align-items: center;
     background: $primary-dark;
-}
-.news-main {
-    position: fixed;
-    right: unset;
-    top: unset;
-    z-index: 10000000;
-    right: $nav-x + $nav-menu-size-lg - .5rem;
-    bottom: $nav-menu-bottom-lg + $nav-menu-size-lg - .5rem;
-    background: $primary;
+ 
+    &.news-main {
+        position: fixed;
+        top: unset;
+        z-index: 10000000;
+        right: $nav-x + $nav-menu-size-lg - .5rem;
+        bottom: $nav-menu-bottom-lg + $nav-menu-size-lg - .5rem;
+        background: $primary;
+    }
+
+    &.news-material-btn {
+        right:calc(#{$material-btn-wh} - 5px) ;
+        top: -12px;
+    }
 }
 ////
 
@@ -1937,7 +1984,7 @@ input[type=text], input[type=password], input[type=email], input[type=number], i
 .p-find-accounts {
     .p-img-pop {
         //REF: https://stackoverflow.com/questions/2182716/is-it-possible-to-set-the-equivalent-of-a-src-attribute-of-an-img-tag-in-css
-        content: url("/assets/images/payments/security-card-sm.jpg");
+        content: url($images-url + "/payments/security-card-sm.jpg");
     }
 
     .personal-site-icon {
@@ -1950,7 +1997,7 @@ input[type=text], input[type=password], input[type=email], input[type=number], i
 .p-purchase-card {
     .p-img-pop {
         //REF: https://stackoverflow.com/questions/2182716/is-it-possible-to-set-the-equivalent-of-a-src-attribute-of-an-img-tag-in-css
-        content: url("/assets/images/payments/card-hands-sm.jpg");
+        content: url($images-url + "/payments/card-hands-sm.jpg");
         height: 160px;
     }
 }
@@ -1958,7 +2005,7 @@ input[type=text], input[type=password], input[type=email], input[type=number], i
 .p-signup {
     .p-img-pop {
         //REF: https://stackoverflow.com/questions/2182716/is-it-possible-to-set-the-equivalent-of-a-src-attribute-of-an-img-tag-in-css
-        content: url("/assets/images/registro/signup-sm.jpg");
+        content: url($images-url + "/registro/signup-sm.jpg");
         height: 160px;
     }
 }
@@ -2141,48 +2188,48 @@ input[type=text], input[type=password], input[type=email], input[type=number], i
     }
 }
 .personal-nav-prev {
-    background: url('/assets/images/slider-nav/prev.png') center center no-repeat;
+    background: url($images-url + '/slider-nav/prev.png') center center no-repeat;
     right: calc(50% + 35px);
 
     @include MQ(L) {
-        cursor: url('/assets/images/slider-nav/prev.png');
-        cursor: url('/assets/images/slider-nav/prev.png'), auto;
-        cursor: url('/assets/images/slider-nav/cur/prev.cur');
+        cursor: url($images-url + '/slider-nav/prev.png');
+        cursor: url($images-url + '/slider-nav/prev.png'), auto;
+        cursor: url($images-url + '/slider-nav/cur/prev.cur');
         left: 0;
         right: auto;
     }
 }
 .personal-play {
     display: none;
-    background: url('/assets/images/slider-nav/play.png') center center no-repeat;
+    background: url($images-url + '/slider-nav/play.png') center center no-repeat;
     left: calc(50% - 35px);
 
     @include MQ(L) {
-        cursor: url('/assets/images/slider-nav/play.png');
-        cursor: url('/assets/images/slider-nav/play.png'), auto;
-        cursor: url('/assets/images/slider-nav/cur/play.cur');
+        cursor: url($images-url + '/slider-nav/play.png');
+        cursor: url($images-url + '/slider-nav/play.png'), auto;
+        cursor: url($images-url + '/slider-nav/cur/play.cur');
         left: calc(100% / 3);
     }
 }
 .personal-pause {
-    background: url('/assets/images/slider-nav/pause.png') center center no-repeat;
+    background: url($images-url + '/slider-nav/pause.png') center center no-repeat;
     left: calc(50% - 35px);
 
     @include MQ(L) {
-        cursor: url('/assets/images/slider-nav/pause.png');
-        cursor: url('/assets/images/slider-nav/pause.png'), auto;
-        cursor: url('/assets/images/slider-nav/cur/pause.cur');
+        cursor: url($images-url + '/slider-nav/pause.png');
+        cursor: url($images-url + '/slider-nav/pause.png'), auto;
+        cursor: url($images-url + '/slider-nav/cur/pause.cur');
         left: calc(100% / 3);
     }
 }
 .personal-nav-next {
-    background: url('/assets/images/slider-nav/next.png') center center no-repeat;
+    background: url($images-url + '/slider-nav/next.png') center center no-repeat;
     left: calc(50% + 35px);
 
     @include MQ(L) {
-        cursor: url('/assets/images/slider-nav/next.png');
-        cursor: url('/assets/images/slider-nav/next.png'), auto;
-        cursor: url('/assets/images/slider-nav/cur/next.cur');
+        cursor: url($images-url + '/slider-nav/next.png');
+        cursor: url($images-url + '/slider-nav/next.png'), auto;
+        cursor: url($images-url + '/slider-nav/cur/next.cur');
         right: 0;
         left: auto;
     }
@@ -2192,171 +2239,171 @@ input[type=text], input[type=password], input[type=email], input[type=number], i
 /////SWITCH INPUT/////
 //REF: https://www.abeautifulsite.net/bootstrap-4-switches
 .switch {
-  font-size: $font-size-base;
-  position: relative;
-
-  input {
-    position: absolute;
-    height: 1px;
-    width: 1px;
-    background: none;
-    border: 0;
-    clip: rect(0 0 0 0);
-    clip-path: inset(50%);
-    overflow: hidden;
-    padding: 0;
-
-    + label {
-      position: relative;
-      min-width: calc(#{$switch-height} * 2);
-      border-radius: $switch-border-radius;
-      height: $switch-height;
-      line-height: $switch-height;
-      display: inline-block;
-      cursor: pointer;
-      outline: none;
-      user-select: none;
-      vertical-align: middle;
-      text-indent: calc(calc(#{$switch-height} * 2) + .5rem);
-    }
-
-    + label::before,
-    + label::after {
-      content: '';
+    font-size: $font-size-base;
+    position: relative;
+  
+    input {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: calc(#{$switch-height} * 2);
-      bottom: 0;
-      display: block;
-    }
-
-    + label::before {
-      right: 0;
-      background-color: $switch-bg;
-      border-radius: $switch-border-radius;
-      transition: $switch-transition;
-    }
-
-    + label::after {
-      top: $switch-thumb-padding;
-      left: $switch-thumb-padding;
-      width: calc(#{$switch-height} - calc(#{$switch-thumb-padding} * 2));
-      height: calc(#{$switch-height} - calc(#{$switch-thumb-padding} * 2));
-      border-radius: $switch-thumb-border-radius;
-      background-color: $switch-thumb-bg;
-      transition: $switch-transition;
-    }
-
-    &:checked + label::before {
-      background-color: $switch-checked-bg;
-    }
-
-    &:checked + label::after {
-      margin-left: $switch-height;
-    }
-
-    &:focus + label::before {
-      outline: none;
-      //box-shadow: $switch-focus-box-shadow;
-    }
-
-    &:disabled + label {
-      color: $switch-disabled-color;
-      cursor: not-allowed;
-    }
-
-    &:disabled + label::before {
-      //background-color: $switch-disabled-bg;
-      background-color: $primary-text;
-    }
-  }
-
-  // Small variation
-  &.switch-sm {
-    font-size: $font-size-sm;
-
-    input {
+      height: 1px;
+      width: 1px;
+      background: none;
+      border: 0;
+      clip: rect(0 0 0 0);
+      clip-path: inset(50%);
+      overflow: hidden;
+      padding: 0;
+  
       + label {
-        min-width: calc(#{$switch-height-sm} * 2);
-        height: $switch-height-sm;
-        line-height: $switch-height-sm;
-        text-indent: calc(calc(#{$switch-height-sm} * 2) + .5rem);
+        position: relative;
+        min-width: calc(#{$switch-height} * 2);
+        border-radius: $switch-border-radius;
+        height: $switch-height;
+        line-height: $switch-height;
+        display: inline-block;
+        cursor: pointer;
+        outline: none;
+        user-select: none;
+        vertical-align: middle;
+        text-indent: calc(calc(#{$switch-height} * 2) + .5rem);
       }
-
-      + label::before {
-        width: calc(#{$switch-height-sm} * 2);
-      }
-
+  
+      + label::before,
       + label::after {
-        width: calc(#{$switch-height-sm} - calc(#{$switch-thumb-padding} * 2));
-        height: calc(#{$switch-height-sm} - calc(#{$switch-thumb-padding} * 2));
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: calc(#{$switch-height} * 2);
+        bottom: 0;
+        display: block;
       }
-
-      &:checked + label::after {
-        margin-left: $switch-height-sm;
-      }
-    }
-  }
-
-  // Large variation
-  &.switch-lg {
-    font-size: $font-size-lg;
-
-    input {
-      + label {
-        min-width: calc(#{$switch-height-lg} * 2);
-        height: $switch-height-lg;
-        line-height: $switch-height-lg;
-        text-indent: calc(calc(#{$switch-height-lg} * 2) + .5rem);
-      }
-
+  
       + label::before {
-        width: calc(#{$switch-height-lg} * 2);
+        right: 0;
+        background-color: $switch-bg;
+        border-radius: $switch-border-radius;
+        transition: $switch-transition;
       }
-
+  
       + label::after {
-        width: calc(#{$switch-height-lg} - calc(#{$switch-thumb-padding} * 2));
-        height: calc(#{$switch-height-lg} - calc(#{$switch-thumb-padding} * 2));
+        top: $switch-thumb-padding;
+        left: $switch-thumb-padding;
+        width: calc(#{$switch-height} - calc(#{$switch-thumb-padding} * 2));
+        height: calc(#{$switch-height} - calc(#{$switch-thumb-padding} * 2));
+        border-radius: $switch-thumb-border-radius;
+        background-color: $switch-thumb-bg;
+        transition: $switch-transition;
       }
-
+  
+      &:checked + label::before {
+        background-color: $switch-checked-bg;
+      }
+  
       &:checked + label::after {
-        margin-left: $switch-height-lg;
+        margin-left: $switch-height;
+      }
+  
+      &:focus + label::before {
+        outline: none;
+        //box-shadow: $switch-focus-box-shadow;
+      }
+  
+      &:disabled + label {
+        color: $switch-disabled-color;
+        cursor: not-allowed;
+      }
+  
+      &:disabled + label::before {
+        //background-color: $switch-disabled-bg;
+        background-color: $primary-text;
       }
     }
-  }
-
-  + .switch {
-    margin-left: 1rem;
-  }
-
-  // MAIN COLOR VARIATION
-  &.switch-normal {
-    input {
-        &:checked + label::before {
-            background-color: $primary;
+  
+    // Small variation
+    &.switch-sm {
+      font-size: $font-size-sm;
+  
+      input {
+        + label {
+          min-width: calc(#{$switch-height-sm} * 2);
+          height: $switch-height-sm;
+          line-height: $switch-height-sm;
+          text-indent: calc(calc(#{$switch-height-sm} * 2) + .5rem);
         }
-    }
-  }
-  // PRIMARY LIGHT COLOR VARIATION
-  &.switch-dark {
-    input {
-        &:checked + label::before {
-            background-color: $primary-dark;
+  
+        + label::before {
+          width: calc(#{$switch-height-sm} * 2);
         }
-    }
-  }
-  // PRIMARY LIGHT COLOR VARIATION
-  &.switch-light {
-    input {
-        &:checked + label::before {
-            background-color: $primary-light;
+  
+        + label::after {
+          width: calc(#{$switch-height-sm} - calc(#{$switch-thumb-padding} * 2));
+          height: calc(#{$switch-height-sm} - calc(#{$switch-thumb-padding} * 2));
         }
+  
+        &:checked + label::after {
+          margin-left: $switch-height-sm;
+        }
+      }
     }
+  
+    // Large variation
+    &.switch-lg {
+      font-size: $font-size-lg;
+  
+      input {
+        + label {
+          min-width: calc(#{$switch-height-lg} * 2);
+          height: $switch-height-lg;
+          line-height: $switch-height-lg;
+          text-indent: calc(calc(#{$switch-height-lg} * 2) + .5rem);
+        }
+  
+        + label::before {
+          width: calc(#{$switch-height-lg} * 2);
+        }
+  
+        + label::after {
+          width: calc(#{$switch-height-lg} - calc(#{$switch-thumb-padding} * 2));
+          height: calc(#{$switch-height-lg} - calc(#{$switch-thumb-padding} * 2));
+        }
+  
+        &:checked + label::after {
+          margin-left: $switch-height-lg;
+        }
+      }
+    }
+  
+    + .switch {
+      margin-left: 1rem;
+    }
+  
+    // MAIN COLOR VARIATION
+    &.switch-normal {
+      input {
+          &:checked + label::before {
+              background-color: $primary;
+          }
+      }
+    }
+    // PRIMARY LIGHT COLOR VARIATION
+    &.switch-dark {
+      input {
+          &:checked + label::before {
+              background-color: $primary-dark;
+          }
+      }
+    }
+    // PRIMARY LIGHT COLOR VARIATION
+    &.switch-light {
+      input {
+          &:checked + label::before {
+              background-color: $primary-light;
+          }
+      }
+    }
+  
   }
-
-}
-////////////////////////
+  ////////////////////////
 
 //////////////////////SNACK BAR PERSONAL CLASSES///////////////////////////
 .p-snackbar-layout {
@@ -2498,3 +2545,88 @@ input[type=text], input[type=password], input[type=email], input[type=number], i
     }
 }
 ///////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////--BEGIN RESPONSIVE LAYOUT--////////////////////////////////////////
+#reponsive-layout {
+    display: block;
+
+    @include MQ(M) {
+        display: none;
+    }
+}
+
+.p-home-web-view {
+
+    @include MQ(M) {
+        .map-web {
+            width: 65%;
+        }
+        .pub-web {
+            width: 35%;
+        }
+    }
+
+    @include MQ(L) {
+        .map-web {
+            width: 75%;
+        }
+        .pub-web {
+            width: 25%;
+        }
+    }
+}
+/////////////////////////////////////////--END RESPONSIVE LAYOUT--//////////////////////////////////////////
+
+/////////////////////////////////////////--BEGIN OFFLINE STYLES--//////////////////////////////////////////
+.offline-status {
+    background-color: $primary-light !important;
+    
+    > div {
+        font-size: .9rem;
+    }
+    * {
+        color: $primary-dark;
+    }
+
+    &.status-float {
+        position: absolute;
+        z-index: 1;
+        top: 100%;
+        left: 0;
+    }
+    &.status-float::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 14px;
+        width: 0;
+        height: 0;
+        border: 8px solid transparent;
+        border-bottom-color: $primary-light;
+        border-top: 0;
+        margin-left: -8px;
+        margin-top: -8px;
+    }
+    &.status-rel-comment::before {
+        left: 12px;
+    }
+}
+
+.offline-tasks {
+    a {
+        fa, span {
+            color: $custom-control-indicator-bg !important; 
+        }
+    }
+}
+
+.p-unavaliable {
+    width: 230px;
+    height: 230px;
+    overflow: hidden;
+    border-radius: 50%;
+    -webkit-box-shadow: 4px 4px 7px 2px rgba(0,0,0,0.2) !important;
+    -moz-box-shadow: 4px 4px 7px 2px rgba(0,0,0,0.2) !important;
+    box-shadow: 4px 4px 7px 2px rgba(0,0,0,0.2) !important;
+}
+/////////////////////////////////////////--END OFFLINE STYLES--//////////////////////////////////////////
