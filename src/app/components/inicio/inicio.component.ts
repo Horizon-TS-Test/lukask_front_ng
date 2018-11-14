@@ -20,6 +20,7 @@ import { OwnPubsService } from 'src/app/services/own-pubs.service';
 import { UserService } from 'src/app/services/user.service';
 
 declare var $: any;
+declare var device: any;
 
 @Component({
   selector: 'app-inicio',
@@ -44,6 +45,7 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   public webViewPort: boolean;
   public askforMorePubs: boolean;
   public isAdmin: boolean;
+  public isNative: boolean;
 
   constructor(
     private _domSanitizer: DomSanitizer,
@@ -61,6 +63,8 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.isNativeApp();
+
     ////RESPONSIVE INDICATOR:
     this.manageResponsiveViewPort();
     ////
@@ -71,6 +75,15 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.initCarousel();
     this.paymentSocketUpdate();
+  }
+
+  /**
+   * METODO PARA DETECTAR SI EL APP ESTA DESPLEGADA EN FORMA DE APP MOVIL NATIVA:
+   */
+  private isNativeApp() {
+    document.addEventListener("deviceready", () => {
+      this.isNative = device.platform ? true : false;
+    }, false);
   }
 
   /**

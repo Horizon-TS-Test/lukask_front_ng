@@ -1,5 +1,8 @@
-<section class="personal-content min-height-full p-overflow-hidden personal-fadeout py-0 d-flex flex-column justify-content-start align-items-center"
-  id="homeContainer">
+<section class="personal-content p-overflow-hidden personal-fadeout py-0 d-flex flex-column justify-content-start align-items-center"
+  id="homeContainer" [ngClass]="{
+    'min-height-full-modal': isNative,
+    'min-height-full': !isNative
+  }">
   <home-panel class="w-100" [checkedInput]="touchDrag" (switchChange)="getSwitchChanges($event)"></home-panel>
 
   <ng-container *ngIf="webViewPort">

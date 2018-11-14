@@ -1,5 +1,9 @@
 <div class="portada-fixed"></div>
-<section class="personal-content min-height-full w-100 d-flex justify-content-center align-items-center" id="personal-portada">
+<section class="personal-content w-100 d-flex justify-content-center align-items-center" id="personal-portada"
+  [ngClass]="{
+  'min-height-full-modal': isNative,
+  'min-height-full': !isNative
+}">
   <div class="personal-init cd-intro-content mask text-center w-100">
     <div class="content-up">
       <!-- THIS CONTENT IS JUST FOR THE LOGO -->
