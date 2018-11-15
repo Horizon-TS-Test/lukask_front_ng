@@ -667,7 +667,6 @@ export class QuejaService implements OnDestroy {
     this.deleteOffPubAsoc(newPub);
     //PARA NOTIFICAR AL COMPONENTE QUE RECIBE LAS PUBLICACIONES PROPIAS EL USUARIO LOGGEADO:
     if (notifiyOwnPubListener) {
-      console.log("action", action);
       this.ownPubUpdateSubject.next({ lastPub: lastPub, newPub: newPub, action: action });
     }
     ////

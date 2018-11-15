@@ -6,10 +6,10 @@ import { Province } from '../../models/province';
 import { UserService } from '../../services/user.service';
 import { User } from '../../models/user';
 import { claimType } from '../../interfaces/claim-type.interface';
-import claimTypes from '../../data/claim-type';
 import { BarrioInterface } from '../../interfaces/barrio-data.interface';
 import barrioData from '../../data/barrio-data';
 import { LocationService } from 'src/app/services/location.service';
+import { EersaLocation } from 'src/app/models/eersa-location';
 
 @Component({
   selector: 'claim-location-frm',
@@ -17,16 +17,12 @@ import { LocationService } from 'src/app/services/location.service';
   styleUrls: ['./claim-location-frm.component.css']
 })
 export class ClaimLocationFrmComponent implements OnInit {
-
-  private selecTypeClaim: string;
   private province: string;
   private canton: string;
   private parroquia: string;
-  private barrio: string;
-  
+
   public userObj: User;
-  public claimTypeList: claimType[];
-  public claimTypeSelect: Select2[];
+  public eersaLocation: EersaLocation;
 
   public provinceList: Province[];
   public provinceSelect: Select2[];
@@ -44,13 +40,9 @@ export class ClaimLocationFrmComponent implements OnInit {
 
   ngOnInit() {
     this.userObj = this._userService.getUserProfile();
-    //PROVISIONAL:
-    this.claimTypeList = claimTypes;
-    this.claimTypeSelect = [];
-    for (let cType of this.claimTypeList) {
-      this.claimTypeSelect.push({ value: cType.claimTypeId, data: cType.description });
-    }
+    this.eersaLocation = new EersaLocation(null, 0, null);
 
+    //PROVISIONAL:
     this.barrioList = barrioData;
     this.barrioSelect = [];
     for (let barrio of this.barrioList) {
@@ -87,14 +79,6 @@ export class ClaimLocationFrmComponent implements OnInit {
       }
     });
 
-  }
-
-  /**
-   * MÉTODO QUE CAPTURA LOS TIPOS DE RECLAMO DESDE EL SELECT
-   * @param event 
-   */
-  getTypeSelect(event: string) {
-    this.selecTypeClaim = event;
   }
 
   /**
@@ -175,8 +159,8 @@ export class ClaimLocationFrmComponent implements OnInit {
    * MÉTODO QUE CAPTURA EL BARRIO DESDE EL SELECT
    * @param event 
    */
-  getbarrioSelect(event: string) {
-    this.barrio = event;
+  getbarrioSelect(event: number) {
+    this.eersaLocation.idbarrio = event;
   }
 
 }

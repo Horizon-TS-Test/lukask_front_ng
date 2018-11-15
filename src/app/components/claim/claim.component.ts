@@ -2,6 +2,7 @@ import { Component, OnInit, Output, Input, EventEmitter } from '@angular/core';
 import { HorizonButton } from '../../interfaces/horizon-button.interface';
 import { ACTION_TYPES } from '../../config/action-types';
 import * as Snackbar from 'node-snackbar';
+import { EersaClaim } from 'src/app/models/eersa-claim';
 
 declare var $: any;
 
@@ -18,7 +19,7 @@ export class ClaimComponent implements OnInit {
   private nextBtnColor: string;
   private nextBtnIcon: string;
   private initStream: boolean;
-  
+
   public aceptedTerms: boolean;
   public matButtons: HorizonButton[];
   public loadingClass: string;
@@ -27,6 +28,8 @@ export class ClaimComponent implements OnInit {
   public selectedCause: string;
   public currentStep: number;
   public reqSubmit: number;
+
+  public eersaClaim: EersaClaim;
 
   constructor() {
     this.currentStep = 0;
@@ -185,6 +188,15 @@ export class ClaimComponent implements OnInit {
     }
     this.initStream = event;
     this.initButtons();
+  }
+
+  /**
+   * METODO PARA OBTENER LOS DATOS DE LA QUEJA EERSA
+   * @param event VALOR DEL EVENT EMITTER QUE LLEGA DESDE EL COMPONENTE HIJO CLAIM DETAL
+   */
+  public getEersaClaim(event: EersaClaim) {
+    this.eersaClaim = event;
+    console.log("UPCOMING this.eersaClaim", this.eersaClaim);
   }
 
 }

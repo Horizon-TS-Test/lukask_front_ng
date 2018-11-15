@@ -2488,7 +2488,9 @@ input[type=text], input[type=password], input[type=email], input[type=number], i
 ////////////////////////////////SHORT PUB//////////////////////////////////
 .short-img-pub {
     position: relative;
+    overflow: hidden;
     width: 45%;
+    max-height: 120px;
     object-fit: cover;
 
     span {

@@ -6,28 +6,70 @@
   <ul class="list-group list-group-flush pb-0">
 
     <li class="list-group-item d-flex justify-content-between align-items-start">
-      <fa name="user" class="mr-1"></fa>
-      <div class="ml-2 f-child-no-auto">{{ userData.person.name }} {{ userData.person.last_name }}</div>
+      <div class="row">
+        <fa name="id-badge" class="col-1"></fa>
+        <div class="col-11 f-child-no-auto">
+          <strong>Cuenta:</strong> {{ eersaCliente.nCuenta }}
+        </div>
+      </div>
     </li>
 
     <li class="list-group-item d-flex justify-content-between align-items-start">
-      <span class="p-primary-text-color personal-site-icon mr-1">y</span>
-      <div class="ml-2 f-child-no-auto">{{ userData.person.identification_card }}</div>
+      <div class="row">
+        <fa name="bolt" class="col-1"></fa>
+        <div class="col-11 f-child-no-auto">
+          <strong>Medidor:</strong> {{ eersaCliente.nMedidor }}
+        </div>
+      </div>
     </li>
 
     <li class="list-group-item d-flex justify-content-between align-items-start">
-      <fa name="phone" class="mr-1"></fa>
-      <div class="ml-2 f-child-no-auto">{{ userData.person.telephone }}</div>
+      <div class="row">
+        <fa name="user" class="col-1"></fa>
+        <div class="col-11 f-child-no-auto">
+          <strong>Cliente:</strong> {{ eersaCliente.user.person.name }} {{ eersaCliente.user.person.last_name }}
+        </div>
+      </div>
     </li>
 
     <li class="list-group-item d-flex justify-content-between align-items-start">
-      <fa name="mobile" class="icon-xs mr-1"></fa>
-      <div class="ml-2 f-child-no-auto">{{ userData.person.cell_phone }}</div>
+      <div class="row">
+
+        <span class="p-primary-text-color personal-site-icon col-1">y</span>
+        <div class="col-11 f-child-no-auto">
+          <strong>Cédula:</strong> {{ eersaCliente.user.person.identification_card }}
+        </div>
+      </div>
     </li>
 
     <li class="list-group-item d-flex justify-content-between align-items-start">
-      <fa name="envelope" class="mr-1"></fa>
-      <div class="ml-2 f-child-no-auto">{{ userData.username }}</div>
+      <div class="row">
+
+        <fa name="phone" class="col-1"></fa>
+        <div class="col-11 f-child-no-auto">
+          <strong>Teléfono:</strong> {{ eersaCliente.user.person.telephone }}
+        </div>
+      </div>
+    </li>
+
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div class="row">
+
+        <fa name="mobile" class="icon-xs col-1"></fa>
+        <div class="col-11 f-child-no-auto">
+          <strong>Celular:</strong> {{ eersaCliente.user.person.cell_phone }}
+        </div>
+      </div>
+    </li>
+
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div class="row">
+
+        <fa name="envelope" class="col-1"></fa>
+        <div class="col-11 f-child-no-auto">
+          <strong>E-mail:</strong> {{ eersaCliente.user.username }}
+        </div>
+      </div>
     </li>
 
   </ul>

@@ -11,6 +11,11 @@ import { Media } from '../../models/media';
 import { MediaFile } from '../../interfaces/media-file.interface';
 import { OnSubmit } from '../../interfaces/on-submit.interface';
 import { GpsService } from 'src/app/services/gps.service';
+import { claimType } from 'src/app/interfaces/claim-type.interface';
+import claimTypes from '../../data/claim-type';
+import { EersaClaim } from 'src/app/models/eersa-claim';
+import { EersaClient } from 'src/app/models/eersa-client';
+import { EersaLocation } from 'src/app/models/eersa-location';
 
 declare var $: any;
 
@@ -23,15 +28,24 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() mediaFiles: MediaFile[];
   @Input() submit: number;
   @Input() isStreamPub: boolean;
+
+  @Input() eersaClient: EersaClient;
+  @Input() eersaLocation: EersaLocation;
+
   @Output() afterSubmit = new EventEmitter<OnSubmit>();
 
   private quejaType: string;
   private newPub: Publication;
   private _gps: Gps;
+  private eersaClaim: EersaClaim;
 
   public tipoQuejaSelect: Select2[];
   public quejaTypeList: QuejaType[];
+  public claimTypeList: claimType[];
+  public claimTypeSelect: Select2[];
+
   public formPub: FormGroup;
+  public _localDate: string;
   public _locationCity: string;
   public _locationAdress: string;
 
@@ -48,6 +62,9 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges {
 
   ngOnInit() {
     this.formPub = this.setFormGroup();
+    this.getEersaClaimType();
+    this.defineEersaClaim();
+    this.getLocalDate();
   }
 
   ngAfterViewInit() {
@@ -174,6 +191,10 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges {
     }
   }
 
+  private getLocalDate() {
+    this._localDate = DateManager.getStringDate();
+  }
+
   /**
    * MÉTODO PARA DETECTAR LOS CAMBIOS DE UNA PROPIEDAD INYECTADA DESDE EL COMPONENTE PADRE DE ESTE COMPONENTE:
    * @param changes LOS CAMBIOS GENERADOS
@@ -202,4 +223,32 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges {
     }
   }
 
+  /**********************************PARA RECLAMO EERSA*******************************************************/
+  /***********************************************************************************************************/
+
+  /**
+   * METODO PARA DEFINI EL OBJETO EERSA CLAIM:
+   */
+  private defineEersaClaim() {
+    this.eersaClaim = new EersaClaim(null, this.eersaClient, this.eersaLocation, null, null);
+  }
+
+  /**
+   * METODO PARA OBTENER LOS DATOS DEL TIPO DE RECLAMO DEL SISTEMA DE EERSA:
+   */
+  private getEersaClaimType() {
+    this.claimTypeList = claimTypes;
+    this.claimTypeSelect = [];
+    for (let cType of this.claimTypeList) {
+      this.claimTypeSelect.push({ value: cType.claimTypeId, data: cType.description });
+    }
+  }
+
+  /**
+   * MÉTODO QUE CAPTURA LOS TIPOS DE RECLAMO DESDE EL SELECT
+   * @param event 
+   */
+  public getTypeSelect(event: number) {
+    this.eersaClaim.idTipo = event;
+  }
 }

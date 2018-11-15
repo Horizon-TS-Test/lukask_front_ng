@@ -10,11 +10,11 @@
     </div>
 
     <div class="personal-carousel next" id="claimDetail">
-      <claim-detail *ngIf="currentStep == 1"></claim-detail>
+      <claim-detail *ngIf="currentStep == 1" (onEersaClaim)="getEersaClaim($event)"></claim-detail>
     </div>
 
     <div class="personal-carousel next" id="customPub">
-      <new-pub *ngIf="currentStep == 2" [isChildPub]="true" [reqSubmit]="reqSubmit" [showClass]="showClass" (streamPub)="oInitStream($event)" (closeModal)="close($event)"></new-pub>
+      <new-pub *ngIf="currentStep == 2" [eersaClaim]="eersaClaim" [isChildPub]="true" [reqSubmit]="reqSubmit" [showClass]="showClass" (streamPub)="oInitStream($event)" (closeModal)="close($event)"></new-pub>
     </div>
 
     <material-btn-list [showClass]="showClass" [materialBtns]="matButtons" (someBtnAction)="getButtonAction($event)"></material-btn-list>

@@ -11,8 +11,9 @@ const _MAX_MINUTES: number = 60;
 const _MAX_SECONDS: number = 60;
 const _TEXT_FORMAT: string = "Hace "
 
-export class DateManager {
+const _MONTHS: any = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
+export class DateManager {
     constructor() { }
 
     /**
@@ -25,21 +26,30 @@ export class DateManager {
     }
 
     /**
+     * MÉTODO PARA OBTENER LA FECHA ACTUAL EN LENGUAJE COLOQUIAL:
+     */
+    public static getStringDate() {
+        var date = new Date();
+        var str = date.getDate() + " de " + _MONTHS[date.getMonth()] + " de " + date.getFullYear() + ", " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+        return str;
+    }
+
+    /**
      * MÉTODO PARA FORMATO DE FECHAS EN LENGUAJE COLOQUIAL
      * @param date 
      */
     public static makeDateCool(date: string) {
         //Eliminamos caracteres de la fecha.
         date = date.replace("T", " ").replace("Z", " ");
-        
+
         //Inicializamos variables para los calculos
         let currentDate = moment(new Date, "YYYY-MM-DD H:mm:ss").locale("es");
         let localDateData = moment(date, "YYYY-MM-DD H:mm:ss").locale("es");
-        
+
         //Encontramos la cantidad de segundos transcuridos segun la fecha actual a la fecha registrada
         let diff = currentDate.diff(localDateData, 'seconds');
         let textTime: string;
-        
+
         if (diff < _MAX_SECONDS) {
             return "Hace pocos segundos"
         }

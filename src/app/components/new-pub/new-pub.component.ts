@@ -8,8 +8,8 @@ import * as Snackbar from 'node-snackbar';
 import { Router } from '@angular/router';
 import { CONTENT_TYPES } from 'src/app/config/content-type';
 import { DynaContentService } from 'src/app/services/dyna-content.service';
-import { User } from 'src/app/models/user';
 import { UserService } from 'src/app/services/user.service';
+import { EersaClaim } from 'src/app/models/eersa-claim';
 
 @Component({
   selector: 'new-pub',
@@ -20,6 +20,8 @@ export class NewPubComponent implements OnInit, OnChanges {
   @Input() showClass: string;
   @Input() isChildPub: boolean;
   @Input() reqSubmit: number;
+  @Input() eersaClaim: EersaClaim;
+
   @Output() closeModal: EventEmitter<boolean>;
   @Output() streamPub: EventEmitter<boolean>;
 
@@ -174,6 +176,11 @@ export class NewPubComponent implements OnInit, OnChanges {
           if (changes[property].currentValue) {
             this.reqSubmit = changes[property].currentValue;
             this.requestSubmit(this.reqSubmit);
+          }
+        case 'eersaClaim':
+          if (changes[property].currentValue) {
+            console.log('eersaClaim: ', this.eersaClaim);
+            this.eersaClaim = changes[property].currentValue;
           }
           break;
       }
