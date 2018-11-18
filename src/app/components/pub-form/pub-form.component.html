@@ -12,7 +12,7 @@
     </li>
 
     <li class="list-group-item d-flex justify-content-between align-items-start">
-      <div class="row">
+      <div class="row w-100">
         <fa name="map-marker" class="col-1"></fa>
         <div class="col-11 f-child-no-auto">
           <strong>Ciudad: </strong> {{ _locationCity }}
@@ -21,10 +21,10 @@
     </li>
 
     <li class="list-group-item d-flex justify-content-between align-items-start">
-      <div class="row">
+      <div class="row w-100">
         <fa name="location-arrow" class="col-1"></fa>
         <div class="col-11 f-child-no-auto">
-          <strong>Calle: </strong> {{ _locationAdress }}
+          <strong>Calle: </strong> {{ _locationAddress }}
         </div>
       </div>
       <button type="button" id="hidden-btn" style="display:none">
@@ -32,13 +32,24 @@
       </button>
     </li>
 
-    <!--li class="list-group-item">
-      <fa name="bullhorn"></fa>
-      <app-select2-bootstrap class="col-11" [fcName]="'quejaType'" [select2Data]="tipoQuejaSelect" (select2Change)="getSelect2Value($event)"></app-select2-bootstrap>
-    </li-->
+    <li *ngIf="!eersaLocClient" class="list-group-item d-flex justify-content-between align-items-start pt-2 pb-0">
+      <div class="row w-100">
+        <fa name="bullhorn" class="col-1"></fa>
 
-    <li class="list-group-item d-flex justify-content-between align-items-start pb-0">
-      <div class="row">
+        <div class="col-11 f-child-no-auto">
+          <strong>Tipo:</strong>
+        </div>
+
+        <div class="ml-3 col-12 form-group row pb-0">
+          <div class="col-12">
+            <app-select2-bootstrap [fcName]="'quejaType'" [select2Data]="tipoQuejaSelect" (select2Change)="getSelect2Value($event)"></app-select2-bootstrap>
+          </div>
+        </div>
+      </div>
+    </li>
+
+    <li *ngIf="eersaLocClient" class="list-group-item d-flex justify-content-between align-items-start pt-2 pb-0">
+      <div class="row w-100">
         <fa name="bullhorn" class="col-1"></fa>
 
         <div class="col-11 f-child-no-auto">
@@ -56,8 +67,8 @@
     <li class="list-group-item pb-0">
       <div class="form-group row col-12 pb-0">
         <div class="col-10 pb-0">
-          <textarea name="detail" formControlName="fcnDetail" class="form-control pb-0" cols="30" rows="5" required
-            placeholder="Detalle su reclamo"></textarea>
+          <textarea name="detail" formControlName="fcnDetail" (keyup)="onDetailChange($event)" class="form-control pb-0"
+            cols="30" rows="5" required placeholder="{{ eersaLocClient ? 'Detalle su reclamo' : 'Detalle su publicación'}}"></textarea>
         </div>
       </div>
     </li>

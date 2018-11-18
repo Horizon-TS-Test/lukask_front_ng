@@ -6,10 +6,12 @@ import { MediaFile } from '../../interfaces/media-file.interface';
 import { DomSanitizer } from '../../../../node_modules/@angular/platform-browser';
 import { ACTION_TYPES } from '../../config/action-types';
 import { OnSubmit } from '../../interfaces/on-submit.interface';
-import * as Snackbar from 'node-snackbar';
 import { DynaContentService } from 'src/app/services/dyna-content.service';
 import { ASSETS } from 'src/app/config/assets-url';
 import { CordovaCameraService } from 'src/app/services/cordova-camera.service';
+import { EersaClient } from 'src/app/models/eersa-client';
+import { EersaLocation } from 'src/app/models/eersa-location';
+import * as Snackbar from 'node-snackbar';
 
 @Component({
   selector: 'edit-queja',
@@ -21,7 +23,9 @@ export class EditQuejaComponent implements OnDestroy, OnInit, OnChanges {
   @Input() isChildPub: boolean;
   @Input() submit: number;
   @Input() isStreamPub: number;
+  @Input() eersaLocClient: { eersaClient: EersaClient, eersaLocation: EersaLocation };
   @Output() afterSubmit = new EventEmitter<OnSubmit>();
+  @Output() validForm = new EventEmitter<boolean>();
 
   private subscription: Subscription;
 
@@ -176,6 +180,14 @@ export class EditQuejaComponent implements OnDestroy, OnInit, OnChanges {
   }
 
   /**
+   * MÉTODO PARA REALIZAR UN PROCESO EN LA INTERFAZ DESPUÉS DE RECIBIR LA RESPUESTA DEL POST DE UNA PUBLICACIÓN:
+   * @param event VALOR INDICATIVO DE QUE EL SUBMIT HA SIDO PROCESADO. OBJETO EVENT EMITTER
+   */
+  public processAfterSubmit(event: OnSubmit) {
+    this.afterSubmit.emit(event);
+  }
+
+  /**
    * MÉTODO PARA DETECTAR LOS CAMBIOS DE UNA PROPIEDAD INYECTADA DESDE EL COMPONENTE PADRE DE ESTE COMPONENTE:
    * @param changes LOS CAMBIOS GENERADOS
    */
@@ -196,16 +208,13 @@ export class EditQuejaComponent implements OnDestroy, OnInit, OnChanges {
             this.isStreamPub = changes[property].currentValue;
           }
           break;
+        case 'eersaLocClient':
+          if (changes[property].currentValue) {
+            this.eersaLocClient = changes[property].currentValue;
+          }
+          break;
       }
     }
-  }
-
-  /**
-   * MÉTODO PARA REALIZAR UN PROCESO EN LA INTERFAZ DESPUÉS DE RECIBIR LA RESPUESTA DEL POST DE UNA PUBLICACIÓN:
-   * @param event VALOR INDICATIVO DE QUE EL SUBMIT HA SIDO PROCESADO. OBJETO EVENT EMITTER
-   */
-  public processAfterSubmit(event: OnSubmit) {
-    this.afterSubmit.emit(event);
   }
 
   ngOnDestroy() {
@@ -213,4 +222,11 @@ export class EditQuejaComponent implements OnDestroy, OnInit, OnChanges {
     this.subscription.unsubscribe();
   }
 
+  /**
+   * METODO PARA DETECTAR QUE EL FORMULARIO DE QUEJA/RECLAMO ES VÁLIDO
+   * @param event VALOR QUE VIENE DEL OBJETO EVENT EMITTER:
+   */
+  public onValidForm(event: boolean) {
+    this.validForm.emit(event);
+  }
 }

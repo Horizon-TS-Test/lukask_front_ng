@@ -439,7 +439,7 @@ export class QuejaService implements OnDestroy {
    * MÉTODO PARA CREAR UN OBJETO DE TIPO FORM DATA A PARTIR DE UNO DE TIPO PUBLICACION
    * @param queja 
    */
-  mergeFormData(queja: Publication) {
+  public mergeFormData(queja: Publication) {
     let formData = new FormData();
 
     formData.append('latitude', queja.latitude + "");
@@ -644,7 +644,7 @@ export class QuejaService implements OnDestroy {
    * @param pubJson JSON COMMING FROM THE SOCKET.IO SERVER OR AS A NORMAL HTTP RESPONSE:
    * @param action THIS CAN BE CREATE, UPDATE OR DELETE:
    */
-  private updatePubList(pubJson: any, action: string, notifiyOwnPubListener: boolean = true) {
+  public updatePubList(pubJson: any, action: string, notifiyOwnPubListener: boolean = true) {
     let lastPub: Publication, newPub: Publication;
     let isDeleted: boolean = false;
 

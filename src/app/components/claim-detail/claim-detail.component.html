@@ -1,5 +1,4 @@
 <div class="personal-content py-1 px-4">
-  <claim-user-data></claim-user-data>
-
-  <claim-location-frm></claim-location-frm>
+  <claim-user-data (onReceiveClient)="getClientData($event)"></claim-user-data>
+  <claim-location-frm (onReceiveLocation)="getLocationData($event)"></claim-location-frm>
 </div>

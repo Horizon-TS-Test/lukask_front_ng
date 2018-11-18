@@ -1,4 +1,4 @@
 export interface claimType {
-    claimTypeId: string;
+    claimTypeId: number;
     description: string;
 }

@@ -1,11 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { Select2 } from '../../interfaces/select2.interface';
 import { Canton } from '../../models/canton';
 import { Parroquia } from '../../models/parroquia';
 import { Province } from '../../models/province';
 import { UserService } from '../../services/user.service';
 import { User } from '../../models/user';
-import { claimType } from '../../interfaces/claim-type.interface';
 import { BarrioInterface } from '../../interfaces/barrio-data.interface';
 import barrioData from '../../data/barrio-data';
 import { LocationService } from 'src/app/services/location.service';
@@ -17,6 +16,8 @@ import { EersaLocation } from 'src/app/models/eersa-location';
   styleUrls: ['./claim-location-frm.component.css']
 })
 export class ClaimLocationFrmComponent implements OnInit {
+  @Output() onReceiveLocation: EventEmitter<EersaLocation>;
+
   private province: string;
   private canton: string;
   private parroquia: string;
@@ -36,19 +37,14 @@ export class ClaimLocationFrmComponent implements OnInit {
   constructor(
     private _userService: UserService,
     private _locationService: LocationService
-  ) { }
+  ) {
+    this.onReceiveLocation = new EventEmitter<EersaLocation>();
+  }
 
   ngOnInit() {
     this.userObj = this._userService.getUserProfile();
     this.eersaLocation = new EersaLocation(null, 0, null);
-
-    //PROVISIONAL:
-    this.barrioList = barrioData;
-    this.barrioSelect = [];
-    for (let barrio of this.barrioList) {
-      this.barrioSelect.push({ value: barrio.barrioId, data: barrio.description });
-    }
-    ////
+    this.getBarrio();
   }
 
   ngAfterViewInit() {
@@ -61,7 +57,7 @@ export class ClaimLocationFrmComponent implements OnInit {
   /**
    * MÉTODO QUE TRAE LAS PROVINCIAS EXISTENTES EN EL SISTEMA
    */
-  getProvince() {
+  private getProvince() {
     this.provinceSelect = [];
 
     this._locationService.getProvinceList().then((qProvinces) => {
@@ -85,7 +81,7 @@ export class ClaimLocationFrmComponent implements OnInit {
    * MÉTODO QUE CAPTURA LA PROVINCIA DESDE EL SELECT
    * @param event 
    */
-  getProvinciaSelect(event: string) {
+  public getProvinciaSelect(event: string) {
     this.province = event;
     this.cantonSelect = [];
     this.parroquiaSelect = [];
@@ -98,7 +94,7 @@ export class ClaimLocationFrmComponent implements OnInit {
   /**
    * MÉTODO QUE TRAE LAS PROVINCIAS EXISTENTES EN EL SISTEMA
    */
-  getCanton(id_provincia: any) {
+  private getCanton(id_provincia: any) {
     this.cantonSelect = [];
 
     this._locationService.getCantonList(id_provincia).then((qCantones) => {
@@ -122,7 +118,7 @@ export class ClaimLocationFrmComponent implements OnInit {
  * MÉTODO QUE CAPTURA LA PROVINCIA DESDE EL SELECT
  * @param event 
  */
-  getCantonSelect(event: string) {
+  public getCantonSelect(event: string) {
     this.canton = event;
     this.parroquiaSelect = [];
     this.parroquia = "";
@@ -132,7 +128,7 @@ export class ClaimLocationFrmComponent implements OnInit {
   /**
    * MÉTODO QUE TRAE LAS PROVINCIAS EXISTENTES EN EL SISTEMA
    */
-  getParroquia(id_canton: any) {
+  private getParroquia(id_canton: any) {
     this.parroquiaSelect = [];
     this._locationService.getParroquiaList(id_canton).then((qParroquia: Parroquia[]) => {
       this.parroquiaList = qParroquia;
@@ -151,16 +147,37 @@ export class ClaimLocationFrmComponent implements OnInit {
    * MÉTODO QUE CAPTURA LA PROVINCIA DESDE EL SELECT
    * @param event 
    */
-  getParroquiaSelect(event: string) {
+  public getParroquiaSelect(event: string) {
     this.parroquia = event;
+  }
+
+  /**
+   * METODO PARA OBTENER LA LISTA DE BARRIOS DE UNA PARRQUIA:
+   */
+  private getBarrio() {
+    //PROVISIONAL:
+    this.barrioList = barrioData;
+    this.barrioSelect = [];
+    for (let barrio of this.barrioList) {
+      this.barrioSelect.push({ value: barrio.barrioId + "", data: barrio.description });
+    }
+    this.getBarrioSelect(this.barrioList[0].barrioId);
+    ////
   }
 
   /**
    * MÉTODO QUE CAPTURA EL BARRIO DESDE EL SELECT
    * @param event 
    */
-  getbarrioSelect(event: number) {
-    this.eersaLocation.idbarrio = event;
+  public getBarrioSelect(event: number) {
+    this.eersaLocation.idBarrio = event;
+    this.onReceiveLocation.emit(this.eersaLocation);
   }
 
+  /**
+   * METODO PARA DETECTAR EL CAMBIO DE VALOR DEL ATRIBUTO REFERENCIA
+   */
+  public onChangeRef(event: any) {
+    this.onReceiveLocation.emit(this.eersaLocation);
+  }
 }

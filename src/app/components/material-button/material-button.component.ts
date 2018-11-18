@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { HorizonButton } from '../../interfaces/horizon-button.interface';
+import { BTN_APPAREANCE } from 'src/app/config/button-appearance';
 
 @Component({
   selector: 'material-button',
@@ -10,8 +11,11 @@ export class MaterialButtonComponent implements OnInit, OnChanges {
   @Input() buttonMeta: HorizonButton;
   @Output() buttonAction: EventEmitter<number>;
 
+  public btnAppearance: any;
+
   constructor() {
     this.buttonAction = new EventEmitter<number>();
+    this.btnAppearance = BTN_APPAREANCE;
   }
 
   ngOnInit() {

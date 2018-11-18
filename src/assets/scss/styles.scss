@@ -440,6 +440,9 @@ p, label, div {
 .p-overflow-hidden {
     overflow: hidden;
 }
+.p-overflow-x-hidden {
+    overflow-x: hidden !important;
+}
 ////
 
 .icon-size-5 {
@@ -1583,11 +1586,11 @@ p, label, div {
     display: flex !important;
     justify-content: center;
     align-items: center;
-    border-color: $primary !important;
+    border-color: $primary-dark !important;
     width: $material-btn-wh;
     height: $material-btn-wh;
     border-radius: 50% !important;
-    background: $primary !important;
+    background: $primary-dark !important;
     -webkit-box-shadow: 1px 2px 4px 2px rgba(0,0,0,0.2) !important;
     -moz-box-shadow: 1px 2px 4px 2px rgba(0,0,0,0.2) !important;
     box-shadow: 1px 2px 4px 2px rgba(0,0,0,0.2) !important;
@@ -1595,9 +1598,21 @@ p, label, div {
     fa, span {
         color: $secondary-text !important;
     }
+    &.custom-btn-light {
+        background: $primary-light !important;
+        border-color: $primary-light !important;
+    }
     &.custom-btn-normal {
         background: $primary !important;
         border-color: $primary !important;
+    }
+    &.custom-btn-dark {
+        background: $primary-dark !important;
+        border-color: $primary-dark !important;
+    }
+    &.custom-btn-sec {
+        background: $primary-text !important;
+        border-color: $primary-text !important;
     }
 }
 .p-sec-btn {

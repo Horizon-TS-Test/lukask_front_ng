@@ -4,12 +4,14 @@ import { ACTION_TYPES } from '../../config/action-types';
 import { OnSubmit } from '../../interfaces/on-submit.interface';
 import { Alert } from '../../models/alert';
 import { ALERT_TYPES } from '../../config/alert-types';
-import * as Snackbar from 'node-snackbar';
 import { Router } from '@angular/router';
 import { CONTENT_TYPES } from 'src/app/config/content-type';
 import { DynaContentService } from 'src/app/services/dyna-content.service';
 import { UserService } from 'src/app/services/user.service';
-import { EersaClaim } from 'src/app/models/eersa-claim';
+import { EersaClient } from 'src/app/models/eersa-client';
+import { EersaLocation } from 'src/app/models/eersa-location';
+import { BTN_APPAREANCE } from 'src/app/config/button-appearance';
+import * as Snackbar from 'node-snackbar';
 
 @Component({
   selector: 'new-pub',
@@ -20,10 +22,11 @@ export class NewPubComponent implements OnInit, OnChanges {
   @Input() showClass: string;
   @Input() isChildPub: boolean;
   @Input() reqSubmit: number;
-  @Input() eersaClaim: EersaClaim;
+  @Input() eersaLocClient: { eersaClient: EersaClient, eersaLocation: EersaLocation };
 
   @Output() closeModal: EventEmitter<boolean>;
   @Output() streamPub: EventEmitter<boolean>;
+  @Output() validForm = new EventEmitter<boolean>();
 
   public initStream: boolean;
   public hideActionBtns: boolean;
@@ -56,23 +59,27 @@ export class NewPubComponent implements OnInit, OnChanges {
    * MÉTODO PARA INICIALIZAR LOS BOTONES A USAR:
    */
   private initButtons() {
-    this.matButtons = [
-      {
-        action: ACTION_TYPES.submitPub,
-        icon: 'check',
-        class: 'custom-btn-normal animated-btn-h animate-in'
-      },
-      {
-        action: ACTION_TYPES.pubStream,
-        icon: 'f',
-        customIcon: true,
-        class: 'custom-btn-normal animated-btn-h'
-      },
-      {
-        action: ACTION_TYPES.close,
-        icon: 'close'
-      }
-    ];
+    if (!this.isChildPub) {
+      this.matButtons = [
+        {
+          action: ACTION_TYPES.submitPub,
+          icon: 'check',
+          class: 'custom-btn-normal animated-btn-h animate-in',
+          appearance: BTN_APPAREANCE.normal
+        },
+        {
+          action: ACTION_TYPES.pubStream,
+          icon: 'f',
+          customIcon: true,
+          class: 'custom-btn-normal animated-btn-h',
+          appearance: BTN_APPAREANCE.normal
+        },
+        {
+          action: ACTION_TYPES.close,
+          icon: 'close'
+        }
+      ];
+    }
   }
 
   /**
@@ -161,33 +168,6 @@ export class NewPubComponent implements OnInit, OnChanges {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LOS CAMBIOS QUE SE DEN EN EL ATRIBUTO QUE VIENE DESDE EL COMPONENTE PADRE:
-   * @param changes 
-   */
-  ngOnChanges(changes: SimpleChanges) {
-    for (const property in changes) {
-      switch (property) {
-        case 'showClass':
-          if (changes[property].currentValue !== undefined) {
-            this.showClass = changes[property].currentValue;
-          }
-          break;
-        case 'reqSubmit':
-          if (changes[property].currentValue) {
-            this.reqSubmit = changes[property].currentValue;
-            this.requestSubmit(this.reqSubmit);
-          }
-        case 'eersaClaim':
-          if (changes[property].currentValue) {
-            console.log('eersaClaim: ', this.eersaClaim);
-            this.eersaClaim = changes[property].currentValue;
-          }
-          break;
-      }
-    }
-  }
-
-  /**
    * MÉTODO PARA SOLICITAR AL COMPONENTE HIJO QUE SE EFECTÚE EL SUBMIT DE LA PUBLICACIÓN
    */
   private requestSubmit(actionEvent: number) {
@@ -210,6 +190,41 @@ export class NewPubComponent implements OnInit, OnChanges {
       case ACTION_TYPES.close:
         this.closeModal.emit(true);
         break;
+    }
+  }
+
+  /**
+   * METODO PARA DETECTAR QUE EL FORMULARIO DE QUEJA/RECLAMO ES VÁLIDO
+   * @param event VALOR QUE VIENE DEL OBJETO EVENT EMITTER:
+   */
+  public onValidForm(event: boolean) {
+    this.validForm.emit(event);
+  }
+
+  /**
+   * MÉTODO PARA ESCUCHAR LOS CAMBIOS QUE SE DEN EN EL ATRIBUTO QUE VIENE DESDE EL COMPONENTE PADRE:
+   * @param changes 
+   */
+  ngOnChanges(changes: SimpleChanges) {
+    for (const property in changes) {
+      switch (property) {
+        case 'showClass':
+          if (changes[property].currentValue !== undefined) {
+            this.showClass = changes[property].currentValue;
+          }
+          break;
+        case 'reqSubmit':
+          if (changes[property].currentValue) {
+            this.reqSubmit = changes[property].currentValue;
+            this.requestSubmit(this.reqSubmit);
+          }
+          break;
+        case 'eersaLocClient':
+          if (changes[property].currentValue) {
+            this.eersaLocClient = changes[property].currentValue;
+          }
+          break;
+      }
     }
   }
 }

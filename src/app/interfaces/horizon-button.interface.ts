@@ -4,4 +4,5 @@ export interface HorizonButton {
     customIcon?: boolean,
     class?: string,
     btnNews?: number,
+    appearance?: number,
 }

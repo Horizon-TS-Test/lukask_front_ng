@@ -1,4 +1,4 @@
-import { Component, OnInit, SimpleChanges, OnChanges, Input, AfterViewInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, SimpleChanges, OnChanges, Input, AfterViewInit, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { QuejaService } from '../../services/queja.service';
 import { FormBuilder, FormGroup, Validators } from '../../../../node_modules/@angular/forms';
 import { QuejaType } from '../../models/queja-type';
@@ -16,6 +16,7 @@ import claimTypes from '../../data/claim-type';
 import { EersaClaim } from 'src/app/models/eersa-claim';
 import { EersaClient } from 'src/app/models/eersa-client';
 import { EersaLocation } from 'src/app/models/eersa-location';
+import { EersaClaimService } from 'src/app/services/eersa-claim.service';
 
 declare var $: any;
 
@@ -24,20 +25,22 @@ declare var $: any;
   templateUrl: './pub-form.component.html',
   styleUrls: ['./pub-form.component.css']
 })
-export class PubFormComponent implements OnInit, AfterViewInit, OnChanges {
+export class PubFormComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
   @Input() mediaFiles: MediaFile[];
   @Input() submit: number;
   @Input() isStreamPub: boolean;
 
-  @Input() eersaClient: EersaClient;
-  @Input() eersaLocation: EersaLocation;
+  @Input() eersaLocClient: { eersaClient: EersaClient, eersaLocation: EersaLocation };
 
   @Output() afterSubmit = new EventEmitter<OnSubmit>();
+  @Output() validForm = new EventEmitter<boolean>();
 
   private quejaType: string;
   private newPub: Publication;
   private _gps: Gps;
   private eersaClaim: EersaClaim;
+  private timeInterval: any;
+  private isValidForm: boolean;
 
   public tipoQuejaSelect: Select2[];
   public quejaTypeList: QuejaType[];
@@ -47,13 +50,16 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges {
   public formPub: FormGroup;
   public _localDate: string;
   public _locationCity: string;
-  public _locationAdress: string;
+  public _locationAddress: string;
 
   constructor(
     private formBuilder: FormBuilder,
     private _quejaService: QuejaService,
+    private _eersaClaimService: EersaClaimService,
     private _gpsService: GpsService
   ) {
+    this.isValidForm = false;
+
     this._gps = {
       latitude: 0,
       longitude: 0
@@ -63,7 +69,6 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges {
   ngOnInit() {
     this.formPub = this.setFormGroup();
     this.getEersaClaimType();
-    this.defineEersaClaim();
     this.getLocalDate();
   }
 
@@ -127,7 +132,7 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges {
    */
   public getLocation() {
     this._gpsService.getDeviceLocation(this._gps.latitude, this._gps.longitude, (deviceLocation) => {
-      this._locationAdress = deviceLocation.address;
+      this._locationAddress = deviceLocation.address;
       this._locationCity = deviceLocation.city;
       $("#hidden-btn").click();
     });
@@ -148,21 +153,13 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges {
       return;
     }
 
-    this.newPub = new Publication("", this._gps.latitude, this._gps.longitude, this.formPub.value.fcnDetail, DateManager.getFormattedDate(), null, null, new QuejaType(this.quejaType, null), null, this._locationCity, null, null, this._locationAdress, this.isStreamPub);
-
-    if (this.mediaFiles.length > 1) {
-      for (let i = 0; i < this.mediaFiles.length; i++) {
-        if (this.mediaFiles[i].removeable == true) {
-          this.newPub.media.push(new Media("", "", this.mediaFiles[i].mediaFileUrl, true, this.mediaFiles[i].mediaFile, i + "-" + new Date().toISOString() + ".png"));
-        }
-      }
-    }
+    this.defineNewPub();
     this._quejaService.savePub(this.newPub).then((response: any) => {
       if (response == true) {
-        this.afterSubmit.emit({ finished: true, dataAfterSubmit: null, hasError: false, message: 'Tu publicación se enviará en la próxima conexión', backSync: true });
+        this.afterSubmit.emit({ finished: true, dataAfterSubmit: null, hasError: false, message: 'Su publicación se enviará en la próxima conexión', backSync: true });
       }
       else {
-        this.afterSubmit.emit({ finished: true, dataAfterSubmit: response.id_publication, hasError: false, message: 'Su queja ha sido publicada exitosamente' });
+        this.afterSubmit.emit({ finished: true, dataAfterSubmit: response.id_publication, hasError: false, message: 'La información ha sido publicada exitosamente' });
       }
       this.formPub.reset();
     }).catch((error) => {
@@ -179,7 +176,7 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges {
   /**
    * MÉTODO CALCULA SI LA POSICION DADA ESTA DENTRO DEL AREA ESTABLECIDA 
    * @param circle = Área permitida 
-   * @param latLngA = Posiciòn desde la cual se emite la queja
+   * @param latLngA = Posición desde la cual se emite la queja
    */
   validatePosition(circle, latLngA) {
     var bounds = circle.getBounds();
@@ -191,8 +188,29 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges {
     }
   }
 
+  /**
+   * METODO PARA DEFINIR LA FECHA ACTUAL DE LA REALIZACIÓN DE LA QUEJA
+   */
   private getLocalDate() {
     this._localDate = DateManager.getStringDate();
+    this.timeInterval = setInterval(() => {
+      this._localDate = DateManager.getStringDate();
+    }, 1000);
+  }
+
+  /**
+   * METODO GENERICO PARA DEFINIR LA NUEVA PUBLICACION
+   */
+  private defineNewPub() {
+    this.newPub = new Publication("", this._gps.latitude, this._gps.longitude, this.formPub.value.fcnDetail, DateManager.getFormattedDate(), null, null, new QuejaType(this.quejaType, null), null, this._locationCity, null, null, this._locationAddress, this.isStreamPub);
+
+    if (this.mediaFiles.length > 1) {
+      for (let i = 0; i < this.mediaFiles.length; i++) {
+        if (this.mediaFiles[i].removeable == true) {
+          this.newPub.media.push(new Media("", "", this.mediaFiles[i].mediaFileUrl, true, this.mediaFiles[i].mediaFile, i + "-" + new Date().toISOString() + ".png"));
+        }
+      }
+    }
   }
 
   /**
@@ -209,7 +227,12 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges {
         switch (property) {
           case 'submit':
             if (changes[property].currentValue == ACTION_TYPES.submitPub || changes[property].currentValue == ACTION_TYPES.pubStream) {
-              this.sendPub();
+              if (this.eersaLocClient) {
+                this.sendEersaClaim();
+              }
+              else {
+                this.sendPub();
+              }
             }
             break;
           case 'mediaFiles':
@@ -218,37 +241,110 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges {
           case 'isStreamPub':
             this.isStreamPub = changes[property].currentValue;
             break;
+          case 'eersaLocClient':
+            if (changes[property].currentValue) {
+              this.eersaLocClient = changes[property].currentValue;
+              this.defineEersaClaim();
+            }
+            break;
         }
       }
     }
   }
 
-  /**********************************PARA RECLAMO EERSA*******************************************************/
-  /***********************************************************************************************************/
+  /*****************************************************************************************/
+  /*****************************************************************************************/
+  /**
+   * METODOS PARA GESTIONAR RECLAMOS EERSA:
+   */
+  /*****************************************************************************************/
+  /*****************************************************************************************/
 
   /**
    * METODO PARA DEFINI EL OBJETO EERSA CLAIM:
    */
   private defineEersaClaim() {
-    this.eersaClaim = new EersaClaim(null, this.eersaClient, this.eersaLocation, null, null);
+    this.eersaClaim = new EersaClaim(null, this.eersaLocClient.eersaClient, this.eersaLocClient.eersaLocation, null, null);
   }
 
   /**
    * METODO PARA OBTENER LOS DATOS DEL TIPO DE RECLAMO DEL SISTEMA DE EERSA:
    */
   private getEersaClaimType() {
-    this.claimTypeList = claimTypes;
-    this.claimTypeSelect = [];
-    for (let cType of this.claimTypeList) {
-      this.claimTypeSelect.push({ value: cType.claimTypeId, data: cType.description });
+    if (this.eersaLocClient) {
+      this.claimTypeList = claimTypes;
+      this.claimTypeSelect = [];
+      for (let cType of this.claimTypeList) {
+        this.claimTypeSelect.push({ value: cType.claimTypeId + "", data: cType.description });
+      }
+
+      this.getTypeSelect(this.claimTypeList[0].claimTypeId);
     }
   }
 
   /**
-   * MÉTODO QUE CAPTURA LOS TIPOS DE RECLAMO DESDE EL SELECT
+   * MÉTODO QUE CAPTURA LOS TIPOS DE RECLAMO EERSA DESDE EL SELECT
    * @param event 
    */
   public getTypeSelect(event: number) {
     this.eersaClaim.idTipo = event;
+    if (this.eersaClaim.detalleReclamo) {
+      if (!this.isValidForm) {
+        this.isValidForm = true;
+        this.validForm.emit(this.isValidForm);
+      }
+    }
+  }
+
+  /**
+   * METODO PARA DETECTAR EL CAMBIO DE VALOR DEL INPUT DE DETALLE DEL RECLAMO:
+   * @param $event 
+   */
+  public onDetailChange(event: any) {
+    if (this.eersaLocClient) {
+      this.eersaClaim.detalleReclamo = this.formPub.value.fcnDetail;
+      if (this.eersaClaim.idTipo > 0 && this.eersaClaim.detalleReclamo) {
+        if (!this.isValidForm) {
+          this.isValidForm = true;
+          this.validForm.emit(this.isValidForm);
+        }
+      }
+      else {
+        if (this.isValidForm) {
+          this.isValidForm = false;
+          this.validForm.emit(this.isValidForm);
+        }
+      }
+    }
+  }
+
+  /**
+   * MÉTODO PARA ENVIAR UNA QUEJA HACIA EL SERVIDOR PARA ALMACENARLO EN LA BASE DE DATOS:
+   */
+  public sendEersaClaim() {
+    this.defineNewPub();
+    this.eersaClaim.ubicacion.calle = this._locationAddress;
+
+    this._eersaClaimService.saveEersaPub({ eersaPub: this.eersaClaim, pub: this.newPub }).then((response: any) => {
+      if (response == true) {
+        this.afterSubmit.emit({ finished: true, dataAfterSubmit: null, hasError: false, message: 'Su reclamo se enviará en la próxima conexión', backSync: true });
+      }
+      else {
+        this.afterSubmit.emit({ finished: true, dataAfterSubmit: response.id_publication, hasError: false, message: 'Su reclamo ha sido publicada exitosamente' });
+      }
+      this.formPub.reset();
+    }).catch((error) => {
+      if (error.code == 400) {
+        this.afterSubmit.emit({ finished: true, dataAfterSubmit: null, hasError: true, message: 'Verifique que la información ingresada sea correcta' });
+      }
+      else {
+        this.afterSubmit.emit({ finished: true, dataAfterSubmit: null, hasError: true, message: 'No se ha podido procesar la petición' });
+      }
+      this.formPub.reset();
+    });
+  }
+
+  ngOnDestroy() {
+    clearTimeout(this.timeInterval);
   }
 }

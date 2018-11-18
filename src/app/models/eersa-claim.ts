@@ -10,5 +10,6 @@ export class EersaClaim {
         public detalleReclamo: string
     ) {
         cliente = new EersaClient('', '', null);
+        ubicacion = new EersaLocation('', null, null);
     }
 }

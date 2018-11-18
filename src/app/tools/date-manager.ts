@@ -11,7 +11,7 @@ const _MAX_MINUTES: number = 60;
 const _MAX_SECONDS: number = 60;
 const _TEXT_FORMAT: string = "Hace "
 
-const _MONTHS: any = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+const _MONTHS: any = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
 
 export class DateManager {
     constructor() { }
@@ -20,18 +20,19 @@ export class DateManager {
      * MÉTODO PARA OBTENER LA FECHA ACTUAL CON EL FORMATO DE LA BASE DE DATOS:
      */
     public static getFormattedDate() {
-        var date = new Date();
-        var str = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-        return str;
+        let date = new Date();
+        return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
     }
 
     /**
      * MÉTODO PARA OBTENER LA FECHA ACTUAL EN LENGUAJE COLOQUIAL:
      */
     public static getStringDate() {
-        var date = new Date();
-        var str = date.getDate() + " de " + _MONTHS[date.getMonth()] + " de " + date.getFullYear() + ", " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-        return str;
+        let date = new Date();
+        let minutes = date.getMinutes() + "";
+        let seconds = date.getSeconds() + "";
+
+        return date.getDate() + " de " + _MONTHS[date.getMonth()] + " de " + date.getFullYear() + " " + date.getHours() + ":" + (minutes.length == 1 ? + "0" + minutes : minutes) + ":" + (seconds.length == 1 ? + "0" + seconds : seconds);
     }
 
     /**

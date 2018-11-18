@@ -23,6 +23,6 @@ export const REST_SERV = {
     logoutUrl: SERV_IP.middleware + '/login/logout',
     pushSub: SERV_IP.middleware + '/push/subscribe',
     unsubsribe: SERV_IP.middleware + '/push/unsubscribe',
-    mediaRecorder : SERV_IP.middleware + '/media'
-
+    mediaRecorder : SERV_IP.middleware + '/media',
+    eersaClaimUrl : SERV_IP.middleware + '/eersa/claim'
 }

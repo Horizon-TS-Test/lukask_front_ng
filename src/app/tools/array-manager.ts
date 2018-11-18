@@ -53,4 +53,16 @@ export class ArrayManager {
 
         return resp;
     }
+
+    /**
+     * METODO PARA INCLUIR UN OBJETO JAVASCRIPT DENTRO DE OTRO:
+     * @param mainObj OBJETO PRINCIPAL
+     * @param newObj NUEVO OBJETO A SER INCLUIDO
+     */
+    public static mergeJavascriptObj(mainObj, newObj) {
+        for (var key in newObj) {
+            if (newObj.hasOwnProperty(key)) mainObj[key] = newObj[key];
+        }
+        return mainObj;
+    }
 }

@@ -1,8 +1,10 @@
 import { Component, OnInit, Output, Input, EventEmitter } from '@angular/core';
 import { HorizonButton } from '../../interfaces/horizon-button.interface';
 import { ACTION_TYPES } from '../../config/action-types';
+import { EersaClient } from 'src/app/models/eersa-client';
+import { EersaLocation } from 'src/app/models/eersa-location';
+import { BTN_APPAREANCE } from 'src/app/config/button-appearance';
 import * as Snackbar from 'node-snackbar';
-import { EersaClaim } from 'src/app/models/eersa-claim';
 
 declare var $: any;
 
@@ -19,6 +21,7 @@ export class ClaimComponent implements OnInit {
   private nextBtnColor: string;
   private nextBtnIcon: string;
   private initStream: boolean;
+  private btnAppearance: number;
 
   public aceptedTerms: boolean;
   public matButtons: HorizonButton[];
@@ -28,10 +31,12 @@ export class ClaimComponent implements OnInit {
   public selectedCause: string;
   public currentStep: number;
   public reqSubmit: number;
+  public isLoading: boolean;
 
-  public eersaClaim: EersaClaim;
+  public eersaLocClient: { eersaClient: EersaClient; eersaLocation: EersaLocation; };
 
   constructor() {
+    this.isLoading = true;
     this.currentStep = 0;
     this.aceptedTerms = false;
     this.initStream = false;
@@ -39,6 +44,7 @@ export class ClaimComponent implements OnInit {
     this.transmitStyle = "secondary";
     this.nextBtnColor = 'animate-in';
     this.nextBtnIcon = 'chevron-right';
+    this.btnAppearance = BTN_APPAREANCE.light;
   }
 
   ngOnInit() {
@@ -48,13 +54,14 @@ export class ClaimComponent implements OnInit {
   /**
    * MÉTODO PARA INICIALIZAR EL OBJETO DE LOS HORIZON-MATERIAL-BUTTONS:
    */
-  initButtons() {
+  private initButtons() {
     this.matButtons = [
       {
         action: ACTION_TYPES.nextStep,
         icon: this.nextBtnIcon,
         customIcon: this.initStream,
-        class: 'animated-btn-h animated-btn-static ' + this.nextBtnColor
+        class: 'animated-btn-h animated-btn-static ' + this.nextBtnColor,
+        appearance: this.btnAppearance
       },
       {
         action: ACTION_TYPES.prevStep,
@@ -75,7 +82,7 @@ export class ClaimComponent implements OnInit {
     this.selectedCause = event;
     if (this.aceptedTerms) {
       this.aceptedTerms = false;
-      this.nextBtnColor = ' animate-in';
+      this.btnAppearance = BTN_APPAREANCE.light;
       this.initButtons();
     }
   }
@@ -85,7 +92,7 @@ export class ClaimComponent implements OnInit {
    */
   public getAceptTerms(event: boolean) {
     this.aceptedTerms = event;
-    this.nextBtnColor = event ? this.nextBtnColor + ' custom-btn-normal' : ' animate-in';
+    this.btnAppearance = event ? BTN_APPAREANCE.normal : BTN_APPAREANCE.light;
     this.initButtons();
   }
 
@@ -99,32 +106,50 @@ export class ClaimComponent implements OnInit {
       nextPrevElement = $("#newClaimContainer .personal-carousel.next").first();
       nextPrevElement.removeClass("next").prevAll().first().addClass("prev");
 
+      this.btnAppearance = BTN_APPAREANCE.light;
       this.prevBtnColor = event ? this.prevBtnColor + ' animated-btn-static animate-in' : '';
-      this.initButtons();
-      this.currentStep++;
 
       if (nextPrevElement.attr("id") == "customPub") {
         this.nextBtnIcon = 'check';
-        this.initButtons();
       }
+
+      this.initButtons();
     } else {
       nextPrevElement = $("#newClaimContainer .personal-carousel.prev").last();
-      lastElement = nextPrevElement.removeClass("prev").nextAll().first();
+      lastElement = nextPrevElement.nextAll().first();
       lastElement.addClass("next");
+      setTimeout(() => {
+        nextPrevElement.removeClass("prev");
+      }, 100);
+
+      this.btnAppearance = BTN_APPAREANCE.normal;
 
       if (nextPrevElement.attr("id") == "firstClaimStep") {
         this.prevBtnColor = '';
         this.initButtons();
       }
       else if (nextPrevElement.attr("id") == "claimDetail") {
-        this.nextBtnColor = this.nextBtnColor + ' custom-btn-normal';
         this.nextBtnIcon = 'chevron-right';
         this.initStream = false;
         this.initButtons();
       }
 
-      this.currentStep--;
     }
+    this.defineAnimation(next);
+  }
+
+  /**
+   * METODO PAR ESTABLECER LA ANIMACION DE APERTURA DE INTERFAZ
+   */
+  private defineAnimation(next: boolean) {
+    setTimeout(() => {
+      if (next) {
+        this.currentStep++;
+      }
+      else {
+        this.currentStep--;
+      }
+    }, 1000);
   }
 
   /**
@@ -143,17 +168,27 @@ export class ClaimComponent implements OnInit {
             }
             break;
           case 1:
-            this.nextPrevStep(true);
-            break;
-          case 2:
-            setTimeout(() => {
-              this.reqSubmit = null;
-            });
-            if (this.initStream) {
-              this.reqSubmit = ACTION_TYPES.pubStream;
+            if (this.btnAppearance == BTN_APPAREANCE.normal) {
+              this.nextPrevStep(true);
             }
             else {
-              this.reqSubmit = ACTION_TYPES.submitPub;
+              Snackbar.show({ text: "Por favor registre toda la información solicitada", pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#f0bd50', customClass: "p-snackbar-layout" });
+            }
+            break;
+          case 2:
+            if (this.btnAppearance == BTN_APPAREANCE.normal) {
+              setTimeout(() => {
+                this.reqSubmit = null;
+              });
+              if (this.initStream) {
+                this.reqSubmit = ACTION_TYPES.pubStream;
+              }
+              else {
+                this.reqSubmit = ACTION_TYPES.submitPub;
+              }
+            }
+            else {
+              Snackbar.show({ text: "Por favor registre toda la información solicitada", pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#f0bd50', customClass: "p-snackbar-layout" });
             }
             break;
         }
@@ -194,9 +229,37 @@ export class ClaimComponent implements OnInit {
    * METODO PARA OBTENER LOS DATOS DE LA QUEJA EERSA
    * @param event VALOR DEL EVENT EMITTER QUE LLEGA DESDE EL COMPONENTE HIJO CLAIM DETAL
    */
-  public getEersaClaim(event: EersaClaim) {
-    this.eersaClaim = event;
-    console.log("UPCOMING this.eersaClaim", this.eersaClaim);
+  public getEersaLocClient(event: { eersaClient: EersaClient; eersaLocation: EersaLocation; }) {
+    this.eersaLocClient = event;
+    if (this.eersaLocClient.eersaLocation.idBarrio != 0 && this.eersaLocClient.eersaLocation.referencia) {
+      if (this.btnAppearance == BTN_APPAREANCE.light) {
+        this.btnAppearance = BTN_APPAREANCE.normal;
+        this.initButtons();
+      }
+    }
+    else if (this.btnAppearance == BTN_APPAREANCE.normal) {
+      this.btnAppearance = BTN_APPAREANCE.light;
+      this.initButtons();
+    }
+  }
+
+  /**
+   * METODO PARA DETECTAR QUE EL FORMULARIO DE QUEJA/RECLAMO ES VÁLIDO
+   * @param event VALOR QUE VIENE DEL OBJETO EVENT EMITTER:
+   */
+  public onValidForm(event: boolean) {
+    if (event) {
+      if (this.btnAppearance == BTN_APPAREANCE.light) {
+        this.btnAppearance = BTN_APPAREANCE.normal;
+        this.initButtons();
+      }
+    }
+    else {
+      if (this.btnAppearance == BTN_APPAREANCE.normal) {
+        this.btnAppearance = BTN_APPAREANCE.light;
+        this.initButtons();
+      }
+    }
   }
 
 }

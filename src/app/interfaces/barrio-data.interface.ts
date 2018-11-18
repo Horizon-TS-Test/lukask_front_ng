@@ -1,4 +1,4 @@
 export interface BarrioInterface {
-    barrioId: string;
+    barrioId: number;
     description: string;
 }

@@ -343,6 +343,9 @@ p, label, div {
 .p-overflow-hidden {
   overflow: hidden; }
 
+.p-overflow-x-hidden {
+  overflow-x: hidden !important; }
+
 .icon-size-5 {
   font-size: 5rem; }
   @media only screen and (min-width: 576px) {
@@ -1196,19 +1199,28 @@ p, label, div {
   display: flex !important;
   justify-content: center;
   align-items: center;
-  border-color: #5dbeb6 !important;
+  border-color: #004360 !important;
   width: 35px;
   height: 35px;
   border-radius: 50% !important;
-  background: #5dbeb6 !important;
+  background: #004360 !important;
   -webkit-box-shadow: 1px 2px 4px 2px rgba(0, 0, 0, 0.2) !important;
   -moz-box-shadow: 1px 2px 4px 2px rgba(0, 0, 0, 0.2) !important;
   box-shadow: 1px 2px 4px 2px rgba(0, 0, 0, 0.2) !important; }
   .custom-btn fa, .custom-btn span {
     color: #fff !important; }
+  .custom-btn.custom-btn-light {
+    background: #c1e6ca !important;
+    border-color: #c1e6ca !important; }
   .custom-btn.custom-btn-normal {
     background: #5dbeb6 !important;
     border-color: #5dbeb6 !important; }
+  .custom-btn.custom-btn-dark {
+    background: #004360 !important;
+    border-color: #004360 !important; }
+  .custom-btn.custom-btn-sec {
+    background: #848b76 !important;
+    border-color: #848b76 !important; }
 
 .p-sec-btn {
   background: #004360 !important;

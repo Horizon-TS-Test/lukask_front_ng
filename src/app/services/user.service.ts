@@ -34,7 +34,6 @@ export class UserService {
     private _locationService: LocationService
   ) {
     this.pageLimit = 5;
-    this.isAdmin = false;
     this.isPatchedUser = false;
     this.onStreaming = false;
   }

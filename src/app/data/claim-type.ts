@@ -1,94 +1,94 @@
 export default [
     {
-        claimTypeId: 'cl1',
+        claimTypeId: 1,
         description: 'Alumbrado Público apagado en la noche'
     },
     {
-        claimTypeId: 'cl2',
+        claimTypeId: 2,
         description: 'Alumbrado Público encendido en el día'
     },
     {
-        claimTypeId: 'cl3',
+        claimTypeId: 3,
         description: 'Alumbrado Público intermitente'
     },
     {
-        claimTypeId: 'cl4',
+        claimTypeId: 4,
         description: 'Cámara de transformación inundada'
     },
     {
-        claimTypeId: 'cl5',
+        claimTypeId: 5,
         description: 'Cambio de categoría de consumo'
     },
     {
-        claimTypeId: 'cl6',
+        claimTypeId: 6,
         description: 'Cortocircuito en la Acometida / Medidor'
     },
     {
-        claimTypeId: 'cl7',
+        claimTypeId: 7,
         description: 'Cortocircuito en la red'
     },
     {
-        claimTypeId: 'cl8',
+        claimTypeId: 8,
         description: 'Daño en Redes Subterráneas'
     },
     {
-        claimTypeId: 'cl9',
+        claimTypeId: 9,
         description: 'Emergencias ECU 911/ Bomberos/ Policía Nacional'
     },
     {
-        claimTypeId: 'cl10',
+        claimTypeId: 10,
         description: 'Facturación errada de planillas'
     },
     {
-        claimTypeId: 'cl11',
+        claimTypeId: 11,
         description: 'Falta de fase'
     },
     {
-        claimTypeId: 'cl12',
+        claimTypeId: 12,
         description: 'Falta de servicio'
     },
     {
-        claimTypeId: 'cl13',
+        claimTypeId: 13,
         description: 'Fluctuaciones de voltaje'
     },
     {
-        claimTypeId: 'cl14',
+        claimTypeId: 14,
         description: 'Fusibles quemados  o  automático actuado'
     },
     {
-        claimTypeId: 'cl15',
+        claimTypeId: 15,
         description: 'Fusibles quemados  o  transformador desconectado'
     },
     {
-        claimTypeId: 'cl16',
+        claimTypeId: 16,
         description: 'Inspección por artefactos averiados'
     },
     {
-        claimTypeId: 'cl17',
+        claimTypeId: 17,
         description: 'Inspección por artefactos quemados'
     },
     {
-        claimTypeId: 'cl18',
+        claimTypeId: 18,
         description: 'Líneas rotas/ arrancadas'
     },
     {
-        claimTypeId: 'cl19',
+        claimTypeId: 19,
         description: 'Poste chocado'
     },
     {
-        claimTypeId: 'cl20',
+        claimTypeId: 20,
         description: 'Poste desplomado o en mal estado'
     },
     {
-        claimTypeId: 'cl21',
+        claimTypeId: 21,
         description: 'Revisión del medidor'
     },
     {
-        claimTypeId: 'cl22',
+        claimTypeId: 22,
         description: 'Voltaje alto'
     },
     {
-        claimTypeId: 'cl23',
+        claimTypeId: 23,
         description: 'Voltaje bajo'
     }
 ]

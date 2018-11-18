@@ -1,302 +1,302 @@
 export default [
     {
-        barrioId: 'B1',
+        barrioId: 1,
         description: 'CAMILO PONCE COOPERATIVA'
     },
     {
-        barrioId: 'B2',
+        barrioId: 2,
         description: 'ALIANZA RIOBAMBEÑA'
     },
     {
-        barrioId: 'B3',
+        barrioId: 3,
         description: 'AGUISACTE'
     },
     {
-        barrioId: 'B4',
+        barrioId: 4,
         description: 'ALFONSO VILLAGOMEZ'
     },
     {
-        barrioId: 'B5',
+        barrioId: 5,
         description: 'AUTOMODELO SUR'
     },
     {
-        barrioId: 'B6',
-        description: 'BALCON ANDINO'
+        barrioId: 6,
+        description: 'ALCON ANDINO'
     },
     {
-        barrioId: 'B7',
-        description: 'BELLAVISTA'
+        barrioId: 7,
+        description: 'ELLAVISTA'
     },
     {
-        barrioId: 'B8',
-        description: 'BILBAO RENACER'
+        barrioId: 8,
+        description: 'ILBAO RENACER'
     },
     {
-        barrioId: 'B9',
+        barrioId: 9,
         description: 'CDLA. BOLIVAR CHIRIBOGA'
     },
     {
-        barrioId: 'B10',
+        barrioId: 10,
         description: 'CDLA. GENERAL LASCANO'
     },
     {
-        barrioId: 'B11',
+        barrioId: 11,
         description: 'CDLA. JAIME GUERRERO'
     },
     {
-        barrioId: 'B12',
+        barrioId: 12,
         description: 'CDLA. JOSE MANCERO'
     },
     {
-        barrioId: 'B13',
+        barrioId: 13,
         description: 'CDLA. JUAN DE VELASCO'
     },
     {
-        barrioId: 'B14',
+        barrioId: 14,
         description: 'CDLA. LUIS A. MARTINEZ'
     },
     {
-        barrioId: 'B15',
+        barrioId: 15,
         description: 'CDLA. MADRID'
     },
     {
-        barrioId: 'B16',
+        barrioId: 16,
         description: 'CDLA. MODESTO ARRIETA'
     },
     {
-        barrioId: 'B17',
+        barrioId: 17,
         description: 'CDLA. MUJERES DE CHIMBORAZO'
     },
     {
-        barrioId: 'B18',
+        barrioId: 18,
         description: 'CDLA. RINCON DE ESPAÑA'
     },
     {
-        barrioId: 'B19',
+        barrioId: 19,
         description: 'COOP. BILBAO RENACER'
     },
     {
-        barrioId: 'B20',
+        barrioId: 20,
         description: 'COOP. NUEVO AMANECER'
     },
     {
-        barrioId: 'B21',
+        barrioId: 21,
         description: 'COOP. NUEVOS HORIZONTES'
     },
     {
-        barrioId: 'B22',
+        barrioId: 22,
         description: 'COOP. UNION DE MUJERES DE CHIMBORAZO'
     },
     {
-        barrioId: 'B23',
+        barrioId: 23,
         description: 'EL CISNE'
     },
     {
-        barrioId: 'B24',
+        barrioId: 24,
         description: 'EL CONDADO'
     },
     {
-        barrioId: 'B25',
+        barrioId: 25,
         description: 'EL ESFUERZO'
     },
     {
-        barrioId: 'B26',
+        barrioId: 26,
         description: 'EL PARAISO'
     },
     {
-        barrioId: 'B27',
+        barrioId: 27,
         description: 'EL PORVENIR'
     },
     {
-        barrioId: 'B28',
+        barrioId: 28,
         description: 'EL PRADO'
     },
     {
-        barrioId: 'B29',
+        barrioId: 29,
         description: 'EL VERGEL'
     },
     {
-        barrioId: 'B30',
+        barrioId: 30,
         description: 'EUCALIPTOS ALTO'
     },
     {
-        barrioId: 'B31',
+        barrioId: 31,
         description: 'EUCALIPTOS BAJO'
     },
     {
-        barrioId: 'B32',
+        barrioId: 32,
         description: 'EUGENIO ESPEJO'
     },
     {
-        barrioId: 'B33',
+        barrioId: 33,
         description: 'FAUSTO MOLINA'
     },
     {
-        barrioId: 'B34',
+        barrioId: 34,
         description: 'JARDINES DEL VALLE'
     },
     {
-        barrioId: 'B35',
+        barrioId: 35,
         description: 'JUAN DE VELASCO'
     },
     {
-        barrioId: 'B36',
+        barrioId: 36,
         description: 'LA ESPERANZA 1ERA ETAPA'
     },
     {
-        barrioId: 'B37',
+        barrioId: 37,
         description: 'LA ESPERANZA 2DA ETAPA'
     },
     {
-        barrioId: 'B38',
+        barrioId: 38,
         description: 'LA ESPERANZA 3ERA ETAPA'
     },
     {
-        barrioId: 'B39',
+        barrioId: 39,
         description: 'LA FLORIDA'
     },
     {
-        barrioId: 'B40',
+        barrioId: 40,
         description: 'LA PIRAMIDE'
     },
     {
-        barrioId: 'B41',
+        barrioId: 41,
         description: 'LA. PREVISORA'
     },
     {
-        barrioId: 'B42',
+        barrioId: 42,
         description: 'LA TRINIDAD'
     },
     {
-        barrioId: 'B43',
+        barrioId: 43,
         description: 'LAS FLORES'
     },
     {
-        barrioId: 'B76',
+        barrioId: 76,
         description: 'LOS ANDES'
     },
     {
-        barrioId: 'B45',
+        barrioId: 45,
         description: 'LOS LAURELES'
     },
     {
-        barrioId: 'B46',
+        barrioId: 46,
         description: 'MADRID'
     },
     {
-        barrioId: 'B47',
+        barrioId: 47,
         description: 'MEDIO MUNDO'
     },
     {
-        barrioId: 'B48',
+        barrioId: 48,
         description: 'MIRADOR ALTO'
     },
     {
-        barrioId: 'B49',
+        barrioId: 49,
         description: 'MIRADOR BAJO'
     },
     {
-        barrioId: 'B50',
+        barrioId: 50,
         description: 'NUEVA BELLAVISTA'
     },
     {
-        barrioId: 'B51',
+        barrioId: 51,
         description: 'NUEVA TRINIDAD'
     },
     {
-        barrioId: 'B52',
+        barrioId: 52,
         description: 'NUEVA AMANECER'
     },
     {
-        barrioId: 'B53',
+        barrioId: 53,
         description: 'NUEVOS HORIZONTES'
     },
     {
-        barrioId: 'B54',
+        barrioId: 54,
         description: 'ORIENTAL'
     },
     {
-        barrioId: 'B55',
+        barrioId: 55,
         description: 'PARQUE DE LAS FLORES'
     },
     {
-        barrioId: 'B56',
+        barrioId: 56,
         description: 'PARQUE DEL DIABLO'
     },
     {
-        barrioId: 'B57',
+        barrioId: 57,
         description: 'PARQUE INDUSTRIAL'
     },
     {
-        barrioId: 'B58',
+        barrioId: 58,
         description: 'PARQUE MALDONADO'
     },
     {
-        barrioId: 'B59',
+        barrioId: 59,
         description: 'PERIMETRO DE LAS INDUSTRIAS'
     },
     {
-        barrioId: 'B60',
+        barrioId: 60,
         description: 'PLAZA DE LAS HIERVAS'
     },
     {
-        barrioId: 'B61',
+        barrioId: 61,
         description: 'PUCARA'
     },
     {
-        barrioId: 'B62',
+        barrioId: 62,
         description: 'PUEBLO UNIDO'
     },
     {
-        barrioId: 'B63',
+        barrioId: 63,
         description: 'RINCON DE ESPAÑA'
     },
     {
-        barrioId: 'B64',
+        barrioId: 64,
         description: 'SAN ALFONSO'
     },
     {
-        barrioId: 'B65',
+        barrioId: 65,
         description: 'SAN ANTONIO'
     },
     {
-        barrioId: 'B66',
+        barrioId: 66,
         description: 'SAN MARTIN DE VERANILLO'
     },
     {
-        barrioId: 'B67',
+        barrioId: 67,
         description: 'SAN FRANCISCO DE PISIN'
     },
     {
-        barrioId: 'B68',
+        barrioId: 68,
         description: 'SAN VICENTE DE LACAS'
     },
     {
-        barrioId: 'B69',
+        barrioId: 69,
         description: 'SANTA MARIANITA'
     },
     {
-        barrioId: 'B70',
+        barrioId: 70,
         description: 'TUBASEC'
     },
     {
-        barrioId: 'B71',
+        barrioId: 71,
         description: 'URB. JAIME GUERRERO'
     },
     {
-        barrioId: 'B72',
+        barrioId: 72,
         description: 'URB. JOSE LASCANO'
     },
     {
-        barrioId: 'B73',
+        barrioId: 73,
         description: 'URB. LOS ANGELES'
     },
     {
-        barrioId: 'B74',
+        barrioId: 74,
         description: 'URB. SILVA GODOY'
     },
     {
-        barrioId: 'B75',
+        barrioId: 75,
         description: 'VILLA MARIA'
     }
 ]

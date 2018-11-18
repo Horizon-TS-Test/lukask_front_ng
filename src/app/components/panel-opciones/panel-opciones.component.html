@@ -12,13 +12,18 @@
 
 <div class="bot-panel d-flex justify-content-start align-items-center">
   <div class="px-3 d-flex">
-    <a *ngIf="isAdmin" href="#" (click)="openLayer($event, contentTypes.new_pub)" class="ml-2 custom-panel-btn" title="Nueva publicación">
+    <a *ngIf="isAdmin == true" href="#" (click)="openLayer($event, contentTypes.new_pub)" class="ml-2 custom-panel-btn"
+      title="Nueva publicación">
       <fa name="plus"></fa>
     </a>
-    <a *ngIf="!isAdmin" href="#" (click)="openLayer($event, contentTypes.new_claim)" class="ml-2 custom-panel-btn"
+    <a *ngIf="isAdmin == false" href="#" (click)="openLayer($event, contentTypes.new_claim)" class="ml-2 custom-panel-btn"
       title="Nuevo reclamo">
       <fa name="bullhorn"></fa>
     </a>
+    <a *ngIf="isAdmin == undefined" href="#" (click)="$event.preventDefault()" class="ml-2 custom-panel-btn" title="Nuevo reclamo">
+      <fa name="spinner" animation="pulse"></fa>
+    </a>
+
     <a href="#" (click)="openLayer($event, contentTypes.view_notifs)" class="relative-background ml-2 custom-panel-btn">
       <span *ngIf="entriesNumber > 0" class="news-number">{{ entriesNumber }}</span>
       <fa name="inbox"></fa>

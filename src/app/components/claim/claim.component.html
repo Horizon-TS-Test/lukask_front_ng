@@ -4,17 +4,30 @@
 
   <app-steps [stepsNumber]="3" [title]="'Nuevo Reclamo'" [currentStep]="currentStep"></app-steps>
 
-  <div class="f-scroll-child mt-1">
+  <div class="f-scroll-child p-overflow-x-hidden mt-1">
     <div class="personal-carousel" id="firstClaimStep">
       <claim-cause [aceptedTerms]="aceptedTerms" (onSelectCause)="getSelectCause($event)" (onAceptTerms)="getAceptTerms($event)"></claim-cause>
     </div>
 
     <div class="personal-carousel next" id="claimDetail">
-      <claim-detail *ngIf="currentStep == 1" (onEersaClaim)="getEersaClaim($event)"></claim-detail>
+      <ng-container *ngIf="currentStep >= 1 else loader1">
+        <claim-detail (onEersaLocClient)="getEersaLocClient($event)"></claim-detail>
+      </ng-container>
+
+      <ng-template #loader1>
+        <loader></loader>
+      </ng-template>
     </div>
 
     <div class="personal-carousel next" id="customPub">
-      <new-pub *ngIf="currentStep == 2" [eersaClaim]="eersaClaim" [isChildPub]="true" [reqSubmit]="reqSubmit" [showClass]="showClass" (streamPub)="oInitStream($event)" (closeModal)="close($event)"></new-pub>
+      <ng-container *ngIf="currentStep == 2 else loader2">
+        <new-pub [eersaLocClient]="eersaLocClient" [isChildPub]="true" [reqSubmit]="reqSubmit"
+          [showClass]="showClass" (streamPub)="oInitStream($event)" (closeModal)="close($event)" (validForm)="onValidForm($event)"></new-pub>
+      </ng-container>
+
+      <ng-template #loader2>
+        <loader *ngIf="currentStep == 1"></loader>
+      </ng-template>
     </div>
 
     <material-btn-list [showClass]="showClass" [materialBtns]="matButtons" (someBtnAction)="getButtonAction($event)"></material-btn-list>

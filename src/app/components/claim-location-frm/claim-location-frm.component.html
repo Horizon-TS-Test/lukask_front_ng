@@ -47,35 +47,35 @@
 
         <div class="ml-3 col-12 form-group pb-0 pr-0">
           <div class="col-12 pr-0">
-            <app-select2-bootstrap [fcName]="'barrio'" [select2Data]="barrioSelect" (select2Change)="getbarrioSelect($event)"></app-select2-bootstrap>
+            <app-select2-bootstrap [fcName]="'barrio'" [select2Data]="barrioSelect" (select2Change)="getBarrioSelect($event)"></app-select2-bootstrap>
           </div>
         </div>
       </div>
     </li>
 
     <li class="list-group-item d-flex justify-content-between align-items-start pt-2 pb-0">
-        <div class="row">
-          <fa name="home" class="icon-xs col-1"></fa>
-  
-          <div class="col-11 f-child-no-auto">
-            <strong>Dirección:</strong>
-          </div>
-  
-          <div class="ml-2 col-12 form-group row pb-0" [ngClass]="{ 'has-danger': !address.valid && address.touched }">
-            <div class="col-12">
-              <input type="text" name="address" #address="ngModel" [(ngModel)]="userObj.person.address" class="form-control py-0"
-                required placeholder="Dirección" />
-              <small *ngIf="address.touched && !address.valid" class="form-control-feedback absolute-layer p-index-1">
-                Por favor ingrese la dirección
-              </small>
-            </div>
+      <div class="row w-100">
+        <fa name="home" class="icon-xs col-1"></fa>
+
+        <div class="col-11 f-child-no-auto">
+          <strong>Dirección:</strong>
+        </div>
+
+        <div class="ml-2 col-12 form-group row pb-0" [ngClass]="{ 'has-danger': !address.valid && address.touched }">
+          <div class="col-12">
+            <input type="text" name="address" #address="ngModel" [(ngModel)]="userObj.person.address" class="form-control py-0"
+              required placeholder="Dirección" />
+            <small *ngIf="address.touched && !address.valid" class="form-control-feedback absolute-layer p-index-1">
+              Por favor ingrese la dirección
+            </small>
           </div>
         </div>
-      </li>
+      </div>
+    </li>
 
     <li class="list-group-item d-flex justify-content-between align-items-start pt-2 pb-0">
-      <div class="row">
-        <fa name="home" class="icon-xs col-1"></fa>
+      <div class="row w-100">
+        <fa name="location-arrow" class="icon-xs col-1"></fa>
 
         <div class="col-11 f-child-no-auto">
           <strong>Referencia:</strong>
@@ -83,10 +83,10 @@
 
         <div class="ml-2 col-12 form-group row pb-2" [ngClass]="{ 'has-danger': !reference.valid && reference.touched }">
           <div class="col-12">
-            <textarea name="reference" #reference="ngModel" [(ngModel)]="eersaLocation.referencia" class="form-control py-0"
-              cols="20" rows="5" required placeholder="Indique alguna referencia de su ubicación"></textarea>
+            <textarea name="reference" #reference="ngModel" [(ngModel)]="eersaLocation.referencia" (keyup)="onChangeRef($event)"
+              class="form-control py-0" cols="20" rows="5" required placeholder="Indique alguna referencia de su ubicación"></textarea>
             <small *ngIf="reference.touched && !reference.valid" class="form-control-feedback absolute-layer p-index-1">
-              Por favor ingrese una referencia
+              Ingrese una referencia
             </small>
           </div>
         </div>
