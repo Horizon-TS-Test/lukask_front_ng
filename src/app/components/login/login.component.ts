@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 import { CONTENT_TYPES } from '../../config/content-type';
 import { DynaContentService } from 'src/app/services/dyna-content.service';
 import { InstallPromptService } from 'src/app/services/install-prompt.service';
+import { ScreenService } from 'src/app/services/screen.service';
 
 declare var $: any;
 declare var device: any;
@@ -29,6 +30,7 @@ export class LoginComponent implements OnInit {
     private _contentService: ContentService,
     private _dynaContentService: DynaContentService,
     private _installPromptService: InstallPromptService,
+    private _screenService: ScreenService,
     private _router: Router,
   ) {
     this.resetForm();
@@ -87,6 +89,7 @@ export class LoginComponent implements OnInit {
         alertData = new Alert({ title: 'Mensaje del Sistema', message: "Te damos la bienvenida a LUKASK", type: ALERT_TYPES.info });
         this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.alert, contentData: alertData });
 
+        this._screenService.defineScreenDelay(1500);
         this._router.navigateByUrl('/');
       })
       .catch((error: Response) => {
