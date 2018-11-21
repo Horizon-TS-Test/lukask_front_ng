@@ -114,6 +114,7 @@ export class PanelOpcionesComponent implements OnInit, OnChanges, OnDestroy {
   **/
   public logout(event: any) {
     event.preventDefault();
+    this._userService.verifyIsAdmin(null);
     this._loginService.logout();
     this._router.navigate(['/login']);
   }

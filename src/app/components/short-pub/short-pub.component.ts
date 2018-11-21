@@ -6,6 +6,7 @@ import { ACTION_TYPES } from 'src/app/config/action-types';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ASSETS } from 'src/app/config/assets-url';
 import { Media } from 'src/app/models/media';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'short-pub',
@@ -16,14 +17,28 @@ export class ShortPubComponent implements OnInit {
   @Input() pub: Publication;
   @Output() geoMap = new EventEmitter<number>();
 
+  public isAdmin: boolean;
+
   constructor(
     private _dynaContentService: DynaContentService,
-    public _domSanitizer: DomSanitizer
-  ) { }
+    public _domSanitizer: DomSanitizer,
+    public _userService: UserService
+  ) {
+    this.verifyIsAdmin();
+  }
 
   ngOnInit() {
     this.setDefaultImg();
     this.makeDetailShorter();
+  }
+
+  /**
+   * METODO PARA ESCUCHAR SI EL USUARIO LOGEADO ES O NO UN ADMINSTRADOR:
+   */
+  private verifyIsAdmin() {
+    this._userService.isAdmin$.subscribe((admin: boolean) => {
+      this.isAdmin = admin;
+    });
   }
 
   /**

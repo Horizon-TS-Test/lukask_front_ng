@@ -258,10 +258,12 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
    * MÉTODO PARA NAVEGAR EN CIERTA OPCIÓN DEL CAROUSEL:
    */
   private changeOwlContent(option: number) {
-    this.owlElement.to([option, 300, true]);
-    setTimeout(() => {
-      this._navigationPanelService.navigateMenu(option);
-    }, 400);
+    if (this.owlElement) {
+      this.owlElement.to([option, 300, true]);
+      setTimeout(() => {
+        this._navigationPanelService.navigateMenu(option);
+      }, 400);
+    }
   }
 
   /**

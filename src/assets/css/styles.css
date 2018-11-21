@@ -1434,8 +1434,14 @@ p, label, div {
 .p-primary-back-color, .p-primary-back-color:hover {
   background: #848b76 !important; }
 
-.p-secondary-back-color, .p-secondary-back-color:hover {
+.p-secondary-text-back-color, .p-secondary-text-back-color:hover {
   background: #fff !important; }
+
+.p-light-back-color, .p-light-back-color:hover {
+  background: #c1e6ca !important; }
+
+.p-secondary-d-back-color, .p-secondary-d-back-color:hover {
+  background: #7fa4ad !important; }
 
 input[type=text], input[type=password], input[type=email], input[type=number], input[type=date], input[type=tel], textarea, .select2-selection {
   border-top: none !important;

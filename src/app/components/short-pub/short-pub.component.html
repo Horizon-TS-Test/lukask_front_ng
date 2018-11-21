@@ -9,6 +9,12 @@
     </a>
   </div>
   <!------------------------------------------->
+  <div *ngIf="isAdmin" class="p-secondary-d-back-color py-0 mb-1 card-block d-flex justify-content-end align-items-center">
+    <div class="p-secondary-text-color d-flex flex-column justify-content-center align-items-end">
+      {{ pub.user.person.name }} {{ pub.user.person.last_name }}
+    </div>
+    <profile-link [userProfile]="pub.user" [isCommentProfile]="false" [profileClass]="'ml-2 my-0'"></profile-link>
+  </div>
 
   <div class="relative-background">
     <a href="#" (click)="geolocatePub($event)" class="p-float-btn top-right-outer-corner secondary no-border-button ml-1"

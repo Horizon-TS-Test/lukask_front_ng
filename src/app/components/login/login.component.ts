@@ -9,6 +9,7 @@ import { CONTENT_TYPES } from '../../config/content-type';
 import { DynaContentService } from 'src/app/services/dyna-content.service';
 import { InstallPromptService } from 'src/app/services/install-prompt.service';
 import { ScreenService } from 'src/app/services/screen.service';
+import { UserService } from 'src/app/services/user.service';
 
 declare var $: any;
 declare var device: any;
@@ -31,6 +32,7 @@ export class LoginComponent implements OnInit {
     private _dynaContentService: DynaContentService,
     private _installPromptService: InstallPromptService,
     private _screenService: ScreenService,
+    private _userService: UserService,
     private _router: Router,
   ) {
     this.resetForm();
