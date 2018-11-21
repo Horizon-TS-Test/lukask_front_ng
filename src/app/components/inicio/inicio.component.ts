@@ -15,6 +15,7 @@ import { NavigationPanelService } from 'src/app/services/navigation-panel.servic
 import { CONTENT_TYPES } from 'src/app/config/content-type';
 import { DynaContentService } from 'src/app/services/dyna-content.service';
 import { DynamicPubsService } from 'src/app/services/dynamic-pubs.service';
+import { ScreenService } from 'src/app/services/screen.service';
 
 declare var $: any;
 declare var device: any;
@@ -27,10 +28,12 @@ declare var device: any;
 export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('owlElement') owlElement: OwlCarousel;
 
+  private screenSubs: Subscription;
   private pubContainer: any;
   private customCarousel: any;
   private subscriptor: Subscription;
   private paymentSubs: Subscription;
+  private screenDelay: number;
 
   public enableSecondOp: boolean;
   public enableThirdOp: boolean;
@@ -49,9 +52,12 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
     private _dynamicPubsService: DynamicPubsService,
     private _socket: SocketService,
     public _quejaService: QuejaService,
+    private _screenService: ScreenService
   ) {
     this.touchDrag = true;
     this.askforMorePubs = false;
+    this.screenDelay = 4000;
+    this.listeToScreenDelay();
   }
 
   ngOnInit() {
@@ -69,6 +75,17 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
     this.paymentSocketUpdate();
 
     this.getPubList();
+  }
+
+  /**
+   * METODO PARA ESCUCHAR LA DEFINICION DEL TIEMPO DE RETARDO DE LA INTERFAZ ANTES DE CARGAR SU CONTENIDO
+   */
+  private listeToScreenDelay() {
+    this.screenSubs = this._screenService.screenDelay$.subscribe((delay: number) => {
+      if (delay) {
+        this.screenDelay = delay;
+      }
+    });
   }
 
   /**
@@ -258,7 +275,7 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
     this._quejaService.getPubList().then((pubs: Publication[]) => {
       setTimeout(() => {
         this._quejaService.loadPubs(pubs);
-      }, 4000);
+      }, this.screenDelay);
     }).catch(err => {
       console.log(err);
     });
@@ -287,5 +304,6 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.subscriptor.unsubscribe();
     this.paymentSubs.unsubscribe();
+    this.screenSubs.unsubscribe();
   }
 }
