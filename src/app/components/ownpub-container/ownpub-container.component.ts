@@ -109,8 +109,10 @@ export class OwnpubContainerComponent implements OnInit, OnDestroy {
   private listenToOwnPubUpdate() {
     this.pubUpdateSub = this._userPubsService.updatedOwnPub$.subscribe((ownPubData: { userPubJson: any, action: string }) => {
       if (ownPubData) {
-        this._userPubsService.updateuserPubList(ownPubData.userPubJson, ownPubData.action, this.myPubList);
-        this._userPubsService.loadOwnPubs(this.myPubList);
+        if (this.myPubList) {
+          this._userPubsService.updateuserPubList(ownPubData.userPubJson, ownPubData.action, this.myPubList);
+          this._userPubsService.loadOwnPubs(this.myPubList);
+        }
       }
     });
   }
