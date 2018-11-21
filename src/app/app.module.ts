@@ -85,6 +85,7 @@ import { OwnPubsComponent } from './components/own-pubs/own-pubs.component';
 import { ShortPubComponent } from './components/short-pub/short-pub.component';
 import { StepsComponent } from './components/steps/steps.component';
 import { OwnpubContainerComponent } from './components/ownpub-container/ownpub-container.component';
+import { LoaderComponent } from './components/loader/loader.component';
 
 @NgModule({
   declarations: [
@@ -159,7 +160,8 @@ import { OwnpubContainerComponent } from './components/ownpub-container/ownpub-c
     ReplyModalComponent,
     NotificationModalComponent,
     SupportModalComponent,
-    OwnpubContainerComponent
+    OwnpubContainerComponent,
+    LoaderComponent
   ],
   imports: [
     HttpModule,

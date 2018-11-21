@@ -15,7 +15,7 @@
       </ng-container>
 
       <ng-template #loader1>
-        <loader></loader>
+        <loader [normalLoader]="fullLoader" [fullScreen]="fullLoader"></loader>
       </ng-template>
     </div>
 
@@ -26,7 +26,7 @@
       </ng-container>
 
       <ng-template #loader2>
-        <loader *ngIf="currentStep == 1"></loader>
+        <loader *ngIf="currentStep == 1" [normalLoader]="fullLoader" [fullScreen]="fullLoader"></loader>
       </ng-template>
     </div>
 

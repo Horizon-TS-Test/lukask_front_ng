@@ -35,9 +35,9 @@
 
         <comment-form *ngSwitchCase="contentTypes.comment_input" [commentModel]="_dynaContent.contentData" (closeModal)="close($event)"></comment-form>
 
-        <img-viewer *ngSwitchCase="contentTypes.view_img" [showClass]="showClass" [media]="_dynaContent.contentData.media" [opView]= "_dynaContent.contentData.opView"
-          (closeModal)="close($event)"></img-viewer>
-          
+        <img-viewer *ngSwitchCase="contentTypes.view_img" [showClass]="showClass" [media]="_dynaContent.contentData.media"
+          [opView]="_dynaContent.contentData.opView" (closeModal)="close($event)"></img-viewer>
+
         <ng-container *ngSwitchCase="contentTypes.view_comments">
           <comment-modal *ngIf="!_dynaContent.contentData.halfModal" [showClass]="showClass" [pubId]="_dynaContent.contentData.pubId"
             [hideBtn]="_dynaContent.contentData.hideBtn" [commentId]="_dynaContent.contentData.comId" [replyId]="_dynaContent.contentData.replyId"
@@ -67,14 +67,7 @@
     </ng-container>
 
     <ng-template #loader>
-      <div class="col-12 py-2 d-flex justify-content-center align-items-center" [ngClass]="{ 'min-height-full-modal': fullLoader }">
-        <div [ngClass]="{
-          'col-5': fullLoader,
-          'col-3': !fullLoader
-        }">
-          <img src="{{ preloader }}" width="100px">
-        </div>
-      </div>
+      <loader [normalLoader]="fullLoader" [fullScreen]="fullLoader"></loader>
     </ng-template>
   </div>
 </div>
