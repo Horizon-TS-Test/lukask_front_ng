@@ -5,5 +5,6 @@ export const ASSETS = {
     pubDefaultImg: BASE_URL.imgPath + '/edit-queja/window-sm.jpg',
     profDefaultImg: BASE_URL.imgPath + '/profile/default-profile.png',
     offlineImg: BASE_URL.imgPath + '/offline/offline2.jpg',
-    unavaliableImg: BASE_URL.imgPath + '/unavaliable/not-found2.jpg'
+    unavaliableImg: BASE_URL.imgPath + '/unavaliable/not-found2.jpg',
+    defaultImg: BASE_URL.imgPath + '/default/default.jpg',
 }

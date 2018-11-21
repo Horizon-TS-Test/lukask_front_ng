@@ -53,7 +53,7 @@
               "src/assets/js/fechaJS/bootstrap-datetimepicker.min.js",
               "src/assets/js/promise.min.js",
               "src/assets/js/idb.min.js",
-              "src/assets/js/utility-db.min.js"
+              "src/assets/js/utility-db.js"
             ]
           },
           "configurations": {

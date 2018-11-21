@@ -15,6 +15,7 @@ import { SocketService } from 'src/app/services/socket.service';
 import { ActionFeederService } from 'src/app/services/action-feeder.service';
 import { Media } from '../../models/media';
 import * as lodash from 'lodash';
+import { ASSETS } from 'src/app/config/assets-url';
 
 declare var deleteItemData: any;
 
@@ -55,6 +56,7 @@ export class QuejaComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.setDefaultImg();
     this.getMedioImgPub();
     this.defineMainComments();
     this.getComments();
@@ -62,6 +64,15 @@ export class QuejaComponent implements OnInit, OnDestroy {
     this.listenToSocket();
     this.onCommentResponse();
     this.listenToDelOffCom();
+  }
+
+  /**
+   * METODO PARA DEFINIR UNA IMAGEN POR DEFECTO EN CASO DE QUE EL RECLAMO OFFLINE NO TENGA MEDIOS:
+   */
+  private setDefaultImg() {
+    if (this.queja.media.length == 0) {
+      this.queja.media[0] = new Media(null, null, ASSETS.defaultImg);;
+    }
   }
 
   /**
