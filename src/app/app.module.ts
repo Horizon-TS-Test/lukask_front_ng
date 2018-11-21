@@ -74,6 +74,7 @@ import { CommentModalComponent } from './components/comment-modal/comment-modal.
 import { ReplyModalComponent } from './components/reply-modal/reply-modal.component';
 import { NotificationModalComponent } from './components/notification-modal/notification-modal.component';
 import { SupportModalComponent } from './components/support-modal/support-modal.component';
+import { LoaderComponent } from './components/loader/loader.component';
 
 @NgModule({
   declarations: [
@@ -137,7 +138,8 @@ import { SupportModalComponent } from './components/support-modal/support-modal.
     CommentModalComponent,
     ReplyModalComponent,
     NotificationModalComponent,
-    SupportModalComponent
+    SupportModalComponent,
+    LoaderComponent
   ],
   imports: [
     HttpModule,
