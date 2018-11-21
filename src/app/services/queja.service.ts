@@ -34,12 +34,6 @@ export class QuejaService implements OnDestroy {
   private subject = new BehaviorSubject<Publication[]>(null);
   pubs$: Observable<Publication[]> = this.subject.asObservable();
 
-  private ownPubsSubject = new BehaviorSubject<Publication[]>(null);
-  ownPubs$: Observable<Publication[]> = this.ownPubsSubject.asObservable();
-
-  private ownPubUpdateSubject = new BehaviorSubject<{ lastPub: Publication, newPub: Publication, action: string }>(null);
-  updatedWwnPub$: Observable<{ lastPub: Publication, newPub: Publication, action: string }> = this.ownPubUpdateSubject.asObservable();
-
   private isFetchedQtype: boolean;
   private isFetchedPubs: boolean;
   private isFetchedPub: boolean;
@@ -74,14 +68,6 @@ export class QuejaService implements OnDestroy {
    */
   public loadPubs(pubList: Publication[]) {
     this.subject.next(pubList);
-  }
-
-  /**
-   * MÉTODO PARA NOTIFICAR A LOS OBSERVADORES LA LISTA DE PUBLICACIONES DEL USUARIO LOGGEADO:
-   * @param pubList 
-   */
-  public loadOwnPubs(pubList: Publication[]) {
-    this.ownPubsSubject.next(pubList);
   }
 
   /**
@@ -272,7 +258,7 @@ export class QuejaService implements OnDestroy {
           //PARA CARGAR LAS PUBLICACIONES QUE ESTÁN PENDIENTES DE ENVIAR AL BACKEND:
           this.getOfflinePubsCache()
           ///
-          return cachePubs;
+          return this.pubList;
         });
       }
       else {
@@ -404,7 +390,7 @@ export class QuejaService implements OnDestroy {
     let quejaFormData: FormData = this.mergeFormData(queja);
     return this.postQuejaClient(quejaFormData)
       .then((response) => {
-        this.updatePubList(response, "CREATE", false);
+        this.updatePubList(response, "CREATE");
         this.isPostedPub = true;
         return response;
       }).catch(err => {
@@ -644,7 +630,7 @@ export class QuejaService implements OnDestroy {
    * @param pubJson JSON COMMING FROM THE SOCKET.IO SERVER OR AS A NORMAL HTTP RESPONSE:
    * @param action THIS CAN BE CREATE, UPDATE OR DELETE:
    */
-  public updatePubList(pubJson: any, action: string, notifiyOwnPubListener: boolean = true) {
+  public updatePubList(pubJson: any, action: string) {
     let lastPub: Publication, newPub: Publication;
     let isDeleted: boolean = false;
 
@@ -665,11 +651,6 @@ export class QuejaService implements OnDestroy {
     verifyStoredData('publication', pubJson, isDeleted);
 
     this.deleteOffPubAsoc(newPub);
-    //PARA NOTIFICAR AL COMPONENTE QUE RECIBE LAS PUBLICACIONES PROPIAS EL USUARIO LOGGEADO:
-    if (notifiyOwnPubListener) {
-      this.ownPubUpdateSubject.next({ lastPub: lastPub, newPub: newPub, action: action });
-    }
-    ////
 
     ArrayManager.backendServerSays(action, this.pubList, lastPub, newPub);
   }
@@ -724,7 +705,7 @@ export class QuejaService implements OnDestroy {
   /**
    * MÉTODO PARA EXTRAER LOS ATRIBUTOS DE LA LISTA DE PUBLICACIONES OFFLINE:
    */
-  private extractOfflinePub(offCachePub) {
+  public extractOfflinePub(offCachePub) {
     let pub: Publication;
     let usr: User;
     let type: QuejaType;
@@ -835,7 +816,6 @@ export class QuejaService implements OnDestroy {
       });
 
       if (!mediaFilter && ArrayManager.CREATE === action) {
-        console.log("this.pubList[indexAddMedia]", this.pubList[indexAddMedia]);
         this.pubList[indexAddMedia].media.push(new Media(media.id_multimedia, media.format_multimedia, media.media_path));
       }
     }

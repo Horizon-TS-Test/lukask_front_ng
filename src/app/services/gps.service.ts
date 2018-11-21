@@ -32,7 +32,7 @@ export class GpsService {
 
       callback({ lat: position.coords.latitude, long: position.coords.longitude });
     }, (error) => {
-      alert('code: ' + error.code + '\n' +
+      console.log('code: ' + error.code + '\n' +
         'message: ' + error.message + '\n');
     }, { timeout: 7000 });
   }

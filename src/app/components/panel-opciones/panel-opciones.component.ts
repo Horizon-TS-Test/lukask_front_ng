@@ -50,9 +50,9 @@ export class PanelOpcionesComponent implements OnInit, OnChanges, OnDestroy {
    * LISTEN TO EVENT EMITTER WITH ADMIN/USER FLAG:
    */
   private listenAdminFlag() {
-    this.adminSubscriber = this._userService.updateUser$.subscribe((resp) => {
-      if (resp) {
-        this.isAdmin = this._userService.verifyIsAdmin();
+    this.adminSubscriber = this._userService.isAdmin$.subscribe((resp) => {
+      if (resp != null) {
+        this.isAdmin = resp;
       }
     });
   }
@@ -69,6 +69,9 @@ export class PanelOpcionesComponent implements OnInit, OnChanges, OnDestroy {
           break;
         case MENU_OPTIONS.mapview:
           idOp = 'top-option-1';
+          break;
+        case MENU_OPTIONS.claims:
+          idOp = 'top-option-2';
           break;
       }
       if (menuOption != -1) {

@@ -264,7 +264,7 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges, OnDes
    * METODO PARA DEFINI EL OBJETO EERSA CLAIM:
    */
   private defineEersaClaim() {
-    this.eersaClaim = new EersaClaim(null, this.eersaLocClient.eersaClient, this.eersaLocClient.eersaLocation, null, null);
+    this.eersaClaim = new EersaClaim(null, null, this.eersaLocClient.eersaClient, this.eersaLocClient.eersaLocation, null, null);
   }
 
   /**
@@ -324,8 +324,9 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges, OnDes
   public sendEersaClaim() {
     this.defineNewPub();
     this.eersaClaim.ubicacion.calle = this._locationAddress;
+    this.newPub.eersaClaim = this.eersaClaim;
 
-    this._eersaClaimService.saveEersaPub({ eersaPub: this.eersaClaim, pub: this.newPub }).then((response: any) => {
+    this._eersaClaimService.saveEersaPub(this.newPub).then((response: any) => {
       if (response == true) {
         this.afterSubmit.emit({ finished: true, dataAfterSubmit: null, hasError: false, message: 'Su reclamo se enviará en la próxima conexión', backSync: true });
       }

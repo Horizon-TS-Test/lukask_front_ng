@@ -1,40 +1,54 @@
 <div class="p-shadow-card p-no-border-rad-card card py-0 m-2 mb-3">
-  <a href="#" (click)="geolocatePub($event)" class="p-float-btn top-right-outer-corner dark no-border-button ml-1" title="Geolocalizar">
-    <fa name="map-marker"></fa>
-  </a>
-
-  <a href="#" (click)="viewQuejaDetail($event)">
-    <div class="d-flex justify-content-center align-items-stretch pr-2">
-
-      <div class="short-img-pub">
-        <span *ngIf="pub.media.length > 1">
-          <fa name="ellipsis-h"></fa>
-        </span>
-
-        <img src="{{ pub.media[0].url }}">
-      </div>
-
-      <div class="f-child-no-auto short-text-pub card-block text-justify py-2 pl-2 pr-4">
-        {{ pub.detail }}
-      </div>
-
+  <!--PARA UNA PUBLICACION OFFLINE-->
+  <div *ngIf="pub.isOffline" class="offline-status p-no-border-rad-card p-border-none card flex-row justify-content-between align-items-center pl-3 pr-2 py-2">
+    <div>
+      <fa name="spinner" animation="pulse"></fa>&nbsp;&nbsp;Esperando conexión
     </div>
+    <a href="#" (click)="cancelPub($event)" class="no-border-button secondary ml-1" title="Cancel">
+      <fa name="close"></fa>
+    </a>
+  </div>
+  <!------------------------------------------->
 
-    <ul class="short-text-pub list-group list-group-flush pt-1 pb-0">
-      <li class="p-primary-text-color list-group-item d-flex justify-content-between align-items-start py-2">
-        <fa name="calendar" class="mr-1"></fa>
-        <div class="ml-2 f-child-no-auto">{{ pub.coolDate }}</div>
-      </li>
+  <div class="relative-background">
+    <a href="#" (click)="geolocatePub($event)" class="p-float-btn top-right-outer-corner secondary no-border-button ml-1"
+      title="Geolocalizar">
+      <fa name="map-marker"></fa>
+    </a>
 
-      <li class="p-primary-text-color list-group-item d-flex justify-content-between align-items-start py-2">
-        <fa name="home" class="mr-1"></fa>
-        <div class="ml-2 f-child-no-auto">{{ pub.address }}</div>
-      </li>
+    <a href="#" (click)="viewQuejaDetail($event)">
+      <div class="d-flex justify-content-center align-items-stretch pr-2">
 
-      <li class="p-primary-text-color list-group-item d-flex justify-content-between align-items-start py-2">
-        <fa name="bullhorn" class="mr-1"></fa>
-        <div class="ml-2 f-child-no-auto">{{ pub.type.description }}</div>
-      </li>
-    </ul>
-  </a>
+        <div class="short-img-pub">
+          <span *ngIf="pub.media.length > 1">
+            <fa name="ellipsis-h"></fa>
+          </span>
+
+          <img [src]="_domSanitizer.bypassSecurityTrustResourceUrl(pub.media[0].url)">
+        </div>
+
+        <div class="f-child-no-auto short-text-pub card-block text-justify py-2 pl-2 pr-4">
+          {{ pub.detail }}
+        </div>
+
+      </div>
+
+      <ul class="short-text-pub list-group list-group-flush pt-1 pb-0">
+        <li class="p-primary-text-color list-group-item d-flex justify-content-between align-items-start py-2">
+          <fa name="calendar" class="mr-1"></fa>
+          <div class="ml-2 f-child-no-auto">{{ pub.coolDate }}</div>
+        </li>
+
+        <li class="p-primary-text-color list-group-item d-flex justify-content-between align-items-start py-2">
+          <fa name="home" class="mr-1"></fa>
+          <div class="ml-2 f-child-no-auto">{{ pub.address }}</div>
+        </li>
+
+        <li class="p-primary-text-color list-group-item d-flex justify-content-between align-items-start py-2">
+          <fa name="bullhorn" class="mr-1"></fa>
+          <div class="ml-2 f-child-no-auto">{{ pub.type.description }}</div>
+        </li>
+      </ul>
+    </a>
+  </div>
 </div>

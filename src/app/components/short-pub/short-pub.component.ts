@@ -3,6 +3,9 @@ import { Publication } from '../../models/publications';
 import { CONTENT_TYPES } from '../../config/content-type';
 import { DynaContentService } from 'src/app/services/dyna-content.service';
 import { ACTION_TYPES } from 'src/app/config/action-types';
+import { DomSanitizer } from '@angular/platform-browser';
+import { ASSETS } from 'src/app/config/assets-url';
+import { Media } from 'src/app/models/media';
 
 @Component({
   selector: 'short-pub',
@@ -14,11 +17,22 @@ export class ShortPubComponent implements OnInit {
   @Output() geoMap = new EventEmitter<number>();
 
   constructor(
-    private _dynaContentService: DynaContentService
+    private _dynaContentService: DynaContentService,
+    public _domSanitizer: DomSanitizer
   ) { }
 
   ngOnInit() {
+    this.setDefaultImg();
     this.makeDetailShorter();
+  }
+
+  /**
+   * METODO PARA DEFINIR UNA IMAGEN POR DEFECTO EN CASO DE QUE EL RECLAMO OFFLINE NO TENGA MEDIOS:
+   */
+  private setDefaultImg() {
+    if (this.pub.media.length == 0) {
+      this.pub.media[0] = new Media(null, null, ASSETS.defaultImg);;
+    }
   }
 
   /**

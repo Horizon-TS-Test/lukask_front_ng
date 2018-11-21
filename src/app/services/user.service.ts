@@ -20,12 +20,13 @@ declare var deleteItemData: any;
 export class UserService {
   private updateUserSub = new BehaviorSubject<boolean>(null)
   updateUser$: Observable<boolean> = this.updateUserSub.asObservable();
+  private isAdminSub = new BehaviorSubject<boolean>(null)
+  isAdmin$: Observable<boolean> = this.isAdminSub.asObservable();
 
   private isPatchedUser: boolean;
 
   public userProfile: User;
   public pageLimit: number;
-  public isAdmin: boolean;
   public onStreaming: boolean;
 
   constructor(
@@ -36,6 +37,7 @@ export class UserService {
     this.pageLimit = 5;
     this.isPatchedUser = false;
     this.onStreaming = false;
+    this.verifyIsAdmin((this.getUserProfile()) ? this.getUserProfile().id == USER_PRIVILEGES.admin : null);
   }
 
   /**
@@ -155,7 +157,8 @@ export class UserService {
     this.setUserProfile();
     setTimeout(() => {
       this.userReady(true);
-    }, 500);
+      this.verifyIsAdmin(this.userProfile.id == USER_PRIVILEGES.admin);
+    }, 1000);
   }
 
   /**
@@ -330,7 +333,6 @@ export class UserService {
    */
   public setUserProfile() {
     this.userProfile = this.getStoredUserData();
-    this.isAdmin = this.getUserProfile().id == USER_PRIVILEGES.admin;
   }
 
   /**
@@ -409,7 +411,7 @@ export class UserService {
   /**
    * MÉTODO PARA VERIFICAR SI UN USUARIO ES ADMIN O NO --------> PROVISIONAL
    */
-  public verifyIsAdmin() {
-    return this.isAdmin;
+  public verifyIsAdmin(isAdmin: boolean) {
+    this.isAdminSub.next(isAdmin);
   }
 }

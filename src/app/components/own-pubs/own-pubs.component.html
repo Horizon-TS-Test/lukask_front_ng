@@ -1,4 +1,4 @@
-<ng-container *ngIf="_quejaService.ownPubs$ | async as myPubList else loadingContainer">
+<ng-container *ngIf="_userPubsService.ownPubs$ | async as myPubList else loadingContainer">
   <short-pub *ngFor="let pub of myPubList" [pub]="pub" (geoMap)="geolocatePub($event, pub.id_publication)"></short-pub>
 </ng-container>
 

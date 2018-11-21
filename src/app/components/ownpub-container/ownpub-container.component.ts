@@ -1,33 +1,55 @@
-import { Component, OnInit, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output, OnDestroy } from '@angular/core';
 import { Publication } from 'src/app/models/publications';
-import { QuejaService } from 'src/app/services/queja.service';
 import { OwnPubsService } from 'src/app/services/own-pubs.service';
 import { ASSETS } from 'src/app/config/assets-url';
 import { DynaContent } from 'src/app/interfaces/dyna-content.interface';
-import { ArrayManager } from 'src/app/tools/array-manager';
+import { UserPubsService } from 'src/app/services/user-pubs.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'ownpub-container',
   templateUrl: './ownpub-container.component.html',
   styleUrls: ['./ownpub-container.component.css']
 })
-export class OwnpubContainerComponent implements OnInit {
+export class OwnpubContainerComponent implements OnInit, OnDestroy {
   @Output() geoMap = new EventEmitter<DynaContent>();
 
+  private morePubsSubscriber: Subscription;
+  private pubUpdateSub: Subscription;
+  private offPubSub: Subscription;
   private myPubList: Publication[];
   private ownPubsDiv: any;
   private activeClass: string;
   private LOADER_HIDE: string = "hide";
   private LOADER_ON: string = "on";
+  private pagePattern: string;
 
   public preloader: string;
 
   constructor(
-    private _quejaService: QuejaService,
+    private _userPubsService: UserPubsService,
     private _ownPubsService: OwnPubsService
   ) {
     this.preloader = ASSETS.preloader;
-    this._ownPubsService.moreOwnPubsRequest$.subscribe((more: boolean) => {
+  }
+
+  ngOnInit() {
+    this.ownPubsDiv = document.querySelector("#ownPubs");
+
+    setTimeout(() => {
+      this.getMyPubList();
+    }, 1500);
+
+    this.listenToMorePubs();
+    this.listenToOwnPubUpdate();
+    this.listenToOffUserPub();
+  }
+
+  /**
+   * METODO PARA ESCUCHAR LA PETICION DE MAS UER PUBS:
+   */
+  private listenToMorePubs() {
+    this.morePubsSubscriber = this._ownPubsService.moreOwnPubsRequest$.subscribe((more: boolean) => {
       if (more && this.activeClass != this.LOADER_ON) {
         let ownClassList = this.ownPubsDiv.classList;
         this.activeClass = this.LOADER_ON;
@@ -41,22 +63,12 @@ export class OwnpubContainerComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
-    this.ownPubsDiv = document.querySelector("#ownPubs");
-
-    setTimeout(() => {
-      this.getMyPubList();
-    }, 4000);
-
-    this.listenToOwnPubUpdate();
-  }
-
   /**
    * FUNCIÓN PARA OBTENER UN NÚMERO INICIAL DE PUBLICACIONES DEL USUARIO LOGGEADO, PARA DESPUÉS CARGAR MAS PUBLICACIONES BAJO DEMANDA
    */
   private getMyPubList(more: boolean = false) {
     if (more) {
-      this._quejaService.getMorePubs(true).then((morePubs: Publication[]) => {
+      this._userPubsService.getMoreUserPubs(this.pagePattern, this.myPubList).then((userPubData: { userPubs: Publication[], pagePattern: string }) => {
         let ownClassList = this.ownPubsDiv.classList;
         if (ownClassList) {
           setTimeout(() => {
@@ -69,14 +81,16 @@ export class OwnpubContainerComponent implements OnInit {
             }, 800);
           }, 1000);
         }
-        this.myPubList = morePubs;
-        this._quejaService.loadOwnPubs(this.myPubList);
+        this.pagePattern = userPubData.pagePattern;
+        this.myPubList = userPubData.userPubs;
+        this._userPubsService.loadOwnPubs(this.myPubList);
       });
     }
     else {
-      this._quejaService.getPubList(true).then((pubs: Publication[]) => {
-        this.myPubList = pubs;
-        this._quejaService.loadOwnPubs(this.myPubList);
+      this._userPubsService.getUserPubList().then((userPubData: { userPubs: Publication[], pagePattern: string }) => {
+        this.pagePattern = userPubData.pagePattern;
+        this.myPubList = userPubData.userPubs;
+        this._userPubsService.loadOwnPubs(this.myPubList);
       });
     }
   }
@@ -93,12 +107,29 @@ export class OwnpubContainerComponent implements OnInit {
    * MÉTODO PARA ESCUCHAR LOS CAMBIOS DE LAS PUBLICACIONES PROPIAS DEL USUARIO QUE VIENEN TRAVES DEL SOCKET.IO CLIENT:
    */
   private listenToOwnPubUpdate() {
-    this._quejaService.updatedWwnPub$.subscribe((ownPubData: { lastPub: Publication, newPub: Publication, action: string }) => {
+    this.pubUpdateSub = this._userPubsService.updatedOwnPub$.subscribe((ownPubData: { userPubJson: any, action: string }) => {
       if (ownPubData) {
-        console.log("pubData: ", ownPubData);
-        ArrayManager.backendServerSays(ownPubData.action, this.myPubList, ownPubData.lastPub, ownPubData.newPub);
-        this._quejaService.loadOwnPubs(this.myPubList);
+        this._userPubsService.updateuserPubList(ownPubData.userPubJson, ownPubData.action, this.myPubList);
+        this._userPubsService.loadOwnPubs(this.myPubList);
       }
     });
+  }
+
+  /**
+   * MÉTODO PARA ESCUCHAR LOS CAMBIOS DE LAS PUBLICACIONES PROPIAS DEL USUARIO QUE VIENEN TRAVES DEL SOCKET.IO CLIENT:
+   */
+  private listenToOffUserPub() {
+    this.offPubSub = this._userPubsService.newOffUserPub$.subscribe((offPub: Publication) => {
+      if (offPub) {
+        this.myPubList.splice(0, 0, offPub);
+        this._userPubsService.loadOwnPubs(this.myPubList);
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this.morePubsSubscriber.unsubscribe();
+    this.offPubSub.unsubscribe();
+    this.pubUpdateSub.unsubscribe();
   }
 }

@@ -3,5 +3,6 @@ export class EersaLocation {
         public calle: string,
         public idBarrio: number,
         public referencia: string,
+        public descBarrio?: string
     ) { }
 }

@@ -30,6 +30,9 @@ var dbPromise = idb.open('lukask-store', 1, function (db) {
     if (!db.objectStoreNames.contains('parroquia')) {
         db.createObjectStore('parroquia', { keyPath: 'id' });
     }
+    if (!db.objectStoreNames.contains('user-pub')) {
+        db.createObjectStore('user-pub', { keyPath: 'id' });
+    }
 
     /**
      * TABLES FOR BACKGROUND SYNC:
@@ -45,6 +48,9 @@ var dbPromise = idb.open('lukask-store', 1, function (db) {
     }
     if (!db.objectStoreNames.contains('sync-user-profile')) {
         db.createObjectStore('sync-user-profile', { keyPath: 'id' });
+    }
+    if (!db.objectStoreNames.contains('sync-user-eersa-claim')) {
+        db.createObjectStore('sync-user-eersa-claim', { keyPath: 'id' });
     }
 });
 //////////////////////////////////////////////////////////////////
@@ -157,6 +163,9 @@ function verifyStoredDataArray(table, dataToSave) {
                     case 'parroquia':
                         dataToSave[d].id = dataToSave[d].id_parish;
                         break;
+                    case 'user-pub':
+                        dataToSave[d].id = dataToSave[d].id_publication;
+                        break;
                 }
                 for (var t = 0; t < tableData.length; t++) {
                     if (tableData[t].id == dataToSave[d].id) {
@@ -180,6 +189,9 @@ function verifyStoredData(table, dataToSave, isDeleted) {
         .then(function (tableData) {
             switch (table) {
                 case 'publication':
+                    dataToSave.id = dataToSave.id_publication;
+                    break;
+                case 'user-pub':
                     dataToSave.id = dataToSave.id_publication;
                     break;
                 case 'qtype':
@@ -360,7 +372,7 @@ function upgradeTableFieldData(table, dataToSave) {
 }
 
 /**
- * FUNCIÓN PARA ELIMINAR LOS REGISTROS DE UNA TABLA ESPECÍFICO SEGÚN SU ID PADRE DE CACHÉ:
+ * FUNCION PARA ELIMINAR DE INDEXDB LOS REGISTROS DE UNA TABLA ESPECÍFICA SEGÚN SU ID PADRE:
  * @param {*} table NOMBRE DE LA TABLA EN CUESTIÓN
  * @param {*} parentId EL ID DEL PADRE A ELIMINAR
  */

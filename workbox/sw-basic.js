@@ -4,7 +4,7 @@ const baseURL = './';
 
 //NEXT ALLOWS US TO USE INDEX DB:
 importScripts(baseURL + 'assets/js/idb.min.js');
-importScripts(baseURL + 'assets/js/utility-db.min.js');
+importScripts(baseURL + 'assets/js/utility-db.js');
 ///////////
 
 //NEXT ALLOWS US TO MAKE NOTIFICATIONS BETWEEN SERVICE WORKER AND BROWSER CLIENTS:
@@ -23,6 +23,7 @@ const SYNC_TYPE = {
     comSyn: 'sync-new-comment',
     relSyn: 'sync-new-relevance',
     userSyn: 'sync-update-user',
+    eersaClaimSyn: 'sync-new-eersa-claim',
 };
 
 const REST_URLS_PATTERN = {
@@ -34,7 +35,9 @@ const REST_URLS_PATTERN = {
     qtype: SERVERS.middleWare + '/qtype',
     province: SERVERS.middleWare + '/province',
     canton: /http:\/\/192.168.1.37:3001\/canton\/\?province_id=[0-9|a-f|-]+$/,
-    parroq: /http:\/\/192.168.1.37:3001\/parroquia\/\?canton_id=[0-9|a-f|-]+$/
+    parroq: /http:\/\/192.168.1.37:3001\/parroquia\/\?canton_id=[0-9|a-f|-]+$/,
+    firstUserPubs: /http:\/\/192.168.1.37:3001\/publication\/\?limit=[0-9]+&user_id=[0-9]+$/,
+    moreUserPubs: /http:\/\/192.168.1.37:3001\/publication\/\?limit=[0-9]+&offset=[0-9]+&user_id=[0-9]+$/,
 };
 
 const REST_URLS = {
@@ -42,6 +45,7 @@ const REST_URLS = {
     comment: SERVERS.middleWare + '/comment',
     relevance: SERVERS.middleWare + '/relevance',
     user: SERVERS.middleWare + '/user',
+    eersa: SERVERS.middleWare + '/eersa/claim',
 };
 
 workbox.precaching.suppressWarnings();
@@ -264,6 +268,51 @@ workbox.routing.registerRoute(REST_URLS_PATTERN.parroq, function (args) {
             return res;
         });
 });
+
+/**
+ * HANDLER TO STORING FIRST USER PUBS DATA INTO INDEXED DB:
+ */
+workbox.routing.registerRoute(REST_URLS_PATTERN.firstUserPubs, function (args) {
+    return fetch(args.event.request)
+        .then(function (res) {
+            var clonedRes = res.clone();
+            clearAllData('user-pub')
+                .then(function () {
+                    return clonedRes.json();
+                })
+                .then(function (response) {
+                    //STORE THE RESPONSE ON INDEX DB:
+                    console.log("[LUKASK SERVICE WORKER - INDEXED-DB] First User Pubs from rest api", response.data);
+                    var pubs = response.data.results;
+
+                    verifyStoredDataArray('user-pub', pubs);
+                });
+
+            return res;
+        });
+});
+
+/**
+ * HANDLER TO STORING MORE USER PUBS DATA INTO INDEXED DB:
+ */
+workbox.routing.registerRoute(REST_URLS_PATTERN.moreUserPubs, function (args) {
+    return fetch(args.event.request)
+        .then(function (res) {
+            var clonedRes = res.clone();
+            clonedRes.json()
+                .then(function (response) {
+                    //STORE THE RESPONSE ON INDEX DB:
+                    console.log("[LUKASK SERVICE WORKER - INDEXED-DB] More User Pubs from rest api", response.data);
+                    var pubs = response.data.results;
+
+                    verifyStoredDataArray('user-pub', pubs);
+                });
+
+            return res;
+        });
+});
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
@@ -364,6 +413,9 @@ function sendData(restUrl, data, indexedTable, syncTable, jsonDataType) {
                         .then(function (restData) {
                             switch (indexedTable) {
                                 case 'publication':
+                                    verifyStoredData(indexedTable, restData.data, false);
+                                    break;
+                                case 'user-pub':
                                     verifyStoredData(indexedTable, restData.data, false);
                                     break;
                                 case '':
@@ -491,6 +543,49 @@ self.addEventListener('sync', function (event) {
                             formData.append('is_active', prof.is_active);
 
                             sendData(REST_URLS.user + "/" + prof.user_id, formData, '', 'sync-user-profile', false);
+                        }
+                    })
+            );
+            break;
+        case SYNC_TYPE.eersaClaimSyn:
+            console.log('[LUKASK SERVICE WORKER] Syncing EERSA CLAIMS');
+            event.waitUntil(
+                readAllData('sync-user-eersa-claim')
+                    .then(function (data) {
+                        for (var claimData of data) {
+                            //SENDING PUB TO THE BACKEND SERVER:
+                            var formData = new FormData();
+                            //ALWAYS IT MUST BE "id" FOR GENERIC PURPOSES:
+                            formData.append('id', claimData.id);
+                            //
+                            formData.append('latitude', claimData.latitude);
+                            formData.append('longitude', claimData.longitude);
+                            formData.append('detail', claimData.detail);
+                            formData.append('type_publication', claimData.type_publication);
+                            formData.append('date_publication', claimData.date_publication);
+                            formData.append('location', claimData.location);
+                            formData.append('address', claimData.address);
+                            formData.append('is_trans', claimData.is_trans);
+                            formData.append('userId', claimData.userId);
+                            for (var media of claimData.media_files) {
+                                formData.append('media_files[]', media.file, media.fileName);
+                            }
+
+                            formData.append('nCuenta', claimData.eersaClaim.nCuenta);
+                            formData.append('nMedidor', claimData.eersaClaim.nMedidor);
+                            formData.append('nPoste', claimData.eersaClaim.nPoste);
+                            formData.append('cliente', claimData.eersaClaim.cliente);
+                            formData.append('cedula', claimData.eersaClaim.cedula);
+                            formData.append('telefono', claimData.eersaClaim.telefono);
+                            formData.append('celular', claimData.eersaClaim.celular);
+                            formData.append('email', claimData.eersaClaim.email);
+                            formData.append('calle', claimData.eersaClaim.calle);
+                            formData.append('idTipo', claimData.eersaClaim.idTipo);
+                            formData.append('idBarrio', claimData.eersaClaim.idBarrio);
+                            formData.append('referencia', claimData.eersaClaim.referencia);
+                            formData.append('detalleReclamo', claimData.eersaClaim.detalleReclamo);
+
+                            sendData(REST_URLS.eersa, formData, 'user-pub', 'sync-user-eersa-claim', false);
                         }
                     })
             );

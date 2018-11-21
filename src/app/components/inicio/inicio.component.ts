@@ -69,10 +69,9 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
     this.manageResponsiveViewPort();
     ////
     this._contentService.fadeInComponent($("#homeContainer"));
+
     this.listenAdminFlag();
-
     this.listenToMenuChanges();
-
     this.initCarousel();
     this.paymentSocketUpdate();
   }
@@ -90,9 +89,9 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
    * LISTEN TO EVENT EMITTER WITH ADMIN/USER FLAG:
    */
   private listenAdminFlag() {
-    this.adminSubscriber = this._userService.updateUser$.subscribe((resp) => {
-      if (resp) {
-        this.isAdmin = this._userService.verifyIsAdmin();
+    this.adminSubscriber = this._userService.isAdmin$.subscribe((resp) => {
+      if (resp != null) {
+        this.isAdmin = resp;
         this.getPubList();
       }
     });
@@ -138,7 +137,7 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
    * MÉTODO PARA MANIPULAR EL EVENTO DE SCROLL DENTRO DEL COMPONENTE PRINCIPAL DE QUEJAS:
    */
   private onScrollOwnPubContainer() {
-    this.ownPubsContainer = $('#ownpub-container');
+    this.ownPubsContainer = $('#claim-container');
     this.ownPubsContainer.scroll(() => {
       if (this._contentService.isBottomScroll(this.ownPubsContainer)) {
         this._ownPubsService.requestMoreOwnPubs();
@@ -185,7 +184,7 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
     this.customCarousel = $('#carousel-home');
 
     this.customCarousel.on('dragged.owl.carousel', (event) => {
-      const menuIndex = event.item.index;
+      let menuIndex = event.item.index;
       switch (menuIndex) {
         case MENU_OPTIONS.home:
           break;
@@ -196,7 +195,7 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
             this.reInitCarousel();
           }, 250);
           break;
-        case MENU_OPTIONS.ownPubs:
+        case MENU_OPTIONS.claims:
           this.enableThirdOp = true;
           break;
       }
@@ -221,7 +220,7 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
             }, 300);
           }
           break;
-        case MENU_OPTIONS.ownPubs:
+        case MENU_OPTIONS.claims:
           this.enableThirdOp = true;
           if (!this.touchDrag) {
             setTimeout(() => {

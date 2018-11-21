@@ -1,8 +1,9 @@
-import * as moment from 'node_modules/moment';
 import { Media } from "./media";
 import { User } from "./user";
 import { QuejaType } from "./queja-type";
 import { DateManager } from "../tools/date-manager";
+import { EersaClaim } from './eersa-claim';
+import * as moment from 'node_modules/moment';
 
 export class Publication {
     public media: Media[];
@@ -26,12 +27,14 @@ export class Publication {
         public isTrans?: boolean,
         public transDone?: boolean,
         public isOffline?: boolean,
-        public offRelevance?: boolean
+        public offRelevance?: boolean,
+        public eersaClaim?: EersaClaim
     ) {
         if (this.date_pub) {
             this.beutifyDate();
         }
         this.media = [];
+        this.eersaClaim = new EersaClaim(null, null, null, null, null, null);
     }
 
     public beutifyDate() {
