@@ -65,14 +65,7 @@
     </ng-container>
 
     <ng-template #loader>
-      <div class="col-12 py-2 d-flex justify-content-center align-items-center" [ngClass]="{ 'min-height-full-modal': fullLoader }">
-        <div [ngClass]="{
-          'col-5': fullLoader,
-          'col-3': !fullLoader
-        }">
-          <img src="{{ preloader }}" width="100px">
-        </div>
-      </div>
+      <loader [normalLoader]="fullLoader" [fullScreen]="fullDisplay"></loader>
     </ng-template>
   </div>
 </div>

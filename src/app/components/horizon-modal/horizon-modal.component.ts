@@ -19,7 +19,6 @@ export class HorizonModalComponent implements OnInit, OnDestroy {
 
   public backgroundClass: string;
   public showClass: string;
-  public preloader: string;
   public fullDisplay: boolean;
   public fullLoader: boolean;
   public modalReady: boolean;
@@ -28,7 +27,6 @@ export class HorizonModalComponent implements OnInit, OnDestroy {
     private _dynaContentService: DynaContentService
   ) {
     this.modalReady = false;
-    this.preloader = ASSETS.preloader;
     this.contentTypes = CONTENT_TYPES;
 
     this.subscriber = this._dynaContentService.removeDynaCont$.subscribe((closeIt: boolean) => {
