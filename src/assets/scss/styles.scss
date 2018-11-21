@@ -1880,8 +1880,14 @@ p, label, div {
 .p-primary-back-color, .p-primary-back-color:hover {
     background: $primary-text !important;
 }
-.p-secondary-back-color, .p-secondary-back-color:hover {
+.p-secondary-text-back-color, .p-secondary-text-back-color:hover {
     background: $secondary-text !important;
+}
+.p-light-back-color, .p-light-back-color:hover {
+    background: $primary-light !important;
+}
+.p-secondary-d-back-color, .p-secondary-d-back-color:hover {
+    background: $secondary-dark !important;
 }
 ////
 
