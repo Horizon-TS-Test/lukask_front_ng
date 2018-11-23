@@ -1,0 +1,6 @@
+<div class="relative-background">
+    <user-pubs (geoMap)="geolocatePub($event)" (onCancelPub)="cancelPub($event)"></user-pubs>
+    <div id="userPubs" class="bottom-loader pub-loader col-12 d-flex justify-content-center align-items-center">
+        <img src="{{ preloader }}" width="60px" class="p-owl-img">
+    </div>
+</div>

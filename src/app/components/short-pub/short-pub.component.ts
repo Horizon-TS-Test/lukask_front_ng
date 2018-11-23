@@ -15,7 +15,8 @@ import { UserService } from 'src/app/services/user.service';
 })
 export class ShortPubComponent implements OnInit {
   @Input() pub: Publication;
-  @Output() geoMap = new EventEmitter<number>();
+  @Output() geoMap: EventEmitter<number>;
+  @Output() onCancelPub: EventEmitter<Publication>;
 
   public isAdmin: boolean;
 
@@ -25,6 +26,8 @@ export class ShortPubComponent implements OnInit {
     public _userService: UserService
   ) {
     this.verifyIsAdmin();
+    this.geoMap = new EventEmitter<number>();
+    this.onCancelPub = new EventEmitter<Publication>();
   }
 
   ngOnInit() {
@@ -75,5 +78,14 @@ export class ShortPubComponent implements OnInit {
     if (this.pub.detail.length > 110) {
       this.pub.detail = this.pub.detail.substring(0, 110) + " ...";
     }
+  }
+
+  /**
+   * METODO PARA CANCELAR UN RECLAMO OFFLINE:
+   * @param event 
+   */
+  public cancelPub(event: any) {
+    event.preventDefault();
+    this.onCancelPub.emit(this.pub);
   }
 }

@@ -1,0 +1,7 @@
+<ng-container *ngIf="_userPubsService.userPubs$ | async as myPubList else loadingContainer">
+  <short-pub *ngFor="let pub of myPubList" [pub]="pub" (geoMap)="geolocatePub($event, pub.id_publication)" (onCancelPub)="cancelPub($event)"></short-pub>
+</ng-container>
+
+<ng-template #loadingContainer>
+  <div class="loading-content active"></div>
+</ng-template>

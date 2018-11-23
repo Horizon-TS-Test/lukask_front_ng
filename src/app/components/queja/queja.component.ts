@@ -27,8 +27,9 @@ declare var deleteItemData: any;
 })
 export class QuejaComponent implements OnInit, OnDestroy {
   @Input() queja: Publication;
-  @Output() actionType = new EventEmitter<number>();
-  @Output() onCancelPub = new EventEmitter<Publication>();
+  @Output() actionType: EventEmitter<number>;
+  @Output() offlineRelevancePub: EventEmitter<Publication>;
+  @Output() onCancelPub: EventEmitter<Publication>;
 
   private subscription: Subscription;
   private commentSubs: Subscription;
@@ -51,7 +52,9 @@ export class QuejaComponent implements OnInit, OnDestroy {
     private _commentFormService: CommentFormService,
     private _socketService: SocketService
   ) {
-
+    this.actionType = new EventEmitter<number>();
+    this.offlineRelevancePub = new EventEmitter<Publication>();
+    this.onCancelPub = new EventEmitter<Publication>();
     this.commentList = [];
   }
 
@@ -73,6 +76,15 @@ export class QuejaComponent implements OnInit, OnDestroy {
     if (this.queja.media.length == 0) {
       this.queja.media[0] = new Media(null, null, ASSETS.defaultImg);;
     }
+  }
+
+  /**
+   * METODO PARA OBTENER EL ARRAY DE MEDIOS DE TIPO IMAGEN
+   */
+  private getMedioImgPub() {
+    this.mediosImg = lodash.filter(this.queja.media, function (obj) {
+      return obj.format == 'IG';
+    });
   }
 
   /**
@@ -127,8 +139,16 @@ export class QuejaComponent implements OnInit, OnDestroy {
     this.onCancelPub.emit(this.queja);
   }
 
+  /**
+   * METODO PARA ESCUCHAR CUANDO UNA PUBLICACION HA SIDO APOYADA EN MODO OFFLINE:
+   * @param event PUBLICACION APOYADA EN MODO OFFLINE
+   */
+  public onOfflineRelevance(event: Publication) {
+    this.offlineRelevancePub.emit(event);
+  }
+
   /**************************************************************************************************************************************/
-  /*********************************************MÉTODOS PARA ADMINISTRAR LA LISTA DE COMENTARIO******************************************/
+  /*********************************************MÉTODOS PARA ADMINISTRAR LA LISTA DE COMENTARIOS******************************************/
   /**************************************************************************************************************************************/
 
   /**
@@ -285,14 +305,5 @@ export class QuejaComponent implements OnInit, OnDestroy {
     this.newComSubscriptor.unsubscribe();
     this.commentSubs.unsubscribe();
     this.delOffComSubscriptor.unsubscribe();
-  }
-
-  /**
-   * METODO PARA OBTENER EL ARRAY DE MEDIOS DE TIPO IMAGEN
-   */
-  private getMedioImgPub() {
-    this.mediosImg = lodash.filter(this.queja.media, function (obj) {
-      return obj.format == 'IG';
-    });
   }
 }

@@ -6,11 +6,10 @@ import { CONTENT_TYPES } from '../../config/content-type';
 import { ACTION_TYPES } from '../../config/action-types';
 import { Alert } from '../../models/alert';
 import { ALERT_TYPES } from '../../config/alert-types';
-import * as Snackbar from 'node-snackbar';
 import { Router } from '@angular/router';
 import { UserService } from 'src/app/services/user.service';
 import { DynaContentService } from 'src/app/services/dyna-content.service';
-import { QuejaService } from 'src/app/services/queja.service';
+import * as Snackbar from 'node-snackbar';
 
 declare var $: any;
 
@@ -22,19 +21,21 @@ declare var $: any;
 export class TaskListComponent implements OnInit {
   @Input() queja: Publication;
   @Input() isModal: boolean;
-  @Output() actionType = new EventEmitter<number>();
+  @Output() actionType: EventEmitter<number>;
+  @Output() offlineRelevancePub: EventEmitter<Publication>;
 
   private relevanceProc: boolean;
 
   constructor(
     private _actionService: ActionService,
-    private _quejaService: QuejaService,
     private _contentService: ContentService,
     private _dynaContentService: DynaContentService,
     private _userService: UserService,
     private _router: Router
   ) {
     this.relevanceProc = true;
+    this.actionType = new EventEmitter<number>();
+    this.offlineRelevancePub = new EventEmitter<Publication>();
   }
 
   ngOnInit() {
@@ -53,7 +54,7 @@ export class TaskListComponent implements OnInit {
           if (response == 'backSyncOk') {
             Snackbar.show({ text: 'Tu apoyo se enviará en la próxima conexión', pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#34b4db', customClass: "p-snackbar-layout" });
             this.queja.offRelevance = true;
-            this._quejaService.changePubOffRelevance(this.queja);
+            this.offlineRelevancePub.emit(this.queja);
           }
           else {
             this.queja.user_relevance = response;

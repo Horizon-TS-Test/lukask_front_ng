@@ -207,7 +207,7 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges, OnDes
     if (this.mediaFiles.length > 1) {
       for (let i = 0; i < this.mediaFiles.length; i++) {
         if (this.mediaFiles[i].removeable == true) {
-          this.newPub.media.push(new Media("", "", this.mediaFiles[i].mediaFileUrl, true, this.mediaFiles[i].mediaFile, i + "-" + new Date().toISOString() + ".png"));
+          this.newPub.media.push(new Media("", "IG", this.mediaFiles[i].mediaFileUrl, true, this.mediaFiles[i].mediaFile, i + "-" + new Date().toISOString() + ".png"));
         }
       }
     }

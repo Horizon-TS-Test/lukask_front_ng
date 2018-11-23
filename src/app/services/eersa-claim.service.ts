@@ -120,7 +120,7 @@ export class EersaClaimService {
     let claimEersaData: FormData = this.mergeFormData(claimPub);
     return this.postEersaClaim(claimEersaData)
       .then((response) => {
-        this._userPubsService.loadUpdatedOwnPub({ userPubJson: response, action: "CREATE" });
+        this._userPubsService.loadUpdatedUserPub({ userPubJson: response, action: "CREATE" });
         this.isPostedEersaPub = true;
         return response;
       }).catch(err => {

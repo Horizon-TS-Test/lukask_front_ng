@@ -12,6 +12,7 @@ import { SocketService } from './socket.service';
 import { ArrayManager } from '../tools/array-manager';
 import { BackSyncService } from './back-sync.service';
 import * as lodash from 'lodash';
+import { PUB_TYPES } from '../config/pub-types';
 
 declare var readAllData: any;
 declare var writeData: any;
@@ -34,18 +35,23 @@ export class QuejaService implements OnDestroy {
   private subject = new BehaviorSubject<Publication[]>(null);
   pubs$: Observable<Publication[]> = this.subject.asObservable();
 
+  private pubUpdateSubject = new BehaviorSubject<{ userPubJson: any, action: string }>(null);
+  pubUpdate$: Observable<{ userPubJson: any, action: string }> = this.pubUpdateSubject.asObservable();
+
+  private newOffPubSub = new BehaviorSubject<Publication>(null);
+  newOffPub$: Observable<Publication> = this.newOffPubSub.asObservable();
+
+  private newPubActionSub = new BehaviorSubject<Publication>(null);
+  newPubAction$: Observable<Publication> = this.newPubActionSub.asObservable();
+
   private isFetchedQtype: boolean;
   private isFetchedPubs: boolean;
   private isFetchedPub: boolean;
-  private pagePattern: string;
   private isPostedPub: boolean;
   private isUpdatedTrans: boolean;
 
   public DEFAULT_LIMIT: number = 5;
   public ALL: string = "all";
-
-  public pubList: Publication[];
-  public pubFilterList: Publication[];
 
   constructor(
     private _http: Http,
@@ -71,19 +77,42 @@ export class QuejaService implements OnDestroy {
   }
 
   /**
+   * MÉTODO PARA NOTIFICAR A LOS OBSERVADORES UNA NUEVA PUBLICIACIÓN ENTRANTE:
+   * @param pubData 
+   */
+  public loadUpdatedPub(pubData: { userPubJson: any, action: string }) {
+    this.pubUpdateSubject.next(pubData);
+  }
+
+  /**
+   * MÉTODO PARA NOTIFICAR A LOS OBSERVADORES ACERCA DE UNA NUEVA PUBLICACION INSERTADA DE FORMA OFFLINE:
+   * @param pubList 
+   */
+  public loadOffPub(newOffpub: Publication) {
+    this.newOffPubSub.next(newOffpub);
+  }
+
+  /**
+   * MÉTODO PARA NOTIFICAR A LOS OBSERVADORES ACERCA DE UNA NUEVA PUBLICACION INSERTADA DE FORMA OFFLINE:
+   * @param pubList 
+   */
+  public loadNewPubAction(newActionData: any) {
+    this.newPubActionSub.next(newActionData);
+  }
+
+  /**
    * MÉTODO PARA CAMBIAR EL ESTADO DE UNA PUBLICACIÓN CUANDO SE HA DADO APOYO EN MODO OFFLINE:
    * @param pub 
    */
-  public changePubOffRelevance(pub: Publication) {
-    let currentPub = this.pubList.find(currPub => currPub.id_publication === pub.id_publication);
-    ArrayManager.backendServerSays("UPDATE", this.pubList, currentPub, pub);
-    this.loadPubs(this.pubList);
+  public changePubOffRelevance(pub: Publication, pubList: Publication[]) {
+    let currentPub = pubList.find(currPub => currPub.id_publication === pub.id_publication);
+    ArrayManager.backendServerSays("UPDATE", pubList, currentPub, pub);
   }
 
   /**
    * MÉTODO PARA CONSUMIR EL END POINT PARA OBTENER LA LISTA DE TIPOS DE QUEJAS:
    */
-  getQuejTypeWeb() {
+  private getQuejTypeWeb() {
     const qTheaders = new Headers({ 'Content-Type': 'application/json', 'X-Access-Token': this._userService.getUserKey() });
 
     return this._http.get(REST_SERV.qTypeUrl, { headers: qTheaders, withCredentials: true }).toPromise()
@@ -131,7 +160,7 @@ export class QuejaService implements OnDestroy {
   /**
    * MÉTODO PARA CARGAR LA LISTA DE TIPOS DE QUEJA SEA DE LA WEB O DE LA CACHÉ
    */
-  getQtypeList() {
+  public getQtypeList() {
     /**
      * IMPLEMENTING NETWORK FIRST STRATEGY
     */
@@ -158,23 +187,22 @@ export class QuejaService implements OnDestroy {
   /**
    * MÉTODO PARA CARGAR PUBLICACIONES BAJO DEMANDA DESDE LA WEB:
    */
-  private getPubsWebByPage(userPubs: boolean, morePubs: boolean = false) {
+  private getPubsWebByPage(pagePattern: string, pubOrClaim: boolean, morePubs: boolean = false) {
     const pubHeaders = new Headers({
       'Content-Type': 'application/json',
       'X-Access-Token': this._userService.getUserKey()
     });
     let flag = true;
-    let userPattern = '&user_id=' + this._userService.getUserProfile().id;
 
-    if (morePubs == true && !this.pagePattern) {
+    if (morePubs == true && !pagePattern) {
       flag = false;
     }
 
     if (flag) {
-      return this._http.get(REST_SERV.pubsUrl + "/" + (this.pagePattern && morePubs == true ? this.pagePattern : "?limit=" + this.DEFAULT_LIMIT) + (userPubs == true ? userPattern : ''), { headers: pubHeaders, withCredentials: true }).toPromise()
+      return this._http.get(REST_SERV.pubsUrl + "/" + (pagePattern && morePubs == true ? pagePattern : "?limit=" + this.DEFAULT_LIMIT) + (pubOrClaim ? '&pub=true' : '&claim=true'), { headers: pubHeaders, withCredentials: true }).toPromise()
         .then((response: Response) => {
           const respJson = response.json().data;
-          this.pagePattern = respJson.next;
+          const pagePattern = respJson.next;
           const pubs = respJson.results;
 
           let transformedPubs: Publication[] = [];
@@ -184,7 +212,7 @@ export class QuejaService implements OnDestroy {
 
           this.isFetchedPubs = true;
           console.log("[LUKASK QUEJA SERVICE] - PUBLICATIONS FROM WEB", transformedPubs);
-          return transformedPubs;
+          return { userPubs: transformedPubs, pagePattern: pagePattern };
         }).catch((error: Response) => {
           if (error.json().code == 401) {
             localStorage.clear();
@@ -194,14 +222,14 @@ export class QuejaService implements OnDestroy {
     }
     return new Promise((resolve, reject) => {
       this.isFetchedPubs = true;
-      resolve([]);
+      resolve({ userPubs: [], pagePattern: pagePattern });
     });
   }
 
   /**
    * MÉTODO PARA CARGAR PUBLICACIONES BAJO DEMANDA DESDE LA CACHÉ:
    */
-  getPubsCacheByPage() {
+  private getPubsCacheByPage(pagePattern: string, pubOrClaim: boolean) {
     if ('indexedDB' in window) {
       return readAllData('publication')
         .then((pubs) => {
@@ -210,12 +238,13 @@ export class QuejaService implements OnDestroy {
           let sortedPubs = lodash.orderBy(pubs, ['date_publication'], ['desc']);
           ////
           let offset = 0;
-          if (this.pagePattern) {
-            offset = parseInt(this.pagePattern.substring(this.pagePattern.indexOf("=", this.pagePattern.indexOf("offset")) + 1));
+          if (pagePattern) {
+            offset = parseInt(pagePattern.substring(pagePattern.indexOf("=", pagePattern.indexOf("offset")) + 1));
           }
           let cont = 0;
 
           let transformedPubs: Publication[] = [];
+          let type = (pubOrClaim) ? PUB_TYPES.pub : PUB_TYPES.claim;
           for (let i = 0; i < sortedPubs.length; i++) {
             if (i >= offset && cont < this.DEFAULT_LIMIT) {
               transformedPubs.push(this.extractPubJson(sortedPubs[i]));
@@ -226,10 +255,10 @@ export class QuejaService implements OnDestroy {
           let size = sortedPubs.length;
           offset = (offset + this.DEFAULT_LIMIT < size) ? offset + this.DEFAULT_LIMIT : null;
 
-          this.pagePattern = (offset) ? "?limit=" + this.DEFAULT_LIMIT + "&offset=" + offset : null;
+          pagePattern = (offset) ? "?limit=" + this.DEFAULT_LIMIT + "&offset=" + offset : null;
 
           console.log("[LUKASK QUEJA SERVICE] - PUBLICATIONS FROM CACHE", transformedPubs);
-          return transformedPubs
+          return { userPubs: transformedPubs, pagePattern: pagePattern };
         });
     }
 
@@ -241,31 +270,32 @@ export class QuejaService implements OnDestroy {
   /**
    * MÉTODO PARA CARGAR LA LISTA DE PUBLICACIONES SEA DESDE LA WEB O DE LA CACHÉ
    */
-  getPubList(userPubs: boolean = false) {
+  public getPubList(pubOrClaim: boolean = true) {
     /**
      * IMPLEMENTING NETWORK FIRST STRATEGY
     */
-    return this.getPubsWebByPage(userPubs).then((webPubs: Publication[]) => {
-      this.pubList = webPubs;
-
+    return this.getPubsWebByPage(null, pubOrClaim).then((webPubData: { userPubs: Publication[], pagePattern: string }) => {
       if (!this.isFetchedPubs) {
-        return this.getPubsCacheByPage().then((cachePubs: Publication[]) => {
-          this.pubList = cachePubs;
-          ////PARA AGREGAR LAS RELEVANCIAS EN MODO OFFLINE:
-          this.getOfflinePubRelevances(this.pubList);
-          ////
-
-          //PARA CARGAR LAS PUBLICACIONES QUE ESTÁN PENDIENTES DE ENVIAR AL BACKEND:
-          this.getOfflinePubsCache()
-          ///
-          return this.pubList;
+        return this.getPubsCacheByPage(null, pubOrClaim).then((cachePubData: { userPubs: Publication[], pagePattern: string }) => {
+          if (pubOrClaim) {
+            ////PARA AGREGAR LAS RELEVANCIAS EN MODO OFFLINE:
+            return this.getOfflinePubRelevances(cachePubData.userPubs).then((relCachePub) => {
+              //PARA CARGAR LAS PUBLICACIONES QUE ESTÁN PENDIENTES DE ENVIAR AL BACKEND:
+              return this.getOfflinePubsCache(relCachePub).then((offPubs: Publication[]) => {
+                return { userPubs: offPubs, pagePattern: cachePubData.pagePattern };
+              });
+              ///
+            });
+            ////
+          }
+          return cachePubData;
         });
       }
       else {
         this.isFetchedPubs = false;
       }
 
-      return webPubs;
+      return webPubData;
     }).catch((error: Response) => {
       if (error.json().code == 401) {
         localStorage.clear();
@@ -277,27 +307,29 @@ export class QuejaService implements OnDestroy {
   /**
    * FUNCIÓN PARA OBTENER PUBLICACIONES BAJO DEMANDA A TRAVÉS DE UN PATTERN DE PAGINACIÓN:
    */
-  getMorePubs(userPubs: boolean = false) {
+  public getMorePubs(pagePattern, pubList: Publication[], pubOrClaim: boolean = true) {
     /**
      * IMPLEMENTING NETWORK FIRST STRATEGY
     */
-    return this.getPubsWebByPage(userPubs, true).then((webPubs: Publication[]) => {
-      this.pubList = (webPubs.length > 0) ? this.pubList.concat(webPubs) : this.pubList;
+    return this.getPubsWebByPage(pagePattern, pubOrClaim, true).then((webPubData: { userPubs: Publication[], pagePattern: string }) => {
+      pubList = (webPubData.userPubs.length > 0) ? pubList.concat(webPubData.userPubs) : pubList;
 
       if (!this.isFetchedPubs) {
-        return this.getPubsCacheByPage().then((cachePubs: Publication[]) => {
+        return this.getPubsCacheByPage(pagePattern, pubOrClaim).then((cachePubData: { userPubs: Publication[], pagePattern: string }) => {
+          pubList = (cachePubData.userPubs.length > 0) ? pubList.concat(cachePubData.userPubs) : pubList;
+
           ////PARA AGREGAR LAS RELEVANCIAS EN MODO OFFLINE:
-          this.getOfflinePubRelevances(cachePubs);
+          return this.getOfflinePubRelevances(pubList).then((relCachePub) => {
+            return { userPubs: relCachePub, pagePattern: cachePubData.pagePattern };
+          });
           ////
-          this.pubList = this.pubList.concat(cachePubs);
-          return this.pubList;
         });
       }
       else {
         this.isFetchedPubs = false;
       }
 
-      return this.pubList;
+      return { userPubs: pubList, pagePattern: webPubData.pagePattern };
     }).catch((error: Response) => {
       console.log("error", error);
       if (error.json().code == 401) {
@@ -311,30 +343,14 @@ export class QuejaService implements OnDestroy {
    * MÉTODO PARA RETORNAR EL OBJETO QUE CONTIENE LA LISTA DE PUBLICACIONES
    */
   getPubListObj() {
-    return this.pubList;
-  }
-
-  /**
-   * MÉTODO PARA ACTUALIZAR EL OBJETO ARRAY DE PUBLICACIONES
-   * @param pubs NUEVA LISTA DE PUBLICACIONES
-   */
-  setPubList(pubs: Publication[]) {
-    this.pubList = pubs;
-  }
-
-  /**
-   * MÉTODO PARA AÑADIR UNA PUBLICACIÓN A LA LISTA DE PUBS
-   * @param pub 
-   */
-  addPubToPubList(pub: Publication) {
-    this.pubList.push(pub);
+    return null;
   }
 
   /**
    * MÉTODO PARA CREAR UN OBJETO JAVASCRIPT A PARTIR DE UNO DE TIPO PUBLICACION
    * @param queja 
    */
-  mergeJSONData(queja: Publication) {
+  public mergeJSONData(queja: Publication) {
     var json = {
       id: queja.id_publication,
       latitude: queja.latitude,
@@ -351,7 +367,7 @@ export class QuejaService implements OnDestroy {
     }
 
     for (let med of queja.media) {
-      json.media_files.push({ file: med.file, fileName: med.fileName, fileUrl: med.url });
+      json.media_files.push({ file: med.file, fileName: med.fileName, fileUrl: med.url, format: med.format });
     }
     /////
 
@@ -371,8 +387,7 @@ export class QuejaService implements OnDestroy {
         if (navigator.serviceWorker.controller) {
           pub.isOffline = true;
           pub.user = this._userService.getUserProfile();
-          this.pubList.splice(0, 0, pub);
-          this.loadPubs(this.pubList);
+          this.loadOffPub(pub);
           return true;
         }
       }
@@ -390,7 +405,7 @@ export class QuejaService implements OnDestroy {
     let quejaFormData: FormData = this.mergeFormData(queja);
     return this.postQuejaClient(quejaFormData)
       .then((response) => {
-        this.updatePubList(response, "CREATE");
+        this.loadUpdatedPub({ userPubJson: response, action: "CREATE" });
         this.isPostedPub = true;
         return response;
       }).catch(err => {
@@ -449,7 +464,7 @@ export class QuejaService implements OnDestroy {
    * MÉTODO PARA POSTEAR UNA NUEVA QUEJA HACIA EL BACKEND
    * @param quejaFormData 
    */
-  postQuejaClient(quejaFormData: FormData) {
+  private postQuejaClient(quejaFormData: FormData) {
     return new Promise((resolve, reject) => {
       let xhr = new XMLHttpRequest();
       xhr.onreadystatechange = function () {
@@ -482,7 +497,7 @@ export class QuejaService implements OnDestroy {
    * MÉTODO PARA OBTENER UNA PUBLICACION DADO SU ID, DESDE LA WEB
    * @param id 
    */
-  getPubWebById(id: string) {
+  private getPubWebById(id: string) {
     const _headers = new Headers({
       'Content-Type': 'application/json',
       'X-Access-Token': this._userService.getUserKey()
@@ -510,7 +525,7 @@ export class QuejaService implements OnDestroy {
    * MÉTODO PARA OBTENER UNA PUBLICACION DADO SU ID, DESDE LA CACHÉ
    * @param id 
    */
-  getPubCacheById(pubId: string) {
+  private getPubCacheById(pubId: string) {
     if ('indexedDB' in window) {
       return readAllData('publication')
         .then((pubs) => {
@@ -536,7 +551,7 @@ export class QuejaService implements OnDestroy {
    * MÉTODO PARA OBTENER UNA PUBLICACION DADO SU ID SEA DESDE LA WEB O LA CACHÉ
    * @param id 
    */
-  getPubById(id: string) {
+  public getPubById(id: string) {
     /**
      * IMPLEMENTING NETWORK FIRST STRATEGY
     */
@@ -607,18 +622,17 @@ export class QuejaService implements OnDestroy {
    */
   private listenToSocket() {
     this.subscriptor = this._socketService.pubUpdate$.subscribe((socketPub: any) => {
-      if (socketPub && this.pubList) {
+      if (socketPub) {
         let stream = socketPub.stream;
         let action = socketPub.payload.action.toUpperCase();
 
         switch (stream) {
           case "publication":
-            this.updatePubList(socketPub.payload.data, action);
+            this.loadUpdatedPub({ userPubJson: socketPub.payload.data, action: action });
             this.mapSubject.next(socketPub.payload.data.id_publication);
-            this.loadPubs(this.pubList);
             break;
           case "actions":
-            this.updateRelevanceNumber(socketPub.payload.data);
+            this.loadNewPubAction(socketPub.payload.data);
             break;
         }
       }
@@ -630,7 +644,7 @@ export class QuejaService implements OnDestroy {
    * @param pubJson JSON COMMING FROM THE SOCKET.IO SERVER OR AS A NORMAL HTTP RESPONSE:
    * @param action THIS CAN BE CREATE, UPDATE OR DELETE:
    */
-  public updatePubList(pubJson: any, action: string) {
+  public updatePubList(pubJson: any, action: string, pubList: Publication[]) {
     let lastPub: Publication, newPub: Publication;
     let isDeleted: boolean = false;
 
@@ -639,7 +653,7 @@ export class QuejaService implements OnDestroy {
     ////
 
     //REF: https://stackoverflow.com/questions/39019808/angular-2-get-object-from-array-by-id
-    lastPub = this.pubList.find(pub => pub.id_publication === pubJson.id_publication);
+    lastPub = pubList.find(pub => pub.id_publication === pubJson.id_publication);
 
     if (action != ArrayManager.DELETE) {
       newPub = this.extractPubJson(pubJson);
@@ -650,9 +664,9 @@ export class QuejaService implements OnDestroy {
 
     verifyStoredData('publication', pubJson, isDeleted);
 
-    this.deleteOffPubAsoc(newPub);
+    this.deleteOffPubAsoc(newPub, pubList);
 
-    ArrayManager.backendServerSays(action, this.pubList, lastPub, newPub);
+    ArrayManager.backendServerSays(action, pubList, lastPub, newPub);
   }
 
   /**
@@ -685,19 +699,17 @@ export class QuejaService implements OnDestroy {
    * MÉTODO PAR ACTUALIZAR EL NÚMERO DE RELEVANCIAS DE UNA PUBLICACIÓN:
    * @param actionData 
    */
-  private updateRelevanceNumber(actionData: any) {
-    var currentPub = this.pubList.find(pub => pub.id_publication === actionData.publication);
+  public updateRelevanceNumber(actionData: any, pubList: Publication[]) {
+    var currentPub = pubList.find(pub => pub.id_publication === actionData.publication);
 
     if (currentPub) {
       this.getPubById(actionData.publication).then((newPub: Publication) => {
-        ArrayManager.backendServerSays("UPDATE", this.pubList, currentPub, newPub);
+        ArrayManager.backendServerSays("UPDATE", pubList, currentPub, newPub);
         //ACTUALIZACIÓN PARA LA VISTA QUEJA DETAIL:
         this.pubDetailSub.next(newPub);
         ////
 
         this.updateRelNumberIndexDb(actionData.publication, newPub.relevance_counter, newPub.user.id);
-
-        this.loadPubs(this.pubList);
       });
     }
   }
@@ -715,7 +727,7 @@ export class QuejaService implements OnDestroy {
 
     pub = new Publication(offCachePub.id, offCachePub.latitude, offCachePub.longitude, offCachePub.detail, offCachePub.date_publication, '', true, type, usr, offCachePub.location, 0, false, offCachePub.address, offCachePub.is_trans);
     for (let med of offCachePub.media_files) {
-      pub.media.push(new Media('', '', med.fileUrl));
+      pub.media.push(new Media('', med.format, med.fileUrl));
     }
 
     return pub;
@@ -725,35 +737,32 @@ export class QuejaService implements OnDestroy {
    * MÉTODO PARA OBTENER LAS PUBLICACIONES EN MODO OFFLINE DESDE LA CACHÉ
    * @param id 
    */
-  public getOfflinePubsCache() {
+  public getOfflinePubsCache(pubList: Publication[]) {
     if ('indexedDB' in window) {
-      readAllData('sync-pub')
+      return readAllData('sync-pub')
         .then((offlinePubs) => {
           let offPub: Publication;
           ////
           for (let pub of offlinePubs) {
             offPub = this.extractOfflinePub(pub);
             offPub.isOffline = true;
-            this.pubList.splice(0, 0, offPub);
+            pubList.splice(0, 0, offPub);
           }
+          return pubList;
         });
     }
+
+    return new Promise((resolve, reject) => {
+      resolve(pubList);
+    });
   }
 
   /**
    * MÉTODO PARA ELIMINAR UNA PUBLICACIÓN DE LA LISTA DE PUBS:
    * @param pubId 
    */
-  public deletePub(pub: Publication) {
-    this.pubList.splice(this.pubList.indexOf(pub), 1);
-  }
-
-  /**
-   * MÉTODO PARA ELIMINAR UNA PUBLICACIÓN DE LA LISTA DE PUBS:
-   * @param pubId 
-   */
-  public deleteOfflinePub(pub: Publication) {
-    this.deletePub(pub);
+  public deleteOfflinePub(pub: Publication, pubList: Publication[]) {
+    pubList.splice(pubList.indexOf(pub), 1);
 
     deleteItemData("sync-pub", pub.id_publication);
   }
@@ -763,15 +772,15 @@ export class QuejaService implements OnDestroy {
    * VENGA COMO RESPUESTA EN EL SOCKET.IO
    * @param newPub 
    */
-  private deleteOffPubAsoc(newPub: Publication) {
+  private deleteOffPubAsoc(newPub: Publication, pubList: Publication[]) {
     //PARA PODER ELIMINAR UNA PUB OFFLINE, LUEGO DE SER GUARDAR:
-    for (let i = 0; i < this.pubList.length; i++) {
-      if (this.pubList[i].isOffline) {
-        let offDate = new Date(this.pubList[i].date_pub).getTime();;
+    for (let i = 0; i < pubList.length; i++) {
+      if (pubList[i].isOffline) {
+        let offDate = new Date(pubList[i].date_pub).getTime();;
         let comDate = new Date(newPub.date_pub.replace("T", " ").replace("Z", "")).getTime();;
 
-        if (this.pubList[i].detail == newPub.detail && offDate.toString() == comDate.toString() && this.pubList[i].latitude == newPub.latitude && this.pubList[i].longitude == newPub.longitude && this.pubList[i].type.id == newPub.type.id && this.pubList[i].user.id == newPub.user.id) {
-          this.pubList.splice(i, 1);
+        if (pubList[i].detail == newPub.detail && offDate.toString() == comDate.toString() && pubList[i].latitude == newPub.latitude && pubList[i].longitude == newPub.longitude && pubList[i].type.id == newPub.type.id && pubList[i].user.id == newPub.user.id) {
+          pubList.splice(i, 1);
         }
       }
     }
@@ -784,7 +793,7 @@ export class QuejaService implements OnDestroy {
    */
   public getOfflinePubRelevances(pubList: Publication[]) {
     if ('indexedDB' in window) {
-      readAllData('sync-relevance')
+      return readAllData('sync-relevance')
         .then((offPubRelevances) => {
           for (let pubRel of offPubRelevances) {
             if (!pubRel.action_parent) {
@@ -795,8 +804,13 @@ export class QuejaService implements OnDestroy {
               }
             }
           }
+          return pubList;
         });
     }
+
+    return new Promise((resolve, reject) => {
+      resolve(pubList);
+    });
   }
 
   ngOnDestroy() {
@@ -808,7 +822,7 @@ export class QuejaService implements OnDestroy {
    * @param media data multimedia a insertar
    * @param action action que se realizo (create, update, delete)
    */
-  updateMediaVideo(media: any, action: any) {
+  /*updateMediaVideo(media: any, action: any) {
     if (media.format_multimedia === 'VD') {
       let indexAddMedia = this.pubList.findIndex(pub => pub.id_publication === media.id_publication);
       let mediaFilter = lodash.find(this.pubList[indexAddMedia].media, function (obj) {
@@ -819,5 +833,5 @@ export class QuejaService implements OnDestroy {
         this.pubList[indexAddMedia].media.push(new Media(media.id_multimedia, media.format_multimedia, media.media_path));
       }
     }
-  }
+  }*/
 }

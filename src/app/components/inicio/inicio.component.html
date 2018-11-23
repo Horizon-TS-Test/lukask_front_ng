@@ -11,7 +11,8 @@
       <owl-carousel #owlElement class="personal-owl-nav owl-carousel" [options]="carouselOptions" [carouselClasses]="['owl-theme']">
 
         <div class="p-home-full-height" id="pub-container">
-          <app-quejas-list (actionType)="optionButtonAction($event)"></app-quejas-list>
+          <app-quejas-list (offlineRelevancePub)="onOfflineRelevance($event)" (cancelOffPub)="cancelPub($event)"
+            (actionType)="optionButtonAction($event)"></app-quejas-list>
         </div>
 
         <div class="p-home-full-height">
@@ -19,8 +20,8 @@
           <div *ngIf="!enableSecondOp" class="personal-content min-height-full"></div>
         </div>
 
-        <div class="p-home-full-height" id="claim-container">
-          <ownpub-container *ngIf="enableThirdOp" (geoMap)="optionButtonAction($event)"></ownpub-container>
+        <div class="p-home-full-height" id="user-pub-container">
+          <user-pub-container *ngIf="enableThirdOp" [isAdmin]="isAdmin" (geoMap)="optionButtonAction($event)"></user-pub-container>
           <div *ngIf="!enableThirdOp" class="personal-content min-height-full"></div>
         </div>
 
@@ -36,11 +37,11 @@
       </div>
 
       <div *ngIf="isAdmin === true" class="pub-web p-home-full-height" id="pub-container">
-        <app-quejas-list (actionType)="optionButtonAction($event)"></app-quejas-list>
+        <app-quejas-list (offlineRelevancePub)="onOfflineRelevance($event)" (actionType)="optionButtonAction($event)"></app-quejas-list>
       </div>
 
-      <div *ngIf="isAdmin === false" class="pub-web p-home-full-height" id="ownpub-container">
-        <ownpub-container (geoMap)="optionButtonAction($event)"></ownpub-container>
+      <div *ngIf="isAdmin === false" class="pub-web p-home-full-height" id="user-pub-container">
+        <user-pub-container (geoMap)="optionButtonAction($event)"></user-pub-container>
       </div>
     </div>
   </ng-container>

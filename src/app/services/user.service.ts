@@ -6,9 +6,9 @@ import { CrytoGen } from '../tools/crypto-gen';
 import { Http, Headers, Response } from '@angular/http';
 import { BackSyncService } from './back-sync.service';
 import { DateManager } from '../tools/date-manager';
-import { USER_PRIVILEGES } from '../config/user-privileges';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { LocationService } from './location.service';
+import { Profile } from '../models/profile';
 
 declare var writeData: any;
 declare var readAllData: any;
@@ -37,7 +37,7 @@ export class UserService {
     this.pageLimit = 5;
     this.isPatchedUser = false;
     this.onStreaming = false;
-    this.verifyIsAdmin((this.getUserProfile()) ? this.getUserProfile().id == USER_PRIVILEGES.admin : null);
+    this.verifyIsAdmin((this.getUserProfile()) ? this.getUserProfile().isAdmin : null);
   }
 
   /**
@@ -157,7 +157,7 @@ export class UserService {
     this.setUserProfile();
     setTimeout(() => {
       this.userReady(true);
-      this.verifyIsAdmin(this.userProfile.id == USER_PRIVILEGES.admin);
+      this.verifyIsAdmin(this.userProfile.isAdmin);
     }, 1000);
   }
 
@@ -291,8 +291,12 @@ export class UserService {
   public extractUserJson(jsonUser: any) {
     let user: User;
     jsonUser.profile_path = jsonUser.profile_path.indexOf("http") !== -1 || jsonUser.profile_path.indexOf("https") !== -1 ? jsonUser.profile_path : REST_SERV.mediaBack + jsonUser.profile_path;
-    user = new User(jsonUser.email, '', jsonUser.profile_path, jsonUser.is_active, null, null, jsonUser.id);
+    user = new User(jsonUser.email, '', jsonUser.profile_path, jsonUser.is_active, null, null, jsonUser.id, jsonUser.is_admin);
     user.person = new Person(jsonUser.person.id_person, jsonUser.person.age, jsonUser.person.identification_card, jsonUser.person.name, jsonUser.person.last_name, jsonUser.person.telephone, jsonUser.person.address, jsonUser.person.active, jsonUser.person.birthdate, jsonUser.person.cell_phone, null, DateManager.convertStringToDate(jsonUser.person.birthdate));
+
+    for (let profile of jsonUser.profiles) {
+      user.profiles[jsonUser.profiles.length] = new Profile(profile.id, profile.profile);
+    }
 
     this._locationService.extractLocationJson(jsonUser.person.location, user.person);
 

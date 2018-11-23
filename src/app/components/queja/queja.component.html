@@ -13,7 +13,7 @@
     <!------------------------------------------->
 
     <div class="px-2 card-header d-flex justify-content-center align-items-center">
-      <task-list class="col-12 p-0" [queja]="queja" (actionType)="optionButtonAction($event)"></task-list>
+      <task-list class="col-12 p-0" [queja]="queja" (actionType)="optionButtonAction($event)" (offlineRelevancePub)="onOfflineRelevance($event)"></task-list>
     </div>
 
     <div class="personal-usr-queja py-0 card-block d-flex justify-content-end align-items-center">
@@ -36,7 +36,7 @@
               width="48%">
           </ng-container>
 
-          <ng-container *ngIf="med.format == 'IG' && mediosImg.length == 1 || mediosImg.length > 2">
+          <ng-container *ngIf="(med.format == 'IG' && mediosImg.length == 1) || (med.format == 'IG' && mediosImg.length > 2)">
             <img *ngIf="i == 0" class="mb-1 full" [src]="_domSanitizer.bypassSecurityTrustUrl(med.url)" width="100%">
             <img *ngIf="i >= 1 && i <= 2" [ngClass]="{'mr-1': i % 2 != 0}" class="mb-1 half" [src]="_domSanitizer.bypassSecurityTrustResourceUrl(med.url)"
               width="48%">

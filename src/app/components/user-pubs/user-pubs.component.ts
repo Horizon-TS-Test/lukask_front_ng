@@ -4,19 +4,20 @@ import { DynaContent } from 'src/app/interfaces/dyna-content.interface';
 import { UserPubsService } from 'src/app/services/user-pubs.service';
 
 @Component({
-  selector: 'app-own-pubs',
-  templateUrl: './own-pubs.component.html',
-  styleUrls: ['./own-pubs.component.css'],
+  selector: 'user-pubs',
+  templateUrl: './user-pubs.component.html',
+  styleUrls: ['./user-pubs.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class OwnPubsComponent {
-  @Output() geoMap = new EventEmitter<DynaContent>();
-
-  public myPubList: Publication[];
+export class UserPubsComponent {
+  @Output() geoMap: EventEmitter<DynaContent>;
+  @Output() onCancelPub: EventEmitter<Publication>;
 
   constructor(
     public _userPubsService: UserPubsService
   ) {
+    this.geoMap = new EventEmitter<DynaContent>();
+    this.onCancelPub = new EventEmitter<Publication>();
   }
 
   /**
@@ -25,5 +26,13 @@ export class OwnPubsComponent {
    */
   public geolocatePub(action: number, pubId: string) {
     this.geoMap.emit({ contentType: action, contentData: pubId });
+  }
+
+  /**
+   * METODO PARA CANCELAR UN RECLAMO OFFLINE:
+   * @param event 
+   */
+  public cancelPub(event: Publication) {
+    this.onCancelPub.emit(event);
   }
 }

@@ -21,7 +21,9 @@ declare var $: any;
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class QuejaListComponent implements OnInit, OnDestroy {
-  @Output() actionType = new EventEmitter<DynaContent>();
+  @Output() actionType: EventEmitter<DynaContent>;
+  @Output() offlineRelevancePub: EventEmitter<Publication>;
+  @Output() cancelOffPub: EventEmitter<Publication>;
   private _sliderManager: SliderManager;
 
   private LOADER_HIDE: string = "hide";
@@ -39,6 +41,9 @@ export class QuejaListComponent implements OnInit, OnDestroy {
     private _dynamicPubsService: DynamicPubsService,
     public _quejaService: QuejaService
   ) {
+    this.actionType = new EventEmitter<DynaContent>();
+    this.offlineRelevancePub = new EventEmitter<Publication>();
+    this.cancelOffPub = new EventEmitter<Publication>();
     this.preloader = ASSETS.preloader;
     this.introDataList = IntroDataInterface;
 
@@ -131,11 +136,19 @@ export class QuejaListComponent implements OnInit, OnDestroy {
    * @param $event 
    */
   public cancelPub(pub: Publication) {
-    this._quejaService.deleteOfflinePub(pub);
+    this.cancelOffPub.emit(pub);;
+  }
+
+  /**
+   * METODO PARA ESCUCHAR CUANDO UNA PUBLICACION HA SIDO APOYADA EN MODO OFFLINE:
+   * @param event PUBLICACION APOYADA EN MODO OFFLINE
+   */
+  public onOfflineRelevance(event: Publication) {
+    this.offlineRelevancePub.emit(event);
   }
 
   ngOnDestroy() {
-  	this.subMorePubs.unsubscribe();
+    this.subMorePubs.unsubscribe();
     this.subscriptor.unsubscribe();
   }
 }

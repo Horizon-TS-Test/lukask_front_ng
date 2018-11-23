@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { OwnPubsComponent } from './own-pubs.component';
+import { UserPubsComponent } from './user-pubs.component';
 
-describe('OwnPubsComponent', () => {
-  let component: OwnPubsComponent;
-  let fixture: ComponentFixture<OwnPubsComponent>;
+describe('UserPubsComponent', () => {
+  let component: UserPubsComponent;
+  let fixture: ComponentFixture<UserPubsComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ OwnPubsComponent ]
+      declarations: [ UserPubsComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(OwnPubsComponent);
+    fixture = TestBed.createComponent(UserPubsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

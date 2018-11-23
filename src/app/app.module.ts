@@ -81,10 +81,10 @@ import { ClaimUserDataComponent } from './components/claim-user-data/claim-user-
 import { ClaimDetailComponent } from './components/claim-detail/claim-detail.component';
 import { ClaimCauseComponent } from './components/claim-cause/claim-cause.component';
 import { ClaimLocationFrmComponent } from './components/claim-location-frm/claim-location-frm.component';
-import { OwnPubsComponent } from './components/own-pubs/own-pubs.component';
+import { UserPubsComponent } from './components/user-pubs/user-pubs.component';
 import { ShortPubComponent } from './components/short-pub/short-pub.component';
 import { StepsComponent } from './components/steps/steps.component';
-import { OwnpubContainerComponent } from './components/ownpub-container/ownpub-container.component';
+import { UserPubContainerComponent } from './components/user-pub-container/user-pub-container.component';
 import { LoaderComponent } from './components/loader/loader.component';
 
 @NgModule({
@@ -148,7 +148,7 @@ import { LoaderComponent } from './components/loader/loader.component';
     ClaimDetailComponent,
     ClaimCauseComponent,
     ClaimLocationFrmComponent,
-    OwnPubsComponent,
+    UserPubsComponent,
     ShortPubComponent,
     StepsComponent,
     HorizonSwitchInListComponent,
@@ -160,7 +160,7 @@ import { LoaderComponent } from './components/loader/loader.component';
     ReplyModalComponent,
     NotificationModalComponent,
     SupportModalComponent,
-    OwnpubContainerComponent,
+    UserPubContainerComponent,
     LoaderComponent
   ],
   imports: [

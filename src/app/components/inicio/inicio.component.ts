@@ -16,9 +16,10 @@ import { NavigationPanelService } from 'src/app/services/navigation-panel.servic
 import { CONTENT_TYPES } from 'src/app/config/content-type';
 import { DynaContentService } from 'src/app/services/dyna-content.service';
 import { DynamicPubsService } from 'src/app/services/dynamic-pubs.service';
-import { OwnPubsService } from 'src/app/services/own-pubs.service';
 import { UserService } from 'src/app/services/user.service';
 import { ScreenService } from 'src/app/services/screen.service';
+import { UserPubsService } from 'src/app/services/user-pubs.service';
+import { PUB_TYPES } from 'src/app/config/pub-types';
 
 declare var $: any;
 declare var device: any;
@@ -31,14 +32,19 @@ declare var device: any;
 export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('owlElement') owlElement: OwlCarousel;
 
+  private subscriptor: Subscription;
+  private adminSubscriber: Subscription;
+  private offPubSub: Subscription;
+  private pubUpdateSub: Subscription;
+  private newPubActionSub: Subscription;
   private pubContainer: any;
   private ownPubsContainer: any;
   private customCarousel: any;
-  private subscriptor: Subscription;
-  private adminSubscriber: Subscription;
   private paymentSubs: Subscription;
   private screenSubs: Subscription;
   private screenDelay: number;
+  private pagePattern: string;
+  private pubList: Publication[];
 
   public enableSecondOp: boolean;
   public enableThirdOp: boolean;
@@ -58,9 +64,9 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
     private _dynamicPubsService: DynamicPubsService,
     private _socket: SocketService,
     public _quejaService: QuejaService,
-    public _ownPubsService: OwnPubsService,
     public _userService: UserService,
-    private _screenService: ScreenService
+    private _screenService: ScreenService,
+    public _userPubsService: UserPubsService
   ) {
     this.screenDelay = 4000;
     this.listeToScreenDelay();
@@ -79,6 +85,9 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
     this.listenAdminFlag();
     this.listenToMenuChanges();
     this.initCarousel();
+    this.listenToOffUserPub();
+    this.listenToPubUpdate();
+    this.listenToNewPubAction();
     this.paymentSocketUpdate();
   }
 
@@ -110,6 +119,44 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
       if (resp != null) {
         this.isAdmin = resp;
         this.getPubList();
+      }
+    });
+  }
+
+  /**
+   * MÉTODO PARA ESCUCHAR LOS CAMBIOS DE LAS PUBLICACIONES PROPIAS DEL USUARIO QUE SON INSERTADAS DE FORMA OFFLINE
+   */
+  private listenToOffUserPub() {
+    this.offPubSub = this._quejaService.newOffPub$.subscribe((offPub: Publication) => {
+      if (offPub) {
+        this.pubList.splice(0, 0, offPub);
+        this._quejaService.loadPubs(this.pubList);
+      }
+    });
+  }
+
+  /**
+   * MÉTODO PARA ESCUCHAR LOS CAMBIOS DE LAS PUBLICACIONES PROPIAS DEL USUARIO QUE VIENEN TRAVES DEL SOCKET.IO CLIENT:
+   */
+  private listenToPubUpdate() {
+    this.pubUpdateSub = this._quejaService.pubUpdate$.subscribe((pubData: { userPubJson: any, action: string }) => {
+      if (pubData && this.pubList) {
+        if (pubData.userPubJson.type_publication_detail == PUB_TYPES.pub) {
+          this._quejaService.updatePubList(pubData.userPubJson, pubData.action, this.pubList);
+          this._quejaService.loadPubs(this.pubList);
+        }
+      }
+    });
+  }
+
+  /**
+   * MÉTODO PARA ESCUCHAR LOS CAMBIOS DE LAS PUBLICACIONES PROPIAS DEL USUARIO QUE VIENEN TRAVES DEL SOCKET.IO CLIENT:
+   */
+  private listenToNewPubAction() {
+    this.newPubActionSub = this._quejaService.newPubAction$.subscribe((pubActinData: any) => {
+      if (pubActinData && this.pubList) {
+        this._quejaService.updateRelevanceNumber(pubActinData, this.pubList);
+        this._quejaService.loadPubs(this.pubList);
       }
     });
   }
@@ -154,10 +201,10 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
    * MÉTODO PARA MANIPULAR EL EVENTO DE SCROLL DENTRO DEL COMPONENTE PRINCIPAL DE QUEJAS:
    */
   private onScrollOwnPubContainer() {
-    this.ownPubsContainer = $('#claim-container');
+    this.ownPubsContainer = $('#user-pub-container');
     this.ownPubsContainer.scroll(() => {
       if (this._contentService.isBottomScroll(this.ownPubsContainer)) {
-        this._ownPubsService.requestMoreOwnPubs();
+        this._userPubsService.requestMoreUserPubs();
       }
     });
   }
@@ -301,12 +348,14 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
    * FUNCIÓN PARA OBTENER UN NÚMERO INICIAL DE PUBLICACIONES, PARA DESPUÉS CARGAR MAS PUBLICACIONES BAJO DEMANDA
    */
   private getPubList() {
-    this._quejaService.getPubList().then((pubs: Publication[]) => {
+    this._quejaService.getPubList().then((pubData: { userPubs: Publication[], pagePattern: string }) => {
+      this.pagePattern = pubData.pagePattern;
+      this.pubList = pubData.userPubs;
       this.onScrollPubContainer();
       this.onScrollOwnPubContainer();
       this.handleMenuCarousel();
       setTimeout(() => {
-        this._quejaService.loadPubs(pubs);
+        this._quejaService.loadPubs(this.pubList);
       }, this.screenDelay);
     }).catch(err => {
       console.log(err);
@@ -319,13 +368,33 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   private getMorePubs() {
     if (!this.askforMorePubs) {
       this.askforMorePubs = true;
-      this._quejaService.getMorePubs().then((morePubs: Publication[]) => {
+      this._quejaService.getMorePubs(this.pagePattern, this.pubList).then((pubData: { userPubs: Publication[], pagePattern: string }) => {
+        this.pagePattern = pubData.pagePattern;
+        this.pubList = pubData.userPubs;
         this.askforMorePubs = false;
         setTimeout(() => {
-          this._quejaService.loadPubs(morePubs);
+          this._quejaService.loadPubs(this.pubList);
         }, 1000);
       });
     }
+  }
+
+  /**
+   * METODO PARA ESCUCHAR LA LLEGADA DE UNA PUBLICACION ACTUALIZADA CON RELEVANCIA OFFLINE:
+   * @param event 
+   */
+  public onOfflineRelevance(event: Publication) {
+    this._quejaService.changePubOffRelevance(event, this.pubList);
+    this._quejaService.loadPubs(this.pubList);
+  }
+
+  /**
+   * MÉTODO PARA CANCELAR EL ENVIO DE UNA PUB OFFLINE:
+   * @param $event 
+   */
+  public cancelPub(pub: Publication) {
+    this._quejaService.deleteOfflinePub(pub, this.pubList);
+    this._quejaService.loadPubs(this.pubList);
   }
 
   ngOnDestroy() {
@@ -338,5 +407,8 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
     this.adminSubscriber.unsubscribe();
     this.paymentSubs.unsubscribe();
     this.screenSubs.unsubscribe();
+    this.offPubSub.unsubscribe();
+    this.pubUpdateSub.unsubscribe();
+    this.newPubActionSub.unsubscribe();
   }
 }
