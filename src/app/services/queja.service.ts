@@ -112,14 +112,17 @@ export class QuejaService implements OnDestroy {
   /**
    * MÉTODO PARA CONSUMIR EL END POINT PARA OBTENER LA LISTA DE TIPOS DE QUEJAS:
    */
-  private getQuejTypeWeb() {
+  private getQuejTypeWeb(asc: boolean) {
     const qTheaders = new Headers({ 'Content-Type': 'application/json', 'X-Access-Token': this._userService.getUserKey() });
 
     return this._http.get(REST_SERV.qTypeUrl, { headers: qTheaders, withCredentials: true }).toPromise()
       .then((response: Response) => {
         const qtypes = response.json().data;
+        let sortedPubTypes = lodash.orderBy(qtypes, ['description'], [asc ? 'asc' : 'desc']);
+        console.log("sortedPubTypes: ", sortedPubTypes);
+
         let transformedQtypes: QuejaType[] = [];
-        for (let type of qtypes) {
+        for (let type of sortedPubTypes) {
           transformedQtypes.push(new QuejaType(type.id_type_publication, type.description));
         }
 
@@ -138,12 +141,13 @@ export class QuejaService implements OnDestroy {
   /**
    * MÉTODO PARA OBTENER LA LISTA DE TIPOS DE QUEJAS DESDE LA MEMORIA CACHÉ:
    */
-  getQuejTypeCache() {
+  private getQuejTypeCache(asc: boolean) {
     if ('indexedDB' in window) {
       return readAllData('qtype')
         .then((qtypes) => {
+          let sortedPubTypes = lodash.orderBy(qtypes, ['description'], [asc ? 'asc' : 'desc']);
           let transformedQtypes: QuejaType[] = [];
-          for (let type of qtypes) {
+          for (let type of sortedPubTypes) {
             transformedQtypes.push(new QuejaType(type.id_type_publication, type.description));
           }
 
@@ -160,14 +164,14 @@ export class QuejaService implements OnDestroy {
   /**
    * MÉTODO PARA CARGAR LA LISTA DE TIPOS DE QUEJA SEA DE LA WEB O DE LA CACHÉ
    */
-  public getQtypeList() {
+  public getQtypeList(asc: boolean = true) {
     /**
      * IMPLEMENTING NETWORK FIRST STRATEGY
     */
-    return this.getQuejTypeWeb().then((webQtype: QuejaType[]) => {
+    return this.getQuejTypeWeb(asc).then((webQtype: QuejaType[]) => {
 
       if (!this.isFetchedQtype) {
-        return this.getQuejTypeCache().then((cacheQtype: QuejaType[]) => {
+        return this.getQuejTypeCache(asc).then((cacheQtype: QuejaType[]) => {
           return cacheQtype;
         });
       }
@@ -621,7 +625,7 @@ export class QuejaService implements OnDestroy {
    * Y ACTUALIZAR LA LISTA GLOBAL DE PUBLICACIONES CON LOS NUEVOS CAMBIOS
    */
   private listenToSocket() {
-    this.subscriptor = this._socketService.pubUpdate$.subscribe((socketPub: any) => {
+    this.subscriptor = this._socketService.socketPubUpdate$.subscribe((socketPub: any) => {
       if (socketPub) {
         let stream = socketPub.stream;
         let action = socketPub.payload.action.toUpperCase();
@@ -816,22 +820,4 @@ export class QuejaService implements OnDestroy {
   ngOnDestroy() {
     this.subscriptor.unsubscribe();
   }
-
-  /**
-   * METODO PARA ACTUALIZAR LOS ARCHIVOS MULTIMEDIA DE TIPO VIDEO UNA VEZ YA GRABADOS.
-   * @param media data multimedia a insertar
-   * @param action action que se realizo (create, update, delete)
-   */
-  /*updateMediaVideo(media: any, action: any) {
-    if (media.format_multimedia === 'VD') {
-      let indexAddMedia = this.pubList.findIndex(pub => pub.id_publication === media.id_publication);
-      let mediaFilter = lodash.find(this.pubList[indexAddMedia].media, function (obj) {
-        return obj.id_multimedia === media.id_multimedia;
-      });
-
-      if (!mediaFilter && ArrayManager.CREATE === action) {
-        this.pubList[indexAddMedia].media.push(new Media(media.id_multimedia, media.format_multimedia, media.media_path));
-      }
-    }
-  }*/
 }

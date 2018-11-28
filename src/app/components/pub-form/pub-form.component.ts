@@ -85,7 +85,7 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges, OnDes
    * MÉTODO PARA CARGAR LOS TIPOS DE QUEJA PARA UN NUEVO REGISTRO:
    */
   private getQuejaType() {
-    this._quejaService.getQtypeList().then((qTypes) => {
+    this._quejaService.getQtypeList(!this.eersaLocClient).then((qTypes) => {
       this.quejaTypeList = qTypes;
       this.tipoQuejaSelect = [];
 
@@ -112,7 +112,7 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges, OnDes
    * METODO QUE VALIDA LA POSICION Y EL NOMBRE DE LA ORGANIZACION AL RECIBIR EL CAMBIO DE VALOR DESDE EL SELECT
    * @param event 
    */
-  getSelect2Value(event: string) {
+  public getSelect2Value(event: string) {
     this.quejaType = event;
   }
 
@@ -174,21 +174,6 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges, OnDes
   }
 
   /**
-   * MÉTODO CALCULA SI LA POSICION DADA ESTA DENTRO DEL AREA ESTABLECIDA 
-   * @param circle = Área permitida 
-   * @param latLngA = Posición desde la cual se emite la queja
-   */
-  validatePosition(circle, latLngA) {
-    var bounds = circle.getBounds();
-    bounds = circle.getBounds();
-    if (bounds.contains(latLngA)) {
-      return bounds.contains(latLngA);
-    } else {
-      return bounds.contains(latLngA);
-    }
-  }
-
-  /**
    * METODO PARA DEFINIR LA FECHA ACTUAL DE LA REALIZACIÓN DE LA QUEJA
    */
   private getLocalDate() {
@@ -218,7 +203,6 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges, OnDes
    * @param changes LOS CAMBIOS GENERADOS
    */
   ngOnChanges(changes: SimpleChanges) {
-
     for (const property in changes) {
       /*console.log('Previous:', changes[property].previousValue);
       console.log('Current:', changes[property].currentValue);

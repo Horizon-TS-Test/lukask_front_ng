@@ -13,8 +13,8 @@ import { BehaviorSubject, Observable } from 'rxjs';
 export class SocketService {
   private socket;
 
-  private pubUpdateSubject = new BehaviorSubject<any>(null);
-  pubUpdate$: Observable<any> = this.pubUpdateSubject.asObservable();
+  private socketPubUpdateSubject = new BehaviorSubject<any>(null);
+  socketPubUpdate$: Observable<any> = this.socketPubUpdateSubject.asObservable();
 
   private commUpdateSubject = new BehaviorSubject<any>(null);
   commUpdate$: Observable<any> = this.commUpdateSubject.asObservable();
@@ -37,7 +37,7 @@ export class SocketService {
       console.log("[SOCKET SERVICE] - backend-rules: ", backendData);
       switch (backendData.stream) {
         case "publication":
-          this.pubUpdateSubject.next(backendData);
+          this.socketPubUpdateSubject.next(backendData);
           break;
         case "actions":
           if (backendData.payload.data.description) {
@@ -48,7 +48,7 @@ export class SocketService {
               this.commUpdateSubject.next(backendData);
             }
             else {
-              this.pubUpdateSubject.next(backendData);
+              this.socketPubUpdateSubject.next(backendData);
             }
           }
           break;

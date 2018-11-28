@@ -28,16 +28,16 @@ const SYNC_TYPE = {
 
 const REST_URLS_PATTERN = {
     medios: /http:\/\/192.168.1.37:3001\/images\/.*/,
-    firstPubs: /http:\/\/192.168.1.37:3001\/publication\/\?limit=[0-9]+$/,
-    morePubs: /http:\/\/192.168.1.37:3001\/publication\/\?limit=[0-9]+&offset=[0-9]+$/,
+    firstPubs: /http:\/\/192.168.1.37:3001\/publication\/\?limit=[0-9]+&pub=true$/,
+    morePubs: /http:\/\/192.168.1.37:3001\/publication\/\?limit=[0-9]+&offset=[0-9]+&pub=true$/,
     comments: /http:\/\/192.168.1.37:3001\/comment\/\?pub_id=[0-9|a-f|-]+\&(?:limit=[0-9]+|limit=[0-9]+\&offset=[0-9]+)$/,
     replies: /http:\/\/192.168.1.37:3001\/comment\/\?com_id=[0-9|a-f|-]+\&(?:limit=[0-9]+|limit=[0-9]+\&offset=[0-9]+)\&replies=true$/,
     qtype: SERVERS.middleWare + '/qtype',
     province: SERVERS.middleWare + '/province',
     canton: /http:\/\/192.168.1.37:3001\/canton\/\?province_id=[0-9|a-f|-]+$/,
     parroq: /http:\/\/192.168.1.37:3001\/parroquia\/\?canton_id=[0-9|a-f|-]+$/,
-    firstUserPubs: /http:\/\/192.168.1.37:3001\/publication\/\?limit=[0-9]+&user_id=[0-9]+$/,
-    moreUserPubs: /http:\/\/192.168.1.37:3001\/publication\/\?limit=[0-9]+&offset=[0-9]+&user_id=[0-9]+$/,
+    firstUserPubs: /http:\/\/192.168.1.37:3001\/publication\/\?limit=[0-9]+(&user_id=[0-9]+|)&claim=true$/,
+    moreUserPubs: /http:\/\/192.168.1.37:3001\/publication\/\?limit=[0-9]+&offset=[0-9]+(&user_id=[0-9]+|)&claim=true$/,
 };
 
 const REST_URLS = {

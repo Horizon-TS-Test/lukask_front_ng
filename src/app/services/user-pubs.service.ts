@@ -301,7 +301,7 @@ export class UserPubsService implements OnDestroy {
    * Y ACTUALIZAR LA LISTA GLOBAL DE PUBLICACIONES CON LOS NUEVOS CAMBIOS
    */
   private listenToSocket() {
-    this.subscriptor = this._socketService.pubUpdate$.subscribe((socketPub: any) => {
+    this.subscriptor = this._socketService.socketPubUpdate$.subscribe((socketPub: any) => {
       if (socketPub) {
         let stream = socketPub.stream;
         let action = socketPub.payload.action.toUpperCase();
@@ -339,6 +339,7 @@ export class UserPubsService implements OnDestroy {
     }
 
     verifyStoredData('user-pub', userPubJson, isDeleted);
+    this._quejaService.deleteOfflinePub(newPub, userPubList);
 
     ArrayManager.backendServerSays(action, userPubList, lastPub, newPub);
   }

@@ -37,7 +37,9 @@ export class UserService {
     this.pageLimit = 5;
     this.isPatchedUser = false;
     this.onStreaming = false;
-    this.verifyIsAdmin((this.getUserProfile()) ? this.getUserProfile().isAdmin : null);
+    if(!navigator.onLine) {
+      this.verifyIsAdmin((this.getUserProfile()) ? this.getUserProfile().isAdmin : null);
+    }
   }
 
   /**
