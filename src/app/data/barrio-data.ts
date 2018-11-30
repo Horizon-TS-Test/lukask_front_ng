@@ -1,302 +1,404 @@
 export default [
     {
-        barrioId: 1,
-        description: 'CAMILO PONCE COOPERATIVA'
+        barrioId: 392, description: '13 DE ABRIL'
     },
     {
-        barrioId: 2,
-        description: 'ALIANZA RIOBAMBEÑA'
+        barrioId: 393, description: '15 DE NOVIEMBRE'
     },
     {
-        barrioId: 3,
-        description: 'AGUISACTE'
+        barrioId: 394, description: '1ERO DE MAYO'
     },
     {
-        barrioId: 4,
-        description: 'ALFONSO VILLAGOMEZ'
+        barrioId: 395, description: '25 DE NOVIEMBRE'
     },
     {
-        barrioId: 5,
-        description: 'AUTOMODELO SUR'
+        barrioId: 396, description: '9 DE OCTUBRE COOPERATIVA'
     },
     {
-        barrioId: 6,
-        description: 'ALCON ANDINO'
+        barrioId: 397, description: 'AIDICH'
     },
     {
-        barrioId: 7,
-        description: 'ELLAVISTA'
+        barrioId: 398, description: 'ALAMOS I'
     },
     {
-        barrioId: 8,
-        description: 'ILBAO RENACER'
+        barrioId: 399, description: 'ALAMOS II'
     },
     {
-        barrioId: 9,
-        description: 'CDLA. BOLIVAR CHIRIBOGA'
+        barrioId: 400, description: 'ALAMOS III'
     },
     {
-        barrioId: 10,
-        description: 'CDLA. GENERAL LASCANO'
+        barrioId: 401, description: 'ALBORADA DEL SUR'
     },
     {
-        barrioId: 11,
-        description: 'CDLA. JAIME GUERRERO'
+        barrioId: 402, description: 'AUTOMODELO NORTE'
     },
     {
-        barrioId: 12,
-        description: 'CDLA. JOSE MANCERO'
+        barrioId: 403, description: 'AV. MALDONADO'
     },
     {
-        barrioId: 13,
-        description: 'CDLA. JUAN DE VELASCO'
+        barrioId: 404, description: 'BARRIO 24 DE MAYO'
     },
     {
-        barrioId: 14,
-        description: 'CDLA. LUIS A. MARTINEZ'
+        barrioId: 405, description: 'BONILLA ABARCA'
     },
     {
-        barrioId: 15,
-        description: 'CDLA. MADRID'
+        barrioId: 406, description: 'CASAS DEL CONDE'
     },
     {
-        barrioId: 16,
-        description: 'CDLA. MODESTO ARRIETA'
+        barrioId: 407, description: 'CDLA. 24 DE MAYO'
     },
     {
-        barrioId: 17,
-        description: 'CDLA. MUJERES DE CHIMBORAZO'
+        barrioId: 408, description: 'CDLA. CORAZON DE RIOBAMBA'
     },
     {
-        barrioId: 18,
-        description: 'CDLA. RINCON DE ESPAÑA'
+        barrioId: 409, description: 'CDLA. COVETIR'
     },
     {
-        barrioId: 19,
-        description: 'COOP. BILBAO RENACER'
+        barrioId: 410, description: 'CDLA. INECEL'
     },
     {
-        barrioId: 20,
-        description: 'COOP. NUEVO AMANECER'
+        barrioId: 411, description: 'CDLA. JUAN MONTALVO'
     },
     {
-        barrioId: 21,
-        description: 'COOP. NUEVOS HORIZONTES'
+        barrioId: 412, description: 'CDLA. LAS MAGNOLIAS'
     },
     {
-        barrioId: 22,
-        description: 'COOP. UNION DE MUJERES DE CHIMBORAZO'
+        barrioId: 413, description: 'CDLA. LOS CARPINTEROS'
     },
     {
-        barrioId: 23,
-        description: 'EL CISNE'
+        barrioId: 414, description: 'CDLA. MAESTROS DE CHIMBORAZO'
     },
     {
-        barrioId: 24,
-        description: 'EL CONDADO'
+        barrioId: 415, description: 'CDLA. MODESTO ARRIETA'
     },
     {
-        barrioId: 25,
-        description: 'EL ESFUERZO'
+        barrioId: 416, description: 'CDLA. MODESTO ARRIETA NORTE'
     },
     {
-        barrioId: 26,
-        description: 'EL PARAISO'
+        barrioId: 417, description: 'CDLA. OBRAS PUBLICAS'
     },
     {
-        barrioId: 27,
-        description: 'EL PORVENIR'
+        barrioId: 418, description: 'CDLA. RIOBAMBA NORTE'
     },
     {
-        barrioId: 28,
-        description: 'EL PRADO'
+        barrioId: 419, description: 'CEMENTO CHIMBORAZO'
     },
     {
-        barrioId: 29,
-        description: 'EL VERGEL'
+        barrioId: 420, description: 'CENTENARIO'
     },
     {
-        barrioId: 30,
-        description: 'EUCALIPTOS ALTO'
+        barrioId: 421, description: 'CIUDAD ESPERANZA'
     },
     {
-        barrioId: 31,
-        description: 'EUCALIPTOS BAJO'
+        barrioId: 422, description: 'COLON'
     },
     {
-        barrioId: 32,
-        description: 'EUGENIO ESPEJO'
+        barrioId: 423, description: 'CONDOMINIOS GRECOS'
     },
     {
-        barrioId: 33,
-        description: 'FAUSTO MOLINA'
+        barrioId: 424, description: 'COOP DE VIVIENDA MACAJI'
     },
     {
-        barrioId: 34,
-        description: 'JARDINES DEL VALLE'
+        barrioId: 425, description: 'COOP. 15 DE NOVIEMBRE'
     },
     {
-        barrioId: 35,
-        description: 'JUAN DE VELASCO'
+        barrioId: 426, description: 'COOP. 30 DE AGOSTO'
     },
     {
-        barrioId: 36,
-        description: 'LA ESPERANZA 1ERA ETAPA'
+        barrioId: 427, description: 'COOP. UNIDAD POPULAR'
     },
     {
-        barrioId: 37,
-        description: 'LA ESPERANZA 2DA ETAPA'
+        barrioId: 428, description: 'CORAZON DE LA PATRIA'
     },
     {
-        barrioId: 38,
-        description: 'LA ESPERANZA 3ERA ETAPA'
+        barrioId: 429, description: 'CORAZON DE RIOBAMBA'
     },
     {
-        barrioId: 39,
-        description: 'LA FLORIDA'
+        barrioId: 430, description: 'DE LOURDES ALTO'
     },
     {
-        barrioId: 40,
-        description: 'LA PIRAMIDE'
+        barrioId: 431, description: 'DEL MOP COOPERATIVA'
     },
     {
-        barrioId: 41,
-        description: 'LA. PREVISORA'
+        barrioId: 432, description: 'EDMUNDO CHIRIBOGA'
     },
     {
-        barrioId: 42,
-        description: 'LA TRINIDAD'
+        barrioId: 433, description: 'EL ARENAL'
     },
     {
-        barrioId: 43,
-        description: 'LAS FLORES'
+        barrioId: 434, description: 'EL BATAN'
     },
     {
-        barrioId: 76,
-        description: 'LOS ANDES'
+        barrioId: 435, description: 'EL ENCANTO'
     },
     {
-        barrioId: 45,
-        description: 'LOS LAURELES'
+        barrioId: 436, description: 'EL PEDREGAL'
     },
     {
-        barrioId: 46,
-        description: 'MADRID'
+        barrioId: 437, description: 'EL PINAR'
     },
     {
-        barrioId: 47,
-        description: 'MEDIO MUNDO'
+        barrioId: 438, description: 'EL PINAR II'
     },
     {
-        barrioId: 48,
-        description: 'MIRADOR ALTO'
+        barrioId: 439, description: 'EL RECREO'
     },
     {
-        barrioId: 49,
-        description: 'MIRADOR BAJO'
+        barrioId: 440, description: 'EL RETAMAL'
     },
     {
-        barrioId: 50,
-        description: 'NUEVA BELLAVISTA'
+        barrioId: 441, description: 'EL ROSAL'
     },
     {
-        barrioId: 51,
-        description: 'NUEVA TRINIDAD'
+        barrioId: 442, description: 'EL ROSARIO'
     },
     {
-        barrioId: 52,
-        description: 'NUEVA AMANECER'
+        barrioId: 443, description: 'EL TERMINAL'
     },
     {
-        barrioId: 53,
-        description: 'NUEVOS HORIZONTES'
+        barrioId: 444, description: 'EL VERGEL'
     },
     {
-        barrioId: 54,
-        description: 'ORIENTAL'
+        barrioId: 445, description: 'ESTADIO OLIMPICO'
     },
     {
-        barrioId: 55,
-        description: 'PARQUE DE LAS FLORES'
+        barrioId: 446, description: 'FERROVIARIO'
     },
     {
-        barrioId: 56,
-        description: 'PARQUE DEL DIABLO'
+        barrioId: 447, description: 'GENERAL BRIGADA'
     },
     {
-        barrioId: 57,
-        description: 'PARQUE INDUSTRIAL'
+        barrioId: 448, description: 'GENERAL LA VALLE'
     },
     {
-        barrioId: 58,
-        description: 'PARQUE MALDONADO'
+        barrioId: 449, description: 'GRUTA DE LOURDES'
     },
     {
-        barrioId: 59,
-        description: 'PERIMETRO DE LAS INDUSTRIAS'
+        barrioId: 450, description: 'ING CIVILES'
     },
     {
-        barrioId: 60,
-        description: 'PLAZA DE LAS HIERVAS'
+        barrioId: 451, description: 'IRENE MARIA'
     },
     {
-        barrioId: 61,
-        description: 'PUCARA'
+        barrioId: 452, description: 'JARDINES DEL SUR'
     },
     {
-        barrioId: 62,
-        description: 'PUEBLO UNIDO'
+        barrioId: 453, description: 'LA ATARAZANA'
     },
     {
-        barrioId: 63,
-        description: 'RINCON DE ESPAÑA'
+        barrioId: 454, description: 'LA COLINA'
     },
     {
-        barrioId: 64,
-        description: 'SAN ALFONSO'
+        barrioId: 455, description: 'LA CONDAMINE'
     },
     {
-        barrioId: 65,
-        description: 'SAN ANTONIO'
+        barrioId: 456, description: 'LA DELICIA'
     },
     {
-        barrioId: 66,
-        description: 'SAN MARTIN DE VERANILLO'
+        barrioId: 457, description: 'LA ESTACION'
     },
     {
-        barrioId: 67,
-        description: 'SAN FRANCISCO DE PISIN'
+        barrioId: 458, description: 'LA ISLA'
     },
     {
-        barrioId: 68,
-        description: 'SAN VICENTE DE LACAS'
+        barrioId: 459, description: 'LA LOLITA'
     },
     {
-        barrioId: 69,
-        description: 'SANTA MARIANITA'
+        barrioId: 460, description: 'LA MERCED'
     },
     {
-        barrioId: 70,
-        description: 'TUBASEC'
+        barrioId: 461, description: 'LA PRIMAVERA'
     },
     {
-        barrioId: 71,
-        description: 'URB. JAIME GUERRERO'
+        barrioId: 462, description: 'LA PROVIDENCIA'
     },
     {
-        barrioId: 72,
-        description: 'URB. JOSE LASCANO'
+        barrioId: 463, description: 'LA TOLITA'
     },
     {
-        barrioId: 73,
-        description: 'URB. LOS ANGELES'
+        barrioId: 464, description: 'LA VICTORIA'
     },
     {
-        barrioId: 74,
-        description: 'URB. SILVA GODOY'
+        barrioId: 465, description: 'LAS CARMELITAS'
     },
     {
-        barrioId: 75,
-        description: 'VILLA MARIA'
+        barrioId: 466, description: 'LAS FLORES'
+    },
+    {
+        barrioId: 467, description: 'LAS MANOLAS'
+    },
+    {
+        barrioId: 468, description: 'LAS PALMAS'
+    },
+    {
+        barrioId: 469, description: 'LAS RETAMAS'
+    },
+    {
+        barrioId: 470, description: 'LIBERACION POPULAR COOPERATIVA'
+    },
+    {
+        barrioId: 471, description: 'LICAN'
+    },
+    {
+        barrioId: 472, description: 'LIRIBAMBA'
+    },
+    {
+        barrioId: 473, description: 'LLACTA PURA'
+    },
+    {
+        barrioId: 474, description: 'LOS MANZANARES'
+    },
+    {
+        barrioId: 475, description: 'LOS OLIVOS'
+    },
+    {
+        barrioId: 476, description: 'LOS SHIRIS'
+    },
+    {
+        barrioId: 477, description: 'LOS TULIPANES'
+    },
+    {
+        barrioId: 478, description: 'LOURDES'
+    },
+    {
+        barrioId: 479, description: 'MAESTROS DE CHIMBORAZO COOPERATIVA'
+    },
+    {
+        barrioId: 480, description: 'MANZANAPAMBA'
+    },
+    {
+        barrioId: 481, description: 'MARIA DE LOURDES'
+    },
+    {
+        barrioId: 482, description: 'MARIA ESTHER'
+    },
+    {
+        barrioId: 483, description: 'MIRAFLORES'
+    },
+    {
+        barrioId: 484, description: 'MUNICIPAL'
+    },
+    {
+        barrioId: 485, description: 'NUEVA JERUSALEN'
+    },
+    {
+        barrioId: 486, description: 'PARQUE INFANTIL'
+    },
+    {
+        barrioId: 487, description: 'PARQUE SESQUICENTENARIO'
+    },
+    {
+        barrioId: 488, description: 'PARQUE SUCRE'
+    },
+    {
+        barrioId: 489, description: 'PLAZA ALFARO'
+    },
+    {
+        barrioId: 490, description: 'PLAZA DE TOROS'
+    },
+    {
+        barrioId: 491, description: 'POLITECNICO ANTIGUO'
+    },
+    {
+        barrioId: 492, description: 'PUEBLO LIBRE'
+    },
+    {
+        barrioId: 493, description: 'PURUHA'
+    },
+    {
+        barrioId: 494, description: 'QUEBRADA TARASANA'
+    },
+    {
+        barrioId: 495, description: 'QUINTA MACAJI'
+    },
+    {
+        barrioId: 496, description: 'QUINTA MOSQUERA'
+    },
+    {
+        barrioId: 497, description: 'RICPAMBA'
+    },
+    {
+        barrioId: 498, description: 'ROSA MARIA'
+    },
+    {
+        barrioId: 499, description: 'SAN ANTONIO'
+    },
+    {
+        barrioId: 500, description: 'SAN ANTONIO JUNTO AL BARRIO DE LOURDES'
+    },
+    {
+        barrioId: 501, description: 'SAN FRANCISCO DE MACAJI'
+    },
+    {
+        barrioId: 502, description: 'SAN JOSE DE MACAJI'
+    },
+    {
+        barrioId: 503, description: 'SAN JOSE DE TAPI'
+    },
+    {
+        barrioId: 504, description: 'SAN JOSE DEL BATAN'
+    },
+    {
+        barrioId: 505, description: 'SAN JOSE DEL CHIBUNGA'
+    },
+    {
+        barrioId: 506, description: 'SAN LUIS'
+    },
+    {
+        barrioId: 507, description: 'SAN MARTIN'
+    },
+    {
+        barrioId: 508, description: 'SAN PEDRO DE MACAJI'
+    },
+    {
+        barrioId: 509, description: 'SANTA ANA DE TAPI'
+    },
+    {
+        barrioId: 510, description: 'SANTA FAZ'
+    },
+    {
+        barrioId: 511, description: 'SANTA ROSA'
+    },
+    {
+        barrioId: 512, description: 'SANTA TERESITA'
+    },
+    {
+        barrioId: 513, description: 'SESQUICENTENARIO'
+    },
+    {
+        barrioId: 514, description: 'SULTANA DE LOS ANDES COOPERATIVA'
+    },
+    {
+        barrioId: 515, description: 'SUR ISRAEL'
+    },
+    {
+        barrioId: 516, description: 'TIERRA NUEVA COOPERATIVA'
+    },
+    {
+        barrioId: 517, description: 'TIWINZA'
+    },
+    {
+        barrioId: 518, description: 'TU NUEVA VIDA'
+    },
+    {
+        barrioId: 519, description: 'UNIDAD POPULAR'
+    },
+    {
+        barrioId: 520, description: 'URB. MACAJI'
+    },
+    {
+        barrioId: 521, description: 'URB. PAZMIÑO'
+    },
+    {
+        barrioId: 522, description: 'URB. SAN LUIS'
+    },
+    {
+        barrioId: 523, description: 'URDESA DEL SUR'
+    },
+    {
+        barrioId: 524, description: 'VILLA GRANADA'
+    },
+    {
+        barrioId: 525, description: 'VILLA LA UNION'
     }
 ]
