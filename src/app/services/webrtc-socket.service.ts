@@ -1,14 +1,13 @@
-import { Injectable } from '@angular/core';
-import { throwError } from 'rxjs';
+import { Injectable, NgZone } from '@angular/core';
+import { throwError, BehaviorSubject, Observable } from 'rxjs';
 import { Headers, Http, Response } from '@angular/http';
 
 import { REST_SERV } from '../rest-url/rest-servers';
 import { QuejaService } from './queja.service';
 import * as kurentoUtils from 'kurento-utils';
 import * as crypto from '../tools/crypto-gen';
+import * as mediaStreamRecorder from 'msr';
 import { UserService } from './user.service';
-
-declare var MediaRecorder: any;
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +16,6 @@ declare var MediaRecorder: any;
 //HREF ABOUT WEBSOCKET: https://developer.mozilla.org/es/docs/Web/API/WebSocket
 export class WebrtcSocketService {
   private webRtcPeer: any;
-  private stream: any;
   private recordedBlobs: any[];
   private mediaRecorder: any;
   private _videoData: any;
@@ -25,20 +23,28 @@ export class WebrtcSocketService {
   private pubId: string;
   private isPresenter: any;
 
+  private endStreamingSub = new BehaviorSubject<boolean>(null);
+  endStreaming$: Observable<boolean> = this.endStreamingSub.asObservable();
+
   public kurentoWs: any;
   public video: any;
 
   constructor(
     private _quejaService: QuejaService,
     private _userService: UserService,
-    private _http: Http
+    private _http: Http,
+    private _ngZone:NgZone
   ) {
+
     this.userId = _userService.getUserProfile().id;
     this.isPresenter = false;
     this.recordedBlobs = [];
     console.log("this.recordedBlobs ", this.recordedBlobs);
   }
 
+  public notifyEndStream(end: boolean) {
+    this.endStreamingSub.next(end);
+  }
 
   /**
    * MÉTODO PARA CONECTAR AL WEBSOCKET DE KURENTO CLIENT DEL MIDDLEWARE:
@@ -46,6 +52,7 @@ export class WebrtcSocketService {
    * @param _video 
    */
   public connecToKurento(pubId: string, _video: any) {
+    
     let websocketPromise = new Promise((resolve, reject) => {
       this.kurentoWs = new WebSocket(REST_SERV.webRtcSocketServerUrl);
       this.kurentoWs.onopen = (open) => {
@@ -91,6 +98,7 @@ export class WebrtcSocketService {
 
         case 'stopCommunication':
           this.break();
+          this.notifyEndStream(true);
           break;
 
         case 'iceCandidate':
@@ -115,24 +123,29 @@ export class WebrtcSocketService {
     }
 
     if (!this.webRtcPeer) {
-      let options = {
-        localVideo: this._videoData,
-        mediaConstraints: constraints,
-        onicecandidate: (candidate) => { this.onIceCandidate(candidate) }
-      }
-
-      this.webRtcPeer = kurentoUtils.WebRtcPeer.WebRtcPeerSendonly(options, (error) => {
-
-        if (error) {
-          console.log(error);
+      
+      this._ngZone.runOutsideAngular(() => {
+        let options = {
+          localVideo: this._videoData,
+          mediaConstraints: constraints,
+          onicecandidate: (candidate) => { this.onIceCandidate(candidate) }
         }
-        this.webRtcPeer.generateOffer((error, offerSdp) => { this.onOfferPresenter(error, offerSdp) });
 
-        this.isPresenter = true;
+        this.webRtcPeer = kurentoUtils.WebRtcPeer.WebRtcPeerSendonly(options, (error) => {
+
+          if (error) {
+            console.log(error);
+          }
+          this.webRtcPeer.generateOffer((error, offerSdp) => { this.onOfferPresenter(error, offerSdp) });
+
+          this.isPresenter = true;
+        });
       });
 
       //Proceso de incio de grabación.
-      this.dataRecord(constraints);
+      this._ngZone.runOutsideAngular(() => {
+        this.dataRecord(constraints); 
+      });
     }
   }
 
@@ -140,7 +153,7 @@ export class WebrtcSocketService {
    * Oferta del presentador del video.
    */
   private onOfferPresenter(error, offerSdp) {
-
+    
     if (error) {
       console.log("error al ofertar", error)
       return error;
@@ -224,27 +237,20 @@ export class WebrtcSocketService {
    * Procese a detener la transmicion del presenter.
    */
   public closeTransmissionCnn() {
-    if (this.webRtcPeer) {
 
-      var messege = {
-        keyWord: 'stop',
-        idUser: this.userId
+      if (this.webRtcPeer) {
+        var messege = {
+          keyWord: 'stop',
+          idUser: this.userId
+        }
+        this.sendMessage(messege);
+        
+        //Detener la transmición.
+        this.break();
+        
+        //Detiene la transmicion
+        this.stopRecorder();
       }
-      this.sendMessage(messege);
-
-      //Detener la transmición.
-      this.break();
-      this.stopRecorder();
-    }
-  }
-
-  /**
-   * Proceso para reproducir videos.
-   * @param videoInput 
-   */
-  playMedia(videoInput: any) {
-    console.log("Proceso para reproducir video");
-    let webRtcPeer = kurentoUtils.WebRtcPeer.startRecvOnly();
   }
 
   /***********************************
@@ -291,98 +297,70 @@ export class WebrtcSocketService {
   }
 
 
-  /***********************************************
-   ** Proceso de grabación del video en memoria ** 
-   ***********************************************/
+/***********************************************
+ ** Proceso de grabación del video en memoria ** 
+ ***********************************************/
 
-  /**
-   * Proceso para obtener datos para la grabación
-   * @param constraints 
-   */
-  async  dataRecord(constraints) {
-    try {
-      this.stream = await navigator.mediaDevices.getUserMedia(constraints);
-      this.startRecording();
-    } catch (e) {
-      console.log('navigator.getUserMedia error', e);
+/**
+ * Proceso para obtener datos para la grabación
+ * @param constraints 
+ */
+ private dataRecord(constraints){
+    try{
+      console.log("proceso de grabacion", constraints);
+      navigator.getUserMedia(constraints, (stream) =>{
+        this.onMediaSuccess(stream);
+      }, (err) => {
+        this.onMediaError(err);
+      });
+    }catch(err){
+      console.error("Error al procesar el videp", err);
     }
   }
 
-  ////////////////////////////
-  ////// PRIVATE METHOTS /////
-  ////////////////////////////
+  /**
+   * Proceso de grabacion exitoso
+   * @param stream 
+   */
+  private onMediaSuccess(stream){
 
+    this.mediaRecorder =  new mediaStreamRecorder(stream);
+    this.mediaRecorder.mimeType = 'video/webm\;codecs=vp9';
+    this.mediaRecorder.stream = stream;
+    this.mediaRecorder.ondataavailable =  async (blob) =>{
+      console.log("grabando..", blob);
+      await this.recordedBlobs.push(blob);
+      
+      //Proceso para convertir 
+      this.bufferToDataUrl((dataUrl, blob) => {
+        //console.log("blob unificada..", blob);
+        this.sendFilebKMS(blob);
+      });
+    }
+    
+    this.mediaRecorder.start(10);
+  }
+
+  /**
+   * Error en procesamiento de video.
+   * @param err 
+   */
+  private onMediaError(err){
+    console.error(err);
+  }
+  
   /**
    * Cerramos la coneccion del WS de kurento.
    */
   private closeWebSocketConn() {
     this.kurentoWs.close();
   }
-
-  /**
-   * Inicio del proceso de grabación.
-   */
-  private startRecording() {
-
-    //Opciones de datos.
-    this.recordedBlobs = [];
-    let options = {
-      mimeType: 'video/webm;codecs=vp9'
-    }
-
-    //Proceso de validacion de soporte de codec's para el navegador.
-    if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-
-      console.error(`${options.mimeType} no es soportado`);
-      options = { mimeType: 'video/webm;codecs=vp8' };
-      if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-
-        console.error(`${options.mimeType} no es soportado`);
-        if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-
-          console.log(`${options.mimeType} no es soportado`);
-          options = { mimeType: '' };
-        }
-      }
-    }
-
-    //Objeto que contiene la grabación.
-    try {
-      this.mediaRecorder = new MediaRecorder(this.stream, options);
-    } catch (error) {
-      console.error('Error en el proceso de grabación:', error);
-      return error;
-    }
-    console.info('Proceso de grabacion exitoso', this.mediaRecorder, ' Con opciones de grabación:', options);
-
-    //Escuchamos el evento de detenido de la grabación
-    this.mediaRecorder.onstop = (event) => {
-      console.info("La grabación de ha detenido", event);
-    }
-
-    //proceso de almacenamiento de blob´s de la transmición
-    this.mediaRecorder.ondataavailable = (event) => {
-      this.handleDataAvailable(event);
-    }
-
-    //Escuchamos el evento de inicio de la grabación.
-    this.mediaRecorder.start(10);
-  }
-
-  /**
-   * Proceso de almacenamiento de blod del video
-   * @param event 
-   */
-  private handleDataAvailable(event) {
-    if (event.data && event.data.size > 0) {
-      this.recordedBlobs.push(event.data);
-    }
-  }
-
+  
   /**
    * Proceso para detener la grabación.
    */
   private stopRecorder() {
+
     if (this.mediaRecorder) {
       //Proceso para detener la grabación.
       try {
@@ -393,11 +371,6 @@ export class WebrtcSocketService {
       } catch (err) {
         console.log("error al detner la transmicion", err);
       }
-
-        //Proceso para convertir 
-        this.bufferToDataUrl((dataUrl, blob) => {
-        this.sendFilebKMS(blob);
-      });
     }
   }
 
@@ -406,6 +379,7 @@ export class WebrtcSocketService {
    * @param callback 
    */
   private bufferToDataUrl(callback) {
+
     let blob = new Blob(this.recordedBlobs, {
       type: "video/webm"
     });
@@ -415,22 +389,6 @@ export class WebrtcSocketService {
       callback(reader.result, blob);
     };
     reader.readAsDataURL(blob);
-  }
-
-  /**
-   * Proceso para creacion de archivo que puede ser enviado al servidor.
-   * @param dataUrl 
-   */
-  private dataUrlToFile(dataUrl) {
-    let binary = atob(dataUrl.split(',')[1]);
-    let data = [];
-    console.log("binary......", binary);
-    for (let i = 0; i < binary.length; i++) {
-      data.push(binary.charCodeAt(i));
-    }
-    return new File([new Uint8Array(data)], crypto.CrytoGen.encrypt(this.generateKeyWord()) + Date.now(), {
-      type: 'video/webm'
-    });
   }
 
   /**
@@ -493,5 +451,119 @@ export class WebrtcSocketService {
     xhr.withCredentials = true;
     xhr.send(formData);
   }
+
+  
+  /**
+   * Inicio del proceso de grabación.
+   */
+  /*private startRecording() {
+
+    //Opciones de datos.
+    this.recordedBlobs = [];
+    let options = {
+      mimeType: 'video/webm;codecs=vp9'
+    }
+
+    //Proceso de validacion de soporte de codec's para el navegador.
+    if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+
+      console.error(`${options.mimeType} no es soportado`);
+      options = { mimeType: 'video/webm;codecs=vp8' };
+      if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+
+        console.error(`${options.mimeType} no es soportado`);
+        if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+
+          console.log(`${options.mimeType} no es soportado`);
+          options = { mimeType: '' };
+        }
+      }
+    }
+
+    //Objeto que contiene la grabación.
+    try {
+      this.mediaRecorder = new MediaRecorder(this.stream, options);
+    } catch (error) {
+      console.error('Error en el proceso de grabación:', error);
+      return error;
+    }
+    console.info('Proceso de grabacion exitoso', this.mediaRecorder, ' Con opciones de grabación:', options);
+
+    //Escuchamos el evento de detenido de la grabación
+    this.mediaRecorder.onstop = (event) => {
+      console.info("La grabación de ha detenido", event);
+    }
+
+    this._ngZone.runOutsideAngular(() =>{
+      //proceso de almacenamiento de blob´s de la transmición
+      this.mediaRecorder.ondataavailable = (event) => {
+        this.handleDataAvailable(event);
+      }   
+      
+      //Escuchamos el evento de inicio de la grabación.
+      this.mediaRecorder.start(100);
+    });
+  } */
+
+  /*private handleDataAvailable(event) {
+    if (event.data && event.data.size > 0) {
+      console.log("blob---", event.data);
+      this.recordedBlobs.push(event.data);
+    }
+  }*/
+
+  /*private dataUrlToFile(dataUrl) {
+    let binary = atob(dataUrl.split(',')[1]);
+    let data = [];
+    console.log("binary......", binary);
+    for (let i = 0; i < binary.length; i++) {
+      data.push(binary.charCodeAt(i));
+    }
+    return new File([new Uint8Array(data)], crypto.CrytoGen.encrypt(this.generateKeyWord()) + Date.now(), {
+      type: 'video/webm'
+    });
+  }*/
+
+  /*private dataTestRecorder(){
+      // Download locally
+      function download(blob) {
+        var url = window.URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = 'test.webm';
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function() {
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);
+        }, 100);
+      }
+    
+      const successCallback = (stream) => {
+        // Set up the recorder
+        let blobs = [];
+        let recorder = new MediaRecorder(stream, {mimeType: 'video/webm; codecs=vp9'});
+        recorder.ondataavailable = e => { if (e.data && e.data.size > 0) blobs.push(e.data)};
+        recorder.onstop = (e) => download(new Blob(blobs, {type: 'video/webm'}));
+    
+        // Record for 10 seconds.
+        setTimeout(()=> recorder.stop(), 10000);
+    
+        // Start recording.
+        recorder.start(10); // collect 10ms chunks of data
+      };
+    
+     /* const errorCallback = (err) => {
+        // We don't have access to the API
+        console.log(err)
+      };
+    
+      navigator.getUserMedia({
+        audio: false,
+        video: {'mandatory': {'chromeMediaSource':'screen'}}
+      }, successCallback, errorCallback);
+  
+  }*/
 }
 
