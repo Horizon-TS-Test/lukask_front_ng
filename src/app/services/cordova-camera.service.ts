@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 
 declare var Camera: any;
 declare var navigator: {
-  camera: any
+  camera: any,
+  device: any
 };
 declare var window: {
   resolveLocalFileSystemURL: any
@@ -51,6 +52,29 @@ export class CordovaCameraService {
   }
 
   /**
+   * Proceso para abrir camara y realizar el proceso de grabacion
+   * @param callback {abrir camara para proceso de grabacion de video}
+   */
+  public openCameraVideo(callback){
+
+    console.log("abriendo camara..");
+    let options = { limit: 1, duration: 120 };
+    let path:any;
+    navigator.device.capture.captureVideo((mediaFiles) =>{
+      mediaFiles.forEach((element) => {
+        //path.push(element);
+        console.log("ruta de grabacion....", element);
+        path=element;
+      });
+      callback(path);
+    }, function cameraError(error) {
+      console.debug("Unable to obtain picture: " + error, "app");
+      callback(null);
+    }, options);
+  }
+
+  
+  /**
    * PENDIENTE!!!!!
    */
   public openFilePicker() {
@@ -73,13 +97,17 @@ export class CordovaCameraService {
    * @param imgUri URL DEL RECURSO CAPTURADO POR CAMARA O DESDE EL DIRECTORIO DEL DISPOSITIVO
    * @param callback 
    */
-  public getFileBlob(imgUri, callback) {
+  public getFileBlob(imgUri, action, callback) {
     window.resolveLocalFileSystemURL(imgUri, function success(fileEntry) {
 
       fileEntry.file(function (file) {
         var reader = new FileReader();
         reader.onloadend = function (e) {
-          var imgBlob = new Blob([this.result], { type: file.type });
+
+          //definimos el tipo de blob a extraer.
+          var type = action == 'video' ? 'video/webm' : file.type; 
+          console.log("type..", type);
+          var imgBlob = new Blob([this.result], { type: type });
           callback(imgBlob);
         };
         reader.readAsArrayBuffer(file);

@@ -38,6 +38,7 @@ export class UserEditComponent implements OnInit, OnDestroy, OnChanges, AfterVie
   ) {
     this.fileToUpload = {
       mediaFileUrl: ASSETS.profDefaultImg,
+      type : 'media',
       mediaFile: null,
       removeable: false,
       active: true,

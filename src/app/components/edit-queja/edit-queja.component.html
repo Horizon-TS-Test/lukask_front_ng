@@ -10,12 +10,32 @@
       <div id="carouselExampleControls" class="p-pub-media carousel slide" data-ride="carousel">
 
         <div class="p-pub-media carousel-inner" role="listbox">
+          <a href="#" id="viewOptions" class="p-transparent-btn xs p-float-btn top-left-corner" (click) = "animation()">
+            <fa name="close"></fa>
+          </a>
+          <div class="actions-edit-queja">
+            <a href="#" class="opCamera">
+              <fa name="close"></fa>
+            </a>
+            <a href="#" class="opCamera">
+              <fa name="close"></fa>
+            </a>
+            <a href="#" class="opCamera">
+              <fa name="close"></fa>
+            </a>
+          </div>
+
           <ng-container *ngFor="let file of filesToUpload; let i = index">
             <div *ngIf="!file.hidden" class="p-pub-media carousel-item p-1" [ngClass]="{ 'active': file.active }">
-              <a *ngIf="file.removeable" href="#" class="p-transparent-btn xs p-float-btn top-left-corner" (click)="removeMedia($event, file)">
+              <a *ngIf="file.removeable" href="#" class="xs p-float-btn top-left-corner" (click)="removeMedia($event, file)">
                 <fa name="close"></fa>
               </a>
-              <img [src]="_domSanitizer.bypassSecurityTrustUrl(file.mediaFileUrl)" width="100%" class="mb-1">
+              <img *ngIf="file.type=='image'" [src]="_domSanitizer.bypassSecurityTrustUrl(file.mediaFileUrl)" width="100%"
+                class="mb-1">
+              <video *ngIf="file.type=='video'" controls width="100%" class="mb-1" poster="../../../assets/images/media/default.gif"
+                autoplay>
+                <source [src]="_domSanitizer.bypassSecurityTrustUrl(file.mediaFileUrl)" type='video/mp4' />
+              </video>
             </div>
           </ng-container>
         </div>
@@ -34,13 +54,30 @@
         </ng-container>
       </div>
 
-      <a href="#" class="p-transparent-btn p-float-btn" (click)="newMedia($event)">
+      <!--<a href="#" class="p-transparent-btn p-float-btn" (click)="newMedia($event)">
         <fa name="camera"></fa>
-      </a>
+      </a>-->
+      <div class="carousel-op-media">
+        <owl-carousel class="p-transparent-btn p-float-btn" id="corousel-live-op" class="personal-owl-nav" [options]="carouselOptions"
+          [carouselClasses]="['owl-theme']">
+          <div class="d-flex justify-content-center align-items-center">
+            <a href="#" class="p-transparent-btn ml-12" (click)="newMedia($event)">
+              <fa name="camera"></fa>
+            </a>
+          </div>
+          <div class="d-flex justify-content-center align-items-center">
+            <a href="#" class="p-transparent-btn ml-12" (click)="newMediaVideo($event)">
+              <span class="personal-site-icon">e</span>
+            </a>
+          </div>
+        </owl-carousel>
+      </div>
+
     </div>
 
     <div class="card-block p-0">
-      <pub-form [mediaFiles]="filesToUpload" [eersaLocClient]="eersaLocClient" [isStreamPub]="isStreamPub" [submit]="submit" (afterSubmit)="processAfterSubmit($event)" (validForm)="onValidForm($event)"></pub-form>
+      <pub-form [mediaFiles]="filesToUpload" [eersaLocClient]="eersaLocClient" [isStreamPub]="isStreamPub" [submit]="submit"
+        (afterSubmit)="processAfterSubmit($event)" (validForm)="onValidForm($event)"></pub-form>
     </div>
   </div>
 

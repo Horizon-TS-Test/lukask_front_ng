@@ -32,6 +32,8 @@ export class EditQuejaComponent implements OnDestroy, OnInit, OnChanges {
   private _initSnapShotsNumber: number;
   private _maxSnapShots: number;
   private isEnabledCordovaCamera: boolean;
+  private _hiddeShowAnimation: boolean;
+  private _optionsCamera: any;
 
   public carouselOptions: any;
   public filesToUpload: MediaFile[];
@@ -56,6 +58,10 @@ export class EditQuejaComponent implements OnDestroy, OnInit, OnChanges {
   }
 
   ngOnInit() {
+
+    this._hiddeShowAnimation = false;
+    this._optionsCamera = document.querySelectorAll(".opCamera");
+    this.initCarousel();
     this.isEnabledCordovaCamera = this._cordovaCameraService.isCameraEnabled();
   }
 
@@ -63,6 +69,7 @@ export class EditQuejaComponent implements OnDestroy, OnInit, OnChanges {
     this.filesToUpload = [
       {
         mediaFileUrl: ASSETS.pubDefaultImg,
+        type : 'image',
         mediaFile: null,
         removeable: false,
         active: true,
@@ -100,8 +107,10 @@ export class EditQuejaComponent implements OnDestroy, OnInit, OnChanges {
     if (this.filesToUpload.length < this._initSnapShotsNumber) {
       if (this.isEnabledCordovaCamera) {
         this._cordovaCameraService.openCamera((imgUri: any) => {
-          this._cordovaCameraService.getFileBlob(imgUri, (imgBlob) => {
-            this.addQuejaSnapShot({ mediaFileUrl: imgUri, mediaFile: imgBlob, removeable: true, active: true, hidden: false });
+          this._cordovaCameraService.getFileBlob(imgUri, "image", (imgBlob) => {
+            console.log("imgUri..........", imgUri);
+            console.log("imgBlob..........", imgBlob);
+            this.addQuejaSnapShot({ mediaFileUrl: imgUri, type: 'image', mediaFile: imgBlob, removeable: true, active: true, hidden: false });
           });
         });
       }
@@ -111,6 +120,33 @@ export class EditQuejaComponent implements OnDestroy, OnInit, OnChanges {
     }
     else {
       Snackbar.show({ text: "Ha llegado al límite de imágenes permitidas", pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#34b4db', customClass: "p-snackbar-layout" });
+    }
+  }
+  
+  /**
+   * Proceso para realizar una grabacion de video desde la camara
+   * @param event 
+   */
+  public newMediaVideo(event: any) {
+    event.preventDefault();
+    if (this.filesToUpload.length < this._initSnapShotsNumber) {
+      if (this.isEnabledCordovaCamera) {
+        this._cordovaCameraService.openCameraVideo((videoUri: any) => {
+          console.log("imgUri", videoUri);
+          this._cordovaCameraService.getFileBlob(videoUri.fullPath, "video", (videoBlob) => {
+            console.log("videoUri.....", videoUri);
+            console.log("imgBlob.....", videoBlob);
+            this.addQuejaSnapShot({ mediaFileUrl: videoUri.localURL, type: 'video', mediaFile: videoBlob, removeable: true, active: true, hidden: false });
+            //this.addQuejaSnapShot({ mediaFileUrl: imgUri, mediaFile: imgBlob, removeable: true, active: true, hidden: false });
+          });
+        });
+      }
+      else {
+        this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.new_media, contentData: { maxSnapShots: this._maxSnapShots, backCamera: true } });
+      }
+    }
+    else {
+      Snackbar.show({ text: "Ha llegado al límite de medios permitidos", pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#34b4db', customClass: "p-snackbar-layout" });
     }
   }
 
@@ -228,5 +264,40 @@ export class EditQuejaComponent implements OnDestroy, OnInit, OnChanges {
    */
   public onValidForm(event: boolean) {
     this.validForm.emit(event);
+  }
+
+   /**
+   * MÉTODO PARA DEFINIR LAS PROPIEDADES DEL CAROUSEL DE SECCIONES:
+   */
+  private initCarousel() {
+    this.carouselOptions = {
+      items: 1, dots: false, loop: false, margin: 5,
+      nav: false, stagePadding: 0, autoWidth: false
+    };
+  }
+
+  private animation(){
+    console.log("this._optionsCamera.....", this._optionsCamera);
+    if(!this._hiddeShowAnimation){
+      this._optionsCamera.forEach(element => {
+        var elementClass = element.classList;
+        elementClass.add("sliderAction");
+      });
+      this._hiddeShowAnimation = true;
+    
+    }else{
+      this._optionsCamera.forEach(element => {
+        var elementClass = element.classList;
+        elementClass.remove("sliderAction");
+        elementClass.add("sliderActionReverse");
+      });
+      
+      this._optionsCamera.forEach(element => {
+        var elementClass = element.classList;
+        elementClass.remove("sliderActionReverse");
+      });
+      
+      this._hiddeShowAnimation = false;
+    }
   }
 }

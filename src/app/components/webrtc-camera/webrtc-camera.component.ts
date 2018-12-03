@@ -253,6 +253,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
 
               this.snapShot = {
                 mediaFileUrl: URL.createObjectURL(fixedBlob),
+                type : 'image',
                 mediaFile: fixedBlob,
                 removeable: true,
                 active: true,

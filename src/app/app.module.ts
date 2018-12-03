@@ -171,7 +171,7 @@ import { LoaderComponent } from './components/loader/loader.component';
     routing,
     AngularFontAwesomeModule,
     OwlModule,
-    ServiceWorkerModule.register('/sw-workbox.js', { enabled: environment.production })
+    //ServiceWorkerModule.register('/sw-workbox.js', { enabled: environment.production })
   ],
   providers: [appRoutingProviders, UserService],
   bootstrap: [AppComponent],
