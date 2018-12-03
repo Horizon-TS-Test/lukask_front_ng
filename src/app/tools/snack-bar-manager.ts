@@ -12,7 +12,7 @@ export class SnackBarManager {
 
     constructor() { }
 
-    public static showSnackMessage(message: string, actionText: string, position?: string, color?: string, customClass?: string) {
+    public static showSnackMessage(message: string, actionText: string, position?: any, color?: string, customClass?: string) {
         Snackbar.show({
             text: message,
             pos: position ? position : this.BOTTOM_CENTER,
