@@ -86,6 +86,7 @@ import { ShortPubComponent } from './components/short-pub/short-pub.component';
 import { StepsComponent } from './components/steps/steps.component';
 import { UserPubContainerComponent } from './components/user-pub-container/user-pub-container.component';
 import { LoaderComponent } from './components/loader/loader.component';
+import { ProgressBarComponent } from './components/progress-bar/progress-bar.component';
 
 @NgModule({
   declarations: [
@@ -161,7 +162,8 @@ import { LoaderComponent } from './components/loader/loader.component';
     NotificationModalComponent,
     SupportModalComponent,
     UserPubContainerComponent,
-    LoaderComponent
+    LoaderComponent,
+    ProgressBarComponent
   ],
   imports: [
     HttpModule,

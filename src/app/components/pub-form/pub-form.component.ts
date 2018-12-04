@@ -6,6 +6,7 @@ import { Select2 } from '../../interfaces/select2.interface';
 import { Publication } from '../../models/publications';
 import { DateManager } from '../../tools/date-manager';
 import { ACTION_TYPES } from '../../config/action-types';
+import { MEDIA_TYPES } from '../../config/media-types';
 import { Gps } from '../../interfaces/gps.interface';
 import { Media } from '../../models/media';
 import { MediaFile } from '../../interfaces/media-file.interface';
@@ -17,6 +18,7 @@ import { EersaClaim } from 'src/app/models/eersa-claim';
 import { EersaClient } from 'src/app/models/eersa-client';
 import { EersaLocation } from 'src/app/models/eersa-location';
 import { EersaClaimService } from 'src/app/services/eersa-claim.service';
+import { WebrtcSocketService } from 'src/app/services/webrtc-socket.service';
 
 declare var $: any;
 
@@ -56,7 +58,8 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges, OnDes
     private formBuilder: FormBuilder,
     private _quejaService: QuejaService,
     private _eersaClaimService: EersaClaimService,
-    private _gpsService: GpsService
+    private _gpsService: GpsService,
+    private _webRtcService: WebrtcSocketService
   ) {
     this.isValidForm = false;
 
@@ -155,12 +158,32 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges, OnDes
 
     this.defineNewPub();
     this._quejaService.savePub(this.newPub).then((response: any) => {
+
       if (response == true) {
         this.afterSubmit.emit({ finished: true, dataAfterSubmit: null, hasError: false, message: 'Su publicación se enviará en la próxima conexión', backSync: true });
       }
       else {
-        this.afterSubmit.emit({ finished: true, dataAfterSubmit: response.id_publication, hasError: false, message: 'La información ha sido publicada exitosamente' });
+      
+        /****aqui va el codigo de guardar videos***/
+        
+        let mediaVideoData = this.mediaFiles.filter((element, index, arrayData)=>{
+          return (element.type == MEDIA_TYPES.video);
+        });
+
+        if (mediaVideoData.length > 0){
+
+          this._webRtcService.sendFilebKMS({pubId : response.id_publication, mediaVideo : mediaVideoData}).then((responsefile:any) =>{
+            this.afterSubmit.emit({ finished: true, dataAfterSubmit: response.id_publication, hasError: false, message: 'La información ha sido publicada exitosamente' });
+          }).catch((error)=>{
+
+            console.log("Error al guardar el archivo..", error);
+          });
+        }else{
+
+          this.afterSubmit.emit({ finished: true, dataAfterSubmit: response.id_publication, hasError: false, message: 'La información ha sido publicada exitosamente' });
+        }
       }
+
       this.formPub.reset();
     }).catch((error) => {
       if (error.code == 400) {
@@ -191,7 +214,7 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges, OnDes
 
     if (this.mediaFiles.length > 1) {
       for (let i = 0; i < this.mediaFiles.length; i++) {
-        if (this.mediaFiles[i].removeable == true) {
+        if (this.mediaFiles[i].removeable == true && this.mediaFiles[i].type == MEDIA_TYPES.image) {
           this.newPub.media.push(new Media("", "IG", this.mediaFiles[i].mediaFileUrl, true, this.mediaFiles[i].mediaFile, i + "-" + new Date().toISOString() + ".png"));
         }
       }
@@ -211,12 +234,14 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges, OnDes
         switch (property) {
           case 'submit':
             if (changes[property].currentValue == ACTION_TYPES.submitPub || changes[property].currentValue == ACTION_TYPES.pubStream) {
-              if (this.eersaLocClient) {
-                this.sendEersaClaim();
+              /*if (this.eersaLocClient) {
+                console.log("Para la eersa", this.eersaClaim);
+                //this.sendEersaClaim();
               }
-              else {
-                this.sendPub();
-              }
+              else {*/
+               console.log("el común insert");
+               this.sendPub();
+              //}
             }
             break;
           case 'mediaFiles':

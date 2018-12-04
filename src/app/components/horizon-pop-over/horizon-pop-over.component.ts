@@ -16,6 +16,7 @@ export class HorizonPopOverComponent implements OnInit {
   public _dynaContent: DynaContent;
   public visibleClass: string;
   public backgroundClass: string;
+  public progressClass:String;
 
   public contentTypes: any;
 
@@ -23,6 +24,7 @@ export class HorizonPopOverComponent implements OnInit {
     private _dynaContentService: DynaContentService
   ) {
     this.contentTypes = CONTENT_TYPES;
+    this.progressClass = "";
     this.subscriber = this._dynaContentService.removeDynaCont$.subscribe((closeIt: boolean) => {
       if (closeIt) {
         this.closePopOver();
@@ -31,6 +33,12 @@ export class HorizonPopOverComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log("_dynaContent..... holaaaaa", this._dynaContent);
+    if(this._dynaContent && this._dynaContent.contentType === CONTENT_TYPES.progress_bar){
+      this.progressClass = "progress-content";
+    }
+    console.log("this.progressClass........", this.progressClass);
+
     setTimeout(() => {
       this.backgroundClass = "on"
       this.visibleClass = "is-visible"
@@ -62,7 +70,9 @@ export class HorizonPopOverComponent implements OnInit {
    */
   public onClickClose(event: any) {
     event.preventDefault();
-    this.closePopOver();
+    if(this._dynaContent.contentType != CONTENT_TYPES.progress_bar){
+      this.closePopOver();
+    }
   }
 
   /**

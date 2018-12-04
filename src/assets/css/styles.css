@@ -1208,7 +1208,7 @@ p, label, div {
   -moz-box-shadow: 1px 2px 4px 2px rgba(0, 0, 0, 0.2) !important;
   box-shadow: 1px 2px 4px 2px rgba(0, 0, 0, 0.2) !important; }
   .custom-btn fa, .custom-btn span {
-    color: #fff !important; }
+    color: #fff; }
   .custom-btn.custom-btn-light {
     background: #c1e6ca !important;
     border-color: #c1e6ca !important; }
@@ -1221,6 +1221,11 @@ p, label, div {
   .custom-btn.custom-btn-sec {
     background: #848b76 !important;
     border-color: #848b76 !important; }
+  .custom-btn.custom-btn-rec {
+    background: white !important;
+    border-color: white !important; }
+    .custom-btn.custom-btn-rec span {
+      color: #dd2222 !important; }
 
 .p-sec-btn {
   background: #004360 !important;
@@ -1965,155 +1970,99 @@ input[type=text], input[type=password], input[type=email], input[type=number], i
   -moz-box-shadow: 4px 4px 7px 2px rgba(0, 0, 0, 0.2) !important;
   box-shadow: 4px 4px 7px 2px rgba(0, 0, 0, 0.2) !important; }
 
-/*# sourceMappingURL=styles.css.map */
+.rotate-on {
+  transform: rotate(180deg);
+  transition: all 0.5s ease; }
 
-/*estilo para slider de opciones de multimedia en queja*/
-.carousel-op-media{
-  position:absolute;
+.p-transition {
+  transition: all 0.5s ease; }
+
+.actions-edit-queja {
+  overflow: hidden;
+  z-index: 1;
+  top: 40px; }
+
+.actions-edit-queja > div {
+  transform: translateY(-100px);
+  transition: all 0.5s ease; }
+
+.actions-edit-queja.slide-down > div {
+  transform: translateY(0);
+  transition: all 0.5s ease; }
+
+.actions-edit-queja > div > a {
+  margin-bottom: 3px; }
+
+/*estilo para caja contenedora de datos de grabacion*/
+.p-transparent-box {
+  position: absolute;
   display: inline-block;
-  left: 0px;
-  right: 0px;
-}
+  border: 2px solid rgba(255, 255, 255, 0.1) !important;
+  background: rgba(0, 0, 0, 0.2) !important;
+  border-radius: 5px 5px; }
 
-.actions-edit-queja{
+/***estilos para grabacion***/
+.recorder {
+  pointer-events: none;
+  cursor: default;
+  opacity: 0.4;
+  transition: all .5s ease; }
+
+/**animacion en proceso de grabacion***/
+.recorderAnimate {
+  animation: sacaleBottom .6s infinite;
+  animation-direction: alternate; }
+
+@keyframes sacaleBottom {
+  from {
+    transform: scale(1); }
+  to {
+    transform: scale(0.8); } }
+.bttnHiddenRecording {
   position: absolute;
   display: block;
-  z-index: 1;
-  left: 4px;
-}
+  visibility: hidden;
+  transition: all 0.4s ease; }
 
-.actions-edit-queja .opCamera{
+/*****estilo que muestra datos de grabacion****/
+.textRecorder {
   position: relative;
   display: block;
-  margin-bottom: 7px;
-  left : 4px;
-  top: -200px;
-  width: 30px;
-  height: 30px;
-  background-color: rgb(181, 207, 231);
-  -webkit-border-radius: 100%;
-  -moz-border-radius: 100%;
-  border-radius: 100%;
-}
+  padding: .5rem .5rem .8rem 2.6rem;
+  color: #fff; }
 
-.sliderAction{
-  -webkit-animation: sliderAction 0.5s ease ;
-  -moz-animation: sliderAction 0.5s ease ;
-  animation: sliderAction 0.5s ease forwards;
-}
+/***** Color de barra de avance ***/
+.progress-hts {
+  background-color: rgba(26, 188, 156, 0.8) !important; }
 
-.sliderActionReverse{
-  -webkit-animation: sliderAction 1s ease ;
-  -moz-animation: sliderAction 1s ease ;
-  animation: sliderAction 1s ease reverse;
-}
+/***** Estilo para centrar el pop up **/
+.personal-pop-over.progress-content {
+  transform: translate(0, 400%); }
 
-#viewOptions{
-  z-index: 2;
-  background-color: #aeaeae;
-}
+/*estilos para texto que se presenta en el progress bar*/
+.textLoad {
+  position: relative;
+  display: block;
+  margin: .5rem auto;
+  font-size: 15px;
+  padding-right: 2rem;
+  background-image: url(../images/install-intro/load_banner.gif);
+  background-repeat: no-repeat;
+  background-size: 25px;
+  background-position-x: 8rem; }
 
-@-webkit-keyframes sliderAction{
-  0%{
-    top : -20px;
-    -webkit-box-shadow: 0 7px 5px rgba(28, 211, 107, 0.3);
-    -moz-box-shadow: 0 7px 5px rgba(28, 211, 107, 0.3);
-    box-shadow: 0 7px 5px rgba(28, 211, 107, 0.3);
-    transform: scale(0.2);
+/*estilo para contenido de progress bar*/
+progress-bar > div {
+  padding: 1rem 0; }
 
-  }
+.op-media:hover {
+  background-color: white !important; }
+  .op-media:hover fa, .op-media:hover span {
+    color: rgba(0, 0, 0, 0.3) !important; }
 
-  50%{
-    top : 15px; 
-    -webkit-box-shadow: 0 7px 7px rgba(28, 211, 107, 0.3);
-    -moz-box-shadow: 0 7px 7px rgba(28, 211, 107, 0.3);
-    box-shadow: 0 7px 7px rgba(28, 211, 107, 0.3);
-    transform: scale(0.5);
-  }
- 
-  90%{
-    top : 44px;
-    -webkit-box-shadow: 0 7px 11px rgba(28, 211, 107, 0.3);
-    -moz-box-shadow: 0 7px 11px rgba(28, 211, 107, 0.3);
-    box-shadow: 0 7px 11px rgba(28, 211, 107, 0.3);
-    transform: scale(1);
-  }
+.obj-hidden {
+  visibility: hidden;
+  transform: scale(0);
+  transition: transform 0.3s, visibility 0s 0.3s; }
 
-  100%{
-    top : 40px;
-    -webkit-box-shadow: 0 7px 11px rgba(28, 211, 107, 0.3);
-    -moz-box-shadow: 0 7px 11px rgba(28, 211, 107, 0.3);
-    box-shadow: 0 7px 11px rgba(28, 211, 107, 0.3);
-    transform: scale(1);
-  }
-}
-
-@-moz-keyframes sliderAction{
-  0%{
-    top : -20px;
-    -webkit-box-shadow: 0 7px 5px rgba(28, 211, 107, 0.3);
-    -moz-box-shadow: 0 7px 5px rgba(28, 211, 107, 0.3);
-    box-shadow: 0 7px 5px rgba(28, 211, 107, 0.3);
-    transform: scale(0.2);
-
-  }
-
-  50%{
-    top : 15px; 
-    -webkit-box-shadow: 0 7px 7px rgba(28, 211, 107, 0.3);
-    -moz-box-shadow: 0 7px 7px rgba(28, 211, 107, 0.3);
-    box-shadow: 0 7px 7px rgba(28, 211, 107, 0.3);
-    transform: scale(0.5);
-  }
- 
-  90%{
-    top : 44px;
-    -webkit-box-shadow: 0 7px 11px rgba(28, 211, 107, 0.3);
-    -moz-box-shadow: 0 7px 11px rgba(28, 211, 107, 0.3);
-    box-shadow: 0 7px 11px rgba(28, 211, 107, 0.3);
-    transform: scale(1);
-  }
-
-  100%{
-    top : 40px;
-    -webkit-box-shadow: 0 7px 11px rgba(28, 211, 107, 0.3);
-    -moz-box-shadow: 0 7px 11px rgba(28, 211, 107, 0.3);
-    box-shadow: 0 7px 11px rgba(28, 211, 107, 0.3);
-    transform: scale(1);
-  }
-}
-
-@keyframes sliderAction{
-  0%{
-    top : -20px;
-    -webkit-box-shadow: 0 7px 5px rgba(28, 211, 107, 0.3);
-    -moz-box-shadow: 0 7px 5px rgba(28, 211, 107, 0.3);
-    box-shadow: 0 7px 5px rgba(28, 211, 107, 0.3);
-    transform: scale(0.2);
-
-  }
-
-  50%{
-    top : 15px; 
-    -webkit-box-shadow: 0 7px 7px rgba(28, 211, 107, 0.3);
-    -moz-box-shadow: 0 7px 7px rgba(28, 211, 107, 0.3);
-    box-shadow: 0 7px 7px rgba(28, 211, 107, 0.3);
-    transform: scale(0.5);
-  }
- 
-  90%{
-    top : 44px;
-    -webkit-box-shadow: 0 7px 11px rgba(28, 211, 107, 0.3);
-    -moz-box-shadow: 0 7px 11px rgba(28, 211, 107, 0.3);
-    box-shadow: 0 7px 11px rgba(28, 211, 107, 0.3);
-    transform: scale(1);
-  }
-
-  100%{
-    top : 40px;
-    -webkit-box-shadow: 0 7px 11px rgba(28, 211, 107, 0.3);
-    -moz-box-shadow: 0 7px 11px rgba(28, 211, 107, 0.3);
-    box-shadow: 0 7px 11px rgba(28, 211, 107, 0.3);
-    transform: scale(1);
-  }
-}
+/*# sourceMappingURL=styles.css.map */

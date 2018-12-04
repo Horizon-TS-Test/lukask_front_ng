@@ -8,5 +8,7 @@ export const ACTION_TYPES = {
     userEdition: 6,
     nextStep: 7,
     prevStep: 8,
-    goHome: 9
+    goHome: 9,
+    takeSnapshot: 10,
+    recordVideo: 11
 }

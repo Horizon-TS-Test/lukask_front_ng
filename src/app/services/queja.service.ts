@@ -459,7 +459,7 @@ export class QuejaService implements OnDestroy {
     formData.append('userId', this._userService.getUserProfile().id);
 
     for (let med of queja.media) {
-      formData.append('media_files[]', med.file, med.fileName);
+        formData.append('media_files[]', med.file, med.fileName);
     }
 
     return formData;

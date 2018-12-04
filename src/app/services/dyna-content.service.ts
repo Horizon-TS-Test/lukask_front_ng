@@ -8,9 +8,11 @@ import { DynaContent } from '../interfaces/dyna-content.interface';
 export class DynaContentService {
   private dynaSubject = new BehaviorSubject<DynaContent>(null);
   private removeSubject = new BehaviorSubject<boolean>(false);
+  private actionOnContent = new BehaviorSubject<DynaContent>(null);
 
   modalData$: Observable<DynaContent> = this.dynaSubject.asObservable();
   removeDynaCont$: Observable<boolean> = this.removeSubject.asObservable();
+  actionInContent$: Observable<DynaContent> = this.actionOnContent.asObservable();
 
   constructor() { }
 
@@ -31,5 +33,14 @@ export class DynaContentService {
    */
   public removeDynaContent(removeIt: boolean) {
     this.removeSubject.next(removeIt);
+  }
+  
+  /**
+   * Metodo para notificar que se ejecuten acciones en componenete agreagado
+   * dinamicamente
+   * @param dynaActionCont {datos de la accion a ejecutar}
+   */
+  public executeAccion(dynaActionCont: DynaContent){
+    this.actionOnContent.next(dynaActionCont);
   }
 }

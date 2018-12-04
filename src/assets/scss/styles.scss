@@ -1596,7 +1596,7 @@ p, label, div {
     box-shadow: 1px 2px 4px 2px rgba(0,0,0,0.2) !important;
 
     fa, span {
-        color: $secondary-text !important;
+        color: $secondary-text;
     }
     &.custom-btn-light {
         background: $primary-light !important;
@@ -1613,6 +1613,13 @@ p, label, div {
     &.custom-btn-sec {
         background: $primary-text !important;
         border-color: $primary-text !important;
+    }
+    &.custom-btn-rec {
+        background: $primary-btn_rec !important;
+        border-color: $primary-btn_rec !important;
+        span{
+            color: $primary_span_rec !important;
+        }
     }
 }
 .p-sec-btn {
@@ -2652,4 +2659,121 @@ input[type=text], input[type=password], input[type=email], input[type=number], i
     -moz-box-shadow: 4px 4px 7px 2px rgba(0,0,0,0.2) !important;
     box-shadow: 4px 4px 7px 2px rgba(0,0,0,0.2) !important;
 }
+
+.rotate-on {
+    transform: rotate(180deg);
+    transition: all 0.5s ease;
+}
+
+.p-transition{
+    transition: all 0.5s ease;
+}
+
+.actions-edit-queja{
+    overflow: hidden;
+    z-index: 1;
+    top: 40px;
+}
+
+.actions-edit-queja > div{
+    transform: translateY(-100px);
+    transition: all 0.5s ease;
+}
+
+.actions-edit-queja.slide-down > div{
+    transform: translateY(0);
+    transition: all 0.5s ease;
+}
+
+.actions-edit-queja > div > a{
+    margin-bottom: 3px; 
+}
+/*estilo para caja contenedora de datos de grabacion*/
+.p-transparent-box{
+    position: absolute;
+    display: inline-block;
+    border: 2px solid  rgba(255, 255, 255, .1) !important;
+    background: rgba(0, 0, 0, .2) !important;
+    border-radius: 5px 5px;
+}
+
+/***estilos para grabacion***/
+.recorder{
+    pointer-events: none;
+    cursor: default;
+    opacity: 0.4;
+    transition: all .5s ease;
+}
+
+/**animacion en proceso de grabacion***/
+.recorderAnimate{
+    animation: sacaleBottom .6s infinite;
+    animation-direction: alternate;
+}
+
+@keyframes sacaleBottom{
+    from{
+        transform: scale(1);
+    }
+    to{
+        transform: scale(0.8);
+    }
+}
+
+.bttnHiddenRecording{
+    position :absolute;
+    display :block;
+    visibility: hidden;
+    transition: all 0.4s ease;
+}
+
+/*****estilo que muestra datos de grabacion****/
+.textRecorder{
+    position: relative;
+    display: block;
+    padding: .5rem .5rem .8rem 2.6rem;
+    color: #fff;
+}
+
+/***** Color de barra de avance ***/
+.progress-hts{
+    background-color : $success-low !important;
+}
+
+/***** Estilo para centrar el pop up **/
+.personal-pop-over.progress-content{
+    transform: translate(0, 400%);
+}
+
+/*estilos para texto que se presenta en el progress bar*/
+.textLoad{
+    position: relative;
+    display: block;
+    margin: .5rem auto;
+    font-size: 15px;
+    padding-right: 2rem; 
+    background-image: url(../images/install-intro/load_banner.gif);
+    background-repeat: no-repeat;
+    background-size: 25px;
+    background-position-x: 8rem;
+}
+
+/*estilo para contenido de progress bar*/
+progress-bar > div{
+    padding: 1rem 0;
+}
+
+.op-media:hover{
+    background-color:rgb(255,255,255) !important;
+    fa, span{
+        color: rgba(0, 0, 0, 0.3) !important;
+    }
+}
+
+.obj-hidden{
+    visibility: hidden;
+    transform: scale(0);
+    transition: transform 0.3s, visibility 0s 0.3s;
+}
+
 /////////////////////////////////////////--END OFFLINE STYLES--//////////////////////////////////////////

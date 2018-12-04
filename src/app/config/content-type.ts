@@ -20,5 +20,6 @@ export const CONTENT_TYPES = {
     paypal: 18,
     register_profile: 19,
     view_video:20,
-    new_claim: 21
+    new_claim: 21,
+    progress_bar:22
 }

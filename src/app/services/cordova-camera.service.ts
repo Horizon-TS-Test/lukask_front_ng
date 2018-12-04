@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { MEDIA_TYPES } from '../config/media-types';
 
 declare var Camera: any;
 declare var navigator: {
@@ -105,7 +106,7 @@ export class CordovaCameraService {
         reader.onloadend = function (e) {
 
           //definimos el tipo de blob a extraer.
-          var type = action == 'video' ? 'video/webm' : file.type; 
+          var type = action == MEDIA_TYPES.video ? 'video/webm' : file.type; 
           console.log("type..", type);
           var imgBlob = new Blob([this.result], { type: type });
           callback(imgBlob);

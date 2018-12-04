@@ -3,10 +3,10 @@
 <div class="min-height-full-modal personal-dyna-cont show col-12 p-3">
   <a *ngIf="_dynaContent.contentType !== contentTypes.payment_card" href="#" (click)="onClickClose($event)" class="absolute-background"></a>
 
-  <div class="personal-pop-over {{ visibleClass }} card">
+  <div class="personal-pop-over {{progressClass}} {{ visibleClass }} card">
     <ng-container [ngSwitch]="_dynaContent.contentType">
       <find-accounts *ngSwitchCase="contentTypes.find_accounts" (closePop)="closePopFromChild($event)"></find-accounts>
       <payments-card *ngSwitchCase="contentTypes.payment_card" [planilla]="_dynaContent.contentData" (closePop)="closePopFromChild($event)"></payments-card>
+      <progress-bar *ngSwitchCase="contentTypes.progress_bar" [typeProgess]="_dynaContent.contentData" (closePop)="closePopFromChild($event)"></progress-bar>
     </ng-container>
   </div>
-</div>
