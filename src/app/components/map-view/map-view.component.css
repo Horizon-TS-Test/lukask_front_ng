@@ -1,0 +1,9 @@
+#contenedor{
+    background-color:rgba(76,74,146,0.2);
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    width: 95%;
+    height: 110px;
+    padding: 5px;
+    box-shadow: 2px 2px 7px 1px rgba(28,110,164,0.66);
+}

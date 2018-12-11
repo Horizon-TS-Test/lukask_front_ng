@@ -4,6 +4,7 @@ export const REST_SERV = {
     loginUrl: SERV_IP.middleware + '/login',
     pubsUrl: SERV_IP.middleware + '/publication',
     pubFilterUrl: SERV_IP.middleware + '/publication/filter',
+    pubParishUrl: SERV_IP.middleware + '/publication/parish',
     qTypeUrl: SERV_IP.middleware + '/qtype',
     commentUrl: SERV_IP.middleware + '/comment',
     relevanceUrl: SERV_IP.middleware + '/relevance',
@@ -24,5 +25,8 @@ export const REST_SERV = {
     pushSub: SERV_IP.middleware + '/push/subscribe',
     unsubsribe: SERV_IP.middleware + '/push/unsubscribe',
     mediaRecorder : SERV_IP.middleware + '/media',
-    eersaClaimUrl : SERV_IP.middleware + '/eersa/claim'
+    eersaClaimUrl : SERV_IP.middleware + '/eersa/claim',
+    pubCiudadUrl: SERV_IP.middleware + '/publication/location',    
+    pubFechaUrl: SERV_IP.middleware + '/publication/date',    
+    pubFechaParishUrl: SERV_IP.middleware + '/publication/dateParish'    
 }

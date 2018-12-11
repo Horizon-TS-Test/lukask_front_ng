@@ -1,7 +1,71 @@
 <section class="personal-content personal-fadeout w-100 py-0 d-flex flex-column justify-content-start align-items-center"
     id="mapContainer">
-    <div #gmap id="mapa" class="p-home-full-height"></div>
-    <button id="idviewPub" style="display:none">
-        <fa name="check" size="2x"></fa>
-    </button>
+    <br />
+    <div id="contenedor" style="position: absolute; z-index: 1;">
+        <div class="form-inline" *ngIf="mostrarp1 == true">
+            <button type="button" class="btn btn-info mb-2" (click)="toogle()">Ver Fecha</button>
+            &nbsp;&nbsp;
+            <div class="form-group mb-2">
+                <label style="color: #0275D8">Canton : </label>
+                <select id="cantonSelect" name="cantonSelect" (change)="onChange($event)" [(ngModel)]="cantonSelect"
+                    class="form-control">
+                    <option *ngFor="let canton of ciudades" [value]="canton.id_canton">{{canton.description_canton}}</option>
+                </select>
+                &nbsp;&nbsp;
+                <label style="color: #0275D8">Parroquia : </label>
+                <select id="parishSelect" name="parishSelect" [(ngModel)]="parishSelect" class="form-control">
+                    <option *ngFor="let dept of parroquias" [value]="dept.id_parish">{{dept.description_parish}}</option>
+                </select>
+            </div>
+            &nbsp;&nbsp;
+            <button type="button" class="btn btn-primary mb-2" (click)="seleccionar('funcion3')">buscar</button>
+        </div>
+        <!--  -->
+        <div class="form-inline" *ngIf="mostrarp2 == true">
+            <button type="button" class="btn btn-info mb-2" (click)="toogle()">Ver Parroquia y fecha</button>
+            &nbsp;&nbsp;
+            <div class="form-group mb-2">
+                <label style="color: #0275D8">Fecha Inicio : </label>
+                <input type="date" name="bday" min="1000-01-01" max="3000-12-31" class="form-control" #fechaitext="ngModel"
+                    [(ngModel)]="fechai">
+                &nbsp;&nbsp;
+                <label style="color: #0275D8">Fecha Fin : </label>
+                <input type="date" name="bday" min="1000-01-01" max="3000-12-31" class="form-control" #fechaftext="ngModel"
+                    [(ngModel)]="fechaf">
+            </div>
+            &nbsp;&nbsp;
+            <button type="button" class="btn btn-primary mb-2" (click)="validarFecha('function1')">buscar</button>
+        </div>
+        <!-- -->
+
+        <div class="form-inline" *ngIf="mostrarp3 == true">
+            <button type="button" class="btn btn-info mb-2" (click)="toogle()">Ver Parroquia</button>
+            &nbsp;&nbsp;
+            <div class="form-group mb-2">      
+                <label style="color: #0275D8">Canton : </label>
+                <select id="cantonSelect" name="cantonSelect" (change)="onChange($event)" [(ngModel)]="cantonSelect"
+                    class="form-control">
+                    <option *ngFor="let canton of ciudades" [value]="canton.id_canton">{{canton.description_canton}}</option>
+                </select>
+                &nbsp;&nbsp;
+                <label style="color: #0275D8">Parroquia : </label>
+                <select id="parishSelect" name="parishSelect" [(ngModel)]="parishSelect" class="form-control">
+                    <option *ngFor="let dept of parroquias" [value]="dept.id_parish">{{dept.description_parish}}</option>
+                </select>
+            </div>
+            <div class="form-group mb-2">
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <label style="color: #0275D8">Fecha Inicio : </label>
+                <input type="date" name="bday" min="1000-01-01" max="3000-12-31" class="form-control" #fechaitext="ngModel"
+                    [(ngModel)]="fechai">
+                &nbsp;&nbsp;
+                <label style="color: #0275D8">Fecha Fin : </label>
+                <input type="date" name="bday" min="1000-01-01" max="3000-12-31" class="form-control" #fechaftext="ngModel"
+                    [(ngModel)]="fechaf">
+            </div>
+            &nbsp;&nbsp;
+            <button type="button" class="btn btn-primary mb-2" (click)="validarFecha('function2')">buscar</button>
+        </div>
+    </div>
+    <div #gmap id="mapa" class="p-home-full-height" style="height: 90% !important; "></div>
 </section>

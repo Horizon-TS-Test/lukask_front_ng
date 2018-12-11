@@ -817,6 +817,179 @@ export class QuejaService implements OnDestroy {
     });
   }
 
+    /**
+   * MÉTODO PARA CARGAR LA LISTA DE PUBLICACIONES SEA DESDE LA WEB O DE LA CACHÉ
+   */
+  public getPubProvincia(value) {
+    /**
+     * IMPLEMENTING NETWORK FIRST STRATEGY
+    */
+
+    const qTheaders = new Headers({ 'Content-Type': 'application/json', 'X-Access-Token': this._userService.getUserKey() });
+    return this._http.get(REST_SERV.pubParishUrl+ "/" + value, { headers: qTheaders, withCredentials: true }).toPromise()
+      .then((response: Response) => {
+        const qtypes = response.json().data;
+        /*let sortedPubTypes = lodash.orderBy(qtypes, ['description'], [asc ? 'asc' : 'desc']);
+        console.log("sortedPubTypes: ", sortedPubTypes);
+        let transformedQtypes: QuejaType[] = [];
+        for (let type of sortedPubTypes) {
+          transformedQtypes.push(new QuejaType(type.id_type_publication, type.description));
+        }
+        this.isFetchedQtype = true;
+        console.log("[LUKASK QUEJA SERVICE] - QUEJA TYPES FROM WEB", transformedQtypes);
+        */
+        return qtypes;
+      })
+      .catch((error: Response) => {
+        if (error.json().code == 401) {
+          localStorage.clear();
+        }
+        return throwError(error.json());
+      });
+  }
+
+  /**
+   * MÉTODO PARA CARGAR LA LISTA DE PUBLICACIONES SEA DESDE LA WEB O DE LA CACHÉ POR CIUDAD
+   */
+  public getPubParish(value) {
+    const qTheaders = new Headers({ 'Content-Type': 'application/json', 'X-Access-Token': this._userService.getUserKey() });
+    return this._http.get(REST_SERV.pubCiudadUrl+ "/" + value, { headers: qTheaders, withCredentials: true }).toPromise()
+      .then((response: Response) => {
+        const qtypes = response.json().data;
+        
+        /*let sortedPubTypes = lodash.orderBy(qtypes, ['description'], [asc ? 'asc' : 'desc']);
+        console.log("sortedPubTypes: ", sortedPubTypes);
+        let transformedQtypes: QuejaType[] = [];
+        for (let type of sortedPubTypes) {
+          transformedQtypes.push(new QuejaType(type.id_type_publication, type.description));
+        }
+        this.isFetchedQtype = true;
+        console.log("[LUKASK QUEJA SERVICE] - QUEJA TYPES FROM WEB", transformedQtypes);
+        */
+        return qtypes;
+      })
+      .catch((error: Response) => {
+        if (error.json().code == 401) {
+          localStorage.clear();
+        }
+        return throwError(error.json());
+      });
+  }
+
+   /**
+   * MÉTODO PARA CARGAR LA LISTA DE PUBLICACIONES SEA DESDE LA WEB O DE LA CACHÉ POR FECHA
+   */
+  public getPubFecha(fechai, fechaf) {
+    var fecha = {'fechai':fechai, 'fechaf':fechaf};
+    var fechaJSON = JSON.stringify(fecha);
+    const qTheaders = new Headers({ 'Content-Type': 'application/json', 'X-Access-Token': this._userService.getUserKey() });
+    return this._http.get(REST_SERV.pubFechaUrl+ "/" + fechaJSON , { headers: qTheaders, withCredentials: true }).toPromise()
+      .then((response: Response) => {
+        const qtypes = response.json().data;
+        /*let sortedPubTypes = lodash.orderBy(qtypes, ['description'], [asc ? 'asc' : 'desc']);
+        console.log("sortedPubTypes: ", sortedPubTypes);
+        let transformedQtypes: QuejaType[] = [];
+        for (let type of sortedPubTypes) {
+          transformedQtypes.push(new QuejaType(type.id_type_publication, type.description));
+        }
+        this.isFetchedQtype = true;
+        console.log("[LUKASK QUEJA SERVICE] - QUEJA TYPES FROM WEB", transformedQtypes);
+        */
+        return qtypes;
+      })
+      .catch((error: Response) => {
+        if (error.json().code == 401) {
+          localStorage.clear();
+        }
+        return throwError(error.json());
+      });
+  }
+
+  /**
+  * MÉTODO PARA CARGAR LA LISTA DE PUBLICACIONES SEA DESDE LA WEB O DE LA CACHÉ POR FECHA y CODIGO DE PARROQUIA
+  */
+  public getPubFechaParish(fechai, fechaf, parishId) {
+    var fecha = {'fechai':fechai, 'fechaf':fechaf, 'parishId':parishId};
+    var fechaJSON = JSON.stringify(fecha);
+    const qTheaders = new Headers({ 'Content-Type': 'application/json', 'X-Access-Token': this._userService.getUserKey() });
+    return this._http.get(REST_SERV.pubFechaParishUrl+ "/" + fechaJSON , { headers: qTheaders, withCredentials: true }).toPromise()
+      .then((response: Response) => {
+        const qtypes = response.json().data;
+        /*let sortedPubTypes = lodash.orderBy(qtypes, ['description'], [asc ? 'asc' : 'desc']);
+        console.log("sortedPubTypes: ", sortedPubTypes);
+        let transformedQtypes: QuejaType[] = [];
+        for (let type of sortedPubTypes) {
+          transformedQtypes.push(new QuejaType(type.id_type_publication, type.description));
+        }
+        this.isFetchedQtype = true;
+        console.log("[LUKASK QUEJA SERVICE] - QUEJA TYPES FROM WEB", transformedQtypes);
+        */
+        return qtypes;
+      })
+      .catch((error: Response) => {
+        if (error.json().code == 401) {
+          localStorage.clear();
+        }
+        return throwError(error.json());
+      });
+  }
+
+  /**
+   * MÉTODO PARA CARGAR LA LISTA DE CIUDADES/CANTONES POR PROVINCIA
+   */
+  public getCiudades(value) {
+    const qTheaders = new Headers({ 'Content-Type': 'application/json', 'X-Access-Token': this._userService.getUserKey() });
+    return this._http.get(REST_SERV.cantonUrl+ "/" + value, { headers: qTheaders, withCredentials: true }).toPromise()
+      .then((response: Response) => {
+        const qtypes = response.json().data;
+        
+        /*let sortedPubTypes = lodash.orderBy(qtypes, ['description'], [asc ? 'asc' : 'desc']);
+        console.log("sortedPubTypes: ", sortedPubTypes);
+        let transformedQtypes: QuejaType[] = [];
+        for (let type of sortedPubTypes) {
+          transformedQtypes.push(new QuejaType(type.id_type_publication, type.description));
+        }
+        this.isFetchedQtype = true;
+        console.log("[LUKASK QUEJA SERVICE] - QUEJA TYPES FROM WEB", transformedQtypes);
+        */
+        return qtypes;
+      })
+      .catch((error: Response) => {
+        if (error.json().code == 401) {
+          localStorage.clear();
+        }
+        return throwError(error.json());
+      });
+  }
+
+
+  /**
+   * MÉTODO PARA CARGAR LA LISTA DE CIUDADES POR PROVINCIA
+   */
+  public getParroquias(value) {
+    const qTheaders = new Headers({ 'Content-Type': 'application/json', 'X-Access-Token': this._userService.getUserKey() });
+    return this._http.get(REST_SERV.parroquiaUrl+ "/" + value, { headers: qTheaders, withCredentials: true }).toPromise()
+      .then((response: Response) => {
+        const qtypes = response.json().data;
+        /*let sortedPubTypes = lodash.orderBy(qtypes, ['description'], [asc ? 'asc' : 'desc']);
+        console.log("sortedPubTypes: ", sortedPubTypes);
+        let transformedQtypes: QuejaType[] = [];
+        for (let type of sortedPubTypes) {
+          transformedQtypes.push(new QuejaType(type.id_type_publication, type.description));
+        }
+        this.isFetchedQtype = true;
+        console.log("[LUKASK QUEJA SERVICE] - QUEJA TYPES FROM WEB", transformedQtypes);
+        */
+        return qtypes;
+      })
+      .catch((error: Response) => {
+        if (error.json().code == 401) {
+          localStorage.clear();
+        }
+        return throwError(error.json());
+      });
+  }
+
   ngOnDestroy() {
     this.subscriptor.unsubscribe();
   }
