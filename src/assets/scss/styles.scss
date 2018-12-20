@@ -1912,6 +1912,14 @@ p, label, div {
         border-color: $primary-text !important;
     }
 
+    &.custom-btn-rec {
+        background: $primary-btn_rec !important;
+        border-color: $primary-btn_rec !important;
+        span{
+            color: $primary_span_rec !important;
+        }
+    }
+    
     &.custom-btn-secondary {
         background: $tertiary !important;
         border-color: $tertiary !important;
@@ -3288,6 +3296,8 @@ input[type=text]:focus, input[type=password]:focus, input[type=email]:focus, inp
 /////////////////////////////////////////--END OFFLINE STYLES--//////////////////////////////////////////
 
 /////////////////////////////////////////--RECORDING STYLES--//////////////////////////////////////////
+
+/**estilos para animacion en botones para opciones de video**/
 .rotate-on {
     transform: rotate(180deg);
     transition: all 0.5s ease;
@@ -3315,6 +3325,14 @@ input[type=text]:focus, input[type=password]:focus, input[type=email]:focus, inp
 
 .actions-edit-queja > div > a {
     margin-bottom: 3px;
+}
+
+.op-media:hover {
+    background-color: rgb(255, 255, 255) !important;
+
+    fa, span {
+        color: rgba(0, 0, 0, 0.3) !important;
+    }
 }
 
 /*estilo para caja contenedora de datos de grabacion*/
@@ -3393,14 +3411,7 @@ progress-bar > div {
     padding: 1rem 0;
 }
 
-.op-media:hover {
-    background-color: rgb(255, 255, 255) !important;
-
-    fa, span {
-        color: rgba(0, 0, 0, 0.3) !important;
-    }
-}
-
+/**estilo para ocultar boton de cambio de camara**/
 .obj-hidden {
     visibility: hidden;
     transform: scale(0);
