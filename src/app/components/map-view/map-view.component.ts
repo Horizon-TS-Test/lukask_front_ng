@@ -29,6 +29,8 @@ import { lizarzaburu } from 'src/app/data/parroquias/lizarzaburu';
 import { yaruquies } from 'src/app/data/parroquias/yaruquies';
 import { GpsService } from 'src/app/services/gps.service';
 
+import * as Snackbar from 'node-snackbar';
+
 
 
 declare var google: any;
@@ -84,7 +86,12 @@ export class MapViewComponent implements OnInit, OnChanges {
     this.graficoParroquia = "N/D"; //Variable que almacenara el grafico de la parroquia
     this.lstMarkers = new Array<any>();
     this.ciudades = new Array<any>();
-  }
+    //Iniciar fechas
+    var fechatemp = new Date();
+    this.fechai=fechatemp.getFullYear()+"-"+(fechatemp.getMonth()+1) +"-"+fechatemp.getDate();
+    this.fechaf=fechatemp.getFullYear()+"-"+(fechatemp.getMonth()+1) +"-"+fechatemp.getDate();
+
+}
 
   ngOnInit() {
     this._contentService.fadeInComponent($("#mapContainer"));
@@ -490,15 +497,12 @@ export class MapViewComponent implements OnInit, OnChanges {
    * @param fuccion //nombre de la funcion mandada desde la interfaz para validar a que función mandar
    */
   validarFecha(fuccion) {
-    if(!this.fechai){
-      alert("La fecha Inicio no se encuentra definida");
+
+    if(this.parishSelect == '1'){
+      Snackbar.show({ text: "Seleccione un parroquia!", pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#f0bd50', customClass: "p-snackbar-layout" });      
       return 0;
     }
-    if(!this.fechaf){
-      alert("La fecha fin no se encuentra definida");
-      return 0;
-    }
-    
+
     var textoIngresado = this.fechaf.split("-");
 
     //Llevar a tipo Date
@@ -515,7 +519,7 @@ export class MapViewComponent implements OnInit, OnChanges {
     fechaLimite.setDate(fechaLimite.getDate() + cantDias); //sumarle 10 días
     //Validar
     if (fechaIngresada >= fechaLimite) {
-      alert("Ingrese una fecha dentro del os 30 dias!");
+        Snackbar.show({ text: "Ingrese una fecha dentro del os 30 dias!", pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#f0bd50', customClass: "p-snackbar-layout" });
     } else {
       if (fuccion == 'function1') {
         this.getQuejasFecha();
@@ -536,7 +540,7 @@ export class MapViewComponent implements OnInit, OnChanges {
 
       this.pubParishDate(qTypes);//Crea los marquers de las publicaciones que traen con resultado de la consulta
       if (qTypes.count <= 0) {
-        alert("No hay registros!!");
+        Snackbar.show({ text: "Lo sentimos no hay registros para mostrar.", pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#f0bd50', customClass: "p-snackbar-layout" });        
       }
       //this.pubList = qTypes;
       //this.fetchPub();
@@ -554,7 +558,7 @@ export class MapViewComponent implements OnInit, OnChanges {
       this.seleccionar("sinparametro"); //Dibuja la parroquia
       this.pubParishDate(qTypes); //Dibuja los markers de las quejas resultantes
       if (qTypes.count <= 0) {
-        alert("Lo sentimos, no hay registros para mostrar!");
+        Snackbar.show({ text: "Lo sentimos no hay registros para mostrar.", pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#f0bd50', customClass: "p-snackbar-layout" });        
       }
       //this.pubList = qTypes;
       //this.fetchPub();
