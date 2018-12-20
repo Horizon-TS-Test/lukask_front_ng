@@ -12,7 +12,7 @@ export class SupportersService {
   constructor() { }
 
   /**
-   * MÉTODO PARA ENVIAR LA ACTUALIZACIÓN DE LA LISTA DE USUARIOS QUE HAN APOYADO LA PUBLICACIÓN
+   * METODO PARA ENVIAR LA ACTUALIZACIÓN DE LA LISTA DE USUARIOS QUE HAN APOYADO LA PUBLICACIÓN
    */
   public loadSuppList(suppList: { supporters: User[]; pagePattern: string }) {
     this.supportSubject.next(suppList);

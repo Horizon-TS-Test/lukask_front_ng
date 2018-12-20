@@ -24,7 +24,7 @@ export class EersaClaimService {
   }
 
   /**
-   * MÉTODO PARA CREAR UN OBJETO JAVASCRIPT A PARTIR DE UNO DE TIPO PUBLICACION
+   * METODO PARA CREAR UN OBJETO JAVASCRIPT A PARTIR DE UNO DE TIPO PUBLICACION
    * @param queja 
    */
   private mergeJSONData(claimPub: Publication) {
@@ -56,7 +56,7 @@ export class EersaClaimService {
   }
 
   /**
-   * MÉTODO PARA CREAR UN OBJETO DE TIPO FORM DATA A PARTIR DE UNO DE TIPO EERSA CLAIM Y QUEJA LUKASK
+   * METODO PARA CREAR UN OBJETO DE TIPO FORM DATA A PARTIR DE UNO DE TIPO EERSA CLAIM Y QUEJA LUKASK
    * @param queja 
    */
   private mergeFormData(claimPub: Publication) {
@@ -80,7 +80,7 @@ export class EersaClaimService {
   }
 
   /**
-   * MÉTODO PARA POSTEAR UNA NUEVO RECLAMO EERSA HACIA EL BACKEND:
+   * METODO PARA POSTEAR UNA NUEVO RECLAMO EERSA HACIA EL BACKEND:
    * @param claimEersaData 
    */
   private postEersaClaim(claimEersaData: FormData) {
@@ -113,7 +113,7 @@ export class EersaClaimService {
   }
 
   /**
-   * MÉTODO PARA ENVIAR UN FORM DATA HACIA EL MIDDLEWARE EN UN POST REQUEST:
+   * METODO PARA ENVIAR UN FORM DATA HACIA EL MIDDLEWARE EN UN POST REQUEST:
    * @param queja 
    */
   private sendEersaPub(claimPub: Publication) {
@@ -129,7 +129,7 @@ export class EersaClaimService {
   }
 
   /**
-   * MÉTODO PARA GUARDAR UN NUEVO COMENTARIO O RESPUESTA EN EL BACKEND O EN SU DEFECTO PARA BACK SYNC:
+   * METODO PARA GUARDAR UN NUEVO COMENTARIO O RESPUESTA EN EL BACKEND O EN SU DEFECTO PARA BACK SYNC:
    */
   public saveEersaPub(claimPub: Publication) {
     return this.sendEersaPub(claimPub).then((response) => {

@@ -69,13 +69,13 @@ export class MapViewComponent implements OnInit, OnChanges {
     this.getPubs();
 
     /**
-     * MÉTODO QUE EJECUTA LA ACCIÓN DEL MARKER
+     * METODO QUE EJECUTA LA ACCIÓN DEL MARKER
      */
     $("#idviewPub").on(("click"), (event) => { });
   }
 
   /**
-   * MÉTODO QUE OBTIENE LA POSICIÓN DESDE DONDE SE EMITE LA QUEJA
+   * METODO QUE OBTIENE LA POSICIÓN DESDE DONDE SE EMITE LA QUEJA
    */
   private getGps() {
     if (!('geolocation' in navigator)) {
@@ -95,7 +95,7 @@ export class MapViewComponent implements OnInit, OnChanges {
   }
 
   /**
-   * MÉTODO QUE RECORRE LA LISTA DE QUEJAS Y CREA EL MARKER DE CADA UNA
+   * METODO QUE RECORRE LA LISTA DE QUEJAS Y CREA EL MARKER DE CADA UNA
    */
   private fetchPub() {
     for (let pub of this.pubList) {
@@ -104,7 +104,7 @@ export class MapViewComponent implements OnInit, OnChanges {
   }
 
   /**
-   * MÉTODO PARA CREAR EL MARKER EN EL MAPA
+   * METODO PARA CREAR EL MARKER EN EL MAPA
    * @param lat = latitud
    * @param lng = longitud
    * @param icon = icono
@@ -199,7 +199,7 @@ export class MapViewComponent implements OnInit, OnChanges {
   }
 
   /**
-   * MÉTODO PARA CAMBIAR DE ICONO CUANDO EL MOUSE SE ENCUENTRE ENCIMA
+   * METODO PARA CAMBIAR DE ICONO CUANDO EL MOUSE SE ENCUENTRE ENCIMA
    * @param typeId = Identificador del marker en el que el mouse se encuentra encima 
    * */
   private defineTypeIconOver(typeId) {

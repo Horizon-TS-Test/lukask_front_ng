@@ -14,7 +14,7 @@ export class RouterService {
   ) { }
 
   /**
-   * MÉTODO PARA ESCUCHAR EL EVENTO DE CAMBIO DE RUTA Y EJECUTAR CIERTA OPERACIÓN:
+   * METODO PARA ESCUCHAR EL EVENTO DE CAMBIO DE RUTA Y EJECUTAR CIERTA OPERACIÓN:
    */
   public listenRouteChanges() {
     this._router.events.subscribe((event) => {

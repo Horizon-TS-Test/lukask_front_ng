@@ -14,7 +14,7 @@ export class ContentService {
   constructor() { }
 
   /**
-   * MÉTODO PARA OCULTAR LA PORTADA LUEGO DE UN TIEMPO DEFINIDO:
+   * METODO PARA OCULTAR LA PORTADA LUEGO DE UN TIEMPO DEFINIDO:
    */
   hidePortada() {
     let portada = $("#personal-portada");
@@ -32,7 +32,7 @@ export class ContentService {
   }
 
   /**
-   * MÉTODO PARA DAR UN EFECTO FADE-IN A UN COMPONENTE AL ABRIRSE POR PRIMERA VEZ:
+   * METODO PARA DAR UN EFECTO FADE-IN A UN COMPONENTE AL ABRIRSE POR PRIMERA VEZ:
    */
   fadeInComponent(component: any) {
     setTimeout(() => {
@@ -43,7 +43,7 @@ export class ContentService {
   }
 
   /**
-   * MÉTODO PARA CENTRAR HORIZONTALMENTE CUALQUIER ELEMENTO DEL DOM
+   * METODO PARA CENTRAR HORIZONTALMENTE CUALQUIER ELEMENTO DEL DOM
    * @param element ELEMENTO A SER CENTRADO
    */
   centerElement(element: any) {
@@ -54,7 +54,7 @@ export class ContentService {
   }
 
   /**
-   * MÉTODO PARA VERIFICAR SI EL SCROLL ESTÁ AL FINAL DE UN ELEMENTO DEL DOM:
+   * METODO PARA VERIFICAR SI EL SCROLL ESTÁ AL FINAL DE UN ELEMENTO DEL DOM:
    * HREF: https://gist.github.com/rajvanshipradeep15/6606779
    * @param domElement ELEMENTO A VERIFICAR SI EL SCROLL ESTÁ AL FINAL DEL MISMO
    */
@@ -71,7 +71,7 @@ export class ContentService {
   }
 
   /**
-   * MÉTODO PARA DESPLAZAR EL SCROLL HACIA UN COMPONENTE ESPECÍFICO DEL DOM:
+   * METODO PARA DESPLAZAR EL SCROLL HACIA UN COMPONENTE ESPECÍFICO DEL DOM:
    * @param hrefValue ID DEL COMPONENTE DE REFERENCIA
    */
   goToLocalContent(hrefValue: any) {
@@ -84,7 +84,7 @@ export class ContentService {
   ////
 
   /**
-   * MÉTODO PARA DAR SCROLL DENTRO DE UN COMPONENTE DEL DOM:
+   * METODO PARA DAR SCROLL DENTRO DE UN COMPONENTE DEL DOM:
    * @param element ELEMENTO A DAR SCROLL DENTRO
    * @param offset DISTANCIA A DAR SCROL DENTO DEL ELEMENTO
    * @param option SI ES UN SCROLL VERTICAL U HORIZONTAL
@@ -118,7 +118,7 @@ export class ContentService {
   }
 
   /**
-   * MÉTODO PARA AÑADIR DINÁMICAMENTE UN COMPONENTE E INCRUSTARLO EN EL DOM A TRAVÉS DE CÓDIGO TYPESCRIPT:
+   * METODO PARA AÑADIR DINÁMICAMENTE UN COMPONENTE E INCRUSTARLO EN EL DOM A TRAVÉS DE CÓDIGO TYPESCRIPT:
    */
   addComponent(ChildComponent: any, cfr: ComponentFactoryResolver, compContainer: ViewContainerRef, dynaContent: DynaContent = null) {
     // check and resolve the component
@@ -142,7 +142,7 @@ export class ContentService {
   ////
 
   /**
-   * MÉTODO PARA DAR FOCUS A UNA OPCIÓN DE UN MENÚ
+   * METODO PARA DAR FOCUS A UNA OPCIÓN DE UN MENÚ
    * @param navContainer ELEMENTO DEL DOM QUE CONTIENE LAS OPCIONES DE NAVEGACIÓN
    * @param idContent ID HTML DE LA OPCIÓN SELECCIONADA
    */

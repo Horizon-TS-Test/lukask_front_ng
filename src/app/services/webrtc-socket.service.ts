@@ -42,7 +42,7 @@ export class WebrtcSocketService {
 
 
   /**
-   * MÉTODO PARA CONECTAR AL WEBSOCKET DE KURENTO CLIENT DEL MIDDLEWARE:
+   * METODO PARA CONECTAR AL WEBSOCKET DE KURENTO CLIENT DEL MIDDLEWARE:
    * @param idUser 
    * @param _video 
    */
@@ -75,7 +75,7 @@ export class WebrtcSocketService {
   }
 
   /**
-   * MÉTODO PARA RECIBIR LAS RESPUESTAS DEL SERVIDOR MIDDLEWARE DONDE SE EJECUTA EL KURENTO CLIENT:
+   * METODO PARA RECIBIR LAS RESPUESTAS DEL SERVIDOR MIDDLEWARE DONDE SE EJECUTA EL KURENTO CLIENT:
    */
   private messageFromKurento() {
     this.kurentoWs.onmessage = (message) => {

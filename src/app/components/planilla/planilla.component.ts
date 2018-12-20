@@ -20,7 +20,7 @@ export class PlanillaComponent implements OnInit {
 
   ngOnInit() { }
   /**
-   * MÉTODO PARA SOLICITAR LA APERTURA DE UN HORIZON MODAL 
+   * METODO PARA SOLICITAR LA APERTURA DE UN HORIZON MODAL 
    * PARA VER EL DETALLE DE LA PLANILLA A PAGAR
    * @param event EVENTO DE CLICK DEL ELEMENTO <a href="#">
    */

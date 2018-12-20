@@ -54,7 +54,7 @@ export class ShortPubComponent implements OnInit {
   }
 
   /**
-   * MÉTODO PARA SOLICITAR LA APERTURA DE UN HORIZON MODAL PARA VER EL DETALLE DE UNA QUEJA:
+   * METODO PARA SOLICITAR LA APERTURA DE UN HORIZON MODAL PARA VER EL DETALLE DE UNA QUEJA:
    * @param event EVENTO DE CLICK DEL ELEMENTO <a href="#">
    */
   public viewQuejaDetail(event: any) {

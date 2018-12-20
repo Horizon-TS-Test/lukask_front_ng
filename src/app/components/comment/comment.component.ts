@@ -49,7 +49,7 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LA ACTUALIZACIÓN DEL PERFIL DE USUARIO:
+   * METODO PARA ESCUCHAR LA ACTUALIZACIÓN DEL PERFIL DE USUARIO:
    */
   private listenToProfileUp() {
     this.subscription = this._userService.updateUser$.subscribe((update: boolean) => {
@@ -60,7 +60,7 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   /**
-   * MÉTODO PARA ACTUALIZAR EL OBJETO USUARIO DE LOS COMENTARIOS DEL 
+   * METODO PARA ACTUALIZAR EL OBJETO USUARIO DE LOS COMENTARIOS DEL 
    * USUARIOS LOGEADOAL MOMENTO DE ACTUALIZAR EL PERFIL DE USUARIO:
    */
   private setOwnUserProfile() {
@@ -71,7 +71,7 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   /**
-   * MÉTODO PARA SOLICITAR LA APERTURA DE UN HORIZON MODAL PARA MOSTRAR LAS RESPUESTAS DE UN COMENTARIO:
+   * METODO PARA SOLICITAR LA APERTURA DE UN HORIZON MODAL PARA MOSTRAR LAS RESPUESTAS DE UN COMENTARIO:
    * @param event 
    */
   public viewReplies(event: any = null) {
@@ -82,7 +82,7 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   /**
-   * MÉTODO PARA ABRIR EL POP OVER DE LA LISTA DE APOYOS:
+   * METODO PARA ABRIR EL POP OVER DE LA LISTA DE APOYOS:
    * @param event 
    */
   public openSupportList(event: any) {
@@ -91,7 +91,7 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   /**
-   * MÉTODO PARA DAR RELEVANCIA A UNA PUBLICACIÓN Y ENVIARLA AL BACKEND:
+   * METODO PARA DAR RELEVANCIA A UNA PUBLICACIÓN Y ENVIARLA AL BACKEND:
    * @param event 
    */
   public onRelevance(event: any) {
@@ -120,7 +120,7 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   /**
-   * MÉTODO PARA CANCELAR EL ENVÍO DE UN COMENTARIO PENDIENTE:
+   * METODO PARA CANCELAR EL ENVÍO DE UN COMENTARIO PENDIENTE:
    * @param $event 
    */
   public cancelComment(event: any) {
@@ -129,7 +129,7 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   /**
-   * MÉTODO PARA CANCELAR EL ENVÍO DE UNA RELEVANCIA OFFLINE AL SERVIDOR:
+   * METODO PARA CANCELAR EL ENVÍO DE UNA RELEVANCIA OFFLINE AL SERVIDOR:
    */
   public cancelCommentRel(event: any) {
     event.preventDefault();
@@ -138,7 +138,7 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   /**
-   * MÉTODO PARA DETECTAR LOS CAMBIOS DE UNA PROPIEDAD INYECTADA DESDE EL COMPONENTE PADRE DE ESTE COMPONENTE:
+   * METODO PARA DETECTAR LOS CAMBIOS DE UNA PROPIEDAD INYECTADA DESDE EL COMPONENTE PADRE DE ESTE COMPONENTE:
    * @param changes LOS CAMBIOS GENERADOS
    */
   ngOnChanges(changes: SimpleChanges) {

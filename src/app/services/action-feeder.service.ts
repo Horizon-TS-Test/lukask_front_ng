@@ -21,7 +21,7 @@ export class ActionFeederService {
   ) { }
 
   /**
-   * MÉTODO PARA CARGAR LOS COMENTARIOS DESDE EL BACKEND:
+   * METODO PARA CARGAR LOS COMENTARIOS DESDE EL BACKEND:
    */
   public getComments(pubId: string, halfModal: boolean = false) {
     if (halfModal) {
@@ -64,7 +64,7 @@ export class ActionFeederService {
   }
 
   /**
-   * MÉTODO PARA CARGAR MAS COMENTARIOS BAJO PETICIÓN
+   * METODO PARA CARGAR MAS COMENTARIOS BAJO PETICIÓN
    */
   private getMoreComments(pubId: string, currentPattern: string, commentList: Comment[]) {
     return this._actionService.getMoreCommentByPub(pubId, false, currentPattern)
@@ -92,7 +92,7 @@ export class ActionFeederService {
   }
 
   /**
-   * MÉTODO PARA ATENDER A LA SOLICITUD DE OBTENER MAS COMENTARIOS:
+   * METODO PARA ATENDER A LA SOLICITUD DE OBTENER MAS COMENTARIOS:
    */
   public askForMore(pubId: string, currentPattern: string, commentList: Comment[], lessComments: boolean) {
     if (lessComments) {
@@ -111,7 +111,7 @@ export class ActionFeederService {
   }
 
   /**
-   * MÉTODO PARA ACTUALIZAR EL PATTERN QUE VIENE DEL BACKEND PARA NO COMPROMETER LA SECUENCIA 
+   * METODO PARA ACTUALIZAR EL PATTERN QUE VIENE DEL BACKEND PARA NO COMPROMETER LA SECUENCIA 
    * DE REGISTRO A TRAER DEL BACKEND BAJO DEMANDA, CUANDO SE REGISTRE UN NUEVO COMENTARIO:
    */
   private updatePattern(currentPattern: string) {
@@ -125,7 +125,7 @@ export class ActionFeederService {
   }
 
   /**
- * MÉTODO PARA ACTUALIZAR INFORMACIÓN DE LA LISTA DE PUBLICACIONES
+ * METODO PARA ACTUALIZAR INFORMACIÓN DE LA LISTA DE PUBLICACIONES
  * @param pubJson JSON COMMING FROM THE SOCKET.IO SERVER OR AS A NORMAL HTTP RESPONSE:
  * @param action THIS CAN BE CREATE, UPDATE OR DELETE:
  */
@@ -158,7 +158,7 @@ export class ActionFeederService {
   }
 
   /**
-   * MÉTODO PARA ACTUALIZAR EL REGISTRO EN INDEXED-DB
+   * METODO PARA ACTUALIZAR EL REGISTRO EN INDEXED-DB
    */
   public updateRelNumberIndexDb(comId: string, newRelCount: number, userId: any) {
     readAllData("comment")
@@ -182,7 +182,7 @@ export class ActionFeederService {
   }
 
   /**
-   * MÉTODO PARA ELIMINAR EL COMENTARIO OFFLINE, CUANDO YA SE HAYA GUARDADO EN EL SERVIDOR Y 
+   * METODO PARA ELIMINAR EL COMENTARIO OFFLINE, CUANDO YA SE HAYA GUARDADO EN EL SERVIDOR Y 
    * VENGA COMO RESPUESTA EN EL SOCKET.IO
    * @param newCom 
    */

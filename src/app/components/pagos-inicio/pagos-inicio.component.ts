@@ -41,7 +41,7 @@ export class PagosInicioComponent implements OnInit, AfterViewInit {
   }
 
   /**
-   * MÉTODO PARA DEFINIR EL STILO USANDO URL'S SEGURAS PARA LAS IMÁGENES DEL SLIDER:
+   * METODO PARA DEFINIR EL STILO USANDO URL'S SEGURAS PARA LAS IMÁGENES DEL SLIDER:
    */
   private defineImageStyle() {
     this.styles = [];
@@ -52,7 +52,7 @@ export class PagosInicioComponent implements OnInit, AfterViewInit {
   }
 
   /**
- * MÉTODO PARA SOLICITAR LA APERTURA DE UN HORIZON MODAL
+ * METODO PARA SOLICITAR LA APERTURA DE UN HORIZON MODAL
  * PARA LA PAGINA DE INICIO DE PAGOS
  * @param event EVENTO CLICK DEL ELEMENTO <a href="#">
  * @param contType TIPO DE CONTENIDO A MOSTRAR DENTRO DEL HORIZON MODAL
@@ -67,7 +67,7 @@ export class PagosInicioComponent implements OnInit, AfterViewInit {
     this._sliderManager.goPrevNext(next);
   }
   /**
-   * MÉTODO PARA PAUSAR O REANUDAR EL SLIDER
+   * METODO PARA PAUSAR O REANUDAR EL SLIDER
    * @param event 
    * @param pause 
    */

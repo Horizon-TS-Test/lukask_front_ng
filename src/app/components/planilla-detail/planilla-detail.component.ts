@@ -39,7 +39,7 @@ export class PlanillaDetailComponent implements OnInit {
   ngOnInit() { }
 
   /**
-     * MÉTODO PARA SOLICITAR LA APERTURA DE UN HORIZON MODAL 
+     * METODO PARA SOLICITAR LA APERTURA DE UN HORIZON MODAL 
      * PARA VER LA PAGINA DE PAYPAL PARA CONSUMIR
      * @param err CUANDO EL SERVIDOR NO RESPONDE O DAMOS MAL LOS DATOS
      */
@@ -65,7 +65,7 @@ export class PlanillaDetailComponent implements OnInit {
   }
 
   /**
-   * MÉTODO PARA SOLICITAR LA APERTURA DE UN HORIZON MODAL 
+   * METODO PARA SOLICITAR LA APERTURA DE UN HORIZON MODAL 
    * PARA VER LA PAGINA DE PAYPAL PARA CONSUMIR POR TARJETA DE CREDITO
    * @param err CUANDO EL SERVIDOR NO RESPONDE O DAMOS MAL LOS DATOS
   */
@@ -75,7 +75,7 @@ export class PlanillaDetailComponent implements OnInit {
   }
 
   /**
-   * MÉTODO PARA REALIZAR UNA ACCIÓN AL DAR CLICK EN UN BOTÓN DE UN MODAL 
+   * METODO PARA REALIZAR UNA ACCIÓN AL DAR CLICK EN UN BOTÓN DE UN MODAL 
    * @param actionEvent 
    */
   public getButtonAction(actionEvent: number) {

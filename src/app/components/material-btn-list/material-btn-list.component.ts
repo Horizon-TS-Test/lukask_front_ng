@@ -21,7 +21,7 @@ export class MaterialBtnListComponent implements OnInit, OnChanges {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LOS EVENTOS DE CLICK DE UN BOTÓN HIJO:
+   * METODO PARA ESCUCHAR LOS EVENTOS DE CLICK DE UN BOTÓN HIJO:
    * @param actionEvent VALOR QUE VIENE DESDE UN EVENT EMITTER
    */
   childRequestAction(actionEvent: number) {
@@ -29,7 +29,7 @@ export class MaterialBtnListComponent implements OnInit, OnChanges {
   }
 
   /**
-   * MÉTODO PARA ACTIVAR ANIMACIÓN PARA CAMBIO DE BOTONES EN LA LISTA:
+   * METODO PARA ACTIVAR ANIMACIÓN PARA CAMBIO DE BOTONES EN LA LISTA:
    * @param next 
    */
   private aplyBtnAnimation(next: boolean) {
@@ -75,7 +75,7 @@ export class MaterialBtnListComponent implements OnInit, OnChanges {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LOS CAMBIOS QUE SE DEN EN EL ATRIBUTO QUE VIENE DESDE EL COMPONENTE PADRE:
+   * METODO PARA ESCUCHAR LOS CAMBIOS QUE SE DEN EN EL ATRIBUTO QUE VIENE DESDE EL COMPONENTE PADRE:
    * @param changes 
    */
   ngOnChanges(changes: SimpleChanges) {

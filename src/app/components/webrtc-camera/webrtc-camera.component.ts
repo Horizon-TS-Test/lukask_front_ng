@@ -93,18 +93,18 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
           case CAMERA_ACTIONS.flash_off:
             break;
           case CAMERA_ACTIONS.init_transmision:
-            //MÉTODO UTILIZADO PARA EL STREAMING
+            //METODO UTILIZADO PARA EL STREAMING
             this.startTransmission();
             break;
           case CAMERA_ACTIONS.pause_transmision:
-            //MÉTODO UTILIZADO PARA EL STREAMING
+            //METODO UTILIZADO PARA EL STREAMING
             break;
           case CAMERA_ACTIONS.stop_transmision:
-            //MÉTODO UTILIZADO PARA EL STREAMING
+            //METODO UTILIZADO PARA EL STREAMING
             this._webrtcSocketService.closeTransmissionCnn();
             break;
           case CAMERA_ACTIONS.join_transmision:
-            //MÉTODO UTILIZADO PARA EL STREAMING
+            //METODO UTILIZADO PARA EL STREAMING
             if (this.streamOwnerId) {
               this.joinTransmission();
             }
@@ -146,7 +146,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
   }
 
   /**
-   * MÉTODO PARA INICIAR VARIABLES
+   * METODO PARA INICIAR VARIABLES
    */
   private initVariables() {
 
@@ -161,7 +161,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
   }
 
   /**
-   * MÉTODO PARA ESCOGER ENTRE LAS CÁMARAS DE VIDEO ENCONTRADAS
+   * METODO PARA ESCOGER ENTRE LAS CÁMARAS DE VIDEO ENCONTRADAS
    * @param device
    */
   private setCamera(device: any, index: any) {
@@ -185,7 +185,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
   }
 
   /**
-   * MÉTODO PARA ABRIR UNA CÁMARA POR DEFECTO
+   * METODO PARA ABRIR UNA CÁMARA POR DEFECTO
    */
   private openSomeCamera() {
     if (this.backCamera) {
@@ -197,7 +197,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
   }
 
   /**
-   * MÉTODO PARA ENCONTRAR LOS DIFERENTES DISPOSITIVOS DE AUDIO Y VIDEO:
+   * METODO PARA ENCONTRAR LOS DIFERENTES DISPOSITIVOS DE AUDIO Y VIDEO:
    * @param deviceInfos Información  de los dispositivos
    */
   private getDevices(deviceInfos: any) {
@@ -214,7 +214,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
   }
 
   /**
-   * MÉTODO PARA INICIAR LA CAPTURA DE LA CÁMARA:
+   * METODO PARA INICIAR LA CAPTURA DE LA CÁMARA:
    */
   private startLiveCamp(infoCamp: string) {
     if (this.startCamera != false) {
@@ -236,7 +236,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
   }
 
   /**
-   * MÉTODO PARA INICIAR LA CAPTURA DE IMAGEN DE LA CÁMARA FRONTAL:
+   * METODO PARA INICIAR LA CAPTURA DE IMAGEN DE LA CÁMARA FRONTAL:
    */
   private startFrontLiveCam() {
     this.backCamera = false;
@@ -245,7 +245,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
   }
 
   /**
-   * MÉTODO PARA INICIAR LA CAPTURA DE IMAGEN DE LA CÁMARA TRASERA:
+   * METODO PARA INICIAR LA CAPTURA DE IMAGEN DE LA CÁMARA TRASERA:
    */
   private startBackLiveCam() {
     if (this.swapCamera) {
@@ -259,7 +259,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
   }
 
   /**
-   * MÉTODO PARA DETENER LA CAPTURA DE IMAGEN DE LA CÁMARA:
+   * METODO PARA DETENER LA CAPTURA DE IMAGEN DE LA CÁMARA:
    */
   private stopStream() {
     if (this.localStream !== undefined) {
@@ -271,7 +271,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
   }
 
   /**
-   * MÉTODO PARA OBTENER UNA CAPTURA DE IMAGEN (SNAP SHOT) DEL STREAM
+   * METODO PARA OBTENER UNA CAPTURA DE IMAGEN (SNAP SHOT) DEL STREAM
    */
   private takeSnapShot() {
     if (this.imageCapture) {
@@ -316,7 +316,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
   }
 
   /**
-   * MÉTODO PARA INCIAR LA CONEXIÓN AL SOCKET DE KURENTO CLIENT:
+   * METODO PARA INCIAR LA CONEXIÓN AL SOCKET DE KURENTO CLIENT:
    */
   private connectToStreamingClient() {
     this.initVariables();
@@ -338,7 +338,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
   }
 
   /**
-   * MÉTODO PARA UNIRSE A UNA TRANSMISIÓN
+   * METODO PARA UNIRSE A UNA TRANSMISIÓN
    */
   private joinTransmission() {
     this.connectToStreamingClient()
@@ -495,7 +495,7 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
   }
 
   /**
-   * MÉTODO PARA DETECTAR LOS CAMBIOS DE UNA PROPIEDAD INYECTADA DESDE EL COMPONENTE PADRE DE ESTE COMPONENTE:
+   * METODO PARA DETECTAR LOS CAMBIOS DE UNA PROPIEDAD INYECTADA DESDE EL COMPONENTE PADRE DE ESTE COMPONENTE:
    * @param changes LOS CAMBIOS GENERADOS
    */
   ngOnChanges(changes: SimpleChanges) {

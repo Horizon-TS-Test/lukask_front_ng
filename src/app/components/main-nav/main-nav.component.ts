@@ -49,7 +49,7 @@ export class MainNavComponent implements OnInit {
   ngOnInit() { }
 
   /**
-   * MÉTODO PARA ABRIR LOS PANELES DE OPCIONES Y NAVEGACIÓN
+   * METODO PARA ABRIR LOS PANELES DE OPCIONES Y NAVEGACIÓN
    */
   private forceClickMenu() {
     if (this._enableMainMenu && this._userService.isLoggedIn()) {
@@ -65,7 +65,7 @@ export class MainNavComponent implements OnInit {
   }
 
   /**
-   * MÉTODO PARA ABRIR EL PANEL PRINCIPAL DE OPCIONES AL DAR CLICK EN EL BOTÓN DE MENÚ:
+   * METODO PARA ABRIR EL PANEL PRINCIPAL DE OPCIONES AL DAR CLICK EN EL BOTÓN DE MENÚ:
    * @param event
    */
   public openPanel(event: any) {
@@ -87,7 +87,7 @@ export class MainNavComponent implements OnInit {
   }
 
   /**
-   * MÉTODO PARA INICIALIZAR EN CERO EL NÚMERO DE ENTRADAS. ESTE MÉTODO PUEDE
+   * METODO PARA INICIALIZAR EN CERO EL NÚMERO DE ENTRADAS. ESTE METODO PUEDE
    * ESCUCHAR EL CAMBIO DE UN EVENT EMITTER DEL HIJO DE ESTE COMPONENTE:
    */
   initEntries(event: boolean) {

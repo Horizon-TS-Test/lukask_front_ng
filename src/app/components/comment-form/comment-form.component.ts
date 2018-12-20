@@ -48,7 +48,7 @@ export class CommentFormComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LAS ACTUALIZACIONES DEL PERFIL DE USUARIO:
+   * METODO PARA ESCUCHAR LAS ACTUALIZACIONES DEL PERFIL DE USUARIO:
    */
   private listenToProfileUp() {
     this.subscription = this._userService.updateUser$.subscribe((update: boolean) => {
@@ -59,14 +59,14 @@ export class CommentFormComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ASIGNAR UN VALOR AL PERFIL DE USUARIO A MOSTRAR EN EL FORMULARIO DE COMENTARIO:
+   * METODO PARA ASIGNAR UN VALOR AL PERFIL DE USUARIO A MOSTRAR EN EL FORMULARIO DE COMENTARIO:
    */
   private setUser() {
     this.commentModel.user = this._userService.getUserProfile();
   }
 
   /**
-   * MÉTODO PARA CONTROLAR EL LÍMITE MÁXIMO DE CARACTERES A INGRESAR 
+   * METODO PARA CONTROLAR EL LÍMITE MÁXIMO DE CARACTERES A INGRESAR 
    * EN UN COMENTARIO O RESPUESTA, FUERA DEL CONTEXTO DE ANGULAR
    * @param event EVENTO DE KEYPRESS
    */
@@ -75,14 +75,14 @@ export class CommentFormComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA RESETEAR EL CAMPO DE TEXTO DEL TEMPLATE DRIVEN FORM:
+   * METODO PARA RESETEAR EL CAMPO DE TEXTO DEL TEMPLATE DRIVEN FORM:
    */
   private resetComment() {
     this.commentModel.description = "";
   }
 
   /**
-   * MÉTODO PARA ENVIAR UN COMENTARIO AL BACKEND:
+   * METODO PARA ENVIAR UN COMENTARIO AL BACKEND:
    */
   public publishComment() {
     this.commentSent = true;

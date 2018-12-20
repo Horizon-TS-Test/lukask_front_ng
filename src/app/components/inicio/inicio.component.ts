@@ -124,7 +124,7 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LOS CAMBIOS DE LAS PUBLICACIONES PROPIAS DEL USUARIO QUE SON INSERTADAS DE FORMA OFFLINE
+   * METODO PARA ESCUCHAR LOS CAMBIOS DE LAS PUBLICACIONES PROPIAS DEL USUARIO QUE SON INSERTADAS DE FORMA OFFLINE
    */
   private listenToOffUserPub() {
     this.offPubSub = this._quejaService.newOffPub$.subscribe((offPub: Publication) => {
@@ -136,7 +136,7 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LOS CAMBIOS DE LAS PUBLICACIONES PROPIAS DEL USUARIO QUE VIENEN TRAVES DEL SOCKET.IO CLIENT:
+   * METODO PARA ESCUCHAR LOS CAMBIOS DE LAS PUBLICACIONES PROPIAS DEL USUARIO QUE VIENEN TRAVES DEL SOCKET.IO CLIENT:
    */
   private listenToPubUpdate() {
     this.pubUpdateSub = this._quejaService.pubUpdate$.subscribe((pubData: { userPubJson: any, action: string }) => {
@@ -150,7 +150,7 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LOS CAMBIOS DE LAS PUBLICACIONES PROPIAS DEL USUARIO QUE VIENEN TRAVES DEL SOCKET.IO CLIENT:
+   * METODO PARA ESCUCHAR LOS CAMBIOS DE LAS PUBLICACIONES PROPIAS DEL USUARIO QUE VIENEN TRAVES DEL SOCKET.IO CLIENT:
    */
   private listenToNewPubAction() {
     this.newPubActionSub = this._quejaService.newPubAction$.subscribe((pubActinData: any) => {
@@ -162,7 +162,7 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA CONTROLAR EL VIEWPORT RESPONSIVO:
+   * METODO PARA CONTROLAR EL VIEWPORT RESPONSIVO:
    */
   private manageResponsiveViewPort() {
     this.webViewPort = $("#reponsive-layout").css("display") == "block";
@@ -173,7 +173,7 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA SUBSCRIBIRSE AL EVENTO DE CAMBIO DE MENU DE NAVEGACIÓN:
+   * METODO PARA SUBSCRIBIRSE AL EVENTO DE CAMBIO DE MENU DE NAVEGACIÓN:
    */
   private listenToMenuChanges() {
     this.subscriptor = this._navigationPanelService.navigateContent$.subscribe(
@@ -185,7 +185,7 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA MANIPULAR EL EVENTO DE SCROLL DENTRO DEL COMPONENTE PRINCIPAL DE QUEJAS:
+   * METODO PARA MANIPULAR EL EVENTO DE SCROLL DENTRO DEL COMPONENTE PRINCIPAL DE QUEJAS:
    */
   private onScrollPubContainer() {
     this.pubContainer = $('#pub-container');
@@ -198,7 +198,7 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA MANIPULAR EL EVENTO DE SCROLL DENTRO DEL COMPONENTE PRINCIPAL DE QUEJAS:
+   * METODO PARA MANIPULAR EL EVENTO DE SCROLL DENTRO DEL COMPONENTE PRINCIPAL DE QUEJAS:
    */
   private onScrollOwnPubContainer() {
     this.ownPubsContainer = $('#user-pub-container');
@@ -210,7 +210,7 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LA RESPUESTA DEL PAGO DE SERVICIOS BÁSICOS:
+   * METODO PARA ESCUCHAR LA RESPUESTA DEL PAGO DE SERVICIOS BÁSICOS:
    */
   private paymentSocketUpdate() {
     this.paymentSubs = this._socket.payUpdate$.subscribe((socketPago: any) => {
@@ -228,7 +228,7 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA DEFINIR LAS PROPIEDADES DEL CAROUSEL DE SECCIONES:
+   * METODO PARA DEFINIR LAS PROPIEDADES DEL CAROUSEL DE SECCIONES:
    */
   private initCarousel() {
     this.carouselOptions = {
@@ -302,7 +302,7 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA NAVEGAR EN CIERTA OPCIÓN DEL CAROUSEL:
+   * METODO PARA NAVEGAR EN CIERTA OPCIÓN DEL CAROUSEL:
    */
   private changeOwlContent(option: number) {
     if (this.owlElement) {
@@ -314,7 +314,7 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA RE INICIALIZAR EL ELEMENTO OWL CAROUSEL:
+   * METODO PARA RE INICIALIZAR EL ELEMENTO OWL CAROUSEL:
    */
   private reInitCarousel() {
     this.initCarousel();
@@ -322,7 +322,7 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA CAPTAR LA ACCIÓN DE ALGÚN BOTÓN DEL LA LSITA DE BOTONES, COMPONENTE HIJO
+   * METODO PARA CAPTAR LA ACCIÓN DE ALGÚN BOTÓN DEL LA LSITA DE BOTONES, COMPONENTE HIJO
    * @param $event VALOR DEL TIPO DE ACCIÓN QUE VIENE EN UN EVENT-EMITTER
    */
   public optionButtonAction(event: DynaContent) {
@@ -336,7 +336,7 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA DETECTAR LOS CAMBIOS DEL SWITCH INPUT COMO COMPONENTE HIJO
+   * METODO PARA DETECTAR LOS CAMBIOS DEL SWITCH INPUT COMO COMPONENTE HIJO
    * @param event VALOR BOOLEANO DEL EVENT EMITTER DEL COMPONENTE HIJO
    */
   public getSwitchChanges(event: HorizonSwitchInputInterface) {
@@ -389,7 +389,7 @@ export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA CANCELAR EL ENVIO DE UNA PUB OFFLINE:
+   * METODO PARA CANCELAR EL ENVIO DE UNA PUB OFFLINE:
    * @param $event 
    */
   public cancelPub(pub: Publication) {

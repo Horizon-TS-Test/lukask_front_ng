@@ -24,7 +24,7 @@ export class InitComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * MÉTODO PARA INICIALIZAR LA ANIMACIÓN DE PUNTOS:
+   * METODO PARA INICIALIZAR LA ANIMACIÓN DE PUNTOS:
    */
   initDots() {
     this.dots = '.';

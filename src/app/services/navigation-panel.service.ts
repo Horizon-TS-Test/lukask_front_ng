@@ -14,7 +14,7 @@ export class NavigationPanelService {
   constructor() { }
 
   /**
-   * MÉTODO PARA NAVEGAR EN OTRA OPCIÓN DEL PANEL PRINCIPAL DE NAVEGACIÓN:
+   * METODO PARA NAVEGAR EN OTRA OPCIÓN DEL PANEL PRINCIPAL DE NAVEGACIÓN:
    * @param option 
    */
   public navigateMenu(option: number) {

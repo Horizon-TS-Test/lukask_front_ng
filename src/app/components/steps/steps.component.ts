@@ -16,7 +16,7 @@ export class StepsComponent implements OnInit {
   }
 
   /**
-   * MÉTODO PARA CREAR UN ARRAY TEMPORAL PARA PODER ITERAR SOBRE EL:
+   * METODO PARA CREAR UN ARRAY TEMPORAL PARA PODER ITERAR SOBRE EL:
    * REF: https://lishman.io/using-ngfor-to-repeat-n-times-in-angular
    */
   public arrayOne(n: number): any[] {

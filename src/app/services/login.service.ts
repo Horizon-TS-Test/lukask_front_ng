@@ -50,7 +50,7 @@ export class LoginService {
   }
 
   /**
-   * MÉTODO PARA CERRAR SESIÓN
+   * METODO PARA CERRAR SESIÓN
    */
   public logout() {
     const requestHeaders = new Headers({ 'Content-Type': 'application/json' });

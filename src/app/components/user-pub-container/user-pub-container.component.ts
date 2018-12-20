@@ -146,7 +146,7 @@ export class UserPubContainerComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LOS CAMBIOS DE LAS PUBLICACIONES PROPIAS DEL USUARIO QUE VIENEN TRAVES DEL SOCKET.IO CLIENT:
+   * METODO PARA ESCUCHAR LOS CAMBIOS DE LAS PUBLICACIONES PROPIAS DEL USUARIO QUE VIENEN TRAVES DEL SOCKET.IO CLIENT:
    */
   private listenToUserPubUpdate() {
     this.pubUpdateSub = this._userPubsService.updatedUserPub$.subscribe((ownPubData: { userPubJson: any, action: string }) => {
@@ -160,7 +160,7 @@ export class UserPubContainerComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LOS CAMBIOS DE LAS PUBLICACIONES PROPIAS DEL USUARIO QUE SON INSERTADAS DE FORMA OFFLINE
+   * METODO PARA ESCUCHAR LOS CAMBIOS DE LAS PUBLICACIONES PROPIAS DEL USUARIO QUE SON INSERTADAS DE FORMA OFFLINE
    */
   private listenToOffUserPub() {
     this.offPubSub = this._userPubsService.newOffUserPub$.subscribe((offPub: Publication) => {

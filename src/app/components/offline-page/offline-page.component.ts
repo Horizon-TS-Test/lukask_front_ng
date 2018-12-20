@@ -25,7 +25,7 @@ export class OfflinePageComponent implements OnInit {
   }
 
   /**
-   * MÉTODO PARA REDIRECCIONAR A LA PÁGINA PRINCIPAL:
+   * METODO PARA REDIRECCIONAR A LA PÁGINA PRINCIPAL:
    * @param event 
    */
   public goToHome(event: any) {

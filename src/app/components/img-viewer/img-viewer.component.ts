@@ -54,7 +54,7 @@ export class ImgViewerComponent implements OnInit {
   }
   
   /**
-   * MÉTODO PARA DEFINIR LAS PROPIEDADES DEL CAROUSEL DE FOTOS:
+   * METODO PARA DEFINIR LAS PROPIEDADES DEL CAROUSEL DE FOTOS:
    */
   initCarousel() {
     this.carouselOptions = {
@@ -64,7 +64,7 @@ export class ImgViewerComponent implements OnInit {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LA ACCIÓN DEL EVENTO DE CLICK DE UN BOTÓN DINÁMICO:
+   * METODO PARA ESCUCHAR LA ACCIÓN DEL EVENTO DE CLICK DE UN BOTÓN DINÁMICO:
    */
   getButtonAction(actionEvent: number) {
     switch (actionEvent) {
@@ -76,7 +76,7 @@ export class ImgViewerComponent implements OnInit {
 
   /**
    * Por: Dennys Moyón
-   * Método para obtener video de acuerdo a archivo provisto por el array de medios de la publicación
+   * METODO para obtener video de acuerdo a archivo provisto por el array de medios de la publicación
    */
   getvideo(videoUrl:string){
 		  /*this._webRtcSocketService.getvideoForUrl(videoUrl, this._userService).then((response:any) =>{

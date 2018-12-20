@@ -42,7 +42,7 @@ export class TaskListComponent implements OnInit {
   }
 
   /**
-   * MÉTODO PARA DAR RELEVANCIA A UNA PUBLICACIÓN Y ENVIARLA AL BACKEND:
+   * METODO PARA DAR RELEVANCIA A UNA PUBLICACIÓN Y ENVIARLA AL BACKEND:
    * @param event 
    */
   public onRelevance(event: any) {
@@ -70,7 +70,7 @@ export class TaskListComponent implements OnInit {
   }
 
   /**
-   * MÉTODO PARA GEOLOCALIZAR LA QUEJA SELECCIONADA
+   * METODO PARA GEOLOCALIZAR LA QUEJA SELECCIONADA
    */
   public geolocatePub(event: any) {
     event.preventDefault();
@@ -85,7 +85,7 @@ export class TaskListComponent implements OnInit {
   }
 
   /**
-   * MÉTODO PARA ABRIR LA TRANSMISIÓN DE UNA PUBLICACIÓN:
+   * METODO PARA ABRIR LA TRANSMISIÓN DE UNA PUBLICACIÓN:
    * @param event 
    */
   public viewTransmission(event: any) {
@@ -100,7 +100,7 @@ export class TaskListComponent implements OnInit {
   }
 
   /**
-   * MÉTODO PARA ABRIR UN MODAL CON LA LISTA DE PERSONAS QUE APOYAN LA PUBLICACIÓN:
+   * METODO PARA ABRIR UN MODAL CON LA LISTA DE PERSONAS QUE APOYAN LA PUBLICACIÓN:
    * @param event 
    */
   public viewSupport(event: any) {
@@ -111,7 +111,7 @@ export class TaskListComponent implements OnInit {
   }
 
   /**
-   * MÉTODO PARA CANCELAR EL ENVÍO DE UNA RELEVANCIA OFFLINE AL SERVIDOR:
+   * METODO PARA CANCELAR EL ENVÍO DE UNA RELEVANCIA OFFLINE AL SERVIDOR:
    */
   public cancelPubRelevance(event: any) {
     event.preventDefault();

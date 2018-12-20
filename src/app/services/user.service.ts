@@ -43,7 +43,7 @@ export class UserService {
   }
 
   /**
-   * MÉTODO PARA ALMACENAR EN EL LOCAL STORAGE DEL NAVEGADOR LAS CREDENCIALES PUBLICAS DEL USUARIO:
+   * METODO PARA ALMACENAR EN EL LOCAL STORAGE DEL NAVEGADOR LAS CREDENCIALES PUBLICAS DEL USUARIO:
    */
   public storeUserCredentials(jsonUser: any) {
     localStorage.setItem('user_key', jsonUser.user_key);
@@ -51,7 +51,7 @@ export class UserService {
   }
 
   /**
-   * MÉTODO PARA OBTENER LOS DATOS DEL USUARIO DESDE LA WEB:
+   * METODO PARA OBTENER LOS DATOS DEL USUARIO DESDE LA WEB:
    * @param id ID DEL USUARIO
    */
   public getRestUserProfile() {
@@ -75,7 +75,7 @@ export class UserService {
   }
 
   /**
-   * MÉTODO PARA OBTENER LA LISTA DE USUARIOS QUE HAN APOYADO PUBLICACIONES O COMENTARIOS:
+   * METODO PARA OBTENER LA LISTA DE USUARIOS QUE HAN APOYADO PUBLICACIONES O COMENTARIOS:
    * @param relevanceType ID-PUBLICACIÓN O ID-COMMENTARIO
    * @param comRelevance PARA INDICAR QUE SE NECESITA UNA LISTA DE RELEVANCIAS DE UN COMENTARIO
    * @param pagePattern PATTERN PARA LA SIGUIENTE PÁGINA
@@ -119,7 +119,7 @@ export class UserService {
   }
 
   /**
-   * MÉTODO PARA ALMACENAR EN INDEXED DB EL ID DE USUARIO LOGEADO:
+   * METODO PARA ALMACENAR EN INDEXED DB EL ID DE USUARIO LOGEADO:
    * @param userId 
    */
   private storeUserIndexedTable(userKey: any, userData: any) {
@@ -149,7 +149,7 @@ export class UserService {
   }
 
   /**
-   * MÉTODO PARA ACTUALIZAR EN EL NAVEGADOR LA INFORMACIÓN DEL PERFIL DE USUARIO:
+   * METODO PARA ACTUALIZAR EN EL NAVEGADOR LA INFORMACIÓN DEL PERFIL DE USUARIO:
    */
   public updateUserData(jsonUser: any) {
     let cryptoData = CrytoGen.encrypt(JSON.stringify(jsonUser));
@@ -164,7 +164,7 @@ export class UserService {
   }
 
   /**
-   * MÉTODO PARA ACTUALIZAR UN PERFIL DE USUARIO EN EL BACKEND O EN SU DEFECTO PARA BACK SYNC:
+   * METODO PARA ACTUALIZAR UN PERFIL DE USUARIO EN EL BACKEND O EN SU DEFECTO PARA BACK SYNC:
    */
   public saveUser(user: User) {
     return this.sendUser(user).then(
@@ -185,7 +185,7 @@ export class UserService {
   }
 
   /**
-   * MÉTODO PARA EDITAR LOS DATOS DEL PERFIL
+   * METODO PARA EDITAR LOS DATOS DEL PERFIL
    */
   public sendUser(user: User) {
     let userFormData: FormData = this.mergeFormData(user);
@@ -200,7 +200,7 @@ export class UserService {
   }
 
   /**
-   * MÉTODO PARA CREAR UN OBJETO JAVASCRIPT MAS REDUCIDO
+   * METODO PARA CREAR UN OBJETO JAVASCRIPT MAS REDUCIDO
    * @param user 
    */
   private mergeJsonData(user: User) {
@@ -227,7 +227,7 @@ export class UserService {
     };
   }
   /**
-    * MÉTODO PARA TOMAR LOS DATOS QUE BIENEN POR POST PARA REGISTRO
+    * METODO PARA TOMAR LOS DATOS QUE BIENEN POR POST PARA REGISTRO
     */
   private mergeFormData(user: User) {
     let formData = new FormData();
@@ -254,7 +254,7 @@ export class UserService {
   }
 
   /**
-   * MÉTODO PARA ENVIAR MEDIANTE POST LOS DATOS DEL PERFIL
+   * METODO PARA ENVIAR MEDIANTE POST LOS DATOS DEL PERFIL
    * @param userFormData 
    */
   private postUserClient(userFormData: FormData) {
@@ -287,7 +287,7 @@ export class UserService {
   }
 
   /**
-   * MÉTODO PARA EXTRAER LOS DATOS DE USUARIO DE UN JSON STRING Y GUARDARLO EN UN OBJETO DE TIPO MODELO USER
+   * METODO PARA EXTRAER LOS DATOS DE USUARIO DE UN JSON STRING Y GUARDARLO EN UN OBJETO DE TIPO MODELO USER
    * @param jsonUser ES EL JSON STRING QUE CONTIENE LOS DATOS DEL USUARIO
    */
   public extractUserJson(jsonUser: any) {
@@ -306,7 +306,7 @@ export class UserService {
   }
 
   /**
-   * MÉTODO PARA OBTENER LA INFORMACIÓN DEL PERFIL DE USUARIO Y DESENCRIPTARLO
+   * METODO PARA OBTENER LA INFORMACIÓN DEL PERFIL DE USUARIO Y DESENCRIPTARLO
    */
   private getStoredUserData() {
     let storedData = localStorage.getItem('user_data');
@@ -320,14 +320,14 @@ export class UserService {
   }
 
   /**
-   * MÉTODO PARA DETERMINAR SI UN USUARIO ESTÁ O NO LOGGEADO
+   * METODO PARA DETERMINAR SI UN USUARIO ESTÁ O NO LOGGEADO
    */
   public isLoggedIn() {
     return localStorage.getItem('user_key') !== null;
   }
 
   /**
-   * MÉTODO PARA OBTENER EL ID DE UN USUARIO PARA PODER REALIZAR LOS REQUEST AL SERVIDOR
+   * METODO PARA OBTENER EL ID DE UN USUARIO PARA PODER REALIZAR LOS REQUEST AL SERVIDOR
    */
   public getUserKey() {
     const user_key = localStorage.getItem("user_key") ? localStorage.getItem("user_key") : '';
@@ -335,21 +335,21 @@ export class UserService {
   }
 
   /**
-   * MÉTODO PARA TOMAR LOS DATOS DEL USUARIO EN UNA VARIABLE GLOBAL DISPONIBLE PARA TODA LA APLICACIÓN:
+   * METODO PARA TOMAR LOS DATOS DEL USUARIO EN UNA VARIABLE GLOBAL DISPONIBLE PARA TODA LA APLICACIÓN:
    */
   public setUserProfile() {
     this.userProfile = this.getStoredUserData();
   }
 
   /**
-   * MÉTODO PARA ELIMINAR EL OBJETO USER PROFILE LUEGO DE DESLOGEARSE:
+   * METODO PARA ELIMINAR EL OBJETO USER PROFILE LUEGO DE DESLOGEARSE:
    */
   public delUserProfile() {
     this.userProfile = null;
   }
 
   /**
-   * MÉTODO PARA OBTENER EL OBJETO USER PROFILE QUE CONTIENE LOS DATOS DEL USUARIO DESENCRIPTADOS:
+   * METODO PARA OBTENER EL OBJETO USER PROFILE QUE CONTIENE LOS DATOS DEL USUARIO DESENCRIPTADOS:
    */
   public getUserProfile() {
     if (!this.userProfile) {
@@ -359,7 +359,7 @@ export class UserService {
   }
 
   /**
-   * MÉTODO PARA CARGAR LOS DATOS DEL USUARIO DESDE LA WEB O EN SU DEFECTO DESDE LOCAL STORAGE: 
+   * METODO PARA CARGAR LOS DATOS DEL USUARIO DESDE LA WEB O EN SU DEFECTO DESDE LOCAL STORAGE: 
    */
   public getRevalidatedUser() {
     return this.getRestUserProfile().then((resp) => {
@@ -369,7 +369,7 @@ export class UserService {
   }
 
   /**
-   * MÉTODO PARA ENVIAR MEDIANTE POST LOS DATOS DEL PERFIL
+   * METODO PARA ENVIAR MEDIANTE POST LOS DATOS DEL PERFIL
    * @param userFormData 
    */
   private patchUserClient(userFormData: FormData) {
@@ -402,7 +402,7 @@ export class UserService {
   }
 
   /**
-   * MÉTODO PARA REGISTRAR LOS DATOS DEL PERFIL
+   * METODO PARA REGISTRAR LOS DATOS DEL PERFIL
    */
   public registerUser(user: User) {
     let userFormData: FormData = this.mergeFormData(user);
@@ -415,7 +415,7 @@ export class UserService {
   }
 
   /**
-   * MÉTODO PARA VERIFICAR SI UN USUARIO ES ADMIN O NO --------> PROVISIONAL
+   * METODO PARA VERIFICAR SI UN USUARIO ES ADMIN O NO --------> PROVISIONAL
    */
   public verifyIsAdmin(isAdmin: boolean) {
     this.isAdminSub.next(isAdmin);

@@ -44,7 +44,7 @@ export class InstallSliderComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA SEGUIR CON LA SIGUIENTE PRESENTACIÓN DEL SLIDER:
+   * METODO PARA SEGUIR CON LA SIGUIENTE PRESENTACIÓN DEL SLIDER:
    */
   goForward() {
     if (this.position > 0) {

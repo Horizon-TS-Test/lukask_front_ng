@@ -56,7 +56,7 @@ export class UserPubsService implements OnDestroy {
   }
 
   /**
-   * MÉTODO PARA NOTIFICAR A LOS OBSERVADORES LA LISTA DE PUBLICACIONES DEL USUARIO LOGGEADO:
+   * METODO PARA NOTIFICAR A LOS OBSERVADORES LA LISTA DE PUBLICACIONES DEL USUARIO LOGGEADO:
    * @param pubList 
    */
   public loadUserPubs(pubList: Publication[]) {
@@ -64,7 +64,7 @@ export class UserPubsService implements OnDestroy {
   }
 
   /**
-   * MÉTODO PARA NOTIFICAR A LOS OBSERVADORES UNA NUEVA PUBLICIACIÓN DE USUARIO ENTRANTE:
+   * METODO PARA NOTIFICAR A LOS OBSERVADORES UNA NUEVA PUBLICIACIÓN DE USUARIO ENTRANTE:
    * @param userPubData 
    */
   public loadUpdatedUserPub(userPubData: { userPubJson: any, action: string }) {
@@ -72,7 +72,7 @@ export class UserPubsService implements OnDestroy {
   }
 
   /**
-   * MÉTODO PARA NOTIFICAR A LOS OBSERVADORES ACERCA DE UNA NUEVA PUBLICACION DE USUARIO INSERTADA DE FORMA OFFLINE:
+   * METODO PARA NOTIFICAR A LOS OBSERVADORES ACERCA DE UNA NUEVA PUBLICACION DE USUARIO INSERTADA DE FORMA OFFLINE:
    * @param newOffUserPub 
    */
   public loadOffUserPub(newOffUserPub: Publication) {
@@ -80,7 +80,7 @@ export class UserPubsService implements OnDestroy {
   }
 
   /**
-   * MÉTODO PARA EXTRAER LOS DATOS DE PUBLICACION DE UN OBJETO JSON
+   * METODO PARA EXTRAER LOS DATOS DE PUBLICACION DE UN OBJETO JSON
    * @param userPubJson 
    */
   public extractUserPubJson(userPubJson) {
@@ -92,7 +92,7 @@ export class UserPubsService implements OnDestroy {
   }
 
   /**
-   * MÉTODO PARA CARGAR PUBLICACIONES BAJO DEMANDA DESDE LA WEB:
+   * METODO PARA CARGAR PUBLICACIONES BAJO DEMANDA DESDE LA WEB:
    */
   private getUserPubsWebByPage(pagePattern: string, pubOrClaim: boolean, morePubs: boolean = false) {
     const pubHeaders = new Headers({
@@ -135,7 +135,7 @@ export class UserPubsService implements OnDestroy {
   }
 
   /**
-   * MÉTODO PARA CARGAR PUBLICACIONES BAJO DEMANDA DESDE LA CACHÉ:
+   * METODO PARA CARGAR PUBLICACIONES BAJO DEMANDA DESDE LA CACHÉ:
    */
   private getUserPubsCacheByPage(pagePattern: string, pubOrClaim: boolean) {
     if ('indexedDB' in window) {
@@ -195,7 +195,7 @@ export class UserPubsService implements OnDestroy {
   }
 
   /**
-   * MÉTODO PARA EXTRAER LOS ATRIBUTOS DE LA LISTA DE PUBLICACIONES OFFLINE:
+   * METODO PARA EXTRAER LOS ATRIBUTOS DE LA LISTA DE PUBLICACIONES OFFLINE:
    */
   private extractOfflineUserPub(offCachePub: any) {
     let userPub: Publication;
@@ -209,7 +209,7 @@ export class UserPubsService implements OnDestroy {
   }
 
   /**
-   * MÉTODO PARA OBTENER LAS PUBLICACIONES EN MODO OFFLINE DESDE LA CACHÉ
+   * METODO PARA OBTENER LAS PUBLICACIONES EN MODO OFFLINE DESDE LA CACHÉ
    * @param id 
    */
   public getOfflinePubsCache(userPubs: Publication[]) {
@@ -233,7 +233,7 @@ export class UserPubsService implements OnDestroy {
   }
 
   /**
-   * MÉTODO PARA CARGAR LA LISTA DE PUBLICACIONES SEA DESDE LA WEB O DE LA CACHÉ
+   * METODO PARA CARGAR LA LISTA DE PUBLICACIONES SEA DESDE LA WEB O DE LA CACHÉ
    */
   public getUserPubList(pubOrClaim: boolean = true) {
     /**
@@ -296,7 +296,7 @@ export class UserPubsService implements OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LAS ACTUALIZACIONES DEL CLIENTE SOCKET.IO
+   * METODO PARA ESCUCHAR LAS ACTUALIZACIONES DEL CLIENTE SOCKET.IO
    * QUE TRAE CAMBIOS DESDE EL BACKEND (CREATE/UPDATE/DELETE)
    * Y ACTUALIZAR LA LISTA GLOBAL DE PUBLICACIONES CON LOS NUEVOS CAMBIOS
    */
@@ -316,7 +316,7 @@ export class UserPubsService implements OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ACTUALIZAR INFORMACIÓN DE LA LISTA DE PUBLICACIONES
+   * METODO PARA ACTUALIZAR INFORMACIÓN DE LA LISTA DE PUBLICACIONES
    * @param userPubJson JSON COMMING FROM THE SOCKET.IO SERVER OR AS A NORMAL HTTP RESPONSE:
    * @param action THIS CAN BE CREATE, UPDATE OR DELETE:
    */
@@ -345,7 +345,7 @@ export class UserPubsService implements OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ELIMINAR UNA PUBLICACIÓN DE LA LISTA DE PUBS:
+   * METODO PARA ELIMINAR UNA PUBLICACIÓN DE LA LISTA DE PUBS:
    * @param pubId 
    */
   public deleteOfflineUserPub(pub: Publication, pubList: Publication[]) {

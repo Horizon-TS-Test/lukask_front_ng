@@ -63,7 +63,7 @@ export class CommentModalComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LA ACCIÓN DEL EVENTO DE CLICK DE UN BOTÓN DINÁMICO:
+   * METODO PARA ESCUCHAR LA ACCIÓN DEL EVENTO DE CLICK DE UN BOTÓN DINÁMICO:
    */
   public getButtonAction(actionEvent: number) {
     switch (actionEvent) {
@@ -74,18 +74,18 @@ export class CommentModalComponent implements OnInit, OnDestroy {
   }
 
   /**************************************************************************************************************************************/
-  /*********************************************MÉTODOS PARA ADMINISTRAR LA LISTA DE COMENTARIO******************************************/
+  /*********************************************METODOS PARA ADMINISTRAR LA LISTA DE COMENTARIO******************************************/
   /**************************************************************************************************************************************/
 
   /**
-   * MÉTODO PARA INICIALIZAR LOS DATOS DEL ARRAY SECUNDARIO DE COMENTARIOS:
+   * METODO PARA INICIALIZAR LOS DATOS DEL ARRAY SECUNDARIO DE COMENTARIOS:
    */
   private defineMainComments() {
     this.mainComments = [];
   }
 
   /**
-   * MÉTODO PARA CARGAR LOS COMENTARIOS DESDE EL BACKEND:
+   * METODO PARA CARGAR LOS COMENTARIOS DESDE EL BACKEND:
    */
   private getComments() {
     this._actionFeederService.getComments(this.pubId, true)
@@ -98,7 +98,7 @@ export class CommentModalComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR EL EVENTO PARA SOLICITAR MAS COMENTARIOS:
+   * METODO PARA ESCUCHAR EL EVENTO PARA SOLICITAR MAS COMENTARIOS:
    * @param event 
    */
   public askForMore(event: boolean) {
@@ -111,7 +111,7 @@ export class CommentModalComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ACTUALIZAR EL PATTERN QUE VIENE DEL BACKEND PARA NO COMPROMETER LA SECUENCIA 
+   * METODO PARA ACTUALIZAR EL PATTERN QUE VIENE DEL BACKEND PARA NO COMPROMETER LA SECUENCIA 
    * DE REGISTRO A TRAER DEL BACKEND BAJO DEMANDA, CUANDO SE REGISTRE UN NUEVO COMENTARIO:
    */
   private updatePattern() {
@@ -123,7 +123,7 @@ export class CommentModalComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LAS EMISIONES DEL OBJETO EVENT-EMITER DEL COMPONENTE HIJO,
+   * METODO PARA ESCUCHAR LAS EMISIONES DEL OBJETO EVENT-EMITER DEL COMPONENTE HIJO,
    * EL NUEVO COMENTARIO QUE DEVUELVE EL COMPONENTE HIJO, PROVENIENTE DEL BACKEND:
    */
   private onCommentResponse() {
@@ -150,7 +150,7 @@ export class CommentModalComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ACTUALIZAR EL NUMERO DE RELEVANCIAS DE UN COMENTARIO:
+   * METODO PARA ACTUALIZAR EL NUMERO DE RELEVANCIAS DE UN COMENTARIO:
    */
   public updateRelevanceCounter(actionData) {
     if (actionData.action_parent) {
@@ -168,7 +168,7 @@ export class CommentModalComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LAS ACTUALIZACIONES DEL CLIENTE SOCKET.IO
+   * METODO PARA ESCUCHAR LAS ACTUALIZACIONES DEL CLIENTE SOCKET.IO
    * QUE TRAE CAMBIOS DESDE EL BACKEND (CREATE/UPDATE/DELETE)
    * Y ACTUALIZAR LA LISTA GLOBAL DE COMENTARIOS CON LOS NUEVOS CAMBIOS
    */
@@ -192,7 +192,7 @@ export class CommentModalComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA CANCELAR UN COMENTARIO OFFLINE
+   * METODO PARA CANCELAR UN COMENTARIO OFFLINE
    * @param comment
    */
   public onCancelComment(comment: Comment) {
@@ -204,7 +204,7 @@ export class CommentModalComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA NOTIFICAR AL PADRE DE ESTE COMPONENTE QUE UN COMENTARIO HA SIDO APOYADO EN MODO OFFLINE, 
+   * METODO PARA NOTIFICAR AL PADRE DE ESTE COMPONENTE QUE UN COMENTARIO HA SIDO APOYADO EN MODO OFFLINE, 
    * PARA CAMBIAR LA APARIENCIA DEL DOM:
    */
   public changeComOffRelevance(comment: Comment) {

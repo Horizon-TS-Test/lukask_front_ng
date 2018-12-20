@@ -55,7 +55,7 @@ export class ClaimLocationFrmComponent implements OnInit {
   }
 
   /**
-   * MÉTODO QUE TRAE LAS PROVINCIAS EXISTENTES EN EL SISTEMA
+   * METODO QUE TRAE LAS PROVINCIAS EXISTENTES EN EL SISTEMA
    */
   private getProvince() {
     this.provinceSelect = [];
@@ -78,7 +78,7 @@ export class ClaimLocationFrmComponent implements OnInit {
   }
 
   /**
-   * MÉTODO QUE CAPTURA LA PROVINCIA DESDE EL SELECT
+   * METODO QUE CAPTURA LA PROVINCIA DESDE EL SELECT
    * @param event 
    */
   public getProvinciaSelect(event: string) {
@@ -92,7 +92,7 @@ export class ClaimLocationFrmComponent implements OnInit {
   }
 
   /**
-   * MÉTODO QUE TRAE LAS PROVINCIAS EXISTENTES EN EL SISTEMA
+   * METODO QUE TRAE LAS PROVINCIAS EXISTENTES EN EL SISTEMA
    */
   private getCanton(id_provincia: any) {
     this.cantonSelect = [];
@@ -115,7 +115,7 @@ export class ClaimLocationFrmComponent implements OnInit {
   }
 
   /**
- * MÉTODO QUE CAPTURA LA PROVINCIA DESDE EL SELECT
+ * METODO QUE CAPTURA LA PROVINCIA DESDE EL SELECT
  * @param event 
  */
   public getCantonSelect(event: string) {
@@ -126,7 +126,7 @@ export class ClaimLocationFrmComponent implements OnInit {
   }
 
   /**
-   * MÉTODO QUE TRAE LAS PROVINCIAS EXISTENTES EN EL SISTEMA
+   * METODO QUE TRAE LAS PROVINCIAS EXISTENTES EN EL SISTEMA
    */
   private getParroquia(id_canton: any) {
     this.parroquiaSelect = [];
@@ -144,7 +144,7 @@ export class ClaimLocationFrmComponent implements OnInit {
   }
 
   /**
-   * MÉTODO QUE CAPTURA LA PROVINCIA DESDE EL SELECT
+   * METODO QUE CAPTURA LA PROVINCIA DESDE EL SELECT
    * @param event 
    */
   public getParroquiaSelect(event: string) {
@@ -166,7 +166,7 @@ export class ClaimLocationFrmComponent implements OnInit {
   }
 
   /**
-   * MÉTODO QUE CAPTURA EL BARRIO DESDE EL SELECT
+   * METODO QUE CAPTURA EL BARRIO DESDE EL SELECT
    * @param event 
    */
   public getBarrioSelect(event: number) {

@@ -48,7 +48,7 @@ export class ReplyListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR A LOS CAMBIOS DE LA LISTA DE COMENTARIOS ENTRANTE:
+   * METODO PARA ESCUCHAR A LOS CAMBIOS DE LA LISTA DE COMENTARIOS ENTRANTE:
    */
   private listenToReplies() {
     this.subscription = this._actionService.replies$.subscribe((commentData) => {
@@ -77,7 +77,7 @@ export class ReplyListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA CARGAR MAS RESPUESTAS
+   * METODO PARA CARGAR MAS RESPUESTAS
    * @param event EVENTO DE CLICK DEL ELEMENTO <a href="#">
    */
   public requestForMore(event: any) {
@@ -106,7 +106,7 @@ export class ReplyListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA CANCELAR EL ENVÍO DE UN COMENTARIO OFFLINE:
+   * METODO PARA CANCELAR EL ENVÍO DE UN COMENTARIO OFFLINE:
    * @param comment COMENTARIO A SER CANCELADO
    */
   public cancelReply(reply: Comment) {

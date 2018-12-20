@@ -18,7 +18,7 @@ export class HorizonSwitchInputComponent implements OnInit, OnChanges {
   }
 
   /**
-   * MÉTODO PARA DETECTAR EL CAMBIO DE ESTADO DEL SWITCH INPUT:
+   * METODO PARA DETECTAR EL CAMBIO DE ESTADO DEL SWITCH INPUT:
    * @param event 
    */
   switchChange(event: any) {
@@ -38,7 +38,7 @@ export class HorizonSwitchInputComponent implements OnInit, OnChanges {
   }
 
   /**
-   * MÉTODO PARA DETECTAR LOS CAMBIOS DE UNA PROPIEDAD INYECTADA DESDE EL COMPONENTE PADRE DE ESTE COMPONENTE:
+   * METODO PARA DETECTAR LOS CAMBIOS DE UNA PROPIEDAD INYECTADA DESDE EL COMPONENTE PADRE DE ESTE COMPONENTE:
    * @param changes LOS CAMBIOS GENERADOS
    */
   ngOnChanges(changes: SimpleChanges) {

@@ -54,14 +54,14 @@ export class LoginComponent implements OnInit {
   }
 
   /**
-   * MÉTODO PARA RESTABLECER EL OBJETO USUARIO QUE ES USADO EN EL FORMULARIO DE LOGIN:
+   * METODO PARA RESTABLECER EL OBJETO USUARIO QUE ES USADO EN EL FORMULARIO DE LOGIN:
    */
   private resetForm() {
     this.user = new User(null, null);
   }
 
   /**
-   * MÉTODO PARA ACTIVAR LA ANIMACIÓN DE LOADING:
+   * METODO PARA ACTIVAR LA ANIMACIÓN DE LOADING:
    * @param remove 
    */
   private activeLoadingContent(remove: boolean = false) {
@@ -76,7 +76,7 @@ export class LoginComponent implements OnInit {
   }
 
   /**
-   * MÉTODO PARA INICIAR SESIÓN EN EL APP:
+   * METODO PARA INICIAR SESIÓN EN EL APP:
    */
   public onLogin() {
     this._installPromptService.openInstallPrompt();
@@ -119,7 +119,7 @@ export class LoginComponent implements OnInit {
   }
 
   /**
- * MÉTODO PARA SOLICITAR QUE SE INCRUSTE DINÁMICAMENTE UN HORIZON MODAL CON CIERTO CONTENIDO EN SU INTERIOR
+ * METODO PARA SOLICITAR QUE SE INCRUSTE DINÁMICAMENTE UN HORIZON MODAL CON CIERTO CONTENIDO EN SU INTERIOR
  * @param event EVENTO CLICK DEL ELEMENTO <a href="#">
  * @param contType TIPO DE CONTENIDO A MOSTRAR DENTRO DEL HORIZON MODAL
  */
