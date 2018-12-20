@@ -5,6 +5,7 @@ import { CONTENT_TYPES } from '../../config/content-type';
 import { ACTION_TYPES } from '../../config/action-types';
 import { DomSanitizer } from '../../../../node_modules/@angular/platform-browser';
 import { DynaContentService } from 'src/app/services/dyna-content.service';
+import { BTN_APPAREANCE } from 'src/app/config/button-appearance';
 
 @Component({
   selector: 'user-register',
@@ -32,7 +33,8 @@ export class UserRegisterComponent implements OnInit, OnChanges {
       {
         action: ACTION_TYPES.userRegister,
         icon: 'check',
-        class: 'custom-btn-normal'
+        class: 'custom-btn-normal',
+        appearance: BTN_APPAREANCE.normal
       },
       {
         action: ACTION_TYPES.close,

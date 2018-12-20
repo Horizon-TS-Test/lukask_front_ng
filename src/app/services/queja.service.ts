@@ -86,7 +86,7 @@ export class QuejaService implements OnDestroy {
 
   /**
    * MÉTODO PARA NOTIFICAR A LOS OBSERVADORES ACERCA DE UNA NUEVA PUBLICACION INSERTADA DE FORMA OFFLINE:
-   * @param pubList 
+   * @param newOffpub 
    */
   public loadOffPub(newOffpub: Publication) {
     this.newOffPubSub.next(newOffpub);
@@ -94,7 +94,7 @@ export class QuejaService implements OnDestroy {
 
   /**
    * MÉTODO PARA NOTIFICAR A LOS OBSERVADORES ACERCA DE UNA NUEVA PUBLICACION INSERTADA DE FORMA OFFLINE:
-   * @param pubList 
+   * @param newActionData 
    */
   public loadNewPubAction(newActionData: any) {
     this.newPubActionSub.next(newActionData);
@@ -103,6 +103,7 @@ export class QuejaService implements OnDestroy {
   /**
    * MÉTODO PARA CAMBIAR EL ESTADO DE UNA PUBLICACIÓN CUANDO SE HA DADO APOYO EN MODO OFFLINE:
    * @param pub 
+   * @param pubList 
    */
   public changePubOffRelevance(pub: Publication, pubList: Publication[]) {
     let currentPub = pubList.find(currPub => currPub.id_publication === pub.id_publication);
@@ -458,7 +459,7 @@ export class QuejaService implements OnDestroy {
     formData.append('userId', this._userService.getUserProfile().id);
 
     for (let med of queja.media) {
-      formData.append('media_files[]', med.file, med.fileName);
+        formData.append('media_files[]', med.file, med.fileName);
     }
 
     return formData;

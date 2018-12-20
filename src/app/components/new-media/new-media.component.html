@@ -1,30 +1,64 @@
 <div class="personal-content min-height-full-modal relative-background col-12 p-0">
-  <app-webrtc-camera [backCamera]="backCamera" [maxSnapShots]="maxSnapShots" (closeEmitter)="getChildEvent($event)"></app-webrtc-camera>
+  <app-webrtc-camera [backCamera]="backCamera" [maxSnapShots]="maxSnapShots" (closeEmitter)="getChildEvent($event)"
+    (cameraReady)="setCameraReady($event)"></app-webrtc-camera>
+
+  <!--- codigo para mostrar datos de grabacion-->
+  <div class="p-transparent-box {{classBttnRecHidden}}">
+    <a href="#" class="p-index-2 custom-btn custom-btn-rec p-transparent-btn xs p-float-btn top-left-corner recorderAnimate">
+      <span class="personal-site-icon">f</span>
+    </a>
+    <div class="textRecorder">
+      <span>
+        {{stateRec}} {{timeRec}}
+      </span>
+    </div>
+  </div>
+  
+  <a *ngIf="actionTypes.recordVideo==opActionMedia" href="#" class="{{classObjHidden}} p-index-2 p-transparent-btn xs p-float-btn top-right-corner" (click)="sendCameraAction($event, cameraActions.change_camera)">
+    <span class="personal-site-icon">d</span>
+  </a>
 
   <owl-carousel id="corousel-snapshot-op" class="personal-owl-nav" [options]="carouselOptions" [carouselClasses]="['owl-theme']">
-    <div class="d-flex justify-content-center align-items-center min-height-full-modal">
-      <a href="#" class="p-transparent-btn" (click)="sendCameraAction($event, cameraActions.snap_shot)">
-        <fa name="camera"></fa>
-      </a>
-    </div>
 
-    <div class="d-flex justify-content-center align-items-center min-height-full-modal">
-      <a href="#" class="p-transparent-btn" (click)="sendCameraAction($event, cameraActions.change_camera)">
-        <span class="personal-site-icon">d</span>
-      </a>
-    </div>
+    <!-- options camera -->
+    <ng-container *ngIf="actionTypes.takeSnapshot==opActionMedia">
+      <div class="d-flex justify-content-center align-items-center min-height-full-modal">
+        <a href="#" class="p-transparent-btn" (click)="sendCameraAction($event, cameraActions.snap_shot)">
+          <fa name="camera"></fa>
+        </a>
+      </div>
 
-    <div class="d-flex justify-content-center align-items-center min-height-full-modal">
-      <a href="#" class="p-transparent-btn" (click)="sendCameraAction($event, 0)">
-        <span class="personal-site-icon">b</span>
-      </a>
-    </div>
+      <div class="d-flex justify-content-center align-items-center min-height-full-modal">
+        <a href="#" class="p-transparent-btn" (click)="sendCameraAction($event, cameraActions.change_camera)">
+          <span class="personal-site-icon">d</span>
+        </a>
+      </div>
 
-    <div class="d-flex justify-content-center align-items-center min-height-full-modal">
-      <a href="#" class="p-transparent-btn" (click)="sendCameraAction($event, cameraActions.start_video)">
-        <span class="personal-site-icon">e</span>
-      </a>
-    </div>
+      <div class="d-flex justify-content-center align-items-center min-height-full-modal">
+        <a href="#" class="p-transparent-btn" (click)="sendCameraAction($event, 0)">
+          <span class="personal-site-icon">b</span>
+        </a>
+      </div>
+    </ng-container>
+
+    <!--options video-->
+    <ng-container *ngIf="actionTypes.recordVideo==opActionMedia">
+      <div class="d-flex justify-content-center align-items-center min-height-full-modal {{classRecordering}}">
+        <a href="#" class="p-transparent-btn" (click)="sendCameraAction($event, cameraActions.init_recorder)">
+          <span class="personal-site-icon">f</span>
+        </a>
+      </div>
+      <div class="d-flex justify-content-center align-items-center min-height-full-modal">
+        <a href="#" class="p-transparent-btn" (click)="sendCameraAction($event, actionResOrPause)">
+          <span class="personal-site-icon">{{_iconPause}}</span>
+        </a>
+      </div>
+      <div class="d-flex justify-content-center align-items-center min-height-full-modal">
+        <a href="#" class="p-transparent-btn" (click)="sendCameraAction($event, cameraActions.stop_recorder)">
+          <span class="personal-site-icon">i</span>
+        </a>
+      </div>
+    </ng-container>
   </owl-carousel>
 
   <material-btn-list [showClass]="showClass" [materialBtns]="matButtons" (someBtnAction)="getButtonAction($event)"></material-btn-list>

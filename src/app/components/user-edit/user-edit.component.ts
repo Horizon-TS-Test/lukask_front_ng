@@ -10,6 +10,7 @@ import { ACTION_TYPES } from '../../config/action-types';
 import { UserService } from '../../services/user.service';
 import { DynaContentService } from 'src/app/services/dyna-content.service';
 import { ASSETS } from 'src/app/config/assets-url';
+import { BTN_APPAREANCE } from 'src/app/config/button-appearance';
 
 @Component({
   selector: 'user-edit',
@@ -38,6 +39,7 @@ export class UserEditComponent implements OnInit, OnDestroy, OnChanges, AfterVie
   ) {
     this.fileToUpload = {
       mediaFileUrl: ASSETS.profDefaultImg,
+      type : 'media',
       mediaFile: null,
       removeable: false,
       active: true,
@@ -48,7 +50,8 @@ export class UserEditComponent implements OnInit, OnDestroy, OnChanges, AfterVie
       {
         action: ACTION_TYPES.userEdition,
         icon: 'check',
-        class: 'custom-btn-normal'
+        class: 'custom-btn-normal',
+        appearance: BTN_APPAREANCE.normal
       },
       {
         action: ACTION_TYPES.close,

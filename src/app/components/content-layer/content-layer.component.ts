@@ -44,6 +44,9 @@ export class ContentLayerComponent implements OnInit, OnDestroy {
           case CONTENT_TYPES.payment_card:
             this.addComponent(HorizonPopOverComponent, this._cfr, this.secondaryLayer, dynaContent);
             break;
+          case CONTENT_TYPES.progress_bar:
+            this.addComponent(HorizonPopOverComponent, this._cfr, this.secondaryLayer, dynaContent);
+            break;
           default:
             this.addComponent(HorizonModalComponent, this._cfr, this.secondaryLayer, dynaContent);
             break;

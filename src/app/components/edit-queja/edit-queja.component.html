@@ -10,12 +10,31 @@
       <div id="carouselExampleControls" class="p-pub-media carousel slide" data-ride="carousel">
 
         <div class="p-pub-media carousel-inner" role="listbox">
+          <a href="#" (click)="animation($event)" class="p-index-2 custom-btn custom-btn-normal p-transparent-btn xs p-float-btn top-left-corner">
+            <fa name="chevron-down" class="p-transition {{ rotateClass }}"></fa>
+          </a>
+          <div class="actions-edit-queja absolute-layer top-left-corner d-flex flex-column justify-content-between align-items-center {{ showClass }}">
+            <div>
+              <a href="#" class="p-transparent-btn op-media xs" (click)="newMedia($event)">
+                <fa name="camera"></fa>
+              </a>
+              <a href="#" class="p-transparent-btn op-media xs" (click)="newMediaVideo($event)">
+                <span class="personal-site-icon">f</span>
+              </a>
+            </div>
+          </div>
+
           <ng-container *ngFor="let file of filesToUpload; let i = index">
             <div *ngIf="!file.hidden" class="p-pub-media carousel-item p-1" [ngClass]="{ 'active': file.active }">
-              <a *ngIf="file.removeable" href="#" class="p-transparent-btn xs p-float-btn top-left-corner" (click)="removeMedia($event, file)">
+              <a *ngIf="file.removeable" href="#" class="p-transparent-btn xs p-float-btn top-right-corner" (click)="removeMedia($event, file)">
                 <fa name="close"></fa>
               </a>
-              <img [src]="_domSanitizer.bypassSecurityTrustUrl(file.mediaFileUrl)" width="100%" class="mb-1">
+              <img *ngIf="file.type==media_type.image" [src]="_domSanitizer.bypassSecurityTrustUrl(file.mediaFileUrl)" width="100%"
+                class="mb-1">
+              <video *ngIf="file.type==media_type.video" width="100%" class="mb-1" poster="../../../assets/images/media/default.gif"
+              controls muted autoplay class="mediaVideo">
+                <source [src]="_domSanitizer.bypassSecurityTrustUrl(file.mediaFileUrl)" type='video/mp4' />
+              </video>
             </div>
           </ng-container>
         </div>
@@ -34,12 +53,10 @@
         </ng-container>
       </div>
 
-      <a href="#" class="p-transparent-btn p-float-btn" (click)="newMedia($event)">
-        <fa name="camera"></fa>
-      </a>
     </div>
     <div class="card-block p-0">
-      <pub-form [mediaFiles]="filesToUpload" [eersaLocClient]="eersaLocClient" [isStreamPub]="isStreamPub" [submit]="submit" (afterSubmit)="processAfterSubmit($event)" (validForm)="onValidForm($event)"></pub-form>
+      <pub-form [mediaFiles]="filesToUpload" [eersaLocClient]="eersaLocClient" [isStreamPub]="isStreamPub" [submit]="submit"
+        (afterSubmit)="processAfterSubmit($event)" (validForm)="onValidForm($event)"></pub-form>
     </div>
   </div>
 </div>

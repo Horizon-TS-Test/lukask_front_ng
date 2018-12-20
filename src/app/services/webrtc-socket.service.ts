@@ -3,6 +3,7 @@ import { throwError } from 'rxjs';
 import { Headers, Http, Response } from '@angular/http';
 
 import { REST_SERV } from '../rest-url/rest-servers';
+import { MEDIA_TYPES } from '../config/media-types';
 import { QuejaService } from './queja.service';
 import * as kurentoUtils from 'kurento-utils';
 import * as crypto from '../tools/crypto-gen';
@@ -17,8 +18,8 @@ declare var MediaRecorder: any;
 //HREF ABOUT WEBSOCKET: https://developer.mozilla.org/es/docs/Web/API/WebSocket
 export class WebrtcSocketService {
   private webRtcPeer: any;
-  private stream: any;
   private recordedBlobs: any[];
+  private stream: any;
   private mediaRecorder: any;
   private _videoData: any;
   private userId: string;
@@ -36,7 +37,7 @@ export class WebrtcSocketService {
     this.userId = _userService.getUserProfile().id;
     this.isPresenter = false;
     this.recordedBlobs = [];
-    console.log("this.recordedBlobs ", this.recordedBlobs);
+    this.pubId = "";
   }
 
 
@@ -394,9 +395,17 @@ export class WebrtcSocketService {
         console.log("error al detner la transmicion", err);
       }
 
-        //Proceso para convertir 
-        this.bufferToDataUrl((dataUrl, blob) => {
-        this.sendFilebKMS(blob);
+      //Proceso para convertir 
+      this.bufferToDataUrl((dataUrl, blob) => {
+
+        var dataMediosVideo = [{
+          pubId: this.pubId,
+          mediosVideo: {
+            blob: blob,
+            type: MEDIA_TYPES.video
+          }
+        }];
+        this.sendFilebKMS(dataMediosVideo);
       });
     }
   }
@@ -405,7 +414,7 @@ export class WebrtcSocketService {
    * Proceso para obtener url del buffer
    * @param callback 
    */
-  private bufferToDataUrl(callback) {
+  public bufferToDataUrl(callback) {
     let blob = new Blob(this.recordedBlobs, {
       type: "video/webm"
     });
@@ -469,29 +478,42 @@ export class WebrtcSocketService {
    * Metodo para guardar el archivo de video generado en la transmicion
    * @param fileVideoRecorder datos del archivo de video
    */
-  private sendFilebKMS(fileVideoRecorder: any) {
-    let formData = new FormData();
-    formData.append('idPublication', this.pubId);
-    formData.append('media_file', fileVideoRecorder, crypto.CrytoGen.encrypt(this.generateKeyWord()) + Date.now());
+  public async sendFilebKMS(dataMediosVideo: any) {
+
+    let dataVideo: FormData = await this.generateFormData(dataMediosVideo);
     let xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function () {
-      if (xhr.readyState === 4) {
-        if (xhr.status === 201) {
-          console.log(JSON.parse(xhr.response).data);
-        } else {
-          if (xhr.status == 0) {
-            console.error(xhr.response);
-          }
-          else {
-            console.error(JSON.parse(xhr.response));
+    return new Promise((resolve, reject) => {
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 201) {
+            resolve(JSON.parse(xhr.response).data);
+          } else {
+            if (xhr.status == 0) {
+              reject(xhr.response);
+            }
+            else {
+              reject(JSON.parse(xhr.response));
+            }
           }
         }
-      }
-    };
-    xhr.open("POST", REST_SERV.mediaRecorder, true);
-    xhr.setRequestHeader('X-Access-Token', this._userService.getUserKey());
-    xhr.withCredentials = true;
-    xhr.send(formData);
+      };
+      xhr.open("POST", REST_SERV.mediaRecorder, true);
+      xhr.setRequestHeader('X-Access-Token', this._userService.getUserKey());
+      xhr.withCredentials = true;
+      xhr.send(dataVideo);
+    });
   }
-}
 
+ /**
+  * Genera data para envio de video
+  */
+  private generateFormData(dataMedios: any) {
+    let formData = new FormData();
+    formData.append('id_publication', dataMedios.pubId);
+    for(let medio of dataMedios.mediaVideo){
+        formData.append('media_file[]', medio.mediaFile, crypto.CrytoGen.encrypt(this.generateKeyWord()) + Date.now());
+    }
+    return formData;
+  }
+  
+}

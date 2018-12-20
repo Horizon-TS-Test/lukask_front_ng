@@ -5,6 +5,7 @@ import { CameraService } from '../../services/camera.service';
 import { MediaFile } from '../../interfaces/media-file.interface';
 import { DomSanitizer } from '../../../../node_modules/@angular/platform-browser';
 import { ACTION_TYPES } from '../../config/action-types';
+import { MEDIA_TYPES } from '../../config/media-types';
 import { OnSubmit } from '../../interfaces/on-submit.interface';
 import { DynaContentService } from 'src/app/services/dyna-content.service';
 import { ASSETS } from 'src/app/config/assets-url';
@@ -29,12 +30,20 @@ export class EditQuejaComponent implements OnDestroy, OnInit, OnChanges {
 
   private subscription: Subscription;
 
+  private SHOW_CLASS: string = 'slide-down';
+  private ROTATE_CLASS: string = 'rotate-on';
+
   private _initSnapShotsNumber: number;
   private _maxSnapShots: number;
   private isEnabledCordovaCamera: boolean;
+  private _hiddeShowAnimation: boolean;
+  private _arrayVideo: any;
 
   public carouselOptions: any;
   public filesToUpload: MediaFile[];
+  public showClass: string;
+  public rotateClass: string;
+  public media_type: any;
 
   constructor(
     private _dynaContentService: DynaContentService,
@@ -42,9 +51,12 @@ export class EditQuejaComponent implements OnDestroy, OnInit, OnChanges {
     private _cordovaCameraService: CordovaCameraService,
     private _domSanitizer: DomSanitizer
   ) {
+    this.showClass = '';
+    this.rotateClass = '';
     this._initSnapShotsNumber = 5;
     this._maxSnapShots = this._initSnapShotsNumber;
-
+    this.media_type = MEDIA_TYPES;
+    this._arrayVideo = [];
     this.initMediaFiles();
 
     //LISTEN TO NEW SNAPSHOT SENT BY NEW MEDIA CONTENT:
@@ -56,6 +68,9 @@ export class EditQuejaComponent implements OnDestroy, OnInit, OnChanges {
   }
 
   ngOnInit() {
+
+    this._hiddeShowAnimation = false;
+    this.initCarousel();
     this.isEnabledCordovaCamera = this._cordovaCameraService.isCameraEnabled();
   }
 
@@ -63,6 +78,7 @@ export class EditQuejaComponent implements OnDestroy, OnInit, OnChanges {
     this.filesToUpload = [
       {
         mediaFileUrl: ASSETS.pubDefaultImg,
+        type: MEDIA_TYPES.image,
         mediaFile: null,
         removeable: false,
         active: true,
@@ -97,20 +113,63 @@ export class EditQuejaComponent implements OnDestroy, OnInit, OnChanges {
    */
   public newMedia(event: any) {
     event.preventDefault();
+    this.mutedVideos();
+
     if (this.filesToUpload.length < this._initSnapShotsNumber) {
+
+      this._maxSnapShots = this._initSnapShotsNumber - this.filesToUpload.length;
       if (this.isEnabledCordovaCamera) {
         this._cordovaCameraService.openCamera((imgUri: any) => {
-          this._cordovaCameraService.getFileBlob(imgUri, (imgBlob) => {
-            this.addQuejaSnapShot({ mediaFileUrl: imgUri, mediaFile: imgBlob, removeable: true, active: true, hidden: false });
-          });
+          
+          if (imgUri) {
+            
+            this._cordovaCameraService.getFileBlob(imgUri, MEDIA_TYPES.image, (imgBlob) => {
+              this.addQuejaSnapShot({ mediaFileUrl: imgUri, type: MEDIA_TYPES.image, mediaFile: imgBlob, removeable: true, active: true, hidden: false });
+            });
+          }
         });
       }
       else {
-        this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.new_media, contentData: { maxSnapShots: this._maxSnapShots, backCamera: true } });
+        this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.new_media, contentData: { maxSnapShots: this._maxSnapShots, backCamera: true, action: ACTION_TYPES.takeSnapshot } });
       }
     }
     else {
       Snackbar.show({ text: "Ha llegado al límite de imágenes permitidas", pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#34b4db', customClass: "p-snackbar-layout" });
+    }
+  }
+
+  /**
+   * Proceso para realizar una grabacion de video desde la camara
+   * @param event 
+   */
+  public newMediaVideo(event: any) {
+    event.preventDefault();
+    this.mutedVideos();
+    if (this.filesToUpload.length < this._initSnapShotsNumber) {
+
+      this._maxSnapShots = this._initSnapShotsNumber - this.filesToUpload.length;
+      if (this.isEnabledCordovaCamera) {
+        this._cordovaCameraService.openCameraVideo((videoUri: any) => {
+
+          if (videoUri) {
+
+            //Abre el progress bar.
+            this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.progress_bar, contentData: 20 });
+
+              this._cordovaCameraService.getFileBlob(videoUri.fullPath, MEDIA_TYPES.video, (videoBlob) => {
+              this._dynaContentService.executeAccion({ contentType: CONTENT_TYPES.progress_bar, contentData: { method: 'close' } });
+              this.addQuejaSnapShot({ mediaFileUrl: videoUri.localURL, type: MEDIA_TYPES.video, mediaFile: videoBlob, removeable: true, active: true, hidden: false });
+              //this.addQuejaSnapShot({ mediaFileUrl: imgUri, mediaFile: imgBlob, removeable: true, active: true, hidden: false });
+            });
+          }
+        });
+      }
+      else {
+        this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.new_media, contentData: { maxSnapShots: this._maxSnapShots, backCamera: true, action: ACTION_TYPES.recordVideo } });
+      }
+    }
+    else {
+      Snackbar.show({ text: "Ha llegado al límite de medios permitidos", pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#34b4db', customClass: "p-snackbar-layout" });
     }
   }
 
@@ -228,5 +287,51 @@ export class EditQuejaComponent implements OnDestroy, OnInit, OnChanges {
    */
   public onValidForm(event: boolean) {
     this.validForm.emit(event);
+  }
+
+  /**
+  * MÉTODO PARA DEFINIR LAS PROPIEDADES DEL CAROUSEL DE SECCIONES:
+  */
+  private initCarousel() {
+    this.carouselOptions = {
+      items: 1, dots: false, loop: false, margin: 5,
+      nav: false, stagePadding: 0, autoWidth: false
+    };
+  }
+
+  /**
+   * Silecia los video.
+   */
+  private mutedVideos(){
+    this._arrayVideo = document.querySelectorAll(".mediaVideo");
+    for (let video of this._arrayVideo){
+      video.muted = true;
+    }
+  }
+
+  /**
+   * Silecia los video.
+   */
+  private unMutedVideos(){
+    this._arrayVideo = document.querySelectorAll(".mediaVideo");
+    for (let video of this._arrayVideo){
+      if(video.muted){
+        video.muted = false;
+      }
+    }
+  }
+
+  public animation(event: any) {
+    event.preventDefault();
+    if (!this._hiddeShowAnimation) {
+      this._hiddeShowAnimation = true;
+      this.showClass = this.SHOW_CLASS;
+      this.rotateClass = this.ROTATE_CLASS;
+
+    } else {
+      this._hiddeShowAnimation = false;
+      this.showClass = '';
+      this.rotateClass = '';
+    }
   }
 }
