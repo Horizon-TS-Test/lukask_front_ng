@@ -10,7 +10,7 @@ import { DynaContentService } from 'src/app/services/dyna-content.service';
 import { UserService } from 'src/app/services/user.service';
 import { EersaClient } from 'src/app/models/eersa-client';
 import { EersaLocation } from 'src/app/models/eersa-location';
-import { BTN_APPAREANCE } from 'src/app/config/button-appearance';
+import { BTN_APPEARANCE } from 'src/app/config/button-appearance';
 import * as Snackbar from 'node-snackbar';
 
 @Component({
@@ -56,7 +56,7 @@ export class NewPubComponent implements OnInit, OnChanges {
   }
 
   /**
-   * MÉTODO PARA INICIALIZAR LOS BOTONES A USAR:
+   * METODO PARA INICIALIZAR LOS BOTONES A USAR:
    */
   private initButtons() {
     if (!this.isChildPub) {
@@ -65,14 +65,14 @@ export class NewPubComponent implements OnInit, OnChanges {
           action: ACTION_TYPES.submitPub,
           icon: 'check',
           class: 'custom-btn-normal animated-btn-h animate-in',
-          appearance: BTN_APPAREANCE.normal
+          appearance: BTN_APPEARANCE.normal
         },
         {
           action: ACTION_TYPES.pubStream,
           icon: 'f',
           customIcon: true,
           class: 'custom-btn-normal animated-btn-h',
-          appearance: BTN_APPAREANCE.normal
+          appearance: BTN_APPEARANCE.normal
         },
         {
           action: ACTION_TYPES.close,
@@ -83,7 +83,7 @@ export class NewPubComponent implements OnInit, OnChanges {
   }
 
   /**
-   * MÉTODO PARA ACCEDER A LA OPCIÓN DE INICIAR STREAMING:
+   * METODO PARA ACCEDER A LA OPCIÓN DE INICIAR STREAMING:
    * @param event
    */
   public initStreaming(event: any) {
@@ -106,7 +106,7 @@ export class NewPubComponent implements OnInit, OnChanges {
   }
 
   /**
-   * MÉTODO PARA OCULTAR O MOSTRAR EL FONDO DE CARGANDO
+   * METODO PARA OCULTAR O MOSTRAR EL FONDO DE CARGANDO
    */
   private showLoadingContent(show: boolean) {
     if (show == true) {
@@ -120,7 +120,7 @@ export class NewPubComponent implements OnInit, OnChanges {
   }
 
   /**
-   * MÉTODO PARA ABRIR EL RECURSO QUE LLEGA JUNTO CON LA NOTIFICACIÓN:
+   * METODO PARA ABRIR EL RECURSO QUE LLEGA JUNTO CON LA NOTIFICACIÓN:
    */
   private openStreaming() {
     this._dynaContentService.removeDynaContent(true);
@@ -128,7 +128,7 @@ export class NewPubComponent implements OnInit, OnChanges {
   }
 
   /**
-   * MÉTODO PARA PROCESAR EL FORMULARIO DESPUÉS DEL SUBMIT:
+   * METODO PARA PROCESAR EL FORMULARIO DESPUÉS DEL SUBMIT:
    * @param event OBJETO DE TIPO INTERFACE ON-SUBMIT QUE LLEGA DESDE EL EVENT EMITTER
    */
   public onSubmitForm(event: OnSubmit) {
@@ -168,7 +168,7 @@ export class NewPubComponent implements OnInit, OnChanges {
   }
 
   /**
-   * MÉTODO PARA SOLICITAR AL COMPONENTE HIJO QUE SE EFECTÚE EL SUBMIT DE LA PUBLICACIÓN
+   * METODO PARA SOLICITAR AL COMPONENTE HIJO QUE SE EFECTÚE EL SUBMIT DE LA PUBLICACIÓN
    */
   private requestSubmit(actionEvent: number) {
     this.actionType = null;
@@ -180,7 +180,7 @@ export class NewPubComponent implements OnInit, OnChanges {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LA ACCIÓN DEL EVENTO DE CLICK DE UN BOTÓN DINÁMICO:
+   * METODO PARA ESCUCHAR LA ACCIÓN DEL EVENTO DE CLICK DE UN BOTÓN DINÁMICO:
    */
   public getButtonAction(actionEvent: number) {
     switch (actionEvent) {
@@ -202,7 +202,7 @@ export class NewPubComponent implements OnInit, OnChanges {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LOS CAMBIOS QUE SE DEN EN EL ATRIBUTO QUE VIENE DESDE EL COMPONENTE PADRE:
+   * METODO PARA ESCUCHAR LOS CAMBIOS QUE SE DEN EN EL ATRIBUTO QUE VIENE DESDE EL COMPONENTE PADRE:
    * @param changes 
    */
   ngOnChanges(changes: SimpleChanges) {

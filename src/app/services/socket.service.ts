@@ -28,7 +28,7 @@ export class SocketService {
   constructor() { }
 
   /**
-   * MÉTODO PARA CONECTARSE AL SOCKET-SERVER Y ABRIR UNA INSTANCIA CLIENTE
+   * METODO PARA CONECTARSE AL SOCKET-SERVER Y ABRIR UNA INSTANCIA CLIENTE
    */
   public connectSocket() {
     this.socket = io.connect(REST_SERV.socketServerUrl);
@@ -65,21 +65,21 @@ export class SocketService {
   }
 
   /**
-   * MÉTODO PARA OBTENER LA INSTANCIA DEL OBJETO SOCKET-CLIENT
+   * METODO PARA OBTENER LA INSTANCIA DEL OBJETO SOCKET-CLIENT
    */
   getSocket() {
     return this.socket;
   }
 
   /**
-   * MÉTODO PARA RECIBIR EL MENSAJE DE CONFIRMACIÓN DEL PAGO DESDE EL MIDDLEWARE
+   * METODO PARA RECIBIR EL MENSAJE DE CONFIRMACIÓN DEL PAGO DESDE EL MIDDLEWARE
    */
   public confimPayResp() {
     this.socket.emit('confirm-pay', true);
   }
 
   /**
-   * MÉTODO PARA CARGAR LOS DATOS DE LA CONFIRMACIÓN DEL PAGO:
+   * METODO PARA CARGAR LOS DATOS DE LA CONFIRMACIÓN DEL PAGO:
    * @param paymentData 
    */
   public loadPayConfirm(paymentData: any) {

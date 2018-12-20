@@ -54,7 +54,7 @@ export class HorizonModalComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA DEFINIR LAS VISTAS QUE OCUPAN TODA LA PANTALLA:
+   * METODO PARA DEFINIR LAS VISTAS QUE OCUPAN TODA LA PANTALLA:
    */
   private defineFullHeight() {
     if (this._dynaContent.contentType == this.contentTypes.new_media || this._dynaContent.contentType == this.contentTypes.new_pub || this._dynaContent.contentType == this.contentTypes.edit_queja || this._dynaContent.contentType == this.contentTypes.view_queja || this._dynaContent.contentType == this.contentTypes.edit_profile || this._dynaContent.contentType == this.contentTypes.view_transmission || this._dynaContent.contentType == this.contentTypes.planilla_detail || this._dynaContent.contentType == this.contentTypes.paypal || this._dynaContent.contentType == this.contentTypes.register_profile || (this._dynaContent.contentType == this.contentTypes.view_comments && !this._dynaContent.contentData.halfModal)) {
@@ -66,7 +66,7 @@ export class HorizonModalComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA DEFINIR LAS VISTAS QUE OCUPAN TODA LA PANTALLA:
+   * METODO PARA DEFINIR LAS VISTAS QUE OCUPAN TODA LA PANTALLA:
    */
   private defineFullHeightLoader() {
     if (this._dynaContent.contentType == this.contentTypes.new_claim || this._dynaContent.contentType == this.contentTypes.view_img || this._dynaContent.contentType == this.contentTypes.new_media || this._dynaContent.contentType == this.contentTypes.new_pub || this._dynaContent.contentType == this.contentTypes.edit_queja || this._dynaContent.contentType == this.contentTypes.view_queja || this._dynaContent.contentType == this.contentTypes.edit_profile || this._dynaContent.contentType == this.contentTypes.view_transmission || this._dynaContent.contentType == this.contentTypes.planilla_detail || this._dynaContent.contentType == this.contentTypes.paypal || this._dynaContent.contentType == this.contentTypes.register_profile || (this._dynaContent.contentType == this.contentTypes.view_comments && !this._dynaContent.contentData.halfModal)) {
@@ -78,7 +78,7 @@ export class HorizonModalComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA DAR EL EFECTO DE DESVANECIMIENTO DEL MODAL PARA LUEGO CERRARLO:
+   * METODO PARA DAR EL EFECTO DE DESVANECIMIENTO DEL MODAL PARA LUEGO CERRARLO:
    */
   closeModal() {
     this.backgroundClass = "";
@@ -90,7 +90,7 @@ export class HorizonModalComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA CERRAR EL MODAL DESDE UN BOTÓN HIJO:
+   * METODO PARA CERRAR EL MODAL DESDE UN BOTÓN HIJO:
    * @param closeEvent DATO QUE LLEGA DEL EVENT EMITTER
    */
   close(closeEvent: Boolean) {
@@ -100,7 +100,7 @@ export class HorizonModalComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA CERRAR EL MODAL AL DAR CLICK FUERA DEL MISMO:
+   * METODO PARA CERRAR EL MODAL AL DAR CLICK FUERA DEL MISMO:
    * @param event 
    */
   onClickClose(event: any) {
@@ -109,7 +109,7 @@ export class HorizonModalComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ELIMINAR LA REFERENCIA DE ESTE COMPONENTE DINÁMICO DENTRO DE TODA LA APP
+   * METODO PARA ELIMINAR LA REFERENCIA DE ESTE COMPONENTE DINÁMICO DENTRO DE TODA LA APP
    */
   removeObject() {
     this._ref.destroy();

@@ -69,7 +69,7 @@ export class QuejaService implements OnDestroy {
   }
 
   /**
-   * MÉTODO PARA NOTIFICAR A LOS OBSERVADORES LA LISTA DE PUBLICACIONES:
+   * METODO PARA NOTIFICAR A LOS OBSERVADORES LA LISTA DE PUBLICACIONES:
    * @param pubList 
    */
   public loadPubs(pubList: Publication[]) {
@@ -77,7 +77,7 @@ export class QuejaService implements OnDestroy {
   }
 
   /**
-   * MÉTODO PARA NOTIFICAR A LOS OBSERVADORES UNA NUEVA PUBLICIACIÓN ENTRANTE:
+   * METODO PARA NOTIFICAR A LOS OBSERVADORES UNA NUEVA PUBLICIACIÓN ENTRANTE:
    * @param pubData 
    */
   public loadUpdatedPub(pubData: { userPubJson: any, action: string }) {
@@ -85,7 +85,7 @@ export class QuejaService implements OnDestroy {
   }
 
   /**
-   * MÉTODO PARA NOTIFICAR A LOS OBSERVADORES ACERCA DE UNA NUEVA PUBLICACION INSERTADA DE FORMA OFFLINE:
+   * METODO PARA NOTIFICAR A LOS OBSERVADORES ACERCA DE UNA NUEVA PUBLICACION INSERTADA DE FORMA OFFLINE:
    * @param newOffpub 
    */
   public loadOffPub(newOffpub: Publication) {
@@ -93,7 +93,7 @@ export class QuejaService implements OnDestroy {
   }
 
   /**
-   * MÉTODO PARA NOTIFICAR A LOS OBSERVADORES ACERCA DE UNA NUEVA PUBLICACION INSERTADA DE FORMA OFFLINE:
+   * METODO PARA NOTIFICAR A LOS OBSERVADORES ACERCA DE UNA NUEVA PUBLICACION INSERTADA DE FORMA OFFLINE:
    * @param newActionData 
    */
   public loadNewPubAction(newActionData: any) {
@@ -101,7 +101,7 @@ export class QuejaService implements OnDestroy {
   }
 
   /**
-   * MÉTODO PARA CAMBIAR EL ESTADO DE UNA PUBLICACIÓN CUANDO SE HA DADO APOYO EN MODO OFFLINE:
+   * METODO PARA CAMBIAR EL ESTADO DE UNA PUBLICACIÓN CUANDO SE HA DADO APOYO EN MODO OFFLINE:
    * @param pub 
    * @param pubList 
    */
@@ -111,7 +111,7 @@ export class QuejaService implements OnDestroy {
   }
 
   /**
-   * MÉTODO PARA CONSUMIR EL END POINT PARA OBTENER LA LISTA DE TIPOS DE QUEJAS:
+   * METODO PARA CONSUMIR EL END POINT PARA OBTENER LA LISTA DE TIPOS DE QUEJAS:
    */
   private getQuejTypeWeb(asc: boolean) {
     const qTheaders = new Headers({ 'Content-Type': 'application/json', 'X-Access-Token': this._userService.getUserKey() });
@@ -140,7 +140,7 @@ export class QuejaService implements OnDestroy {
   }
 
   /**
-   * MÉTODO PARA OBTENER LA LISTA DE TIPOS DE QUEJAS DESDE LA MEMORIA CACHÉ:
+   * METODO PARA OBTENER LA LISTA DE TIPOS DE QUEJAS DESDE LA MEMORIA CACHÉ:
    */
   private getQuejTypeCache(asc: boolean) {
     if ('indexedDB' in window) {
@@ -163,7 +163,7 @@ export class QuejaService implements OnDestroy {
   }
 
   /**
-   * MÉTODO PARA CARGAR LA LISTA DE TIPOS DE QUEJA SEA DE LA WEB O DE LA CACHÉ
+   * METODO PARA CARGAR LA LISTA DE TIPOS DE QUEJA SEA DE LA WEB O DE LA CACHÉ
    */
   public getQtypeList(asc: boolean = true) {
     /**
@@ -190,7 +190,7 @@ export class QuejaService implements OnDestroy {
   }
 
   /**
-   * MÉTODO PARA CARGAR PUBLICACIONES BAJO DEMANDA DESDE LA WEB:
+   * METODO PARA CARGAR PUBLICACIONES BAJO DEMANDA DESDE LA WEB:
    */
   private getPubsWebByPage(pagePattern: string, pubOrClaim: boolean, morePubs: boolean = false) {
     const pubHeaders = new Headers({
@@ -232,7 +232,7 @@ export class QuejaService implements OnDestroy {
   }
 
   /**
-   * MÉTODO PARA CARGAR PUBLICACIONES BAJO DEMANDA DESDE LA CACHÉ:
+   * METODO PARA CARGAR PUBLICACIONES BAJO DEMANDA DESDE LA CACHÉ:
    */
   private getPubsCacheByPage(pagePattern: string, pubOrClaim: boolean) {
     if ('indexedDB' in window) {
@@ -273,7 +273,7 @@ export class QuejaService implements OnDestroy {
   }
 
   /**
-   * MÉTODO PARA CARGAR LA LISTA DE PUBLICACIONES SEA DESDE LA WEB O DE LA CACHÉ
+   * METODO PARA CARGAR LA LISTA DE PUBLICACIONES SEA DESDE LA WEB O DE LA CACHÉ
    */
   public getPubList(pubOrClaim: boolean = true) {
     /**
@@ -345,14 +345,14 @@ export class QuejaService implements OnDestroy {
   }
 
   /**
-   * MÉTODO PARA RETORNAR EL OBJETO QUE CONTIENE LA LISTA DE PUBLICACIONES
+   * METODO PARA RETORNAR EL OBJETO QUE CONTIENE LA LISTA DE PUBLICACIONES
    */
   getPubListObj() {
     return null;
   }
 
   /**
-   * MÉTODO PARA CREAR UN OBJETO JAVASCRIPT A PARTIR DE UNO DE TIPO PUBLICACION
+   * METODO PARA CREAR UN OBJETO JAVASCRIPT A PARTIR DE UNO DE TIPO PUBLICACION
    * @param queja 
    */
   public mergeJSONData(queja: Publication) {
@@ -380,7 +380,7 @@ export class QuejaService implements OnDestroy {
   }
 
   /**
-   * MÉTODO PARA GUARDAR UN NUEVO COMENTARIO O RESPUESTA EN EL BACKEND O EN SU DEFECTO PARA BACK SYNC:
+   * METODO PARA GUARDAR UN NUEVO COMENTARIO O RESPUESTA EN EL BACKEND O EN SU DEFECTO PARA BACK SYNC:
    */
   public savePub(pub: Publication) {
     return this.sendQueja(pub).then((response) => {
@@ -403,7 +403,7 @@ export class QuejaService implements OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ENVIAR UN FORM DATA HACIA EL MIDDLEWARE EN UN POST REQUEST:
+   * METODO PARA ENVIAR UN FORM DATA HACIA EL MIDDLEWARE EN UN POST REQUEST:
    * @param queja 
    */
   private sendQueja(queja: Publication) {
@@ -419,7 +419,7 @@ export class QuejaService implements OnDestroy {
   }
 
   /**
-   * MÉTODO PARA EXTRAER LOS DATOS DE PUBLICACION DE UN OBJETO JSON
+   * METODO PARA EXTRAER LOS DATOS DE PUBLICACION DE UN OBJETO JSON
    * @param pubJson 
    */
   public extractPubJson(pubJson) {
@@ -442,7 +442,7 @@ export class QuejaService implements OnDestroy {
   }
 
   /**
-   * MÉTODO PARA CREAR UN OBJETO DE TIPO FORM DATA A PARTIR DE UNO DE TIPO PUBLICACION
+   * METODO PARA CREAR UN OBJETO DE TIPO FORM DATA A PARTIR DE UNO DE TIPO PUBLICACION
    * @param queja 
    */
   public mergeFormData(queja: Publication) {
@@ -466,7 +466,7 @@ export class QuejaService implements OnDestroy {
   }
 
   /**
-   * MÉTODO PARA POSTEAR UNA NUEVA QUEJA HACIA EL BACKEND
+   * METODO PARA POSTEAR UNA NUEVA QUEJA HACIA EL BACKEND
    * @param quejaFormData 
    */
   private postQuejaClient(quejaFormData: FormData) {
@@ -499,7 +499,7 @@ export class QuejaService implements OnDestroy {
   }
 
   /**
-   * MÉTODO PARA OBTENER UNA PUBLICACION DADO SU ID, DESDE LA WEB
+   * METODO PARA OBTENER UNA PUBLICACION DADO SU ID, DESDE LA WEB
    * @param id 
    */
   private getPubWebById(id: string) {
@@ -527,7 +527,7 @@ export class QuejaService implements OnDestroy {
   }
 
   /**
-   * MÉTODO PARA OBTENER UNA PUBLICACION DADO SU ID, DESDE LA CACHÉ
+   * METODO PARA OBTENER UNA PUBLICACION DADO SU ID, DESDE LA CACHÉ
    * @param id 
    */
   private getPubCacheById(pubId: string) {
@@ -553,7 +553,7 @@ export class QuejaService implements OnDestroy {
   }
 
   /**
-   * MÉTODO PARA OBTENER UNA PUBLICACION DADO SU ID SEA DESDE LA WEB O LA CACHÉ
+   * METODO PARA OBTENER UNA PUBLICACION DADO SU ID SEA DESDE LA WEB O LA CACHÉ
    * @param id 
    */
   public getPubById(id: string) {
@@ -583,7 +583,7 @@ export class QuejaService implements OnDestroy {
   }
 
   /**
-   * MÉTODO PARA GUARDAR UN NUEVO COMENTARIO O RESPUESTA EN EL BACKEND O EN SU DEFECTO PARA BACK SYNC:
+   * METODO PARA GUARDAR UN NUEVO COMENTARIO O RESPUESTA EN EL BACKEND O EN SU DEFECTO PARA BACK SYNC:
    */
   public updateTransmission(pubId: string, transDone: boolean) {
     return this.stopTransmission(pubId, transDone).then((response: any) => {
@@ -599,7 +599,7 @@ export class QuejaService implements OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ENVIAR UN FORM DATA HACIA EL MIDDLEWARE EN UN POST REQUEST:
+   * METODO PARA ENVIAR UN FORM DATA HACIA EL MIDDLEWARE EN UN POST REQUEST:
    * @param queja 
    */
   private stopTransmission(pubId: string, transDone: boolean = true) {
@@ -621,7 +621,7 @@ export class QuejaService implements OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LAS ACTUALIZACIONES DEL CLIENTE SOCKET.IO
+   * METODO PARA ESCUCHAR LAS ACTUALIZACIONES DEL CLIENTE SOCKET.IO
    * QUE TRAE CAMBIOS DESDE EL BACKEND (CREATE/UPDATE/DELETE)
    * Y ACTUALIZAR LA LISTA GLOBAL DE PUBLICACIONES CON LOS NUEVOS CAMBIOS
    */
@@ -645,7 +645,7 @@ export class QuejaService implements OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ACTUALIZAR INFORMACIÓN DE LA LISTA DE PUBLICACIONES
+   * METODO PARA ACTUALIZAR INFORMACIÓN DE LA LISTA DE PUBLICACIONES
    * @param pubJson JSON COMMING FROM THE SOCKET.IO SERVER OR AS A NORMAL HTTP RESPONSE:
    * @param action THIS CAN BE CREATE, UPDATE OR DELETE:
    */
@@ -675,7 +675,7 @@ export class QuejaService implements OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ACTUALIZAR EL REGISTRO EN INDEXED-DB
+   * METODO PARA ACTUALIZAR EL REGISTRO EN INDEXED-DB
    */
   private updateRelNumberIndexDb(pubId: string, newRelCount: number, userId: any) {
     readAllData("publication")
@@ -701,7 +701,7 @@ export class QuejaService implements OnDestroy {
   }
 
   /**
-   * MÉTODO PAR ACTUALIZAR EL NÚMERO DE RELEVANCIAS DE UNA PUBLICACIÓN:
+   * METODO PAR ACTUALIZAR EL NÚMERO DE RELEVANCIAS DE UNA PUBLICACIÓN:
    * @param actionData 
    */
   public updateRelevanceNumber(actionData: any, pubList: Publication[]) {
@@ -720,7 +720,7 @@ export class QuejaService implements OnDestroy {
   }
 
   /**
-   * MÉTODO PARA EXTRAER LOS ATRIBUTOS DE LA LISTA DE PUBLICACIONES OFFLINE:
+   * METODO PARA EXTRAER LOS ATRIBUTOS DE LA LISTA DE PUBLICACIONES OFFLINE:
    */
   public extractOfflinePub(offCachePub) {
     let pub: Publication;
@@ -739,7 +739,7 @@ export class QuejaService implements OnDestroy {
   }
 
   /**
-   * MÉTODO PARA OBTENER LAS PUBLICACIONES EN MODO OFFLINE DESDE LA CACHÉ
+   * METODO PARA OBTENER LAS PUBLICACIONES EN MODO OFFLINE DESDE LA CACHÉ
    * @param id 
    */
   public getOfflinePubsCache(pubList: Publication[]) {
@@ -763,7 +763,7 @@ export class QuejaService implements OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ELIMINAR UNA PUBLICACIÓN DE LA LISTA DE PUBS:
+   * METODO PARA ELIMINAR UNA PUBLICACIÓN DE LA LISTA DE PUBS:
    * @param pubId 
    */
   public deleteOfflinePub(pub: Publication, pubList: Publication[]) {
@@ -773,7 +773,7 @@ export class QuejaService implements OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ELIMINAR LA PUBLICACIÓN OFFLINE, CUANDO YA SE HAYA GUARDADO EN EL SERVIDOR Y 
+   * METODO PARA ELIMINAR LA PUBLICACIÓN OFFLINE, CUANDO YA SE HAYA GUARDADO EN EL SERVIDOR Y 
    * VENGA COMO RESPUESTA EN EL SOCKET.IO
    * @param newPub 
    */
@@ -793,7 +793,7 @@ export class QuejaService implements OnDestroy {
   }
 
   /**
-   * MÉTODO PARA OBTENER LAS RELEVANCIAS OFFLINE DESDE LA CACHÉ, PARA AÑADIR ESTILOS A LAS PUBLICACIONES,
+   * METODO PARA OBTENER LAS RELEVANCIAS OFFLINE DESDE LA CACHÉ, PARA AÑADIR ESTILOS A LAS PUBLICACIONES,
    * AL MOMENTO DE RECARGAR LA PÁGIN ESTANDO EN MODO OFFLINE:
    */
   public getOfflinePubRelevances(pubList: Publication[]) {

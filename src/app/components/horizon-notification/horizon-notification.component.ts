@@ -47,14 +47,14 @@ export class HorizonNotificationComponent implements OnInit {
   }
 
   /**
-   * MÉTODO PARA ELIMINAR EL COMPONENTE AÑADIDO DINÁMICAMENTE:
+   * METODO PARA ELIMINAR EL COMPONENTE AÑADIDO DINÁMICAMENTE:
    */
   removeObject() {
     this._ref.destroy();
   }
 
   /**
-   * MÉTODO PARA MOSTRAR U OCULTAR CON ANIMACIÓN EL COMPONENTE:
+   * METODO PARA MOSTRAR U OCULTAR CON ANIMACIÓN EL COMPONENTE:
    * @param show
    */
   showHideNotif(show: boolean = true) {
@@ -73,7 +73,7 @@ export class HorizonNotificationComponent implements OnInit {
   }
 
   /**
-   * MÉTODO PARA ABRIR EL RECURSO QUE LLEGA JUNTO CON LA NOTIFICACIÓN:
+   * METODO PARA ABRIR EL RECURSO QUE LLEGA JUNTO CON LA NOTIFICACIÓN:
    */
   public openUrl(event: any) {
     event.preventDefault();

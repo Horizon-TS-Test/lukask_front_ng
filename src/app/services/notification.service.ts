@@ -30,14 +30,14 @@ export class NotificationService {
   }
 
   /**
-   * MÉTODO PARA ENVIAR A LOS SUBSCRIPTORES DE A LISTA DE NOTIFICACIONES
+   * METODO PARA ENVIAR A LOS SUBSCRIPTORES DE A LISTA DE NOTIFICACIONES
    */
   public loadNotifications(notifList: { notifs: HorizonNotification[]; pagePattern: string }) {
     this.notifListSubject.next(notifList);
   }
 
   /**
-   * MÉTODO PARA MOSTRAR NOTIFICACIÓN EN EL DOM:
+   * METODO PARA MOSTRAR NOTIFICACIÓN EN EL DOM:
    */
   public showNotification(notif: HorizonNotification, noShow: boolean = false) {
     if (noShow == false) {
@@ -47,7 +47,7 @@ export class NotificationService {
   }
 
   /**
-   * MÉTODO PARA EXTRAER LOS DATOS DE NOTIFICIÓN DE UN OBJETO JSON:
+   * METODO PARA EXTRAER LOS DATOS DE NOTIFICIÓN DE UN OBJETO JSON:
    * @param notifJson
    */
   public extractNotifJson(notifJson) {
@@ -58,7 +58,7 @@ export class NotificationService {
   }
 
   /**
-   * MÉTODO PARA OBTENER NOTIFICACIONES DE UN USUARIO LOGGEADO:
+   * METODO PARA OBTENER NOTIFICACIONES DE UN USUARIO LOGGEADO:
    * @param pagePattern PATTERN DE PAGINACIÓN
    * @param moreComments PETICIÓN BAJO DEMANDA
    */

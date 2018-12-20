@@ -88,7 +88,7 @@ export class QuejaComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LA ACTUALIZACIÓN DEL PERFIL DE USUARIO:
+   * METODO PARA ESCUCHAR LA ACTUALIZACIÓN DEL PERFIL DE USUARIO:
    */
   private listenToProfileUp() {
     this.subscription = this._userService.updateUser$.subscribe((update: boolean) => {
@@ -99,7 +99,7 @@ export class QuejaComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO QUE ESCUCHA LA ACTUALIZACIÓN DE LOS DATOS DE PERFIL DEL USUARIO LOGEADO 
+   * METODO QUE ESCUCHA LA ACTUALIZACIÓN DE LOS DATOS DE PERFIL DEL USUARIO LOGEADO 
    * PARA ACTUALIZAR LA INFORMACIÓN DE LAS PUBLICACIONES QUE PERTENECEN AL MISMO PERFIL:
    */
   private setOwnUserProfile() {
@@ -110,7 +110,7 @@ export class QuejaComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA SOLICITAR LA APERTURA DE UN HORIZON MODAL PARA VER EL DETALLE DE UNA QUEJA:
+   * METODO PARA SOLICITAR LA APERTURA DE UN HORIZON MODAL PARA VER EL DETALLE DE UNA QUEJA:
    * @param event EVENTO DE CLICK DEL ELEMENTO <a href="#">
    */
   public viewQuejaDetail(event: any) {
@@ -121,7 +121,7 @@ export class QuejaComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA CAPTAR LA ACCIÓN DE ALGÚN BOTÓN DEL LA LSITA DE BOTONES, COMPONENTE HIJO
+   * METODO PARA CAPTAR LA ACCIÓN DE ALGÚN BOTÓN DEL LA LSITA DE BOTONES, COMPONENTE HIJO
    * @param $event VALOR DEL TIPO DE ACCIÓN QUE VIENE EN UN EVENT-EMITTER
    */
   public optionButtonAction(event: number) {
@@ -131,7 +131,7 @@ export class QuejaComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA CANCELAR EL ENVÍO DE LA PUBLICACIÓN OFFLINE:
+   * METODO PARA CANCELAR EL ENVÍO DE LA PUBLICACIÓN OFFLINE:
    * @param event
    */
   public cancelPub(event: any) {
@@ -148,18 +148,18 @@ export class QuejaComponent implements OnInit, OnDestroy {
   }
 
   /**************************************************************************************************************************************/
-  /*********************************************MÉTODOS PARA ADMINISTRAR LA LISTA DE COMENTARIOS******************************************/
+  /*********************************************METODOS PARA ADMINISTRAR LA LISTA DE COMENTARIOS******************************************/
   /**************************************************************************************************************************************/
 
   /**
-   * MÉTODO PARA INICIALIZAR LOS DATOS DEL ARRAY SECUNDARIO DE COMENTARIOS:
+   * METODO PARA INICIALIZAR LOS DATOS DEL ARRAY SECUNDARIO DE COMENTARIOS:
    */
   private defineMainComments() {
     this.mainComments = [];
   }
 
   /**
-   * MÉTODO PARA CARGAR LOS COMENTARIOS DESDE EL BACKEND:
+   * METODO PARA CARGAR LOS COMENTARIOS DESDE EL BACKEND:
    */
   private getComments() {
     this._actionFeederService.getComments(this.queja.id_publication)
@@ -173,7 +173,7 @@ export class QuejaComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR EL EVENTO PARA SOLICITAR MAS COMENTARIOS:
+   * METODO PARA ESCUCHAR EL EVENTO PARA SOLICITAR MAS COMENTARIOS:
    * @param event 
    */
   public askForMore(event: boolean) {
@@ -186,7 +186,7 @@ export class QuejaComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ACTUALIZAR EL PATTERN QUE VIENE DEL BACKEND PARA NO COMPROMETER LA SECUENCIA 
+   * METODO PARA ACTUALIZAR EL PATTERN QUE VIENE DEL BACKEND PARA NO COMPROMETER LA SECUENCIA 
    * DE REGISTRO A TRAER DEL BACKEND BAJO DEMANDA, CUANDO SE REGISTRE UN NUEVO COMENTARIO:
    */
   private updatePattern() {
@@ -198,7 +198,7 @@ export class QuejaComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LAS EMISIONES DEL OBJETO EVENT-EMITER DEL COMPONENTE HIJO,
+   * METODO PARA ESCUCHAR LAS EMISIONES DEL OBJETO EVENT-EMITER DEL COMPONENTE HIJO,
    * EL NUEVO COMENTARIO QUE DEVUELVE EL COMPONENTE HIJO, PROVENIENTE DEL BACKEND:
    */
   private onCommentResponse() {
@@ -225,7 +225,7 @@ export class QuejaComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ACTUALIZAR EL NUMERO DE RELEVANCIAS DE UN COMENTARIO:
+   * METODO PARA ACTUALIZAR EL NUMERO DE RELEVANCIAS DE UN COMENTARIO:
    */
   public updateRelevanceCounter(actionData) {
     if (actionData.action_parent) {
@@ -243,7 +243,7 @@ export class QuejaComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LAS ACTUALIZACIONES DEL CLIENTE SOCKET.IO
+   * METODO PARA ESCUCHAR LAS ACTUALIZACIONES DEL CLIENTE SOCKET.IO
    * QUE TRAE CAMBIOS DESDE EL BACKEND (CREATE/UPDATE/DELETE)
    * Y ACTUALIZAR LA LISTA GLOBAL DE COMENTARIOS CON LOS NUEVOS CAMBIOS
    */
@@ -265,7 +265,7 @@ export class QuejaComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA CANCELAR UN COMENTARIO OFFLINE
+   * METODO PARA CANCELAR UN COMENTARIO OFFLINE
    * @param comment 
    */
   public onCancelComment(comment: Comment) {
@@ -276,7 +276,7 @@ export class QuejaComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA NOTIFICAR AL PADRE DE ESTE COMPONENTE QUE UN COMENTARIO HA SIDO APOYADO EN MODO OFFLINE, 
+   * METODO PARA NOTIFICAR AL PADRE DE ESTE COMPONENTE QUE UN COMENTARIO HA SIDO APOYADO EN MODO OFFLINE, 
    * PARA CAMBIAR LA APARIENCIA DEL DOM:
    */
   public changeComOffRelevance(comment: Comment) {
@@ -284,7 +284,7 @@ export class QuejaComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR CUANDO UN COMENTARIO OFFLINE HA SIDO ELIMINADO:
+   * METODO PARA ESCUCHAR CUANDO UN COMENTARIO OFFLINE HA SIDO ELIMINADO:
    */
   public listenToDelOffCom() {
     this.delOffComSubscriptor = this._commentFormService.delOffCommentId$.subscribe((delCommentId: string) => {

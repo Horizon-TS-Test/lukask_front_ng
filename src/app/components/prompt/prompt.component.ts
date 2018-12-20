@@ -26,7 +26,7 @@ export class PromptComponent implements OnInit, AfterViewInit {
   }
 
   /**
-   * MÉTODO PARA PROPAGAR LA ACTUALIZACIÓN DEL SERVICE WORKER AL DAR CLICK EN EL BOTÓN OK
+   * METODO PARA PROPAGAR LA ACTUALIZACIÓN DEL SERVICE WORKER AL DAR CLICK EN EL BOTÓN OK
    */
   onUpdateClick(event: any) {
     event.preventDefault();

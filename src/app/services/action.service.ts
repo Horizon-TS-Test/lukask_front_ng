@@ -41,7 +41,7 @@ export class ActionService {
   }
 
   /**
-   * MÉTODO PARA ENVIAR LA ACTUALIZACIÓN DE LA LISTA DE COMENTARIOS:
+   * METODO PARA ENVIAR LA ACTUALIZACIÓN DE LA LISTA DE COMENTARIOS:
    * @param comList
    */
   public loadComments(comList: { comments: Comment[]; pagePattern: string }) {
@@ -49,7 +49,7 @@ export class ActionService {
   }
 
   /**
-   * MÉTODO PARA CAMBIAR EL ESTADO DE UN COMENTARIO CUANDO SE HA DADO APOYO EN MODO OFFLINE:
+   * METODO PARA CAMBIAR EL ESTADO DE UN COMENTARIO CUANDO SE HA DADO APOYO EN MODO OFFLINE:
    */
   public changeComOffRelevance(offRelCom: Comment, commList: Comment[], pagePattern: string) {
     let currentCom = commList.find(currCom => currCom.commentId === offRelCom.commentId);
@@ -58,7 +58,7 @@ export class ActionService {
   }
 
   /**
-   * MÉTODO PARA ENVIAR LA ACTUALIZACIÓN DE LA LISTA DE COMENTARIOS:
+   * METODO PARA ENVIAR LA ACTUALIZACIÓN DE LA LISTA DE COMENTARIOS:
    * @param comList
    */
   public loadReplies(replyList: { comments: Comment[]; pagePattern: string }) {
@@ -66,8 +66,8 @@ export class ActionService {
   }
 
   /**
-   * MÉTODO PARA OBTENER LOS COMENTARIOS DE UNA PUBLICACIÓN CON FILTRO DE PÁGINA DE LA WEB.
-   * MÉTODO PARA OBTENER LAS RESPUESTAS DE UN COMENTARIO CON FILTRO DE PÁGINA DE LA WEB.
+   * METODO PARA OBTENER LOS COMENTARIOS DE UNA PUBLICACIÓN CON FILTRO DE PÁGINA DE LA WEB.
+   * METODO PARA OBTENER LAS RESPUESTAS DE UN COMENTARIO CON FILTRO DE PÁGINA DE LA WEB.
    * @param parentId ID DE PUBLICACIÓN / COMENTARIO
    * @param isReplies SI SE TRATA DE OBTENER RESPUESTAS DE UN COMENTARIO
    * @param pagePattern PATTERN DE PAGINACIÓN
@@ -124,8 +124,8 @@ export class ActionService {
   }
 
   /**
-   * MÉTODO PARA OBTENER LOS COMENTARIOS DE UNA PUBLICACIÓN CON FILTRO DE PÁGINA DE LA CACHE.
-   * MÉTODO PARA OBTENER LAS RESPUESTAS DE UN COMENTARIO CON FILTRO DE PÁGINA DE LA CACHE.
+   * METODO PARA OBTENER LOS COMENTARIOS DE UNA PUBLICACIÓN CON FILTRO DE PÁGINA DE LA CACHE.
+   * METODO PARA OBTENER LAS RESPUESTAS DE UN COMENTARIO CON FILTRO DE PÁGINA DE LA CACHE.
    * @param parentId ID DE PUBLICACIÓN / COMENTARIO
    * @param isReplies SI SE TRATA DE OBTENER RESPUESTAS DE UN COMENTARIO
    * @param pagePattern PATTERN DE PAGINACIÓN
@@ -180,7 +180,7 @@ export class ActionService {
   }
 
   /**
-   * MÉTODO PARA OBTENER COMENTARIOS/RESPUESTAS SEA DE LA WEB O DE LA CACHÉ
+   * METODO PARA OBTENER COMENTARIOS/RESPUESTAS SEA DE LA WEB O DE LA CACHÉ
    * @param parentId ID DE PUBLICACIÓN / COMENTARIO
    * @param isReplies SI SE TRATA DE OBTENER RESPUESTAS DE UN COMENTARIO
    * @param pagePattern PATTERN DE PAGINACIÓN
@@ -211,7 +211,7 @@ export class ActionService {
   }
 
   /**
-   * MÉTODO PARA CARGAR LOS COMENTARIOS O RESPUESTAS SEA DE LA WEB O DE LA CACHÉ:
+   * METODO PARA CARGAR LOS COMENTARIOS O RESPUESTAS SEA DE LA WEB O DE LA CACHÉ:
    * @param parentId ID DE PUBLICACIÓN / COMENTARIO
    * @param isReplies SI SE TRATA DE OBTENER RESPUESTAS DE UN COMENTARIO
    * @param pagePattern PATTERN DE PAGINACIÓN
@@ -241,7 +241,7 @@ export class ActionService {
   }
 
   /**
-   * MÉTODO PARA GUARDAR UN COMENTARIO O UNA RESPUESTA A UN COMENTARIO:
+   * METODO PARA GUARDAR UN COMENTARIO O UNA RESPUESTA A UN COMENTARIO:
    * @param comment EL COMENTARIO O RESPUESTA A ENVIAR
    */
   public sendComment(comment: Comment) {
@@ -276,7 +276,7 @@ export class ActionService {
   }
 
   /**
-   * MÉTODO PARA GUARDAR UN NUEVO COMENTARIO O RESPUESTA EN EL BACKEND O EN SU DEFECTO PARA BACK SYNC:
+   * METODO PARA GUARDAR UN NUEVO COMENTARIO O RESPUESTA EN EL BACKEND O EN SU DEFECTO PARA BACK SYNC:
    */
   public saveComment(comment: Comment) {
     return this.sendComment(comment).then((response) => {
@@ -295,7 +295,7 @@ export class ActionService {
   }
 
   /**
-   * MÉTODO PARA CREAR UN OBJETO JSON A PARTIR DE UN MODELO
+   * METODO PARA CREAR UN OBJETO JSON A PARTIR DE UN MODELO
    * @param comment EL OBJETO MODELO
    */
   mergeJSONData(comment: Comment) {
@@ -316,7 +316,7 @@ export class ActionService {
   }
 
   /**
-   * MÉTODO PARA GUARDAR UN NUEVO REGISTRO DE APOYO A UNA PUBLICACIÓN:
+   * METODO PARA GUARDAR UN NUEVO REGISTRO DE APOYO A UNA PUBLICACIÓN:
    */
   public sendRelevance(pubId: string, parentCommentId: string, isRelevance: boolean) {
     const requestHeaders = new Headers({
@@ -344,7 +344,7 @@ export class ActionService {
   }
 
   /**
-   * MÉTODO PARA GUARDAR UN NUEVO COMENTARIO O RESPUESTA EN EL BACKEND O EN SU DEFECTO PARA BACK SYNC:
+   * METODO PARA GUARDAR UN NUEVO COMENTARIO O RESPUESTA EN EL BACKEND O EN SU DEFECTO PARA BACK SYNC:
    */
   public saveRelevance(pubId: string, parentCommentId: string, isRelevance: boolean) {
     return this.sendRelevance(pubId, parentCommentId, isRelevance).then((response) => {
@@ -363,7 +363,7 @@ export class ActionService {
   }
 
   /**
-   * MÉTODO PARA OBTENER COMENTARIOS/RESPUESTAS SEA DE LA WEB O DE LA CACHÉ
+   * METODO PARA OBTENER COMENTARIOS/RESPUESTAS SEA DE LA WEB O DE LA CACHÉ
    * @param parentId ID DE PUBLICACIÓN / COMENTARIO
    * @param isReplies SI SE TRATA DE OBTENER RESPUESTAS DE UN COMENTARIO
    * @param pagePattern PATTERN DE PAGINACIÓN
@@ -397,7 +397,7 @@ export class ActionService {
   }
 
   /**
-   * MÉTODO PARA EXTRAER LOS DATOS DE UN NUEVO COMENTARIO Y CONVERTIRLO A UN OBJETO DE TIPO MODELO:
+   * METODO PARA EXTRAER LOS DATOS DE UN NUEVO COMENTARIO Y CONVERTIRLO A UN OBJETO DE TIPO MODELO:
    * @param jsonComment 
    */
   public extractCommentJson(jsonComment: any) {
@@ -413,7 +413,7 @@ export class ActionService {
   }
 
   /**
-   * MÉTODO PARA OBTENER COMENTARIOS Y RESPUESTAS OFFLINE:
+   * METODO PARA OBTENER COMENTARIOS Y RESPUESTAS OFFLINE:
    * @param parentId 
    * @param isReplies 
    */
@@ -453,7 +453,7 @@ export class ActionService {
   }
 
   /**
-   * MÉTODO PARA ELIMINAR UNA RELEVANCIA OFFLINE ANTES DE SER ENVIADA AL SERVIDOR:
+   * METODO PARA ELIMINAR UNA RELEVANCIA OFFLINE ANTES DE SER ENVIADA AL SERVIDOR:
    * @param isCommentRel
    */
   public deleteOffRel(parentId: string, isCommentRel: boolean) {

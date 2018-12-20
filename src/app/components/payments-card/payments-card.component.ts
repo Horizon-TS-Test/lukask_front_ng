@@ -52,7 +52,7 @@ export class PaymentsCardComponent implements OnInit {
   }
 
   /**
-   * MÉTODO PARA ACTIVAR EL EECTO DE CARGANDO:
+   * METODO PARA ACTIVAR EL EECTO DE CARGANDO:
    */
   private loadingAnimation() {
     this.loadingClass = "on";
@@ -60,7 +60,7 @@ export class PaymentsCardComponent implements OnInit {
   }
 
   /**
-   * MÉTODO PARA CAPTAR EL EVENTO CLICK DEL BOTON DEL COMPONENTE PARA PAGAR CON TARJETA
+   * METODO PARA CAPTAR EL EVENTO CLICK DEL BOTON DEL COMPONENTE PARA PAGAR CON TARJETA
    * @param event
    */
   public payWithCard(event: any, isValidForm: boolean) {
@@ -86,7 +86,7 @@ export class PaymentsCardComponent implements OnInit {
   }
 
   /**
-   * MÉTODO PARA CERRAR LOS POP OVER ABIERTOS:
+   * METODO PARA CERRAR LOS POP OVER ABIERTOS:
    */
   public requestClosePop(event: any) {
     event.preventDefault();

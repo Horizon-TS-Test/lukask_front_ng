@@ -11,7 +11,7 @@ export class CommentModalService {
   constructor() { }
 
   /**
-   * MÉTODO PARA NOTIFICAR QUE EL MODAL DE COMENTARIOS ESTÁ ABIERTO:
+   * METODO PARA NOTIFICAR QUE EL MODAL DE COMENTARIOS ESTÁ ABIERTO:
    */
   public commentsModalOpened(isOpen: boolean) {
     this.modalSubject.next(isOpen);

@@ -77,7 +77,7 @@ export class QuejaListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA DEFINIR EL STILO USANDO URL'S SEGURAS PARA LAS IMÁGENES DEL SLIDER:
+   * METODO PARA DEFINIR EL STILO USANDO URL'S SEGURAS PARA LAS IMÁGENES DEL SLIDER:
    */
   private defineImageStyle() {
     this.styles = [];
@@ -98,7 +98,7 @@ export class QuejaListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA QUITAR EL ESTILO DE CARGANDO UEV
+   * METODO PARA QUITAR EL ESTILO DE CARGANDO UEV
    */
   private morePubsHasCome() {
     setTimeout(() => {
@@ -112,7 +112,7 @@ export class QuejaListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA CAPTAR LA ACCIÓN DE ALGÚN BOTÓN DEL LA LISTA DE BOTONES, COMPONENTE HIJO
+   * METODO PARA CAPTAR LA ACCIÓN DE ALGÚN BOTÓN DEL LA LISTA DE BOTONES, COMPONENTE HIJO
    * @param $event VALOR DEL TIPO DE ACCIÓN QUE VIENE EN UN EVENT-EMITTER
    */
   public optionButtonAction(event: number, pubId: string) {
@@ -122,7 +122,7 @@ export class QuejaListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA NAVEGAR E INTERACTUAR CON EL SLIDER:
+   * METODO PARA NAVEGAR E INTERACTUAR CON EL SLIDER:
    * @param event 
    * @param next 
    */
@@ -132,7 +132,7 @@ export class QuejaListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA CANCELAR EL ENVIO DE UNA PUB OFFLINE:
+   * METODO PARA CANCELAR EL ENVIO DE UNA PUB OFFLINE:
    * @param $event 
    */
   public cancelPub(pub: Publication) {

@@ -46,7 +46,7 @@ export class ActivityComponent implements OnInit, AfterViewInit {
   }
 
   /**
-   * MÉTODO PARA OBTENER LOS PARÁMETROS QUE LLEGAN EN EL URL:
+   * METODO PARA OBTENER LOS PARÁMETROS QUE LLEGAN EN EL URL:
    */
   getQueryParams() {
     this._activatedRoute.queryParams.subscribe(params => {
@@ -57,7 +57,7 @@ export class ActivityComponent implements OnInit, AfterViewInit {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LA ACCIÓN DEL EVENTO DE CLICK DE UN BOTÓN DINÁMICO:
+   * METODO PARA ESCUCHAR LA ACCIÓN DEL EVENTO DE CLICK DE UN BOTÓN DINÁMICO:
    */
   getButtonAction(actionEvent: number) {
     switch (actionEvent) {

@@ -11,7 +11,7 @@ export class InstallPromptService {
   constructor() { }
 
   /**
-   * MÉTODO PARA ENVIAR LA SEÑAL DE APERTURA DEL PROMPT DE INSTALACIÓN DEL APP
+   * METODO PARA ENVIAR LA SEÑAL DE APERTURA DEL PROMPT DE INSTALACIÓN DEL APP
    */
   public openInstallPrompt() {
     this.installSubject.next(true);

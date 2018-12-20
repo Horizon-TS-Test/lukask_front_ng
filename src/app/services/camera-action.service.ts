@@ -11,7 +11,7 @@ export class CameraActionService {
   constructor() { }
 
   /**
-   * MÉTODO PARA NOTIFICAR EL CAMBIO DE ACCIÓN A REALIZAR CON LA CÁMERA:
+   * METODO PARA NOTIFICAR EL CAMBIO DE ACCIÓN A REALIZAR CON LA CÁMERA:
    */
   public sendCameraAction(action: number) {
     this.actionSubject.next(action);

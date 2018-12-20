@@ -27,7 +27,7 @@ export class StreamingComponent implements OnInit {
   }
 
   /**
-   * MÉTODO PARA OBTENER LOS PARÁMETROS QUE LLEGAN EN EL URL:
+   * METODO PARA OBTENER LOS PARÁMETROS QUE LLEGAN EN EL URL:
    */
   private getQueryParams() {
     this._activatedRoute.queryParams.subscribe(params => {

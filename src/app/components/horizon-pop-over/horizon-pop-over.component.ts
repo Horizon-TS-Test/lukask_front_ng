@@ -46,7 +46,7 @@ export class HorizonPopOverComponent implements OnInit {
   }
 
   /**
-   * MÉTODO PARA DAR EL EFECTO DE ENCOGIMIENTO DEL POP OVER PARA LUEGO CERRARLO:
+   * METODO PARA DAR EL EFECTO DE ENCOGIMIENTO DEL POP OVER PARA LUEGO CERRARLO:
    */
   private closePopOver() {
     this.backgroundClass = ""
@@ -58,14 +58,14 @@ export class HorizonPopOverComponent implements OnInit {
   }
 
   /**
-   * MÉTODO PARA ELIMINAR LA REFERENCIA DE ESTE COMPONENTE DINÁMICO DENTRO DE TODA LA APP
+   * METODO PARA ELIMINAR LA REFERENCIA DE ESTE COMPONENTE DINÁMICO DENTRO DE TODA LA APP
    */
   private removeObject() {
     this._ref.destroy();
   }
 
   /**
-   * MÉTODO PARA CERRAR EL POP OVER AL DAR CLICK FUERA DEL MISMO:
+   * METODO PARA CERRAR EL POP OVER AL DAR CLICK FUERA DEL MISMO:
    * @param event 
    */
   public onClickClose(event: any) {
@@ -76,7 +76,7 @@ export class HorizonPopOverComponent implements OnInit {
   }
 
   /**
-   * MÉTODO PARA CERRAR EL POP OVER DESDE EL COMPONENTE HIJO USANDO EVENT EMITTER
+   * METODO PARA CERRAR EL POP OVER DESDE EL COMPONENTE HIJO USANDO EVENT EMITTER
    * @param $event VALOR DEL EVENT EMITTER
    */
   closePopFromChild(event: boolean) {

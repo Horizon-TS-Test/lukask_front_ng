@@ -58,7 +58,7 @@ export class CommentListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR A LOS CAMBIOS DE LA LISTA DE COMENTARIOS ENTRANTE:
+   * METODO PARA ESCUCHAR A LOS CAMBIOS DE LA LISTA DE COMENTARIOS ENTRANTE:
    */
   private listenToComments() {
     this.subscription = this._actionService.comms$.subscribe((commentData) => {
@@ -93,7 +93,7 @@ export class CommentListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA MANIPULAR EL EVENTO DE SCROLL DENTRO DEL COMPONENTE PRINCIPAL DE COMENTARIO:
+   * METODO PARA MANIPULAR EL EVENTO DE SCROLL DENTRO DEL COMPONENTE PRINCIPAL DE COMENTARIO:
    */
   private onScrollCommentContainer() {
     this.container = $('#comentsBody');
@@ -105,14 +105,14 @@ export class CommentListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA INICIALIZAR EL OBJETO DE TIPO COMMENT PARA REGISTRAR UN NUEVO COMENTARIO:
+   * METODO PARA INICIALIZAR EL OBJETO DE TIPO COMMENT PARA REGISTRAR UN NUEVO COMENTARIO:
    */
   private resetComment() {
     this.newComment = new Comment("", "", this.pubId, this._userService.getUserProfile());
   }
 
   /**
-   * MÉTODO PARA CARGAR MAS COMENTARIOS
+   * METODO PARA CARGAR MAS COMENTARIOS
    * @param event EVENTO DE CLICK DEL ELEMENTO <a href="#">
    */
   public requestForMore(event: any) {
@@ -155,7 +155,7 @@ export class CommentListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA CANCELAR EL ENVÍO DE UN COMENTARIO OFFLINE:
+   * METODO PARA CANCELAR EL ENVÍO DE UN COMENTARIO OFFLINE:
    * @param comment COMENTARIO A SER CANCELADO
    */
   public cancelComment(comment: Comment) {
@@ -163,7 +163,7 @@ export class CommentListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA NOTIFICAR AL PADRE DE ESTE COMPONENTE QUE UN COMENTARIO HA SIDO APOYADO EN MODO OFFLINE, 
+   * METODO PARA NOTIFICAR AL PADRE DE ESTE COMPONENTE QUE UN COMENTARIO HA SIDO APOYADO EN MODO OFFLINE, 
    * PARA CAMBIAR LA APARIENCIA DEL DOM:
    */
   public changeComOffRelevance(comment: Comment) {

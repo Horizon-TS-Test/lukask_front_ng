@@ -9,7 +9,7 @@ export class BrowserNotifierService {
   constructor() { }
 
   /**
-   * MÉTODO PARA MOSTRAR UNA NOTIFICACIÓN EN EL NAVEGADOR O EN EL MÓBIL:
+   * METODO PARA MOSTRAR UNA NOTIFICACIÓN EN EL NAVEGADOR O EN EL MÓBIL:
    */
   public displayConfirmNotification() {
     if ('serviceWorker' in navigator) {

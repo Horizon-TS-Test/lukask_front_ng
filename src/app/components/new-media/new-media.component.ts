@@ -76,7 +76,7 @@ export class NewMediaComponent implements OnInit, OnChanges, OnDestroy {
   ngAfterViewInit() { }
 
   /**
-   * MÉTODO PARA DEFINIR LAS PROPIEDADES DEL CAROUSEL DE SECCIONES:
+   * METODO PARA DEFINIR LAS PROPIEDADES DEL CAROUSEL DE SECCIONES:
    */
   private initCarousel() {
     this.carouselOptions = {
@@ -86,7 +86,7 @@ export class NewMediaComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ENVIAR LAS DISTINTAS ACCIONES A EJECUTAR EN EL 
+   * METODO PARA ENVIAR LAS DISTINTAS ACCIONES A EJECUTAR EN EL 
    * COMPONENTE QUE ABRE LA CÁMARA PARA TOMAR FOTOGRAFÍAS:
    * @param event 
    * @param action EL TIPO DE ACCIÓN A REALIZAR. VER EL ARCHIVO ../../config/camera-actions.ts
@@ -141,7 +141,7 @@ export class NewMediaComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LOS CAMBIOS QUE SE DEN EN EL ATRIBUTO QUE VIENE DESDE EL COMPONENTE PADRE:
+   * METODO PARA ESCUCHAR LOS CAMBIOS QUE SE DEN EN EL ATRIBUTO QUE VIENE DESDE EL COMPONENTE PADRE:
    * @param changes 
    */
   ngOnChanges(changes: SimpleChanges) {
@@ -157,7 +157,7 @@ export class NewMediaComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA CAPTAR EL EVENTO DEL COMPONENTE HIJO
+   * METODO PARA CAPTAR EL EVENTO DEL COMPONENTE HIJO
    * @param event 
    */
   public getChildEvent(event: boolean) {
@@ -176,7 +176,7 @@ export class NewMediaComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LA ACCIÓN DEL EVENTO DE CLICK DE UN BOTÓN DINÁMICO:
+   * METODO PARA ESCUCHAR LA ACCIÓN DEL EVENTO DE CLICK DE UN BOTÓN DINÁMICO:
    */
   public getButtonAction(actionEvent: number) {
     switch (actionEvent) {

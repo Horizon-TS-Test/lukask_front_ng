@@ -41,7 +41,7 @@ export class SupportListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LA LLEGADA DE LA LISTA ACTUALIZADA DE USUARIOS QUE HAN APOYADO LA PUBLICACIÓN O COMENTARIO:
+   * METODO PARA ESCUCHAR LA LLEGADA DE LA LISTA ACTUALIZADA DE USUARIOS QUE HAN APOYADO LA PUBLICACIÓN O COMENTARIO:
    */
   private listenToSuppList() {
     this.subscriptor = this._supportersService.supportList$.subscribe((suppData) => {
@@ -71,7 +71,7 @@ export class SupportListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA CARGAR MAS USUARIOS QUEN HAN APOYADO LA PUBLICACIÓN
+   * METODO PARA CARGAR MAS USUARIOS QUEN HAN APOYADO LA PUBLICACIÓN
    * @param event EVENTO DE CLICK DEL ELEMENTO <a href="#">
    */
   public requestForMore(event: any) {

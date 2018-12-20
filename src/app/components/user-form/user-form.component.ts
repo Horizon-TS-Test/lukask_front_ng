@@ -56,7 +56,7 @@ export class UserFormComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   /**
-   * MÉTODO QUE TRAE LAS PROVINCIAS EXISTENTES EN EL SISTEMA
+   * METODO QUE TRAE LAS PROVINCIAS EXISTENTES EN EL SISTEMA
    */
   getProvince() {
     this.provinceSelect = [];
@@ -94,7 +94,7 @@ export class UserFormComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   /**
-   * MÉTODO QUE TRAE LAS PROVINCIAS EXISTENTES EN EL SISTEMA
+   * METODO QUE TRAE LAS PROVINCIAS EXISTENTES EN EL SISTEMA
    */
   getCanton(id_provincia: any) {
     this.cantonSelect = [];
@@ -130,7 +130,7 @@ export class UserFormComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   /**
-   * MÉTODO QUE TRAE LAS PROVINCIAS EXISTENTES EN EL SISTEMA
+   * METODO QUE TRAE LAS PROVINCIAS EXISTENTES EN EL SISTEMA
    */
   getParroquia(id_canton: any) {
     this.parroquiaSelect = [];
@@ -158,7 +158,7 @@ export class UserFormComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   /**
-   * MÉTODO PARA AGREGAR EL FORMATO MAS HORA EN LA FECHA DE NACIMIENTO:
+   * METODO PARA AGREGAR EL FORMATO MAS HORA EN LA FECHA DE NACIMIENTO:
   */
   formmatSendDate() {
     var date = new Date();
@@ -166,7 +166,7 @@ export class UserFormComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   /**
-   * MÉTODO PARA CALCULAR LA EDAD DE UN USUARIO
+   * METODO PARA CALCULAR LA EDAD DE UN USUARIO
    */
   calculateAge() {
     let age = DateManager.calcAge(this.userObj.person.transBirthDate);
@@ -176,7 +176,7 @@ export class UserFormComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   /**
-  * MÉTODO PARA REGISTRAR O EDITAR UN PERFIL DE USUARIO:
+  * METODO PARA REGISTRAR O EDITAR UN PERFIL DE USUARIO:
   */
   createUpdateProfile(update: boolean = false) {
     if (this.mediaFile) {
@@ -235,7 +235,7 @@ export class UserFormComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LOS CAMBIOS QUE SE DEN EN EL ATRIBUTO QUE VIENE DESDE EL COMPONENTE PADRE:
+   * METODO PARA ESCUCHAR LOS CAMBIOS QUE SE DEN EN EL ATRIBUTO QUE VIENE DESDE EL COMPONENTE PADRE:
    * @param changes 
    */
   ngOnChanges(changes: SimpleChanges) {

@@ -63,7 +63,7 @@ export class AppComponent implements OnInit, OnDestroy {
     }, false);
   }
   /**
-   * MÉTODO PARA EVITAR QUE EL NAVEGADOR DESPLIEGUE POR SI MISMO EL BANNER DE INSTALACIÓN DEL APP
+   * METODO PARA EVITAR QUE EL NAVEGADOR DESPLIEGUE POR SI MISMO EL BANNER DE INSTALACIÓN DEL APP
    */
   private preventInstallPrompt() {
     window.addEventListener('beforeinstallprompt', (e) => {
@@ -73,7 +73,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ADECUAR LA INTERFAZ DE USUARIO PARA MOSTRAR EL PROCESO DE INSTALACIÓN DEL SERVICE WORKER:
+   * METODO PARA ADECUAR LA INTERFAZ DE USUARIO PARA MOSTRAR EL PROCESO DE INSTALACIÓN DEL SERVICE WORKER:
    */
   private afterSwInstall() {
     if ('serviceWorker' in navigator) {
@@ -95,14 +95,14 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA VERIFICAR SI UN USUARIO ESTÁ LOGEADO Y MOSTRAR EL MENÚ PRINCIPAL:
+   * METODO PARA VERIFICAR SI UN USUARIO ESTÁ LOGEADO Y MOSTRAR EL MENÚ PRINCIPAL:
    */
   private checkLogin() {
     return this._userService.isLoggedIn();
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LOS EVENTOS DEL SERVICE WORKER:
+   * METODO PARA ESCUCHAR LOS EVENTOS DEL SERVICE WORKER:
    */
   private listenWorkerMessage() {
     this.channel = new BroadcastChannel('lsw-events');
@@ -117,7 +117,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR ACERCA DE UNA NUEVA ACTUALIZACIÓN DEL SERVICE WORKER:
+   * METODO PARA ESCUCHAR ACERCA DE UNA NUEVA ACTUALIZACIÓN DEL SERVICE WORKER:
    */
   private listenWorkerUpdateMessage() {
     this.updateChannel = new BroadcastChannel('lets-update');
@@ -131,7 +131,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR EL EVENTO DE CLICK DEL PROMPT DE ACTUALIZACIÓN DEL APP
+   * METODO PARA ESCUCHAR EL EVENTO DE CLICK DEL PROMPT DE ACTUALIZACIÓN DEL APP
    * @param $event 
    */
   public triggerUpdate(event: boolean) {
@@ -142,7 +142,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR UN EVENTO DESDE OTRO COMPONENTE PARA MOSTRAR EL MODAL DE INSTALACIÓN
+   * METODO PARA ESCUCHAR UN EVENTO DESDE OTRO COMPONENTE PARA MOSTRAR EL MODAL DE INSTALACIÓN
    */
   private listenToInstallReq() {
     this.installSubscriber = this._installPromptService.installPrompt$.subscribe(
@@ -155,7 +155,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA DESENCADENAR EL DIÁLOGO PARA INSTALAR EL APP:
+   * METODO PARA DESENCADENAR EL DIÁLOGO PARA INSTALAR EL APP:
    */
   private triggerInstallPromt() {
     if (this.deferredPrompt) {
@@ -175,7 +175,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LAS NOTIFICACIONES ENTRANTES:
+   * METODO PARA ESCUCHAR LAS NOTIFICACIONES ENTRANTES:
    */
   private listenNotifSocket() {
     this.socketSubscription = this._socketService.notifUpdate$.subscribe((notifData: any) => {

@@ -25,7 +25,7 @@ export class LocationService {
   }
 
   /**
-   * MÉTODO PARA OBTENER LAS PROVINCIAS SEA DE LA WEB O DE LA CACHÉ
+   * METODO PARA OBTENER LAS PROVINCIAS SEA DE LA WEB O DE LA CACHÉ
    * */
   public getProvinceList() {
     return this.getProvinceWeb().then((webProvince: Province[]) => {
@@ -48,7 +48,7 @@ export class LocationService {
   }
 
   /**
-   * MÉTODO PARA CARGAR LAS PROVINCIAS DESDE LA WEB
+   * METODO PARA CARGAR LAS PROVINCIAS DESDE LA WEB
    */
   private getProvinceWeb() {
     const qTheaders = new Headers({ 'Content-Type': 'application/json' });
@@ -73,7 +73,7 @@ export class LocationService {
   }
 
   /**
-   * MÉTODO PARA CARGAR LAS PROVINCIAS DESDE LA WEB
+   * METODO PARA CARGAR LAS PROVINCIAS DESDE LA WEB
    */
   private getProvinceCache() {
     if ('indexedDB' in window) {
@@ -94,7 +94,7 @@ export class LocationService {
   }
 
   /**
-   * MÉTODO PARA OBTENER LOS CANTONES DE UNA PROVINCIA SEA DE LA WEB O DE LA CACHÉ
+   * METODO PARA OBTENER LOS CANTONES DE UNA PROVINCIA SEA DE LA WEB O DE LA CACHÉ
    * */
   public getCantonList(id_provincia: string) {
     return this.getCantonWeb(id_provincia).then((webCanton: Canton[]) => {
@@ -117,7 +117,7 @@ export class LocationService {
   }
 
   /**
-   * MÉTODO PARA CARGAR LOS CANTONES DE UNA PROVINCIA ESPECÍFICA DESDE LA WEB
+   * METODO PARA CARGAR LOS CANTONES DE UNA PROVINCIA ESPECÍFICA DESDE LA WEB
    * @param id_provincia 
    */
   private getCantonWeb(id_provincia: string) {
@@ -143,7 +143,7 @@ export class LocationService {
   }
 
   /**
-   * MÉTODO PARA CARGAR LOS CANTONES DE UNA PROVINCIA ESPECÍFICA DESDE LA CACHÉ
+   * METODO PARA CARGAR LOS CANTONES DE UNA PROVINCIA ESPECÍFICA DESDE LA CACHÉ
    * @param id_provincia 
    */
   private getCantonCache(id_provincia: string) {
@@ -166,7 +166,7 @@ export class LocationService {
   }
 
   /**
-   * MÉTODO PARA OBTENER LAS PARROQUIAS SEA DE LA WEB O DE LA CACHÉ
+   * METODO PARA OBTENER LAS PARROQUIAS SEA DE LA WEB O DE LA CACHÉ
    * */
   public getParroquiaList(canton_id: any) {
     return this.getParroquiaWeb(canton_id).then((webParroquia: Parroquia[]) => {
@@ -189,7 +189,7 @@ export class LocationService {
   }
 
   /**
-   * MÉTODO PARA CARGAR LAS PARROQUIAS DE UN CANTÓN ESPECÍFICO DESDE LA WEB
+   * METODO PARA CARGAR LAS PARROQUIAS DE UN CANTÓN ESPECÍFICO DESDE LA WEB
    * @param canton_id 
    */
   private getParroquiaWeb(canton_id: string) {
@@ -215,7 +215,7 @@ export class LocationService {
   }
 
   /**
-   * MÉTODO PARA CARGAR LAS PARROQUIAS DE UN CANTÓN ESPECÍFICO DESDE LA CACHÉ
+   * METODO PARA CARGAR LAS PARROQUIAS DE UN CANTÓN ESPECÍFICO DESDE LA CACHÉ
    * @param canton_id 
    */
   private getParroquiaCache(canton_id: string) {
@@ -238,7 +238,7 @@ export class LocationService {
   }
 
   /**
-   * MÉTODO PARA EXTRAER LOS DATOS DE USUARIO DE UN JSON STRING Y GUARDARLO EN UN OBJETO DE TIPO MODELO USER
+   * METODO PARA EXTRAER LOS DATOS DE USUARIO DE UN JSON STRING Y GUARDARLO EN UN OBJETO DE TIPO MODELO USER
    * @param locationJson ES EL JSON STRING QUE CONTIENE LOS DATOS DEL USUARIO
    */
   public extractLocationJson(locationJson: any, person: Person) {

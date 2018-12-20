@@ -23,7 +23,7 @@ export class ProfileLinkComponent implements OnInit {
   }
 
   /**
-   * MÉTODO PARA VER LA INFORMACIÓN DE UN PERFIL DE USUARIO:
+   * METODO PARA VER LA INFORMACIÓN DE UN PERFIL DE USUARIO:
    * @param event 
    */
   public viewProfile(event: any) {

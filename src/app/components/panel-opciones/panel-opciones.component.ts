@@ -58,7 +58,7 @@ export class PanelOpcionesComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LOS CAMBIOS DE LA OPCIÓN DE MENÚ:
+   * METODO PARA ESCUCHAR LOS CAMBIOS DE LA OPCIÓN DE MENÚ:
    */
   private listenMenuChanges() {
     this.subscriber = this._navigationPanelService.navigateMenu$.subscribe((menuOption: number) => {
@@ -81,7 +81,7 @@ export class PanelOpcionesComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA SOLICITAR QUE SE INCRUSTE DINÁMICAMENTE UN HORIZON MODAL CON CIERTO CONTENIDO EN SU INTERIOR
+   * METODO PARA SOLICITAR QUE SE INCRUSTE DINÁMICAMENTE UN HORIZON MODAL CON CIERTO CONTENIDO EN SU INTERIOR
    * @param event EVENTO CLICK DEL ELEMENTO <a href="#">
    * @param contType TIPO DE CONTENIDO A MOSTRAR DENTRO DEL HORIZON MODAL
    */
@@ -94,7 +94,7 @@ export class PanelOpcionesComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA SOLICITAR QUE SE DE FOCUS A UNA OPCIÓN SELECCIONADA DEL MENÚ DE NAVEGACIÓN:
+   * METODO PARA SOLICITAR QUE SE DE FOCUS A UNA OPCIÓN SELECCIONADA DEL MENÚ DE NAVEGACIÓN:
    * @param idContent ID HTML DE LA OPCIÓN SELECCIONADA
    */
   public focusOption(event: any, idContent: string, menuOption: number, notify: boolean = true) {
@@ -110,7 +110,7 @@ export class PanelOpcionesComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   /**
-  * MÉTODO PARA SALIR DE LA APP
+  * METODO PARA SALIR DE LA APP
   **/
   public logout(event: any) {
     event.preventDefault();
@@ -120,7 +120,7 @@ export class PanelOpcionesComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA DETECTAR LOS CAMBIOS DE UNA PROPIEDAD INYECTADA DESDE EL COMPONENTE PADRE DE ESTE COMPONENTE:
+   * METODO PARA DETECTAR LOS CAMBIOS DE UNA PROPIEDAD INYECTADA DESDE EL COMPONENTE PADRE DE ESTE COMPONENTE:
    * @param changes LOS CAMBIOS GENERADOS
    */
   ngOnChanges(changes: SimpleChanges) {

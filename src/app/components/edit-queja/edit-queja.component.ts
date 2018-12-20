@@ -68,9 +68,7 @@ export class EditQuejaComponent implements OnDestroy, OnInit, OnChanges {
   }
 
   ngOnInit() {
-
     this._hiddeShowAnimation = false;
-    this.initCarousel();
     this.isEnabledCordovaCamera = this._cordovaCameraService.isCameraEnabled();
   }
 
@@ -88,7 +86,7 @@ export class EditQuejaComponent implements OnDestroy, OnInit, OnChanges {
   }
 
   /**
-   * MÉTODO PARA AÑADIR UNA IMAGEN EN LA SECCIÓN DE MEDIOS A PUBLICAR
+   * METODO PARA AÑADIR UNA IMAGEN EN LA SECCIÓN DE MEDIOS A PUBLICAR
    * @param media EL OBJETO DE TIPO MEDIA-FILE
    */
   public addQuejaSnapShot(media: MediaFile) {
@@ -107,7 +105,7 @@ export class EditQuejaComponent implements OnDestroy, OnInit, OnChanges {
   }
 
   /**
-   * MÉTODO PARA ABRIR LA CÁMARA SEA DESDE CÓRDOVA SIENDO UN APP MOVIL O DESDE 
+   * METODO PARA ABRIR LA CÁMARA SEA DESDE CÓRDOVA SIENDO UN APP MOVIL O DESDE 
    * JAVASCRIPT COMO APP WEB / APP WEB PROGRESIVA PARA TOMAR UNA FOTOGRAFÍA
    * @param event 
    */
@@ -172,9 +170,9 @@ export class EditQuejaComponent implements OnDestroy, OnInit, OnChanges {
       Snackbar.show({ text: "Ha llegado al límite de medios permitidos", pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#34b4db', customClass: "p-snackbar-layout" });
     }
   }
-
+  
   /**
-   * MÉTODO PARA ELIMINAR UNA IMAGEN DEL GRUPO DE MEDIA
+   * METODO PARA ELIMINAR UNA IMAGEN DEL GRUPO DE MEDIA
    * @param $event 
    * @param media MEDIO A SER ELIMINADO
    */
@@ -202,7 +200,7 @@ export class EditQuejaComponent implements OnDestroy, OnInit, OnChanges {
   }
 
   /**
-   * MÉTODO PARA ACTUALIZAR DE LA LISTA DE FOTOS, LA QUE DEBE SER ACTUAL AL MOMENTO DE DAR NEXT O PREV:
+   * METODO PARA ACTUALIZAR DE LA LISTA DE FOTOS, LA QUE DEBE SER ACTUAL AL MOMENTO DE DAR NEXT O PREV:
    * @param event 
    * @param next 
    */
@@ -239,7 +237,7 @@ export class EditQuejaComponent implements OnDestroy, OnInit, OnChanges {
   }
 
   /**
-   * MÉTODO PARA REALIZAR UN PROCESO EN LA INTERFAZ DESPUÉS DE RECIBIR LA RESPUESTA DEL POST DE UNA PUBLICACIÓN:
+   * METODO PARA REALIZAR UN PROCESO EN LA INTERFAZ DESPUÉS DE RECIBIR LA RESPUESTA DEL POST DE UNA PUBLICACIÓN:
    * @param event VALOR INDICATIVO DE QUE EL SUBMIT HA SIDO PROCESADO. OBJETO EVENT EMITTER
    */
   public processAfterSubmit(event: OnSubmit) {
@@ -247,7 +245,7 @@ export class EditQuejaComponent implements OnDestroy, OnInit, OnChanges {
   }
 
   /**
-   * MÉTODO PARA DETECTAR LOS CAMBIOS DE UNA PROPIEDAD INYECTADA DESDE EL COMPONENTE PADRE DE ESTE COMPONENTE:
+   * METODO PARA DETECTAR LOS CAMBIOS DE UNA PROPIEDAD INYECTADA DESDE EL COMPONENTE PADRE DE ESTE COMPONENTE:
    * @param changes LOS CAMBIOS GENERADOS
    */
   ngOnChanges(changes: SimpleChanges) {
@@ -274,29 +272,6 @@ export class EditQuejaComponent implements OnDestroy, OnInit, OnChanges {
           break;
       }
     }
-  }
-
-  ngOnDestroy() {
-    this._dynaContentService.loadDynaContent(null);
-    this.subscription.unsubscribe();
-  }
-
-  /**
-   * METODO PARA DETECTAR QUE EL FORMULARIO DE QUEJA/RECLAMO ES VÁLIDO
-   * @param event VALOR QUE VIENE DEL OBJETO EVENT EMITTER:
-   */
-  public onValidForm(event: boolean) {
-    this.validForm.emit(event);
-  }
-
-  /**
-  * MÉTODO PARA DEFINIR LAS PROPIEDADES DEL CAROUSEL DE SECCIONES:
-  */
-  private initCarousel() {
-    this.carouselOptions = {
-      items: 1, dots: false, loop: false, margin: 5,
-      nav: false, stagePadding: 0, autoWidth: false
-    };
   }
 
   /**
@@ -333,5 +308,18 @@ export class EditQuejaComponent implements OnDestroy, OnInit, OnChanges {
       this.showClass = '';
       this.rotateClass = '';
     }
+  }
+
+  /**
+   * METODO PARA DETECTAR QUE EL FORMULARIO DE QUEJA/RECLAMO ES VÁLIDO
+   * @param event VALOR QUE VIENE DEL OBJETO EVENT EMITTER:
+   */
+  public onValidForm(event: boolean) {
+    this.validForm.emit(event);
+  }
+  
+  ngOnDestroy() {
+    this._dynaContentService.loadDynaContent(null);
+    this.subscription.unsubscribe();
   }
 }

@@ -3,7 +3,7 @@ import { HorizonButton } from '../../interfaces/horizon-button.interface';
 import { ACTION_TYPES } from '../../config/action-types';
 import { EersaClient } from 'src/app/models/eersa-client';
 import { EersaLocation } from 'src/app/models/eersa-location';
-import { BTN_APPAREANCE } from 'src/app/config/button-appearance';
+import { BTN_APPEARANCE } from 'src/app/config/button-appearance';
 import * as Snackbar from 'node-snackbar';
 
 declare var $: any;
@@ -44,7 +44,7 @@ export class ClaimComponent implements OnInit {
     this.transmitStyle = "secondary";
     this.nextBtnColor = 'animate-in';
     this.nextBtnIcon = 'chevron-right';
-    this.btnAppearance = BTN_APPAREANCE.light;
+    this.btnAppearance = BTN_APPEARANCE.light;
   }
 
   ngOnInit() {
@@ -52,7 +52,7 @@ export class ClaimComponent implements OnInit {
   }
 
   /**
-   * MÉTODO PARA INICIALIZAR EL OBJETO DE LOS HORIZON-MATERIAL-BUTTONS:
+   * METODO PARA INICIALIZAR EL OBJETO DE LOS HORIZON-MATERIAL-BUTTONS:
    */
   private initButtons() {
     this.matButtons = [
@@ -76,28 +76,28 @@ export class ClaimComponent implements OnInit {
   }
 
   /**
-   * MÉTODO PARA OBTENER LA CAUSA DEL RECLAMO, MEDIANTE EVENT EMITTER:
+   * METODO PARA OBTENER LA CAUSA DEL RECLAMO, MEDIANTE EVENT EMITTER:
    */
   public getSelectCause(event: string) {
     this.selectedCause = event;
     if (this.aceptedTerms) {
       this.aceptedTerms = false;
-      this.btnAppearance = BTN_APPAREANCE.light;
+      this.btnAppearance = BTN_APPEARANCE.light;
       this.initButtons();
     }
   }
 
   /**
-   * MÉTODO PARA OBTENER SI EL USUARIO ACEPTA O NO LOS TÉRMINOS:
+   * METODO PARA OBTENER SI EL USUARIO ACEPTA O NO LOS TÉRMINOS:
    */
   public getAceptTerms(event: boolean) {
     this.aceptedTerms = event;
-    this.btnAppearance = event ? BTN_APPAREANCE.normal : BTN_APPAREANCE.light;
+    this.btnAppearance = event ? BTN_APPEARANCE.normal : BTN_APPEARANCE.light;
     this.initButtons();
   }
 
   /**
-   * MÉTODO PARA DESLIZAR EN PRIMER PLANO LA SIGUIENTES INTERFACES DEL WIZARD:
+   * METODO PARA DESLIZAR EN PRIMER PLANO LA SIGUIENTES INTERFACES DEL WIZARD:
    */
   private nextPrevStep(next: boolean) {
     let nextPrevElement, lastElement;
@@ -106,7 +106,7 @@ export class ClaimComponent implements OnInit {
       nextPrevElement = $("#newClaimContainer .personal-carousel.next").first();
       nextPrevElement.removeClass("next").prevAll().first().addClass("prev");
 
-      this.btnAppearance = BTN_APPAREANCE.light;
+      this.btnAppearance = BTN_APPEARANCE.light;
       this.prevBtnColor = event ? this.prevBtnColor + ' animated-btn-static animate-in' : '';
 
       if (nextPrevElement.attr("id") == "customPub") {
@@ -122,7 +122,7 @@ export class ClaimComponent implements OnInit {
         nextPrevElement.removeClass("prev");
       }, 100);
 
-      this.btnAppearance = BTN_APPAREANCE.normal;
+      this.btnAppearance = BTN_APPEARANCE.normal;
 
       if (nextPrevElement.attr("id") == "firstClaimStep") {
         this.prevBtnColor = '';
@@ -153,7 +153,7 @@ export class ClaimComponent implements OnInit {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LA ACCIÓN DEL EVENTO DE CLICK DE UN BOTÓN DINÁMICO:
+   * METODO PARA ESCUCHAR LA ACCIÓN DEL EVENTO DE CLICK DE UN BOTÓN DINÁMICO:
    */
   public getButtonAction(actionEvent: number) {
     switch (actionEvent) {
@@ -168,7 +168,7 @@ export class ClaimComponent implements OnInit {
             }
             break;
           case 1:
-            if (this.btnAppearance == BTN_APPAREANCE.normal) {
+            if (this.btnAppearance == BTN_APPEARANCE.normal) {
               this.nextPrevStep(true);
             }
             else {
@@ -176,7 +176,7 @@ export class ClaimComponent implements OnInit {
             }
             break;
           case 2:
-            if (this.btnAppearance == BTN_APPAREANCE.normal) {
+            if (this.btnAppearance == BTN_APPEARANCE.normal) {
               setTimeout(() => {
                 this.reqSubmit = null;
               });
@@ -203,7 +203,7 @@ export class ClaimComponent implements OnInit {
   }
 
   /**
-   * MÉTODO PARA CERRAR EL MODAL PADRE, SOLICITADO DESDE UN COMPONENTE HIJO
+   * METODO PARA CERRAR EL MODAL PADRE, SOLICITADO DESDE UN COMPONENTE HIJO
    */
   close(event: boolean) {
     if (event) {
@@ -212,7 +212,7 @@ export class ClaimComponent implements OnInit {
   }
 
   /**
-   * MÉTODO PARA DETECTAR EL CAMBIO DE PUB NORMAL A PUB DE STREAMING:
+   * METODO PARA DETECTAR EL CAMBIO DE PUB NORMAL A PUB DE STREAMING:
    */
   public oInitStream(event: boolean) {
     if (event) {
@@ -232,13 +232,13 @@ export class ClaimComponent implements OnInit {
   public getEersaLocClient(event: { eersaClient: EersaClient; eersaLocation: EersaLocation; }) {
     this.eersaLocClient = event;
     if (this.eersaLocClient.eersaLocation.idBarrio != 0 && this.eersaLocClient.eersaLocation.referencia) {
-      if (this.btnAppearance == BTN_APPAREANCE.light) {
-        this.btnAppearance = BTN_APPAREANCE.normal;
+      if (this.btnAppearance == BTN_APPEARANCE.light) {
+        this.btnAppearance = BTN_APPEARANCE.normal;
         this.initButtons();
       }
     }
-    else if (this.btnAppearance == BTN_APPAREANCE.normal) {
-      this.btnAppearance = BTN_APPAREANCE.light;
+    else if (this.btnAppearance == BTN_APPEARANCE.normal) {
+      this.btnAppearance = BTN_APPEARANCE.light;
       this.initButtons();
     }
   }
@@ -249,14 +249,14 @@ export class ClaimComponent implements OnInit {
    */
   public onValidForm(event: boolean) {
     if (event) {
-      if (this.btnAppearance == BTN_APPAREANCE.light) {
-        this.btnAppearance = BTN_APPAREANCE.normal;
+      if (this.btnAppearance == BTN_APPEARANCE.light) {
+        this.btnAppearance = BTN_APPEARANCE.normal;
         this.initButtons();
       }
     }
     else {
-      if (this.btnAppearance == BTN_APPAREANCE.normal) {
-        this.btnAppearance = BTN_APPAREANCE.light;
+      if (this.btnAppearance == BTN_APPEARANCE.normal) {
+        this.btnAppearance = BTN_APPEARANCE.light;
         this.initButtons();
       }
     }

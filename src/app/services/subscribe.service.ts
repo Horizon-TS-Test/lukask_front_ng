@@ -34,7 +34,7 @@ export class SubscribeService {
   }*/
 
   /**
-   * MÉTODO PARA PREGUNTAR SI ES QUE EL USUARIO DESEA RECIBIR NOTIFICACIONES PUSH:
+   * METODO PARA PREGUNTAR SI ES QUE EL USUARIO DESEA RECIBIR NOTIFICACIONES PUSH:
    */
   public askForSubscription(letSubscribe: boolean = true) {
     return Notification.requestPermission((result) => {
@@ -50,7 +50,7 @@ export class SubscribeService {
   }
 
   /**
-   * MÉTODO PARA PREPARAR LAS CREDENCIALES Y LLAVES PARA SOLICITAR UNA SUBSCRIPCIÓN AL SERVIDOR:
+   * METODO PARA PREPARAR LAS CREDENCIALES Y LLAVES PARA SOLICITAR UNA SUBSCRIPCIÓN AL SERVIDOR:
    */
   private configurePushSub(letSubscribe: boolean) {
     if (!('serviceWorker' in navigator)) {
@@ -86,7 +86,7 @@ export class SubscribeService {
   }
 
   /**
-   * MÉTODO PARA SOLICITAR UNA SUBSCRIPCIÓN AL SERVIDOR PUSH:
+   * METODO PARA SOLICITAR UNA SUBSCRIPCIÓN AL SERVIDOR PUSH:
    * @param newSub LOS DATOS DEL ENDPOINT PARA LA SUBSCRIPCIÓN
    */
   private callPushSub(newSub: any, letSubscribe: boolean) {
@@ -127,7 +127,7 @@ export class SubscribeService {
   }
 
   /**
-   * MÉTODO PARA DESUSCRIBIR A UN DISPOSITIVO, DE LAS NOTIFICACIONES PUSH
+   * METODO PARA DESUSCRIBIR A UN DISPOSITIVO, DE LAS NOTIFICACIONES PUSH
    * REF: https://blog.learningtree.com/utilizing-push-notifications-progressive-web-app-pwa/
    */
   private unsubscribe() {
@@ -150,7 +150,7 @@ export class SubscribeService {
   }
 
   /**
-   * MÉTODO PARA VERIFICAR SI EL DISPOSITIVO ESTÁ SUSCRITO A RECIBIR NOTIFICACIONES PUSH:
+   * METODO PARA VERIFICAR SI EL DISPOSITIVO ESTÁ SUSCRITO A RECIBIR NOTIFICACIONES PUSH:
    */
   public isSubscribed() {
     if (localStorage.getItem('user_subs')) {

@@ -30,7 +30,7 @@ export class SingleMapComponent implements OnInit {
   }
 
   /**
-   * MÉTODO PARA DEFINIR LAS PROPIEDADES Y APARIENCI DEL MAPA:
+   * METODO PARA DEFINIR LAS PROPIEDADES Y APARIENCI DEL MAPA:
    */
   defineMap() {
     var mapProp = {
@@ -46,7 +46,7 @@ export class SingleMapComponent implements OnInit {
   }
 
   /**
-   * MÉTODO PARA CREAR EL MARKER EN EL MAPA
+   * METODO PARA CREAR EL MARKER EN EL MAPA
    * @param lat = latitud
    * @param lng = longitud
    * @param icon = icono

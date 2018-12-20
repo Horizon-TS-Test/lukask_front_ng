@@ -75,7 +75,7 @@ export class QuejaDetailComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA DEFINIR LAS PROPIEDADES DEL CAROUSEL DE FOTOS:
+   * METODO PARA DEFINIR LAS PROPIEDADES DEL CAROUSEL DE FOTOS:
    */
   initCarousel() {
     this.carouselOptions = {
@@ -86,7 +86,7 @@ export class QuejaDetailComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA INCRUSTAR EL COMPONENTE DE MAPA ASÍNCRONAMENTE:
+   * METODO PARA INCRUSTAR EL COMPONENTE DE MAPA ASÍNCRONAMENTE:
    */
   renderMap() {
     setTimeout(() => {
@@ -95,7 +95,7 @@ export class QuejaDetailComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA VER UNA IMAGEN EN PRIMER PLANO
+   * METODO PARA VER UNA IMAGEN EN PRIMER PLANO
    * @param event EVENTO DE CLICK
    */
   public viewImg(event: any) {
@@ -105,7 +105,7 @@ export class QuejaDetailComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA VER EL MODAL DE COMENTARIOS DE UNA PUBLICACIÓN ESPECÍFICA:
+   * METODO PARA VER EL MODAL DE COMENTARIOS DE UNA PUBLICACIÓN ESPECÍFICA:
    * @param event EVENTO DE CLICK DEL ELEMENTO <a href="#">
    */
   public viewComments(event: any = null) {
@@ -116,7 +116,7 @@ export class QuejaDetailComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LA ACCIÓN DEL EVENTO DE CLICK DE UN BOTÓN DINÁMICO:
+   * METODO PARA ESCUCHAR LA ACCIÓN DEL EVENTO DE CLICK DE UN BOTÓN DINÁMICO:
    */
   public getButtonAction(actionEvent: number) {
     switch (actionEvent) {
@@ -127,7 +127,7 @@ export class QuejaDetailComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LOS CAMBIOS QUE SE DEN EN EL ATRIBUTO QUE VIENE DESDE EL COMPONENTE PADRE:
+   * METODO PARA ESCUCHAR LOS CAMBIOS QUE SE DEN EN EL ATRIBUTO QUE VIENE DESDE EL COMPONENTE PADRE:
    * @param changes 
    */
   ngOnChanges(changes: SimpleChanges) {

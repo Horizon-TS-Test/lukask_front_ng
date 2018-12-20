@@ -25,7 +25,7 @@ export class NotificationModalComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA OBTENER LAS RESPUESTAS DE UN COMENTARIO SEA DE LA WEB O DE LA CACHÉ:
+   * METODO PARA OBTENER LAS RESPUESTAS DE UN COMENTARIO SEA DE LA WEB O DE LA CACHÉ:
    */
   private getNotifications() {
     this._notificationService.getUserNotifications()
@@ -38,7 +38,7 @@ export class NotificationModalComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LA LLEGADA DE NUEVAS NOTIFICACIONES:
+   * METODO PARA ESCUCHAR LA LLEGADA DE NUEVAS NOTIFICACIONES:
    */
   private listenNewNotif() {
     this.subscription = this._notificationService.newNotif$.subscribe((newNotif: HorizonNotification) => {
@@ -51,7 +51,7 @@ export class NotificationModalComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA CARGAR MAS COMENTARIOS
+   * METODO PARA CARGAR MAS COMENTARIOS
    * @param event VALOR DEL EVENT EMITTER
    */
   public askForMore(event: boolean) {
@@ -72,7 +72,7 @@ export class NotificationModalComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ACTUALIZAR EL PATTERN QUE VIENE DEL BACKEND PARA NO COMPROMETER LA SECUENCIA 
+   * METODO PARA ACTUALIZAR EL PATTERN QUE VIENE DEL BACKEND PARA NO COMPROMETER LA SECUENCIA 
    * DE REGISTRO A TRAER DEL BACKEND BAJO DEMANDA, CUANDO SE REGISTRE UNA NUEVA RESPUESTA:
    */
   private updatePattern() {

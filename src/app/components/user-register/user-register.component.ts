@@ -5,7 +5,7 @@ import { CONTENT_TYPES } from '../../config/content-type';
 import { ACTION_TYPES } from '../../config/action-types';
 import { DomSanitizer } from '../../../../node_modules/@angular/platform-browser';
 import { DynaContentService } from 'src/app/services/dyna-content.service';
-import { BTN_APPAREANCE } from 'src/app/config/button-appearance';
+import { BTN_APPEARANCE } from 'src/app/config/button-appearance';
 
 @Component({
   selector: 'user-register',
@@ -34,7 +34,7 @@ export class UserRegisterComponent implements OnInit, OnChanges {
         action: ACTION_TYPES.userRegister,
         icon: 'check',
         class: 'custom-btn-normal',
-        appearance: BTN_APPAREANCE.normal
+        appearance: BTN_APPEARANCE.normal
       },
       {
         action: ACTION_TYPES.close,
@@ -48,7 +48,7 @@ export class UserRegisterComponent implements OnInit, OnChanges {
   }
 
   /**
-   * MÉTODO PARA DEFINIR LAS PROPIEDADES DEL CAROUSEL DE SECCIONES:
+   * METODO PARA DEFINIR LAS PROPIEDADES DEL CAROUSEL DE SECCIONES:
    */
   private initCarousel() {
     this.carouselOptions = {
@@ -58,7 +58,7 @@ export class UserRegisterComponent implements OnInit, OnChanges {
   }
 
   /**
-   * MÉTODO PARA ACTIVAR EL EECTO DE CARGANDO:
+   * METODO PARA ACTIVAR EL EECTO DE CARGANDO:
    */
   private loadingAnimation() {
     this.loadingClass = 'on';
@@ -66,7 +66,7 @@ export class UserRegisterComponent implements OnInit, OnChanges {
   }
 
   /**
-  * MÉTODO PARA MOSTRAR EL MODAL DE LA CAMARA
+  * METODO PARA MOSTRAR EL MODAL DE LA CAMARA
   * @param event = EVENTO DE LA CAMARA
   */
   public newMedia(event: any) {
@@ -75,7 +75,7 @@ export class UserRegisterComponent implements OnInit, OnChanges {
   }
 
   /**
-   * MÉTODO PARA OBTENER EL EVENTO DEL COMPONENTE HIJO LUEGO DEL SUBMIT
+   * METODO PARA OBTENER EL EVENTO DEL COMPONENTE HIJO LUEGO DEL SUBMIT
    * @param event VALOR BOOLEANO DEL EVENT EMITTER
    */
   public childAfterSubmit(event: any) {
@@ -85,7 +85,7 @@ export class UserRegisterComponent implements OnInit, OnChanges {
   }
 
   /**
-  * MÉTODO PARA EJECUTAR LA FUNCION SEGUN LA ACCION DEL BOTON
+  * METODO PARA EJECUTAR LA FUNCION SEGUN LA ACCION DEL BOTON
   * @param event = EVENTO DE LA CAMARA
   */
   public actionBtn(event: number) {
@@ -105,7 +105,7 @@ export class UserRegisterComponent implements OnInit, OnChanges {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LOS CAMBIOS QUE SE DEN EN EL ATRIBUTO QUE VIENE DESDE EL COMPONENTE PADRE:
+   * METODO PARA ESCUCHAR LOS CAMBIOS QUE SE DEN EN EL ATRIBUTO QUE VIENE DESDE EL COMPONENTE PADRE:
    * @param changes 
    */
   ngOnChanges(changes: SimpleChanges) {

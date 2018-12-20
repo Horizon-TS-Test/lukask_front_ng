@@ -15,14 +15,14 @@ export class CommentFormService {
   constructor() { }
 
   /**
-   * MÉTODO PARA DEFINIR Y PROPAGAR EL CAMBIO DE VALOR DE UN NUEVO COMENTARIO REGISTRADO:
+   * METODO PARA DEFINIR Y PROPAGAR EL CAMBIO DE VALOR DE UN NUEVO COMENTARIO REGISTRADO:
    */
   public newCommentInserted(com: Comment) {
     this.newComSubject.next(com);
   }
 
   /**
-   * MÉTODO PARA ELIMINAR UN COMENTARIO GUARDADO DE FORMA OFFLINE:
+   * METODO PARA ELIMINAR UN COMENTARIO GUARDADO DE FORMA OFFLINE:
    * @param offCom 
    */
   public deleteOffComent(offComId: string) {

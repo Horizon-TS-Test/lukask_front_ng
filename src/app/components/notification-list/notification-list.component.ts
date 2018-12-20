@@ -29,7 +29,7 @@ export class NotificationListComponent implements OnInit {
   ngOnInit() { }
 
   /**
-   * MÉTODO PARA OBTENER LAS RESPUESTAS DE UN COMENTARIO SEA DE LA WEB O DE LA CACHÉ:
+   * METODO PARA OBTENER LAS RESPUESTAS DE UN COMENTARIO SEA DE LA WEB O DE LA CACHÉ:
    */
   private listenNotif() {
     this._notificationService.notifList$.subscribe((notifData) => {
@@ -55,7 +55,7 @@ export class NotificationListComponent implements OnInit {
   }
 
   /**
-   * MÉTODO PARA CARGAR MAS RESPUESTAS
+   * METODO PARA CARGAR MAS RESPUESTAS
    * @param event EVENTO DE CLICK DEL ELEMENTO <a href="#">
    */
   public requestForMore(event: any) {

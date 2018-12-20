@@ -85,7 +85,7 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges, OnDes
   }
 
   /**
-   * MÉTODO PARA CARGAR LOS TIPOS DE QUEJA PARA UN NUEVO REGISTRO:
+   * METODO PARA CARGAR LOS TIPOS DE QUEJA PARA UN NUEVO REGISTRO:
    */
   private getQuejaType() {
     this._quejaService.getQtypeList(!this.eersaLocClient).then((qTypes) => {
@@ -102,7 +102,7 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges, OnDes
   }
 
   /**
-   * MÉTODO PARA INICIALIZAR EL FORMULARIO DE UN NUEVA PUBLICACIÒN:
+   * METODO PARA INICIALIZAR EL FORMULARIO DE UN NUEVA PUBLICACIÒN:
    */
   private setFormGroup(): FormGroup {
     const formGroup = this.formBuilder.group({
@@ -120,7 +120,7 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges, OnDes
   }
 
   /**
-   * MÉTODO QUE OBTIENE LA POSICIÓN DESDE DONDE SE EMITE LA QUEJA
+   * METODO QUE OBTIENE LA POSICIÓN DESDE DONDE SE EMITE LA QUEJA
    */
   private getGps() {
     this._gpsService.getDeviceGeolocation((geoLocation) => {
@@ -131,7 +131,7 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges, OnDes
   }
 
   /**
-   * MÉTODO QUE TOMA LA CIUDAD Y DIRECCIÓN DE DONDE SE EMITE LA QUEJA
+   * METODO QUE TOMA LA CIUDAD Y DIRECCIÓN DE DONDE SE EMITE LA QUEJA
    */
   public getLocation() {
     this._gpsService.getDeviceLocation(this._gps.latitude, this._gps.longitude, (deviceLocation) => {
@@ -142,7 +142,7 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges, OnDes
   }
 
   /**
-   * MÉTODO PARA ENVIAR UNA QUEJA HACIA EL SERVIDOR PARA ALMACENARLO EN LA BASE DE DATOS:
+   * METODO PARA ENVIAR UNA QUEJA HACIA EL SERVIDOR PARA ALMACENARLO EN LA BASE DE DATOS:
    */
   public sendPub() {
     if (!this.formPub.value.fcnDetail || !this.quejaType) {
@@ -222,7 +222,7 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges, OnDes
   }
 
   /**
-   * MÉTODO PARA DETECTAR LOS CAMBIOS DE UNA PROPIEDAD INYECTADA DESDE EL COMPONENTE PADRE DE ESTE COMPONENTE:
+   * METODO PARA DETECTAR LOS CAMBIOS DE UNA PROPIEDAD INYECTADA DESDE EL COMPONENTE PADRE DE ESTE COMPONENTE:
    * @param changes LOS CAMBIOS GENERADOS
    */
   ngOnChanges(changes: SimpleChanges) {
@@ -292,7 +292,7 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges, OnDes
   }
 
   /**
-   * MÉTODO QUE CAPTURA LOS TIPOS DE RECLAMO EERSA DESDE EL SELECT
+   * METODO QUE CAPTURA LOS TIPOS DE RECLAMO EERSA DESDE EL SELECT
    * @param event 
    */
   public getTypeSelect(event: number) {
@@ -328,7 +328,7 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges, OnDes
   }
 
   /**
-   * MÉTODO PARA ENVIAR UNA QUEJA HACIA EL SERVIDOR PARA ALMACENARLO EN LA BASE DE DATOS:
+   * METODO PARA ENVIAR UNA QUEJA HACIA EL SERVIDOR PARA ALMACENARLO EN LA BASE DE DATOS:
    */
   public sendEersaClaim() {
     this.defineNewPub();

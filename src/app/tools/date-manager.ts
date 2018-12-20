@@ -17,7 +17,7 @@ export class DateManager {
     constructor() { }
 
     /**
-     * MÉTODO PARA OBTENER LA FECHA ACTUAL CON EL FORMATO DE LA BASE DE DATOS:
+     * METODO PARA OBTENER LA FECHA ACTUAL CON EL FORMATO DE LA BASE DE DATOS:
      */
     public static getFormattedDate() {
         let date = new Date();
@@ -25,7 +25,7 @@ export class DateManager {
     }
 
     /**
-     * MÉTODO PARA OBTENER LA FECHA ACTUAL EN LENGUAJE COLOQUIAL:
+     * METODO PARA OBTENER LA FECHA ACTUAL EN LENGUAJE COLOQUIAL:
      */
     public static getStringDate() {
         let date = new Date();
@@ -36,7 +36,7 @@ export class DateManager {
     }
 
     /**
-     * MÉTODO PARA FORMATO DE FECHAS EN LENGUAJE COLOQUIAL
+     * METODO PARA FORMATO DE FECHAS EN LENGUAJE COLOQUIAL
      * @param date 
      */
     public static makeDateCool(date: string) {
@@ -82,7 +82,7 @@ export class DateManager {
     }
 
     /**
-     * MÉTODO QUE CALCULA LA EDAD
+     * METODO QUE CALCULA LA EDAD
      */
     public static calcAge(date: string) {
         var hoy = new Date();
@@ -98,7 +98,7 @@ export class DateManager {
     }
 
     /**
-   * MÉTODO QUE TRANSFORMA UN STRING EN FORMATO DE FECHA:
+   * METODO QUE TRANSFORMA UN STRING EN FORMATO DE FECHA:
    */
     public static convertStringToDate(string) {
         var info = string.split('-');

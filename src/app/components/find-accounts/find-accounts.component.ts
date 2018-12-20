@@ -34,7 +34,7 @@ export class FindAccountsComponent implements OnInit, AfterViewInit {
   }
 
   /**
-   * MÉTODO PARA INICIALIZAR EL FORMULARIO:
+   * METODO PARA INICIALIZAR EL FORMULARIO:
    */
   private setFormGroup(): FormGroup {
     const formGroup = this.formBuilder.group({
@@ -44,7 +44,7 @@ export class FindAccountsComponent implements OnInit, AfterViewInit {
   }
 
   /**
-   * MÉTODO PARA ACTIVAR EL EECTO DE CARGANDO:
+   * METODO PARA ACTIVAR EL EECTO DE CARGANDO:
    */
   private loadingAnimation() {
     this.loadingClass = "on";
@@ -61,7 +61,7 @@ export class FindAccountsComponent implements OnInit, AfterViewInit {
   }
 
   /**
-   * MÉTODO PARA PROCESAR EL SUBMIT DEL FORMULARIO PARA BUSCAR LAS CUENTAS DE SERVICIOS BÁSICOS:
+   * METODO PARA PROCESAR EL SUBMIT DEL FORMULARIO PARA BUSCAR LAS CUENTAS DE SERVICIOS BÁSICOS:
    */
   public findAccounts() {
     let userCi = this.formAcc.value.fcnCedula;
@@ -77,7 +77,7 @@ export class FindAccountsComponent implements OnInit, AfterViewInit {
   }
 
   /**
-   * MÉTODO PARA CAPTAR EL VALOR DEL EVENT EMITTER DEL COMPONENTE HIJO PARA CERRAR EL POP OVER:
+   * METODO PARA CAPTAR EL VALOR DEL EVENT EMITTER DEL COMPONENTE HIJO PARA CERRAR EL POP OVER:
    * @param event VALOR DEL EVENT EMITTER
    */
   getChildAction(event: boolean) {

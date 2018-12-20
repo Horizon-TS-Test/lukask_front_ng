@@ -31,7 +31,7 @@ export class ClaimCauseComponent implements OnInit {
   }
 
   /**
-   * MÉTODO PARA DEFINIR EL ARRAY DE TIPO HORIZON-SWITCH-INPUT:
+   * METODO PARA DEFINIR EL ARRAY DE TIPO HORIZON-SWITCH-INPUT:
    */
   private initSwitchInputs() {
     this.switchIns = [];
@@ -47,7 +47,7 @@ export class ClaimCauseComponent implements OnInit {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LA ACCIÓN DEL EVENTO DE CLICK DE UN BOTÓN DINÁMICO:
+   * METODO PARA ESCUCHAR LA ACCIÓN DEL EVENTO DE CLICK DE UN BOTÓN DINÁMICO:
    */
   public aceptTerms(event: any) {
     this.aceptedTerms = !this.aceptedTerms;
@@ -55,7 +55,7 @@ export class ClaimCauseComponent implements OnInit {
   }
 
   /**
-   * MÉTODO PARA CAPTURAR LA CAUSA DEL RECLAMO ESCOGIDO POR EL USUARIO:
+   * METODO PARA CAPTURAR LA CAUSA DEL RECLAMO ESCOGIDO POR EL USUARIO:
    * @param event ID QUE VIENE POR EL OUTPUT EVENT EMITTER DEL COMPONENTE HIJO
    */
   public getSelectedClainCause(event: string) {

@@ -43,14 +43,14 @@ export class ReplyModalComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA INICIALIZAR LOS DATOS DEL ARRAY SECUNDARIO DE COMENTARIOS:
+   * METODO PARA INICIALIZAR LOS DATOS DEL ARRAY SECUNDARIO DE COMENTARIOS:
    */
   private defineMainReplies() {
     this.mainReplies = [];
   }
 
   /**
-   * MÉTODO PARA OBTENER LAS RESPUESTAS OFFLINE, PENDIENTES DE ENVÍO:
+   * METODO PARA OBTENER LAS RESPUESTAS OFFLINE, PENDIENTES DE ENVÍO:
    */
   private getOfflineReplies(replyList: Comment[]) {
     this._actionService.getOffCommentsByPub(this.parentComment.commentId, true).then((dataResponse: any) => {
@@ -62,7 +62,7 @@ export class ReplyModalComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA OBTENER LAS RESPUESTAS DE UN COMENTARIO SEA DE LA WEB O DE LA CACHÉ:
+   * METODO PARA OBTENER LAS RESPUESTAS DE UN COMENTARIO SEA DE LA WEB O DE LA CACHÉ:
    */
   private getReplies() {
     this._actionService.getCommentByPub(this.parentComment.commentId, true)
@@ -76,7 +76,7 @@ export class ReplyModalComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA CARGAR MAS COMENTARIOS
+   * METODO PARA CARGAR MAS COMENTARIOS
    * @param event EVENTO DEL ELEMENTO <a href="#">
    */
   public askForMore(event: boolean) {
@@ -97,7 +97,7 @@ export class ReplyModalComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ACTUALIZAR EL PATTERN QUE VIENE DEL BACKEND PARA NO COMPROMETER LA SECUENCIA 
+   * METODO PARA ACTUALIZAR EL PATTERN QUE VIENE DEL BACKEND PARA NO COMPROMETER LA SECUENCIA 
    * DE REGISTRO A TRAER DEL BACKEND BAJO DEMANDA, CUANDO SE REGISTRE UNA NUEVA RESPUESTA:
    */
   private updatePattern() {
@@ -109,7 +109,7 @@ export class ReplyModalComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LAS EMISIONES DEL OBJETO EVENT-EMITER DEL COMPONENTE HIJO,
+   * METODO PARA ESCUCHAR LAS EMISIONES DEL OBJETO EVENT-EMITER DEL COMPONENTE HIJO,
    * EL NUEVO COMENTARIO QUE DEVUELVE EL COMPONENTE HIJO, PROVENIENTE DEL BACKEND:
    */
   private onCommentResponse() {
@@ -136,7 +136,7 @@ export class ReplyModalComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ACTUALIZAR INFORMACIÓN DE LA LISTA DE PUBLICACIONES
+   * METODO PARA ACTUALIZAR INFORMACIÓN DE LA LISTA DE PUBLICACIONES
    * @param pubJson JSON COMMING FROM THE SOCKET.IO SERVER OR AS A NORMAL HTTP RESPONSE:
    * @param action THIS CAN BE CREATE, UPDATE OR DELETE:
    */
@@ -169,7 +169,7 @@ export class ReplyModalComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ELIMINAR LA RESPUESTA OFFLINE, CUANDO YA SE HAYA GUARDADO EN EL SERVIDOR Y 
+   * METODO PARA ELIMINAR LA RESPUESTA OFFLINE, CUANDO YA SE HAYA GUARDADO EN EL SERVIDOR Y 
    * VENGA COMO RESPUESTA EN EL SOCKET.IO
    * @param newRep 
    */
@@ -189,7 +189,7 @@ export class ReplyModalComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LAS ACTUALIZACIONES DEL CLIENTE SOCKET.IO
+   * METODO PARA ESCUCHAR LAS ACTUALIZACIONES DEL CLIENTE SOCKET.IO
    * QUE TRAE CAMBIOS DESDE EL BACKEND (CREATE/UPDATE/DELETE)
    * Y ACTUALIZAR LA LISTA GLOBAL DE RESPUESTAS CON LOS NUEVOS CAMBIOS
    */
@@ -206,7 +206,7 @@ export class ReplyModalComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ELIMINAR UNA RESPUESTA OFFLINE:
+   * METODO PARA ELIMINAR UNA RESPUESTA OFFLINE:
    */
   onCancelReply(comment: Comment) {
     this.replyList.splice(this.replyList.indexOf(comment), 1);

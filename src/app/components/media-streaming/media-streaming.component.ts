@@ -64,7 +64,7 @@ export class MediaStreamingComponent implements OnInit, OnChanges, OnDestroy {
   ngAfterViewInit() { }
 
   /**
-   * MÉTODO PARA INICIALIZAR LOS BOTONES A MOSTRAR EN LA INTERFAZ
+   * METODO PARA INICIALIZAR LOS BOTONES A MOSTRAR EN LA INTERFAZ
    */
   private initButtons() {
     this.matButtons = [
@@ -83,7 +83,7 @@ export class MediaStreamingComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA DETECTAR LA LLEGADA DE UN NUEVO COMENTARIO 
+   * METODO PARA DETECTAR LA LLEGADA DE UN NUEVO COMENTARIO 
    */
   private listenToNewComment() {
     this.commentSubs = this._socketService.commUpdate$.subscribe((socketComment) => {
@@ -98,7 +98,7 @@ export class MediaStreamingComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA DEFINIR LAS PROPIEDADES DEL CAROUSEL DE SECCIONES:
+   * METODO PARA DEFINIR LAS PROPIEDADES DEL CAROUSEL DE SECCIONES:
    */
   private initCarousel() {
     this.carouselOptions = {
@@ -108,7 +108,7 @@ export class MediaStreamingComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR CUANDO SE ABRE EL MODAL DE COMENTARIOS DENTRO DEL STREAMING:
+   * METODO PARA ESCUCHAR CUANDO SE ABRE EL MODAL DE COMENTARIOS DENTRO DEL STREAMING:
    */
   private subscribeCommentsModal() {
     this.subscriber = this._commentModalService.openModal$
@@ -129,7 +129,7 @@ export class MediaStreamingComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ENVIAR LAS DISTINTAS ACCIONES A EJECUTAR EN EL STREAMING:
+   * METODO PARA ENVIAR LAS DISTINTAS ACCIONES A EJECUTAR EN EL STREAMING:
    * @param event 
    * @param action EL TIPO DE ACCIÓN A REALIZAR. VER EL ARCHIVO ../../config/camera-actions.ts
    */
@@ -147,7 +147,7 @@ export class MediaStreamingComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA DETECTAR LOS CAMBIOS DE UNA PROPIEDAD INYECTADA DESDE EL COMPONENTE PADRE DE ESTE COMPONENTE:
+   * METODO PARA DETECTAR LOS CAMBIOS DE UNA PROPIEDAD INYECTADA DESDE EL COMPONENTE PADRE DE ESTE COMPONENTE:
    * @param changes LOS CAMBIOS GENERADOS
    */
   ngOnChanges(changes: SimpleChanges) {
@@ -177,7 +177,7 @@ export class MediaStreamingComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LA ACCIÓN DEL EVENTO DE CLICK DE UN BOTÓN DINÁMICO:
+   * METODO PARA ESCUCHAR LA ACCIÓN DEL EVENTO DE CLICK DE UN BOTÓN DINÁMICO:
    */
   public getButtonAction(actionEvent: number) {
     switch (actionEvent) {

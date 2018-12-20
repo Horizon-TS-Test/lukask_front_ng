@@ -28,7 +28,7 @@ export class SupportModalComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA OBTENER LA LISTA DE USUARIOS QUE HAN APOYADO UNA PUBLICACIÓN 
+   * METODO PARA OBTENER LA LISTA DE USUARIOS QUE HAN APOYADO UNA PUBLICACIÓN 
    */
   private getSuppList() {
     this._userService.getUserSupporters(this.pubId ? this.pubId : this.commentId, this.pubId ? false : true)
@@ -42,7 +42,7 @@ export class SupportModalComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA OBTENER MAS USUARIOS QUE HAN APOYADO LA PUBLICACIÓN O COMENTARIO:
+   * METODO PARA OBTENER MAS USUARIOS QUE HAN APOYADO LA PUBLICACIÓN O COMENTARIO:
    */
   private getMoreSupporters() {
     this._userService.getUserSupporters(this.pubId ? this.pubId : this.commentId, this.pubId ? false : true, this.pagePattern, true)
@@ -55,7 +55,7 @@ export class SupportModalComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * MÉTODO PARA ESCUCHAR LA PETICIÓN DE OBTENER MAS USUARIOS QUEN HAN APOYADO LA PUBLICACIÓN:
+   * METODO PARA ESCUCHAR LA PETICIÓN DE OBTENER MAS USUARIOS QUEN HAN APOYADO LA PUBLICACIÓN:
    */
   public askForMore(event: boolean) {
     if (event) {

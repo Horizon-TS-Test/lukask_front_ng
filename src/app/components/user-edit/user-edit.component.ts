@@ -10,7 +10,7 @@ import { ACTION_TYPES } from '../../config/action-types';
 import { UserService } from '../../services/user.service';
 import { DynaContentService } from 'src/app/services/dyna-content.service';
 import { ASSETS } from 'src/app/config/assets-url';
-import { BTN_APPAREANCE } from 'src/app/config/button-appearance';
+import { BTN_APPEARANCE } from 'src/app/config/button-appearance';
 
 @Component({
   selector: 'user-edit',
@@ -51,7 +51,7 @@ export class UserEditComponent implements OnInit, OnDestroy, OnChanges, AfterVie
         action: ACTION_TYPES.userEdition,
         icon: 'check',
         class: 'custom-btn-normal',
-        appearance: BTN_APPAREANCE.normal
+        appearance: BTN_APPEARANCE.normal
       },
       {
         action: ACTION_TYPES.close,
@@ -80,7 +80,7 @@ export class UserEditComponent implements OnInit, OnDestroy, OnChanges, AfterVie
   }
 
   /**
-   * MÉTODO PARA CARGAR LOS DATOS DEL PERFIL DE USUARIO A MODIFICAR
+   * METODO PARA CARGAR LOS DATOS DEL PERFIL DE USUARIO A MODIFICAR
    */
   private setUserProfile() {
     this._userService.getRevalidatedUser().then((userData: User) => {
@@ -90,7 +90,7 @@ export class UserEditComponent implements OnInit, OnDestroy, OnChanges, AfterVie
   }
 
   /**
-   * MÉTODO PARA ACTIVAR EL EECTO DE CARGANDO:
+   * METODO PARA ACTIVAR EL EECTO DE CARGANDO:
    */
   private loadingAnimation() {
     this.loadingClass = 'on';
@@ -98,7 +98,7 @@ export class UserEditComponent implements OnInit, OnDestroy, OnChanges, AfterVie
   }
 
   /**
-   * MÉTODO PARA DEFINIR LAS PROPIEDADES DEL CAROUSEL DE SECCIONES:
+   * METODO PARA DEFINIR LAS PROPIEDADES DEL CAROUSEL DE SECCIONES:
    */
   private initCarousel() {
     this.carouselOptions = {
@@ -108,7 +108,7 @@ export class UserEditComponent implements OnInit, OnDestroy, OnChanges, AfterVie
   }
 
   /**
-   * MÉTODO PARA MOSTRAR EL MODAL DE LA CAMARA
+   * METODO PARA MOSTRAR EL MODAL DE LA CAMARA
    * @param event = EVENTO DE LA CAMARA
    */
   public newMedia(event: any) {
@@ -117,7 +117,7 @@ export class UserEditComponent implements OnInit, OnDestroy, OnChanges, AfterVie
   }
 
   /**
-   * MÉTODO PARA COLOCAR LA IMAGEN TOMADA EN EL MODAL Y ALMACENARLA EN UNA VARIABLE TIPO ARCHIVO
+   * METODO PARA COLOCAR LA IMAGEN TOMADA EN EL MODAL Y ALMACENARLA EN UNA VARIABLE TIPO ARCHIVO
    * @param event = ARCHIVO FOTO
   */
   public addUserSnapShot(media: MediaFile) {
@@ -131,7 +131,7 @@ export class UserEditComponent implements OnInit, OnDestroy, OnChanges, AfterVie
   }
 
   /**
-  * MÉTODO PARA EJECUTAR LA FUNCION SEGUN LA ACCION DEL BOTON
+  * METODO PARA EJECUTAR LA FUNCION SEGUN LA ACCION DEL BOTON
   * @param event = EVENTO DE LA CAMARA
   */
   public actionBtn(event: number) {
@@ -151,7 +151,7 @@ export class UserEditComponent implements OnInit, OnDestroy, OnChanges, AfterVie
   }
 
   /**
-   * MÉTODO PARA DETECTAR LOS CAMBIOS DE UNA PROPIEDAD INYECTADA DESDE EL COMPONENTE PADRE DE ESTE COMPONENTE:
+   * METODO PARA DETECTAR LOS CAMBIOS DE UNA PROPIEDAD INYECTADA DESDE EL COMPONENTE PADRE DE ESTE COMPONENTE:
    * @param changes LOS CAMBIOS GENERADOS
    */
   ngOnChanges(changes: SimpleChanges) {
