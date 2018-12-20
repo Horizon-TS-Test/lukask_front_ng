@@ -1,96 +1,121 @@
 //COLORS:
 $primary: rgb(93, 190, 182);
-$primary-a: rgba(93, 190, 182, .5);
-$primary-a-f: rgba(93, 190, 182, .8);
+$primary-opa: rgb(130, 190, 182);
+$primary-a: rgba(93, 190, 182, 0.5);
 
 $primary-dark: rgb(0, 67, 96);
-$primary-dark-a: rgba(0, 67, 96, .9);
+$primary-dark-a: rgba(0, 67, 96, 0.9);
+$primary-dark-opa: rgba(0, 67, 96, 0.7);
+$primary-dark-wm: rgba(0, 67, 96, 0.5);
 
 $primary-light: rgb(193, 230, 202);
+$primary-light-opa: rgba(193, 230, 202, 0.5);
 
 $secondary: rgb(247, 245, 200);
 $secondary-dark: rgb(127, 164, 173);
-$secondary-dark-a: rgba(127, 164, 173, .5);
+$secondary-dark-a: rgba(127, 164, 173, 0.5);
+
+$tertiary: rgb(188, 199, 164);
 
 $primary-text: rgb(132, 139, 118);
-$primary-text-a: rgba(132, 139, 118, .7);
+$primary-text-a: rgba(132, 139, 118, 0.7);
 
-$primary-btn_rec: rgb(255, 255, 255);
-$primary_span_rec: hsl(0, 73%, 50%);
-
-//$secondary-text: rgb(242, 242, 242);
 $secondary-text: #fff;
+
+$default-back-color-light: rgba(238, 238, 238, 0.1);
+$default-back-color-normal: rgba(238, 238, 238, 0.3);
+$default-back-color-mdark: rgba(238, 238, 238, 0.5);
+$default-back-color-dark: rgba(238, 238, 238, 0.9);
+
+$row-color-light: rgba(0, 0, 0, 0.01);
+$row-color-dark: rgba(0, 0, 0, 0.03);
+
+$secondary-back-color: #666666;
+
 /////
 
 //ALERT COLORS:
-$success: rgb(26, 188, 156);
-$success-low: rgba(26, 188, 156, .8);
+$success: rgb(92, 184, 92);
+$success-low: rgba(92, 184, 92, 0.5);
 
-$info: rgb(52, 180, 219);
-$info-low: rgba(52, 180, 219, .5);
+$info: rgb(91, 192, 222);
+$info-low: rgba(91, 192, 222, 0.5);
 
-$warning: rgb(240, 189, 80);
-$warning-low: rgba(240, 189, 80, .5);
+$warning: rgb(240, 173, 78);
+$warning-low: rgba(240, 173, 78, 0.5);
 
-$danger: #E52F62;
-$danger-low: rgba(229, 47, 98, .5);
+$danger: rgb(216, 83, 79);
+$danger-low: rgba(216, 83, 79, 0.5);
+
 ////
 
 //FONTS:
-$primary-font: 'Barlow', sans-serif;
-$secondary-font: 'Barlow Condensed', sans-serif;
+$primary-font: "Barlow", sans-serif;
+$secondary-font: "Barlow Condensed", sans-serif;
 
 //POSITION FOR NAV AND MENU BUTTONS:
 //XS, SM:
 $nav-menu-size: 2.1rem;
 $global-nav-size: 1.4rem;
 
-$nav-menu-bottom: .5rem;
-$nav-menu-bottom-1: .12rem;
+$nav-menu-bottom: 0.5rem;
+$nav-menu-bottom-1: 0.12rem;
 
-$global-nav-bottom: .8rem;
-$global-nav-bottom-1: .5rem;
+$global-nav-bottom: 0.8rem;
+$global-nav-bottom-1: 0.5rem;
 
 $nav-x: 1rem;
 $nav-x-down: 2.6rem;
 
-$global-nav-bot-foot-sm: .9rem;
-$nav-menu-bot-foot-sm: .5rem;
+$global-nav-bot-foot-sm: 0.9rem;
+$nav-menu-bot-foot-sm: 0.5rem;
 
 //MD:
 $nav-menu-size-md: 2.3rem;
 $global-nav-size-md: 1.6rem;
 
-$nav-menu-bottom-md: .75rem;
+$nav-menu-bottom-md: 0.75rem;
 $global-nav-bottom-md: 1.1rem;
 $nav-x-md: 1rem;
 $nav-x-down-md: 3.1rem;
 
-$global-nav-bot-foot-md: .9rem;
-$nav-menu-bot-foot-md: .43rem;
+$global-nav-bot-foot-md: 0.9rem;
+$nav-menu-bot-foot-md: 0.43rem;
 
 //LG:
 $nav-menu-size-lg: 2.7rem;
 $global-nav-size-lg: 2rem;
 
-$nav-menu-bottom-lg: .9rem;
+$nav-menu-bottom-lg: 0.9rem;
 $global-nav-bottom-lg: 1.3rem;
 $nav-x-lg: 1.1rem;
 $nav-x-down-lg: 3.6rem;
 
-$global-nav-bot-foot-lg: .6rem;
-$nav-menu-bot-foot-lg: .25rem;
+$global-nav-bot-foot-lg: 0.6rem;
+$nav-menu-bot-foot-lg: 0.25rem;
 
 ////
 
 //MAIN NAV BAR SIZE:
 $option-min-height: 2.6rem;
+
 ////
 
 //INTRO HEIGHT:
 $intro-height-XS: 100vh;
 
-
 //////////////MATERIAL BUTTONS:///////////
 $material-btn-wh: 35px;
+
 //////////////////////////////////////////
+
+//TABLE ROW HEIGHT:
+$min-row-height: 48px;
+
+////////////////////////////////////
+$pop-over-top: 1.3rem;
+
+//HOME MARGIN TOP:
+$home-margin: 55px;
+
+////////////////////////////////////
