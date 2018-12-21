@@ -1079,6 +1079,16 @@ p, label, div {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //////PANEL DE OPCIONES:
+.top-panel, .bot-panel {
+    position: fixed;
+    z-index: 11;
+    left: 0px;
+    width: 100%;
+    height: 55px;
+    background: $secondary-text;
+    transition: transform .3s ease;
+}
+
 .p-home-panel {
     width: 100%;
     height: $home-margin;
@@ -1672,7 +1682,7 @@ p, label, div {
 
 //ICONS:
 .personal-site-icon {
-    font-family: "siscon-font" !important;
+    font-family: "lukask-font" !important;
     color: $secondary-text;
     font-size: 1.1rem;
 }
