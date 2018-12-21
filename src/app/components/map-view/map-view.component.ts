@@ -54,8 +54,11 @@ export class MapViewComponent implements OnInit, OnChanges {
   public mostrarp1: boolean;
   public mostrarp2: boolean;
   public mostrarp3: boolean;
-  
 
+  public showP1: boolean;
+
+  private _hiddeShowAnimation: boolean;
+  
   @ViewChild('gmap') gmapElement: any;
   map: any;
   public pubList: Publication[];
@@ -77,6 +80,8 @@ export class MapViewComponent implements OnInit, OnChanges {
     this.mostrarp1 = false;
     this.mostrarp2 = false;
     this.mostrarp3 = true;
+    //para mostrar el panel de filtros
+    this.showP1 = false;
 
     this.lat = -1.6709800;
     this.lng = -78.6471200;
@@ -90,7 +95,7 @@ export class MapViewComponent implements OnInit, OnChanges {
     var fechatemp = new Date();
     this.fechai=fechatemp.getFullYear()+"-"+(fechatemp.getMonth()+1) +"-"+fechatemp.getDate();
     this.fechaf=fechatemp.getFullYear()+"-"+(fechatemp.getMonth()+1) +"-"+fechatemp.getDate();
-
+    this._hiddeShowAnimation = false;
 }
 
   ngOnInit() {
@@ -585,4 +590,73 @@ export class MapViewComponent implements OnInit, OnChanges {
       }
     }
   }
+
+  /**
+   * Funcion de animacion panel mapa
+   * @param event 
+   */
+  public showClass: string;
+  public rotateClass: string;
+
+  private SHOW_CLASS: string = 'slide-down';
+  private ROTATE_CLASS: string = 'rotate-on';
+  
+
+  public animation(event: any) {
+    event.preventDefault();
+    if (!this._hiddeShowAnimation) {
+      this._hiddeShowAnimation = true;
+      this.showClass = this.SHOW_CLASS;
+      this.rotateClass = this.ROTATE_CLASS;
+      } else {
+      this._hiddeShowAnimation = false;
+      this.showClass = '';
+      this.rotateClass = '';
+      this.showP1= false; 
+    }
+  }
+
+  /**
+   * METODO PARA ABRIR LA CÁMARA SEA DESDE CÓRDOVA SIENDO UN APP MOVIL O DESDE 
+   * JAVASCRIPT COMO APP WEB / APP WEB PROGRESIVA PARA TOMAR UNA FOTOGRAFÍA
+   * @param event 
+  */
+  public newMedia(event: any) {
+    event.preventDefault();
+    this.showP1 = true;
+    //this.addQuejaSnapShot({ mediaFileUrl: imgUri, type: MEDIA_TYPES.image, mediaFile: imgBlob, removeable: true, active: true, hidden: false });
+    //this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.new_media, contentData: { maxSnapShots: this._maxSnapShots, backCamera: true, action: ACTION_TYPES.takeSnapshot } });
+    
+    
+
+    //this.mutedVideos();
+
+    /*if (this.filesToUpload.length < this._initSnapShotsNumber) {
+
+      this._maxSnapShots = this._initSnapShotsNumber - this.filesToUpload.length;
+      if (this.isEnabledCordovaCamera) {
+        this._cordovaCameraService.openCamera((imgUri: any) => {
+          
+          if (imgUri) {
+            
+            this._cordovaCameraService.getFileBlob(imgUri, MEDIA_TYPES.image, (imgBlob) => {
+              this.addQuejaSnapShot({ mediaFileUrl: imgUri, type: MEDIA_TYPES.image, mediaFile: imgBlob, removeable: true, active: true, hidden: false });
+            });
+          }
+        });
+      }
+      else {
+        this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.new_media, contentData: { maxSnapShots: this._maxSnapShots, backCamera: true, action: ACTION_TYPES.takeSnapshot } });
+      }
+    }
+    else {
+      Snackbar.show({ text: "Ha llegado al límite de imágenes permitidas", pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#34b4db', customClass: "p-snackbar-layout" });
+    }*/
+  }
+
+  getTypeSelect(event){
+    console.log("Algo para mostrar");
+    console.log(event);
+  }
+
 }

@@ -1,71 +1,48 @@
 <section class="personal-content personal-fadeout w-100 py-0 d-flex flex-column justify-content-start align-items-center"
     id="mapContainer">
     <br />
-    <div id="contenedor" style="position: absolute; z-index: 1;">
-        <div class="form-inline" *ngIf="mostrarp1 == true">
-            <button type="button" class="btn btn-info mb-2" (click)="toogle()">Ver Fecha</button>
-            &nbsp;&nbsp;
-            <div class="form-group mb-2">
+    <div id="contenedor"  class="p-transparent-box"  *ngIf="showP1 == true">
+        <!---div style="width: 90%; background-color: aqua; float: right;"-->
+            
+            <!--div style="width: 50%;  float:left;">
                 <label style="color: #0275D8">Canton : </label>
                 <select id="cantonSelect" name="cantonSelect" (change)="onChange($event)" [(ngModel)]="cantonSelect"
-                    class="form-control">
+                    class="form-control" style="width:150px;height:15px;font-size: 10px">
                     <option *ngFor="let canton of ciudades" [value]="canton.id_canton">{{canton.description_canton}}</option>
                 </select>
-                &nbsp;&nbsp;
+            </div>
+            <div style="width: 50%; float: right;">
                 <label style="color: #0275D8">Parroquia : </label>
-                <select id="parishSelect" name="parishSelect" [(ngModel)]="parishSelect" class="form-control">
+                <select id="parishSelect" name="parishSelect" [(ngModel)]="parishSelect" class="form-control"
+                    style="width:150px;height:15px;font-size: 10px">
                     <option *ngFor="let dept of parroquias" [value]="dept.id_parish">{{dept.description_parish}}</option>
                 </select>
+            </div-->
+            <div class="ml-3 col-12 form-group row pb-0">
+                <div class="col-12">
+                  <app-select2-bootstrap  [select2Data]="parroquias" (select2Change)="getTypeSelect($event)"></app-select2-bootstrap>
+                </div>
             </div>
-            &nbsp;&nbsp;
-            <button type="button" class="btn btn-primary mb-2" (click)="seleccionar('funcion3')">buscar</button>
-        </div>
-        <!--  -->
-        <div class="form-inline" *ngIf="mostrarp2 == true">
-            <button type="button" class="btn btn-info mb-2" (click)="toogle()">Ver Parroquia y fecha</button>
-            &nbsp;&nbsp;
-            <div class="form-group mb-2">
-                <label style="color: #0275D8">Fecha Inicio : </label>
-                <input type="date" name="bday" min="1000-01-01" max="3000-12-31" class="form-control" #fechaitext="ngModel"
-                    [(ngModel)]="fechai">
-                &nbsp;&nbsp;
-                <label style="color: #0275D8">Fecha Fin : </label>
-                <input type="date" name="bday" min="1000-01-01" max="3000-12-31" class="form-control" #fechaftext="ngModel"
-                    [(ngModel)]="fechaf">
-            </div>
-            &nbsp;&nbsp;
-            <button type="button" class="btn btn-primary mb-2" (click)="validarFecha('function1')">buscar</button>
-        </div>
-        <!-- -->
+            
 
-        <div class="form-inline" *ngIf="mostrarp3 == true">
-            <button type="button" class="btn btn-info mb-2" (click)="toogle()">Ver Parroquia</button>
-            &nbsp;&nbsp;
-            <div class="form-group mb-2">      
-                <label style="color: #0275D8">Canton : </label>
-                <select id="cantonSelect" name="cantonSelect" (change)="onChange($event)" [(ngModel)]="cantonSelect"
-                    class="form-control">
-                    <option *ngFor="let canton of ciudades" [value]="canton.id_canton">{{canton.description_canton}}</option>
-                </select>
-                &nbsp;&nbsp;
-                <label style="color: #0275D8">Parroquia : </label>
-                <select id="parishSelect" name="parishSelect" [(ngModel)]="parishSelect" class="form-control">
-                    <option *ngFor="let dept of parroquias" [value]="dept.id_parish">{{dept.description_parish}}</option>
-                </select>
+        
+        <!---/div-->
+    </div>
+    <div class="p-pub-media " role="listbox">
+        <a href="#" (click)="animation($event)" class="p-index-2 custom-btn custom-btn-normal p-transparent-btn xs p-float-btn top-left-corner">
+            <fa name="chevron-down" class="p-transition {{ rotateClass }}"></fa>
+        </a>
+        <div class="actions-edit-queja absolute-layer top-left-corner d-flex flex-column justify-content-between align-items-center {{ showClass }}">
+            <div>
+              <a href="#" class="p-transparent-btn op-media xs" (click)="newMedia($event)">
+                <fa name="camera"></fa>
+              </a>
+              <a href="#" class="p-transparent-btn op-media xs" (click)="newMediaVideo($event)">
+                <span class="personal-site-icon">f</span>
+              </a>
             </div>
-            <div class="form-group mb-2">
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <label style="color: #0275D8">Fecha Inicio : </label>
-                <input type="date" name="bday" min="1000-01-01" max="3000-12-31" class="form-control" #fechaitext="ngModel"
-                    [(ngModel)]="fechai">
-                &nbsp;&nbsp;
-                <label style="color: #0275D8">Fecha Fin : </label>
-                <input type="date" name="bday" min="1000-01-01" max="3000-12-31" class="form-control" #fechaftext="ngModel"
-                    [(ngModel)]="fechaf">
-            </div>
-            &nbsp;&nbsp;
-            <button type="button" class="btn btn-primary mb-2" (click)="validarFecha('function2')">buscar</button>
         </div>
     </div>
+
     <div #gmap id="mapa" class="p-home-full-height"></div>
 </section>
