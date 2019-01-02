@@ -45,12 +45,12 @@ export class ImgViewerComponent implements OnInit {
 
   ngAfterViewInit(){
     this.videoRecPub = document.getElementById("videoPub");
-    if(this.opView === CONTENT_TYPES.view_video){
+    //if(this.opView === CONTENT_TYPES.view_video){
       let mediaVideo = lodash.find(this.media, function(obj){
         return obj.format  == 'VD';
       });
       this.getvideo(mediaVideo.url);
-    }
+    //}
   }
   
   /**
