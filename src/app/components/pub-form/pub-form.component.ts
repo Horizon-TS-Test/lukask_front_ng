@@ -234,14 +234,14 @@ export class PubFormComponent implements OnInit, AfterViewInit, OnChanges, OnDes
         switch (property) {
           case 'submit':
             if (changes[property].currentValue == ACTION_TYPES.submitPub || changes[property].currentValue == ACTION_TYPES.pubStream) {
-              /*if (this.eersaLocClient) {
-                console.log("Para la eersa", this.eersaClaim);
-                //this.sendEersaClaim();
+              if (this.eersaLocClient) {
+                //console.log("Para la eersa", this.eersaClaim);
+                this.sendEersaClaim();
               }
-              else {*/
-               console.log("el común insert");
+              else {
+               //console.log("el común insert");
                this.sendPub();
-              //}
+              }
             }
             break;
           case 'mediaFiles':
