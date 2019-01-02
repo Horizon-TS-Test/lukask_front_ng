@@ -346,7 +346,7 @@ p, label, div {
 .p-home-full-height {
   overflow-y: auto;
   width: 100%;
-  height: calc(100vh - 0px) !important; }
+  height: calc(100vh - 55px) !important; }
 
 .min-height-full {
   min-height: 110vh !important; }
@@ -740,7 +740,7 @@ p, label, div {
 
 .p-home-panel {
   width: 100%;
-  height: 0px;
+  height: 55px;
   background: #fff;
   border-bottom: solid 1px rgba(0, 0, 0, 0.2) !important;
   -webkit-box-shadow: 2px 1px 3px rgba(0, 0, 0, 0.2) !important;
@@ -748,7 +748,7 @@ p, label, div {
   box-shadow: 2px 1px 3px rgba(0, 0, 0, 0.2) !important; }
 
 .p-top-margin-home {
-  margin-top: 0px; }
+  margin-top: 55px; }
 
 .p-separator {
   width: .12rem;
