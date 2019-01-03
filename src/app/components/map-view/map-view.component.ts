@@ -1,4 +1,7 @@
-import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
+//import { Component, OnInit, Input, OnChanges, SimpleChanges, EventEmitter, Output, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, SimpleChanges, OnChanges, EventEmitter, Output, AfterViewInit } from '@angular/core';
+import { Select2 } from '../../interfaces/select2.interface';
+
 import { ContentService } from '../../services/content.service';
 import { ViewChild } from '@angular/core';
 import { Publication } from '../../models/publications';
@@ -31,11 +34,8 @@ import { GpsService } from 'src/app/services/gps.service';
 
 import * as Snackbar from 'node-snackbar';
 
-
-
 declare var google: any;
 declare var $: any;
-
 
 @Component({
   selector: 'app-map-view',
@@ -55,16 +55,19 @@ export class MapViewComponent implements OnInit, OnChanges {
   public mostrarp2: boolean;
   public mostrarp3: boolean;
 
-  public showP1: boolean;
+  public canton: string;
+  public parroquia: string;
 
   private _hiddeShowAnimation: boolean;
-  
+
   @ViewChild('gmap') gmapElement: any;
   map: any;
   public pubList: Publication[];
   public _locationCity: string;
   private lstMarkers: Array<any>;
   public ciudades: Array<any>;
+  public ciudadesSelected: Select2[];
+
   public parishSelect: string;
   public cantonSelect: string;
 
@@ -74,14 +77,13 @@ export class MapViewComponent implements OnInit, OnChanges {
   constructor(
     private _contentService: ContentService,
     private _quejaService: QuejaService,
-    private _dynaContentService: DynaContentService,
     private _gpsService: GpsService,
   ) {
+    this.ciudadesSelected = [];
     this.mostrarp1 = false;
     this.mostrarp2 = false;
     this.mostrarp3 = true;
     //para mostrar el panel de filtros
-    this.showP1 = false;
 
     this.lat = -1.6709800;
     this.lng = -78.6471200;
@@ -93,12 +95,13 @@ export class MapViewComponent implements OnInit, OnChanges {
     this.ciudades = new Array<any>();
     //Iniciar fechas
     var fechatemp = new Date();
-    this.fechai=fechatemp.getFullYear()+"-"+(fechatemp.getMonth()+1) +"-"+fechatemp.getDate();
-    this.fechaf=fechatemp.getFullYear()+"-"+(fechatemp.getMonth()+1) +"-"+fechatemp.getDate();
+    this.fechai = fechatemp.getFullYear() + "-" + (fechatemp.getMonth() + 1) + "-" + fechatemp.getDate();
+    this.fechaf = fechatemp.getFullYear() + "-" + (fechatemp.getMonth() + 1) + "-" + fechatemp.getDate();
     this._hiddeShowAnimation = false;
-}
+  }
 
   ngOnInit() {
+    this.canton = null;
     this._contentService.fadeInComponent($("#mapContainer"));
     this.getGps()
     var mapProp = {
@@ -120,13 +123,13 @@ export class MapViewComponent implements OnInit, OnChanges {
         this.focusPubById();
       }
     });
-    
 
     //Definición del mapa
     this.map = new google.maps.Map(this.gmapElement.nativeElement, mapProp);
 
-    //this.getPubs();
+    //Cargando los cantones 
     this.getCanton();
+
     /**
      * METODO QUE EJECUTA LA ACCIÓN DEL MARKER
      */
@@ -156,7 +159,7 @@ export class MapViewComponent implements OnInit, OnChanges {
 
   /**
    * METODO QUE RECORRE LA LISTA DE QUEJAS Y CREA EL MARKER DE CADA UNA
-   */
+  */
   private fetchPub() {
     for (let pub of this.pubList) {
       this.crearMarker(pub.latitude, pub.longitude, this.defineTypeIcon(pub.type), pub.id_publication, pub.type, pub.type.description);
@@ -189,8 +192,8 @@ export class MapViewComponent implements OnInit, OnChanges {
     marker.addListener('click', (event) => {
       this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.view_queja, contentData: pubId });
       $("#idviewPub").click(); //No tocar si no deja de funcionar ojo!!     
-    });
-*/
+    });*/
+    
     marker.addListener('mouseover', () => {
       let icon = this.defineTypeIconOver(pubtype);
       //marker.setIcon(icon);
@@ -208,32 +211,6 @@ export class MapViewComponent implements OnInit, OnChanges {
     this.lstMarkers.push(marker);
     this.map.setCenter(new google.maps.LatLng(lat, lng));
     this.map.setZoom(16);
-  }
-
-
-  /**
-   * Funcion para traer las publicaciones 
-   */
-  private getPubs() {
-    this.pubList = this._quejaService.getPubListObj();
-    if (!this.pubList) {
-      this._quejaService.getPubList().then((pubs: Publication[]) => {
-        this.pubList = pubs;
-        this.fetchPub();
-        if (!this.focusPubId) {
-          this.focusPubId = this.pubList[0].id_publication;
-        }
-        //HACIENDO FOCUS UNA PUBLICACIÓN EN EL MAPA      
-        this.focusPubById();
-      });
-    } else {
-      this.fetchPub();
-      if (!this.focusPubId) {
-        this.focusPubId = this.pubList[0].id_publication;
-      }
-      //HACIENDO FOCUS UNA PUBLICACIÓN EN EL MAPA      
-      this.focusPubById();
-    }
   }
 
   /**
@@ -276,12 +253,9 @@ export class MapViewComponent implements OnInit, OnChanges {
     }
   }
 
-  
+
   ngOnChanges(changes: SimpleChanges) {
     for (let property in changes) {
-      /*console.log('Previous:', changes[property].previousValue);
-      console.log('Current:', changes[property].currentValue);
-      console.log('firstChange:', changes[property].firstChange);*/
       if (property === 'focusPubId') {
         if (changes[property].currentValue) {
           this.focusPubId = changes[property].currentValue;
@@ -293,9 +267,9 @@ export class MapViewComponent implements OnInit, OnChanges {
     }
   }
 
-  /**
-   * Funciones de seleccion de ciudades
-   */
+  
+   // Funciones de seleccion de ciudades
+   
 
 
   /**
@@ -304,7 +278,7 @@ export class MapViewComponent implements OnInit, OnChanges {
    */
   seleccionar(fuccion) {
     this.borrarMarkers();
-    
+    console.log("Mostrando markers...",fuccion);
     if (fuccion == "funcion3") {
       this.getQuejaType();
     }
@@ -418,7 +392,7 @@ export class MapViewComponent implements OnInit, OnChanges {
     });
     this.graficoParroquia.setMap(this.map);
     //Pongo la vista del mapa en el primer punto del gráfico
-    this.map.setCenter({lat:coordenadas[0].lat,lng:coordenadas[0].lng});
+    this.map.setCenter({ lat: coordenadas[0].lat, lng: coordenadas[0].lng });
   }
 
 
@@ -438,6 +412,8 @@ export class MapViewComponent implements OnInit, OnChanges {
   * MÉTODO PARA CARGAR LOS TIPOS DE QUEJA PARA UN NUEVO REGISTRO:
   */
   private getQuejaType() {
+    console.log("Mostrando markers de parish");
+    console.log(this.parishSelect);
     this._quejaService.getPubParish(this.parishSelect).then((qTypes) => {
       this.pubParish(qTypes);
     });
@@ -464,7 +440,7 @@ export class MapViewComponent implements OnInit, OnChanges {
    * Funcion que recibe las quejas y los grafica si dentro de un rango de fechas
    * @param publications //Publicaciones traidas de la consulta
    */
-  
+
   private pubParishDate(publications) {
     var listaPubs = publications.results;
     for (let pub of listaPubs) {
@@ -480,31 +456,68 @@ export class MapViewComponent implements OnInit, OnChanges {
   /**
    * Obtener el listado de la cantones para ser llenados en la lista de la interfaz
    */
+
   private getCanton() {
     this._quejaService.getCiudades('4f6eb70f-12c3-4204-9a94-96117032f07e').then((result) => {
-      this.ciudades = result;
+      //Cambio el valor de las llaves para que acepte el componente interfaz Select2  
+      for (let dato of result) {
+        if (!this.canton) {
+          this.canton = dato.id_canton;
+        }
+        this.ciudadesSelected.push({ value: dato.id_canton, data: dato.description_canton, selectedItem: (this.canton == dato.id_canton) ? this.canton : "" });
+      }
+      if (this.canton) {
+        this.getParroquias();
+      }
       return result;
     })
   }
 
   /**
-   * Funcion que al cambiar de canton, llena utomaticamente la lista de parroquias de ese canton en la interfaz
-   * @param $event 
+   * METODO QUE CAPTURA LA CIUDAD DESDE EL SELECT
+   * @param event 
    */
-  onChange($event) {
-    this._quejaService.getParroquias(this.cantonSelect).then((result) => {
-      this.parroquias = result;
+  getCantonSelect(event: string) {
+    this.canton = event;
+    this.getParroquias();
+  }
+
+  /**
+    * Obtener el listado de la parroquias para ser llenados en la lista de la interfaz
+  */
+  private getParroquias() {
+    this._quejaService.getParroquias(this.canton).then((result) => {
+      //Cambio el valor de las llaves para que acepte el componente interfaz Select2  
+      this.parroquias = [];
+      this.parroquias.push(" ");
+      for (let dato of result) {
+        if (!this.parroquia) {
+          this.parroquia = dato.id_parish;
+        }
+        this.parroquias.push({ value: dato.id_parish, data: dato.description_parish, selectedItem: (this.parroquia == dato.id_parish) ? this.parroquia : "" });
+      }
+      return result;
     })
   }
+
+  /**
+   * METODO QUE CAPTURA LA PARROQUIA DESDE EL SELECT
+   * @param event 
+  */
+  getParishSelect(event: string) {
+    this.parroquia = event;
+    this.parishSelect = event;
+    this.seleccionar('funcion3');
+  }
+
 
   /**
    * Funcion que validara que el rango de fechas ingresada no excede de 30 dias
    * @param fuccion //nombre de la funcion mandada desde la interfaz para validar a que función mandar
    */
   validarFecha(fuccion) {
-
-    if(this.parishSelect == '1'){
-      Snackbar.show({ text: "Seleccione un parroquia!", pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#f0bd50', customClass: "p-snackbar-layout" });      
+    if (this.parishSelect == '1' && fuccion != 'function1') {
+      Snackbar.show({ text: "Seleccione un parroquia!", pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#f0bd50', customClass: "p-snackbar-layout" });
       return 0;
     }
 
@@ -524,7 +537,7 @@ export class MapViewComponent implements OnInit, OnChanges {
     fechaLimite.setDate(fechaLimite.getDate() + cantDias); //sumarle 10 días
     //Validar
     if (fechaIngresada >= fechaLimite) {
-        Snackbar.show({ text: "Ingrese una fecha dentro del os 30 dias!", pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#f0bd50', customClass: "p-snackbar-layout" });
+      Snackbar.show({ text: "Ingrese una fecha dentro del os 30 dias!", pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#f0bd50', customClass: "p-snackbar-layout" });
     } else {
       if (fuccion == 'function1') {
         this.getQuejasFecha();
@@ -533,7 +546,6 @@ export class MapViewComponent implements OnInit, OnChanges {
       }
     }
   }
-
 
   /**
   * Obtener las publicaciones por fecha
@@ -545,10 +557,9 @@ export class MapViewComponent implements OnInit, OnChanges {
 
       this.pubParishDate(qTypes);//Crea los marquers de las publicaciones que traen con resultado de la consulta
       if (qTypes.count <= 0) {
-        Snackbar.show({ text: "Lo sentimos no hay registros para mostrar.", pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#f0bd50', customClass: "p-snackbar-layout" });        
+        Snackbar.show({ text: "Lo sentimos no hay registros para mostrar.", pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#f0bd50', customClass: "p-snackbar-layout" });
       }
-      //this.pubList = qTypes;
-      //this.fetchPub();
+      
     });
   }
 
@@ -559,14 +570,12 @@ export class MapViewComponent implements OnInit, OnChanges {
     this._quejaService.getPubFechaParish(this.fechai, this.fechaf, this.parishSelect).then((qTypes) => {
       this.borrarMarkers();
       this.borrarGraficoAnterior();
-      
+
       this.seleccionar("sinparametro"); //Dibuja la parroquia
       this.pubParishDate(qTypes); //Dibuja los markers de las quejas resultantes
       if (qTypes.count <= 0) {
-        Snackbar.show({ text: "Lo sentimos no hay registros para mostrar.", pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#f0bd50', customClass: "p-snackbar-layout" });        
+        Snackbar.show({ text: "Lo sentimos no hay registros para mostrar.", pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#f0bd50', customClass: "p-snackbar-layout" });
       }
-      //this.pubList = qTypes;
-      //this.fetchPub();
     });
   }
 
@@ -595,68 +604,50 @@ export class MapViewComponent implements OnInit, OnChanges {
    * Funcion de animacion panel mapa
    * @param event 
    */
+
   public showClass: string;
   public rotateClass: string;
 
   private SHOW_CLASS: string = 'slide-down';
-  private ROTATE_CLASS: string = 'rotate-on';
-  
+  //private ROTATE_CLASS: string = 'rotate-on';
 
+/**
+ * Metodo que despliega los iconos para ver los filtros
+ * @param event 
+ */
   public animation(event: any) {
     event.preventDefault();
     if (!this._hiddeShowAnimation) {
       this._hiddeShowAnimation = true;
       this.showClass = this.SHOW_CLASS;
-      this.rotateClass = this.ROTATE_CLASS;
-      } else {
+      //this.rotateClass = this.ROTATE_CLASS;
+
+    } else {
       this._hiddeShowAnimation = false;
       this.showClass = '';
       this.rotateClass = '';
-      this.showP1= false; 
+      this.mostrarp1 = false;
+      this.mostrarp2 = false;
     }
   }
 
   /**
-   * METODO PARA ABRIR LA CÁMARA SEA DESDE CÓRDOVA SIENDO UN APP MOVIL O DESDE 
-   * JAVASCRIPT COMO APP WEB / APP WEB PROGRESIVA PARA TOMAR UNA FOTOGRAFÍA
+   * METODO PARA ABRIR EL PRIMER FILTRO POR CANTON
    * @param event 
   */
-  public newMedia(event: any) {
+  public newPanel1(event: any) {
     event.preventDefault();
-    this.showP1 = true;
-    //this.addQuejaSnapShot({ mediaFileUrl: imgUri, type: MEDIA_TYPES.image, mediaFile: imgBlob, removeable: true, active: true, hidden: false });
-    //this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.new_media, contentData: { maxSnapShots: this._maxSnapShots, backCamera: true, action: ACTION_TYPES.takeSnapshot } });
-    
-    
-
-    //this.mutedVideos();
-
-    /*if (this.filesToUpload.length < this._initSnapShotsNumber) {
-
-      this._maxSnapShots = this._initSnapShotsNumber - this.filesToUpload.length;
-      if (this.isEnabledCordovaCamera) {
-        this._cordovaCameraService.openCamera((imgUri: any) => {
-          
-          if (imgUri) {
-            
-            this._cordovaCameraService.getFileBlob(imgUri, MEDIA_TYPES.image, (imgBlob) => {
-              this.addQuejaSnapShot({ mediaFileUrl: imgUri, type: MEDIA_TYPES.image, mediaFile: imgBlob, removeable: true, active: true, hidden: false });
-            });
-          }
-        });
-      }
-      else {
-        this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.new_media, contentData: { maxSnapShots: this._maxSnapShots, backCamera: true, action: ACTION_TYPES.takeSnapshot } });
-      }
-    }
-    else {
-      Snackbar.show({ text: "Ha llegado al límite de imágenes permitidas", pos: 'bottom-center', actionText: 'Entendido', actionTextColor: '#34b4db', customClass: "p-snackbar-layout" });
-    }*/
+    this.mostrarp1 = true;
+    this.mostrarp2 = false;
   }
 
-  getTypeSelect(event){
-    console.log("Algo para mostrar");
-    console.log(event);
+  /**
+   * METODO PARA ABRIR EL PRIMER FILTRO POR FECHA
+   * @param event 
+  */
+  public newPanel2(event: any) {
+    event.preventDefault();
+    this.mostrarp2 = true;
+    this.mostrarp1 = false;
   }
-
 }

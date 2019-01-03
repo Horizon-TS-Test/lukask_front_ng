@@ -1,45 +1,46 @@
 <section class="personal-content personal-fadeout w-100 py-0 d-flex flex-column justify-content-start align-items-center"
     id="mapContainer">
     <br />
-    <div id="contenedor"  class="p-transparent-box"  *ngIf="showP1 == true">
-        <!---div style="width: 90%; background-color: aqua; float: right;"-->
-            
-            <!--div style="width: 50%;  float:left;">
-                <label style="color: #0275D8">Canton : </label>
-                <select id="cantonSelect" name="cantonSelect" (change)="onChange($event)" [(ngModel)]="cantonSelect"
-                    class="form-control" style="width:150px;height:15px;font-size: 10px">
-                    <option *ngFor="let canton of ciudades" [value]="canton.id_canton">{{canton.description_canton}}</option>
-                </select>
+    <div class="filter-map" *ngIf="mostrarp1 == true">
+        <div class="ml-3 col-12 form-group row pb-0">
+            <div class="col-6">
+                <app-select2-bootstrap [fcName]="'canton'" [select2Data]="ciudadesSelected" (select2Change)="getCantonSelect($event)"></app-select2-bootstrap>
             </div>
-            <div style="width: 50%; float: right;">
-                <label style="color: #0275D8">Parroquia : </label>
-                <select id="parishSelect" name="parishSelect" [(ngModel)]="parishSelect" class="form-control"
-                    style="width:150px;height:15px;font-size: 10px">
-                    <option *ngFor="let dept of parroquias" [value]="dept.id_parish">{{dept.description_parish}}</option>
-                </select>
-            </div-->
-            <div class="ml-3 col-12 form-group row pb-0">
-                <div class="col-12">
-                  <app-select2-bootstrap  [select2Data]="parroquias" (select2Change)="getTypeSelect($event)"></app-select2-bootstrap>
-                </div>
-            </div>
-            
 
-        
-        <!---/div-->
+            <div class="col-6">
+                <app-select2-bootstrap [fcName]="'parroquia'" [select2Data]="parroquias" (select2Change)="getParishSelect($event)"></app-select2-bootstrap>
+            </div>
+        </div>
     </div>
+
+    <div class="filter-map" *ngIf="mostrarp2 == true">
+        <div class="ml-3 col-12 form-group row pb-0">
+            <div class="col-6" style="color:black">Fecha Inicio :</div>
+            <div class="col-6">
+                <input type="date" name="bday" min="1000-01-01" max="3000-12-31" #fechaitext="ngModel" [(ngModel)]="fechai">
+            </div>
+            <div class="col-6" style="color:black">Fecha Fin :</div>
+            <div class="col-6">
+                <input type="date" name="bday" min="1000-01-01" max="3000-12-31" #fechaftext="ngModel" [(ngModel)]="fechaf">
+            </div>
+            <br>
+            <button type="button" style="width: 100% !important;" class="btn btn-primary mb-2" (click)="validarFecha('function1')">buscar</button>
+
+        </div>
+    </div>
+
     <div class="p-pub-media " role="listbox">
         <a href="#" (click)="animation($event)" class="p-index-2 custom-btn custom-btn-normal p-transparent-btn xs p-float-btn top-left-corner">
-            <fa name="chevron-down" class="p-transition {{ rotateClass }}"></fa>
+            <fa name="search" class="p-transition {{ rotateClass }}"></fa>
         </a>
         <div class="actions-edit-queja absolute-layer top-left-corner d-flex flex-column justify-content-between align-items-center {{ showClass }}">
             <div>
-              <a href="#" class="p-transparent-btn op-media xs" (click)="newMedia($event)">
-                <fa name="camera"></fa>
-              </a>
-              <a href="#" class="p-transparent-btn op-media xs" (click)="newMediaVideo($event)">
-                <span class="personal-site-icon">f</span>
-              </a>
+                <a href="#" class="p-transparent-btn op-media xs" (click)="newPanel1($event)">
+                    <fa name="map-marker"></fa>
+                </a>
+                <a href="#" class="p-transparent-btn op-media xs" (click)="newPanel2($event)">
+                    <fa name="calendar"></fa>
+                </a>
             </div>
         </div>
     </div>
