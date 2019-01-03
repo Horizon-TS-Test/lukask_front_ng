@@ -31,7 +31,7 @@
               </a>
               <img *ngIf="file.type==media_type.image" [src]="_domSanitizer.bypassSecurityTrustUrl(file.mediaFileUrl)" width="100%"
                 class="mb-1">
-              <video *ngIf="file.type==media_type.video" width="100%" class="mb-1" poster="../../../assets/images/media/default.gif"
+              <video *ngIf="file.type==media_type.video" width="100%" class="mb-1" poster="{{ saveVideoGif }}"
               controls muted autoplay class="mediaVideo">
                 <source [src]="_domSanitizer.bypassSecurityTrustUrl(file.mediaFileUrl)" type='video/mp4' />
               </video>

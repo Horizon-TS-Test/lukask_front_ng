@@ -5,9 +5,7 @@ import { HorizonButton } from '../../interfaces/horizon-button.interface';
 import { ACTION_TYPES } from '../../config/action-types';
 import { CONTENT_TYPES } from '../../config/content-type';
 import { REST_SERV } from '../../rest-url/rest-servers';
-import { WebrtcSocketService } from '../../services/webrtc-socket.service';
-import { UserService } from '../../services/user.service';
-import * as lodash from 'lodash';
+import { ASSETS } from 'src/app/config/assets-url';
 
 @Component({
   selector: 'img-viewer',
@@ -25,8 +23,9 @@ export class ImgViewerComponent implements OnInit {
   public carouselOptions: any;
   public materialBtn: HorizonButton[];
   public _contentType: any;
+  public _pathMediaVideo: string = REST_SERV.mediaRecorder + "/?pathmedia=";
+  public videoLoader: string;
   private videoRecPub : any;
-
   
   constructor() {
     this.closeModal = new EventEmitter<boolean>();
@@ -37,6 +36,7 @@ export class ImgViewerComponent implements OnInit {
         icon: "close"
       }
     ];
+    this.videoLoader = ASSETS.saveVideoAnimation;
   }
 
   ngOnInit() {
@@ -45,12 +45,12 @@ export class ImgViewerComponent implements OnInit {
 
   ngAfterViewInit(){
     this.videoRecPub = document.getElementById("videoPub");
-    if(this.opView === CONTENT_TYPES.view_video){
-      let mediaVideo = lodash.find(this.media, function(obj){
+    //if(this.opView === CONTENT_TYPES.view_video){
+      /*let mediaVideo = lodash.find(this.media, function(obj){
         return obj.format  == 'VD';
       });
-      this.getvideo(mediaVideo.url);
-    }
+      this.getvideo(mediaVideo.url);*/
+    //}
   }
   
   /**

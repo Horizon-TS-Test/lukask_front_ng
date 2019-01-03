@@ -7,4 +7,6 @@ export const ASSETS = {
     offlineImg: BASE_URL.imgPath + '/offline/offline2.jpg',
     unavaliableImg: BASE_URL.imgPath + '/unavaliable/not-found2.jpg',
     defaultImg: BASE_URL.imgPath + '/default/default.jpg',
+    saveVideoAnimation: BASE_URL.imgPath + '/media/default.gif',
+    openCameraAnimation: BASE_URL.imgPath + '/media/default3.gif'
 }

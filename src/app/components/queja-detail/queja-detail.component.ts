@@ -7,8 +7,10 @@ import { ContentService } from '../../services/content.service';
 import { SingleMapComponent } from '../single-map/single-map.component';
 import { CONTENT_TYPES } from '../../config/content-type';
 import { ACTION_TYPES } from '../../config/action-types';
+import { REST_SERV } from '../../rest-url/rest-servers';
 import { Subscription } from '../../../../node_modules/rxjs';
 import { DynaContentService } from 'src/app/services/dyna-content.service';
+import { ASSETS } from 'src/app/config/assets-url';
 
 @Component({
   selector: 'queja-detail',
@@ -30,6 +32,8 @@ export class QuejaDetailComponent implements OnInit, OnChanges, OnDestroy {
   public matButtons: HorizonButton[];
   public carouselOptions: any;
   public isUnavaliable: boolean;
+  public _pathMediaVideo: string = REST_SERV.mediaRecorder + "/?pathmedia=";
+  public videoLoader: string;
 
   constructor(
     private _quejaService: QuejaService,
@@ -46,6 +50,7 @@ export class QuejaDetailComponent implements OnInit, OnChanges, OnDestroy {
       }
     ];
     this.carouselOptions = {};
+    this.videoLoader = ASSETS.saveVideoAnimation;
   }
 
   ngOnInit() {
@@ -100,6 +105,8 @@ export class QuejaDetailComponent implements OnInit, OnChanges, OnDestroy {
    */
   public viewImg(event: any) {
     event.preventDefault();
+    
+    this.pauseVideos();
     this._dynaContentService.loadDynaContent({ contentType: CONTENT_TYPES.view_img, contentData: {media :this.quejaDetail.media, opView: CONTENT_TYPES.view_img} });
 	  //this._notifierService.notifyNewContent({ contentType: CONTENT_TYPES.view_img, contentData: { media :this.quejaDetail.media, opView: CONTENT_TYPES.view_img}});
   }
@@ -123,6 +130,19 @@ export class QuejaDetailComponent implements OnInit, OnChanges, OnDestroy {
       case ACTION_TYPES.close:
         this.closeModal.emit(true);
         break;
+    }
+  }
+
+  /**
+   * Metodo para pausar video.
+   */
+  private pauseVideos(){
+    let _videos:any =[];
+    _videos = document.querySelectorAll(".videoDetail");
+    for (let video of _videos){
+      if(!video.paused){
+        video.pause();
+      }
     }
   }
 
