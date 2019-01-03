@@ -1303,6 +1303,11 @@ p, label, div {
   .custom-btn.custom-btn-sec {
     background: #848b76 !important;
     border-color: #848b76 !important; }
+  .custom-btn.custom-btn-rec {
+    background: white !important;
+    border-color: white !important; }
+    .custom-btn.custom-btn-rec span {
+      color: #dd2222 !important; }
   .custom-btn.custom-btn-secondary {
     background: #bcc7a4 !important;
     border-color: #bcc7a4 !important; }
@@ -2215,6 +2220,7 @@ input[type=text]:focus, input[type=password]:focus, input[type=email]:focus, inp
   -moz-box-shadow: 4px 4px 7px 2px rgba(0, 0, 0, 0.2) !important;
   box-shadow: 4px 4px 7px 2px rgba(0, 0, 0, 0.2) !important; }
 
+/**estilos para animacion en botones para opciones de video**/
 .rotate-on {
   transform: rotate(180deg);
   transition: all 0.5s ease; }
@@ -2237,6 +2243,11 @@ input[type=text]:focus, input[type=password]:focus, input[type=email]:focus, inp
 
 .actions-edit-queja > div > a {
   margin-bottom: 3px; }
+
+.op-media:hover {
+  background-color: white !important; }
+  .op-media:hover fa, .op-media:hover span {
+    color: rgba(0, 0, 0, 0.3) !important; }
 
 /*estilo para caja contenedora de datos de grabacion*/
 .p-transparent-box {
@@ -2300,11 +2311,7 @@ input[type=text]:focus, input[type=password]:focus, input[type=email]:focus, inp
 progress-bar > div {
   padding: 1rem 0; }
 
-.op-media:hover {
-  background-color: white !important; }
-  .op-media:hover fa, .op-media:hover span {
-    color: rgba(0, 0, 0, 0.3) !important; }
-
+/**estilo para ocultar boton de cambio de camara**/
 .obj-hidden {
   visibility: hidden;
   transform: scale(0);
@@ -2565,5 +2572,4 @@ progress-bar > div {
     transform: scale(0); }
   100% {
     transform: scale(1); } }
-
 /*# sourceMappingURL=styles.css.map */

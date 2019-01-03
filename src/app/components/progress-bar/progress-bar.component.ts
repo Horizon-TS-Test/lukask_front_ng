@@ -37,7 +37,6 @@ export class ProgressBarComponent implements OnInit, OnDestroy {
     
     this.subscriberAction = this._dynaContentService.actionInContent$.subscribe((dynaContent: DynaContent) => {
       
-      console.log("dynaContent............... progress bar component", dynaContent);
       if (dynaContent && (dynaContent.contentType == CONTENT_TYPES.progress_bar)) {
         
         switch (dynaContent.contentData.method) {
@@ -59,7 +58,6 @@ export class ProgressBarComponent implements OnInit, OnDestroy {
    * @param percentage {procentage de avance del progress-bar}
    */
   private  advancedProgressBar(percentage: number) {
-    console.log("advancedProgressBar..", percentage);
 
     this.progress = percentage;
     if(this.progress == 0){

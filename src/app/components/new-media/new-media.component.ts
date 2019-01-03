@@ -99,18 +99,19 @@ export class NewMediaComponent implements OnInit, OnChanges, OnDestroy {
 
     //Para el caso de iniciar la grabacion
     if (action == CAMERA_ACTIONS.init_recorder && this._cameraready) {
+      
       this.classRecordering = this._recordering;
       this.classBttnRecHidden = "";
       this.classObjHidden = this._hidden;
       this._recording = true;
-
       this._minutes = 0;
       this._seconds = 0;
       this._timer = new _setIntervalPlus(() => {
         this.calcTimer();
       }, 1000);
 
-    } else if (action == CAMERA_ACTIONS.stop_recorder && this._cameraready) { //En el caso de detener la grabacion
+    } else if (this._timer && CAMERA_ACTIONS.stop_recorder == action && this._cameraready) { //En el caso de detener la grabacion
+      
       this.stateRec = "Finalizando";
       this._recording = false;
       this.classRecordering = "";
@@ -120,6 +121,7 @@ export class NewMediaComponent implements OnInit, OnChanges, OnDestroy {
 
     //En el caso de reanudar la grabacion
     if (this._timer && this._resumen && CAMERA_ACTIONS.resumen_recorder == action) {
+      
       console.log("Entro al resumen");
       this._iconPause = "h";
       this.actionResOrPause = CAMERA_ACTIONS.pause_recorder;
@@ -129,7 +131,8 @@ export class NewMediaComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     //En el caso de detener la grabacion
-    if (this._timer && action == CAMERA_ACTIONS.pause_recorder) {
+    if (this._timer && CAMERA_ACTIONS.pause_recorder == action) {
+      
       this.actionResOrPause = CAMERA_ACTIONS.resumen_recorder;
       this._iconPause = "g";
       this._resumen = true;

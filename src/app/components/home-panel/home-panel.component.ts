@@ -98,7 +98,8 @@ export class HomePanelComponent implements OnInit, OnChanges, OnDestroy {
    */
   public reloadApp(event: any) {
     event.preventDefault();
-    location.href = '/';
+    //location.href = '/';
+    location.reload(); 
   }
 
   /**

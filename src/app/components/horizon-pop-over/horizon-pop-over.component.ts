@@ -33,11 +33,9 @@ export class HorizonPopOverComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log("_dynaContent..... holaaaaa", this._dynaContent);
     if(this._dynaContent && this._dynaContent.contentType === CONTENT_TYPES.progress_bar){
       this.progressClass = "progress-content";
     }
-    console.log("this.progressClass........", this.progressClass);
 
     setTimeout(() => {
       this.backgroundClass = "on"

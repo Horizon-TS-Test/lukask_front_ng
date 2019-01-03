@@ -111,7 +111,7 @@ export class EditQuejaComponent implements OnDestroy, OnInit, OnChanges {
    */
   public newMedia(event: any) {
     event.preventDefault();
-    this.mutedVideos();
+    this.stopVideos();
 
     if (this.filesToUpload.length < this._initSnapShotsNumber) {
 
@@ -142,7 +142,8 @@ export class EditQuejaComponent implements OnDestroy, OnInit, OnChanges {
    */
   public newMediaVideo(event: any) {
     event.preventDefault();
-    this.mutedVideos();
+    this.stopVideos();
+
     if (this.filesToUpload.length < this._initSnapShotsNumber) {
 
       this._maxSnapShots = this._initSnapShotsNumber - this.filesToUpload.length;
@@ -157,7 +158,6 @@ export class EditQuejaComponent implements OnDestroy, OnInit, OnChanges {
               this._cordovaCameraService.getFileBlob(videoUri.fullPath, MEDIA_TYPES.video, (videoBlob) => {
               this._dynaContentService.executeAccion({ contentType: CONTENT_TYPES.progress_bar, contentData: { method: 'close' } });
               this.addQuejaSnapShot({ mediaFileUrl: videoUri.localURL, type: MEDIA_TYPES.video, mediaFile: videoBlob, removeable: true, active: true, hidden: false });
-              //this.addQuejaSnapShot({ mediaFileUrl: imgUri, mediaFile: imgBlob, removeable: true, active: true, hidden: false });
             });
           }
         });
@@ -205,10 +205,15 @@ export class EditQuejaComponent implements OnDestroy, OnInit, OnChanges {
    * @param next 
    */
   public setNewActive(event, next) {
+    console.log("holaaaaaaaaaaaaaa");
     event.preventDefault();
+    
+    //****pausamos videos
+    this.stopVideos();
+    
     let nextPrevTimeout;
     clearTimeout(nextPrevTimeout);
-
+    
     nextPrevTimeout = setTimeout(() => {
       let size = this.filesToUpload.length - 1;
       for (let i = 0; i < size; i++) {
@@ -275,23 +280,27 @@ export class EditQuejaComponent implements OnDestroy, OnInit, OnChanges {
   }
 
   /**
-   * Silecia los video.
+   * Pausar los video.
    */
-  private mutedVideos(){
+  private stopVideos(){
     this._arrayVideo = document.querySelectorAll(".mediaVideo");
+    console.log("this._arrayVideo..", this._arrayVideo);
     for (let video of this._arrayVideo){
-      video.muted = true;
+      if(!video.paused){
+        video.pause();
+      }
     }
   }
 
   /**
-   * Silecia los video.
+   * Reanudar los video.
    */
-  private unMutedVideos(){
+  private resumeVideos(){
     this._arrayVideo = document.querySelectorAll(".mediaVideo");
     for (let video of this._arrayVideo){
       if(video.muted){
         video.muted = false;
+        video.play();
       }
     }
   }
