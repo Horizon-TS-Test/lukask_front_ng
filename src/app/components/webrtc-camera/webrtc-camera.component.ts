@@ -15,6 +15,7 @@ import * as mediaStreamRecorder from 'msr';
 import * as Snackbar from 'node-snackbar';
 import * as loadImage from 'blueimp-load-image';
 import { CONTENT_TYPES } from 'src/app/config/content-type';
+import { ASSETS } from 'src/app/config/assets-url';
 
 @Component({
   selector: 'app-webrtc-camera',
@@ -46,8 +47,9 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
   private subscription: Subscription;
   private transmissionOn: boolean;
   private mediaRecorder: any;
-  private arrayBlobRecorder: any[];
   private initPauseVideo:boolean;
+  
+  public openCameraGif: string;
 
   constructor(
     private _cameraActionService: CameraActionService,
@@ -62,8 +64,8 @@ export class WebrtcCameraComponent implements OnInit, AfterViewInit, OnDestroy, 
     this._backCamera = { id: "", description: "" };
     this.swapCamera = false;
     this.transmissionOn = false;
-    this.arrayBlobRecorder = [];
     this.initPauseVideo = false;
+    this.openCameraGif = ASSETS.openCameraAnimation;
 
     //LISTEN FOR ANY CAMERA EVENT:
     this.subscription = this._cameraActionService.cameraAction$.subscribe(

@@ -44,6 +44,7 @@ export class EditQuejaComponent implements OnDestroy, OnInit, OnChanges {
   public showClass: string;
   public rotateClass: string;
   public media_type: any;
+  public saveVideoGif: string;
 
   constructor(
     private _dynaContentService: DynaContentService,
@@ -57,6 +58,7 @@ export class EditQuejaComponent implements OnDestroy, OnInit, OnChanges {
     this._maxSnapShots = this._initSnapShotsNumber;
     this.media_type = MEDIA_TYPES;
     this._arrayVideo = [];
+    this.saveVideoGif = ASSETS.saveVideoAnimation;
     this.initMediaFiles();
 
     //LISTEN TO NEW SNAPSHOT SENT BY NEW MEDIA CONTENT:

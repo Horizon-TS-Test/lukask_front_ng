@@ -15,6 +15,11 @@
               <img src="{{med.url}}" width="100%" class="mb-1">
             </a>
           </ng-container>
+          <!--ng-container *ngIf="med.format == 'VD'">
+            <a href="#" (click)="viewImg($event)" class="card-img-top">
+              <video src="{{_pathMediaVideo + med.url}}" controls width="100%" poster="{{ videoLoader }}" class="mb-1 videoDetail"></video>
+            </a>
+          </ng-container-->
         </ng-container>
       </owl-carousel>
     </div>
