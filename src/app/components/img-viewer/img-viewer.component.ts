@@ -5,8 +5,6 @@ import { HorizonButton } from '../../interfaces/horizon-button.interface';
 import { ACTION_TYPES } from '../../config/action-types';
 import { CONTENT_TYPES } from '../../config/content-type';
 import { REST_SERV } from '../../rest-url/rest-servers';
-import { WebrtcSocketService } from '../../services/webrtc-socket.service';
-import { UserService } from '../../services/user.service';
 import * as lodash from 'lodash';
 
 @Component({
@@ -26,6 +24,7 @@ export class ImgViewerComponent implements OnInit {
   public materialBtn: HorizonButton[];
   public _contentType: any;
   private videoRecPub : any;
+  private videoRecPubSource : any;
 
   
   constructor() {
@@ -45,6 +44,7 @@ export class ImgViewerComponent implements OnInit {
 
   ngAfterViewInit(){
     this.videoRecPub = document.getElementById("videoPub");
+    this.videoRecPubSource = document.getElementById("videoPubSource");
     if(this.opView === CONTENT_TYPES.view_video){
       let mediaVideo = lodash.find(this.media, function(obj){
         return obj.format  == 'VD';
@@ -88,8 +88,13 @@ export class ImgViewerComponent implements OnInit {
       });*/
 
       try{  
+        
         let reqDataUrl = REST_SERV.mediaRecorder + "/?pathmedia=" + videoUrl;
-        this.videoRecPub.src = reqDataUrl;
+        this.videoRecPub.currentTime = 9999999999;
+        this.videoRecPubSource.src = reqDataUrl;
+        this.videoRecPubSource.controls = true;
+        this.videoRecPub.load();
+        this.videoRecPub.play();
       }catch(error){
         console.error("Error al cargar el video ", error);
       }

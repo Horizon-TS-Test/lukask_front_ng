@@ -1959,4 +1959,10 @@ input[type=text], input[type=password], input[type=email], input[type=number], i
   -moz-box-shadow: 4px 4px 7px 2px rgba(0, 0, 0, 0.2) !important;
   box-shadow: 4px 4px 7px 2px rgba(0, 0, 0, 0.2) !important; }
 
+.carousel-op-media{
+  position:absolute;
+  display: inline-block;
+  left: 0px;
+  right: 0px;
+}
 /*# sourceMappingURL=styles.css.map */
